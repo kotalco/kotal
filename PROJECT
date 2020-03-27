@@ -1,3 +1,7 @@
 domain: kotal.io
 repo: github.com/mfarghaly/kotal
+resources:
+- group: ethereum
+  kind: Network
+  version: v1alpha1
 version: "2"

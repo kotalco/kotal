@@ -1,0 +1,20 @@
+# permissions for end users to view networks.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: network-viewer-role
+rules:
+- apiGroups:
+  - ethereum.kotal.io
+  resources:
+  - networks
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ethereum.kotal.io
+  resources:
+  - networks/status
+  verbs:
+  - get
