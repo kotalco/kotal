@@ -1,0 +1,76 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: networks.ethereum.kotal.io
+spec:
+  group: ethereum.kotal.io
+  names:
+    kind: Network
+    listKind: NetworkList
+    plural: networks
+    singular: network
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      description: Network is the Schema for the networks API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: NetworkSpec defines the desired state of Network
+          properties:
+            consensus:
+              description: Consensus is the consensus algorithm to be used by the
+                network nodes to reach consensus
+              enum:
+              - poa
+              - pow
+              - ibft2
+              - quorum
+              type: string
+            join:
+              description: Join specifies the network to join
+              type: string
+            nodes:
+              description: Nodes is array of node specifications
+              items:
+                description: Node is the specification of the node
+                properties:
+                  name:
+                    type: string
+                required:
+                - name
+                type: object
+              minItems: 1
+              type: array
+          type: object
+        status:
+          description: NetworkStatus defines the observed state of Network
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
