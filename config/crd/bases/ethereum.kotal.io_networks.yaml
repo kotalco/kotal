@@ -58,6 +58,8 @@ spec:
                 type: object
               minItems: 1
               type: array
+          required:
+          - nodes
           type: object
         status:
           description: NetworkStatus defines the observed state of Network

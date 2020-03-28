@@ -38,7 +38,7 @@ type NetworkSpec struct {
 
 	// Nodes is array of node specifications
 	// +kubebuilder:validation:MinItems=1
-	Nodes []Node `json:"nodes,omitempty"`
+	Nodes []Node `json:"nodes"`
 }
 
 //ConsensusAlgorithm is the algorithm nodes use to reach consensus
