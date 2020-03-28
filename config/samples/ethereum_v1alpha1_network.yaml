@@ -3,5 +3,6 @@ kind: Network
 metadata:
   name: network-sample
 spec:
-  # Add fields here
-  foo: bar
+  join: rinkeby
+  nodes:
+    - name: node-1
