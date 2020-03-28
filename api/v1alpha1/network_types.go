@@ -28,8 +28,37 @@ type NetworkSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of Network. Edit Network_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Join specifies the network to join
+	// +optional
+	Join string `json:"join,omitempty"`
+
+	// Consensus is the consensus algorithm to be used by the network nodes to reach consensus
+	// +optional
+	Consensus ConsensusAlgorithm `json:"consensus,omitempty"`
+
+	// Nodes is array of node specifications
+	// +kubebuilder:validation:MinItems=1
+	Nodes []Node `json:"nodes,omitempty"`
+}
+
+//ConsensusAlgorithm is the algorithm nodes use to reach consensus
+// +kubebuilder:validation:Enum=poa;pow;ibft2;quorum
+type ConsensusAlgorithm string
+
+const (
+	//ProofOfAuthority is proof of authority consensus algorithm
+	ProofOfAuthority ConsensusAlgorithm = "poa"
+	//ProofOfWork is proof of work (satoshi consensus) consensus algorithm
+	ProofOfWork ConsensusAlgorithm = "pow"
+	//IBFT2 is Istanbul Byzantine Fault Tolerant consensus algorithm
+	IBFT2 ConsensusAlgorithm = "ibft2"
+	//Quorum is Quorum IBFT consensus algorithm
+	Quorum ConsensusAlgorithm = "quorum"
+)
+
+//Node is the specification of the node
+type Node struct {
+	Name string `json:"name"`
 }
 
 // NetworkStatus defines the observed state of Network
