@@ -34,18 +34,25 @@ type NetworkReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+// Reconcile reconciles ethereum networks
 // +kubebuilder:rbac:groups=ethereum.kotal.io,resources=networks,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ethereum.kotal.io,resources=networks/status,verbs=get;update;patch
-
 func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	_ = context.Background()
-	_ = r.Log.WithValues("network", req.NamespacedName)
+	ctx := context.Background()
+	log := r.Log.WithValues("network", req.NamespacedName)
 
-	// your logic here
+	var network ethereumv1alpha1.Network
+	if err := r.Client.Get(ctx, req.NamespacedName, &network); err != nil {
+		log.Error(err, "Unable to fetch Ethereum Network")
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+
+	//TODO: reconcile the network
 
 	return ctrl.Result{}, nil
 }
 
+// SetupWithManager adds reconciler to the manager
 func (r *NetworkReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ethereumv1alpha1.Network{}).
