@@ -55,77 +55,82 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	// Reconcile nodes
 	for _, node := range network.Spec.Nodes {
-
-		dep := &appsv1.Deployment{}
-
-		err := r.Client.Get(ctx, client.ObjectKey{
-			Name:      node.Name,
-			Namespace: req.Namespace,
-		}, dep)
-
-		if err != nil {
-
-			if errors.IsNotFound(err) {
-				log.Info(fmt.Sprintf("node %s deployment is not found", node.Name))
-				log.Info(fmt.Sprintf("creating new deployment for node %s", node.Name))
-
-				newDep := appsv1.Deployment{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      node.Name,
-						Namespace: req.Namespace,
-					},
-					Spec: appsv1.DeploymentSpec{
-						Selector: &metav1.LabelSelector{
-							MatchLabels: map[string]string{
-								"app": "node",
-							},
-						},
-						Template: corev1.PodTemplateSpec{
-							ObjectMeta: metav1.ObjectMeta{
-								Labels: map[string]string{
-									"app": "node",
-								},
-							},
-							Spec: corev1.PodSpec{
-								Containers: []corev1.Container{
-									corev1.Container{
-										Name:  "node",
-										Image: "hyperledger/besu",
-										Command: []string{
-											"besu",
-										},
-										Args: []string{
-											"--network",
-											network.Spec.Join,
-										},
-									},
-								},
-							},
-						},
-					},
-				}
-
-				if err := ctrl.SetControllerReference(&network, &newDep, r.Scheme); err != nil {
-					log.Error(err, "Unable to set controller reference")
-					return ctrl.Result{}, err
-				}
-
-				if err := r.Client.Create(ctx, &newDep); err != nil {
-					log.Error(err, "Unable to create node deployment")
-					return ctrl.Result{}, err
-				}
-
-			} else {
-				log.Error(err, "Unable to find node")
-				return ctrl.Result{}, err
-			}
+		if err := r.reconcileNode(ctx, &node, &network); err != nil {
+			return ctrl.Result{}, err
 		}
-
 	}
 
 	return ctrl.Result{}, nil
+}
+
+func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
+	log := r.Log.WithValues("node")
+	dep := &appsv1.Deployment{}
+	ns := network.ObjectMeta.Namespace
+
+	err := r.Client.Get(ctx, client.ObjectKey{
+		Name:      node.Name,
+		Namespace: ns,
+	}, dep)
+
+	if err != nil {
+		if !errors.IsNotFound(err) {
+			log.Error(err, fmt.Sprintf("unable to find node (%s) deployment", node.Name))
+			return err
+		}
+
+		log.Info(fmt.Sprintf("node (%s) deployment is not found", node.Name))
+		log.Info(fmt.Sprintf("creating a new deployment for node (%s)", node.Name))
+
+		newDep := appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      node.Name,
+				Namespace: ns,
+			},
+			Spec: appsv1.DeploymentSpec{
+				Selector: &metav1.LabelSelector{
+					MatchLabels: map[string]string{
+						"app": "node",
+					},
+				},
+				Template: corev1.PodTemplateSpec{
+					ObjectMeta: metav1.ObjectMeta{
+						Labels: map[string]string{
+							"app": "node",
+						},
+					},
+					Spec: corev1.PodSpec{
+						Containers: []corev1.Container{
+							corev1.Container{
+								Name:  "node",
+								Image: "hyperledger/besu",
+								Command: []string{
+									"besu",
+								},
+								Args: []string{
+									"--network",
+									network.Spec.Join,
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		if err := ctrl.SetControllerReference(network, &newDep, r.Scheme); err != nil {
+			log.Error(err, "Unable to set controller reference")
+			return err
+		}
+
+		if err := r.Client.Create(ctx, &newDep); err != nil {
+			log.Error(err, "Unable to create node deployment")
+			return err
+		}
+
+	}
+	return nil
 }
 
 // SetupWithManager adds reconciler to the manager
