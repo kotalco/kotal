@@ -55,6 +55,8 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
+	// TODO: delete nodes that has been removed from nodes list
+
 	for _, node := range network.Spec.Nodes {
 		if err := r.reconcileNode(ctx, &node, &network); err != nil {
 			return ctrl.Result{}, err
@@ -64,6 +66,8 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	return ctrl.Result{}, nil
 }
 
+// reconcileNode create a new node deployment if it doesn't exist
+// updates existing deployments if node spec changed
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
 	log := r.Log.WithValues("node")
 	dep := &appsv1.Deployment{}
@@ -83,6 +87,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		log.Info(fmt.Sprintf("node (%s) deployment is not found", node.Name))
 		log.Info(fmt.Sprintf("creating a new deployment for node (%s)", node.Name))
 
+		// TODO: move into new function
 		newDep := appsv1.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      node.Name,
@@ -130,6 +135,9 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		}
 
 	}
+
+	// TODO: update existing deployment if node spec change
+
 	return nil
 }
 
