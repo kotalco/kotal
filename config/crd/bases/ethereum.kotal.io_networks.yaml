@@ -52,6 +52,14 @@ spec:
                 description: Node is the specification of the node
                 properties:
                   name:
+                    description: Name is the node name
+                    type: string
+                  syncMode:
+                    description: SyncMode is the node synchronization mode
+                    enum:
+                    - fast
+                    - full
+                    - archive
                     type: string
                 required:
                 - name

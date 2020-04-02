@@ -29,11 +29,9 @@ type NetworkSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Join specifies the network to join
-	// +optional
 	Join string `json:"join,omitempty"`
 
 	// Consensus is the consensus algorithm to be used by the network nodes to reach consensus
-	// +optional
 	Consensus ConsensusAlgorithm `json:"consensus,omitempty"`
 
 	// Nodes is array of node specifications
@@ -41,24 +39,46 @@ type NetworkSpec struct {
 	Nodes []Node `json:"nodes"`
 }
 
-//ConsensusAlgorithm is the algorithm nodes use to reach consensus
+// ConsensusAlgorithm is the algorithm nodes use to reach consensus
 // +kubebuilder:validation:Enum=poa;pow;ibft2;quorum
 type ConsensusAlgorithm string
 
 const (
-	//ProofOfAuthority is proof of authority consensus algorithm
+	// ProofOfAuthority is proof of authority consensus algorithm
 	ProofOfAuthority ConsensusAlgorithm = "poa"
-	//ProofOfWork is proof of work (satoshi consensus) consensus algorithm
+
+	// ProofOfWork is proof of work (nakamoto consensus) consensus algorithm
 	ProofOfWork ConsensusAlgorithm = "pow"
-	//IBFT2 is Istanbul Byzantine Fault Tolerant consensus algorithm
+
+	// IBFT2 is Istanbul Byzantine Fault Tolerant consensus algorithm
 	IBFT2 ConsensusAlgorithm = "ibft2"
+
 	//Quorum is Quorum IBFT consensus algorithm
 	Quorum ConsensusAlgorithm = "quorum"
 )
 
+// SynchronizationMode is the node synchronization mode
+// +kubebuilder:validation:Enum=fast;full;archive
+type SynchronizationMode string
+
+const (
+	//FastSynchronization is the full (archive) synchronization mode, alias for archive
+	FastSynchronization SynchronizationMode = "fast"
+
+	//ArchiveSynchronization is the archive synchronization mode, alias for full
+	ArchiveSynchronization SynchronizationMode = "archive"
+
+	//FullSynchronization is the fast (non-archival) synchronization mode
+	FullSynchronization SynchronizationMode = "full"
+)
+
 //Node is the specification of the node
 type Node struct {
+	// Name is the node name
 	Name string `json:"name"`
+
+	//SyncMode is the node synchronization mode
+	SyncMode SynchronizationMode `json:"syncMode,omitempty"`
 }
 
 // NetworkStatus defines the observed state of Network
