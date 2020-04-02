@@ -77,8 +77,11 @@ type Node struct {
 	// Name is the node name
 	Name string `json:"name"`
 
-	//SyncMode is the node synchronization mode
+	// SyncMode is the node synchronization mode
 	SyncMode SynchronizationMode `json:"syncMode,omitempty"`
+
+	// Miner is whether node is mining/validating blocks or no
+	Miner bool `json:"miner,omitempty"`
 }
 
 // NetworkStatus defines the observed state of Network

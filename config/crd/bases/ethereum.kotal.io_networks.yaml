@@ -51,6 +51,10 @@ spec:
               items:
                 description: Node is the specification of the node
                 properties:
+                  miner:
+                    description: Miner is whether node is mining/validating blocks
+                      or no
+                    type: boolean
                   name:
                     description: Name is the node name
                     type: string
