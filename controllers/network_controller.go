@@ -85,44 +85,11 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		}
 
 		log.Info(fmt.Sprintf("node (%s) deployment is not found", node.Name))
+
 		log.Info(fmt.Sprintf("creating a new deployment for node (%s)", node.Name))
 
-		// TODO: move into new function
-		newDep := appsv1.Deployment{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      node.Name,
-				Namespace: ns,
-			},
-			Spec: appsv1.DeploymentSpec{
-				Selector: &metav1.LabelSelector{
-					MatchLabels: map[string]string{
-						"app": "node",
-					},
-				},
-				Template: corev1.PodTemplateSpec{
-					ObjectMeta: metav1.ObjectMeta{
-						Labels: map[string]string{
-							"app": "node",
-						},
-					},
-					Spec: corev1.PodSpec{
-						Containers: []corev1.Container{
-							corev1.Container{
-								Name:  "node",
-								Image: "hyperledger/besu",
-								Command: []string{
-									"besu",
-								},
-								Args: []string{
-									"--network",
-									network.Spec.Join,
-								},
-							},
-						},
-					},
-				},
-			},
-		}
+		// TODO: create node cli args from node.spec
+		newDep := r.CreateDeploymentForNode(node, ns, network.Spec.Join)
 
 		if err := ctrl.SetControllerReference(network, &newDep, r.Scheme); err != nil {
 			log.Error(err, "Unable to set controller reference")
@@ -139,6 +106,47 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 	// TODO: update existing deployment if node spec change
 
 	return nil
+}
+
+// CreateDeploymentForNode creates a new deployment for node
+func (r *NetworkReconciler) CreateDeploymentForNode(node *ethereumv1alpha1.Node, ns, join string) appsv1.Deployment {
+	return appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: ns,
+		},
+		Spec: appsv1.DeploymentSpec{
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					"app": "node",
+				},
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						"app": "node",
+					},
+				},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						corev1.Container{
+							Name: "node",
+							// TODO: use tag
+							Image: "hyperledger/besu",
+							Command: []string{
+								"besu",
+							},
+							Args: []string{
+								"--network",
+								join,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
 }
 
 // SetupWithManager adds reconciler to the manager
