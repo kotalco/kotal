@@ -6,3 +6,8 @@ spec:
   join: rinkeby
   nodes:
     - name: node-1
+      rpc: true
+      rpcServices:
+        - web3
+        - net
+        - eth
