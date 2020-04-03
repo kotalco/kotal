@@ -72,6 +72,51 @@ const (
 	FullSynchronization SynchronizationMode = "full"
 )
 
+// RPCService is name of the RPC service
+// +kubebuilder:validation:Enum=admin;clique;debug;eea;eth;ibft;miner;net;perm;plugins;priv;txpool;web3
+type RPCService string
+
+const (
+	// AdminService is administration service
+	AdminService RPCService = "admin"
+
+	// CliqueService is clique (Proof of Authority consensus) service
+	CliqueService RPCService = "clique"
+
+	// DebugService is debugging service
+	DebugService RPCService = "debug"
+
+	// EEAService is EEA (Enterprise Ethereum Alliance) service
+	EEAService RPCService = "eea"
+
+	// ETHService is ethereum service
+	ETHService RPCService = "eth"
+
+	// IBFTService is IBFT consensus service
+	IBFTService RPCService = "ibft"
+
+	// MinerService is miner service
+	MinerService RPCService = "miner"
+
+	// NetworkService is network service
+	NetworkService RPCService = "net"
+
+	// PermissionService is permission service
+	PermissionService RPCService = "perm"
+
+	// PluginsService is plugins service
+	PluginsService RPCService = "plugins"
+
+	// PrivacyService is privacy service
+	PrivacyService RPCService = "privacy"
+
+	// TransactionPoolService is transaction pool service
+	TransactionPoolService RPCService = "txpool"
+
+	// Web3Service is web3 service
+	Web3Service RPCService = "web3"
+)
+
 //Node is the specification of the node
 type Node struct {
 	// Name is the node name
@@ -82,6 +127,25 @@ type Node struct {
 
 	// Miner is whether node is mining/validating blocks or no
 	Miner bool `json:"miner,omitempty"`
+
+	// Hosts is a list of hostnames to to whitelist for RPC access
+	Hosts []string `json:"hosts,omitempty"`
+
+	// CORSDomains is the domains from which to accept cross origin requests
+	CORSDomains []string `json:"corsDomains,omitempty"`
+
+	// RPC is whether HTTP-RPC server is enabled or no
+	RPC bool `json:"rpc,omitempty"`
+
+	// RPCPort is HTTP-RPC server listening port
+	RPCPort uint `json:"rpcPort,omitempty"`
+
+	// RPCHost is HTTP-RPC server host address
+	RPCHost string `json:"rpcHost,omitempty"`
+
+	// RPCServices is a list of rpc services to enable
+	// TODO: +kubebuilder:validation:UniqueItems=true
+	RPCServices []RPCService `json:"rpcServices,omitempty"`
 }
 
 // NetworkStatus defines the observed state of Network
