@@ -69,7 +69,7 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 // reconcileNode create a new node deployment if it doesn't exist
 // updates existing deployments if node spec changed
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
-	log := r.Log.WithValues("node")
+	log := r.Log.WithValues("node", node.Name)
 	dep := &appsv1.Deployment{}
 	ns := network.ObjectMeta.Namespace
 
