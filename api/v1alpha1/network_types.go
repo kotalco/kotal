@@ -61,6 +61,11 @@ const (
 // +kubebuilder:validation:Enum=fast;full;archive
 type SynchronizationMode string
 
+// String returns the string value of the synchronization mode
+func (sm SynchronizationMode) String() string {
+	return string(sm)
+}
+
 const (
 	//FastSynchronization is the full (archive) synchronization mode, alias for archive
 	FastSynchronization SynchronizationMode = "fast"
@@ -75,6 +80,11 @@ const (
 // RPCService is name of the RPC service
 // +kubebuilder:validation:Enum=admin;clique;debug;eea;eth;ibft;miner;net;perm;plugins;priv;txpool;web3
 type RPCService string
+
+// String returns string value of the RPC service
+func (rs RPCService) String() string {
+	return string(rs)
+}
 
 const (
 	// AdminService is administration service
@@ -127,6 +137,7 @@ type Node struct {
 
 	// Miner is whether node is mining/validating blocks or no
 	Miner bool `json:"miner,omitempty"`
+	// TODO: add MinerAccount option
 
 	// Hosts is a list of hostnames to to whitelist for RPC access
 	Hosts []string `json:"hosts,omitempty"`

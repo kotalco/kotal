@@ -7,6 +7,10 @@ spec:
   nodes:
     - name: node-1
       rpc: true
+      rpcPort: 8599
+      rpcHost: 0.0.0.0
+      corsDomains:
+        - example.kotal.io
       rpcServices:
         - web3
         - net

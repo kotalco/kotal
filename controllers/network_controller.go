@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -89,7 +90,8 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		log.Info(fmt.Sprintf("creating a new deployment for node (%s)", node.Name))
 
 		// TODO: create node cli args from node.spec
-		newDep := r.CreateDeploymentForNode(node, ns, network.Spec.Join)
+		args := r.createArgsForClient(node, network.Spec.Join)
+		newDep := r.createDeploymentForNode(node, ns, args)
 
 		if err := ctrl.SetControllerReference(network, &newDep, r.Scheme); err != nil {
 			log.Error(err, "Unable to set controller reference")
@@ -108,8 +110,62 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 	return nil
 }
 
-// CreateDeploymentForNode creates a new deployment for node
-func (r *NetworkReconciler) CreateDeploymentForNode(node *ethereumv1alpha1.Node, ns, join string) appsv1.Deployment {
+// createArgsForClient create arguments to be passed to the node client from node specs
+func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, join string) []string {
+	args := []string{}
+	// TODO: update after admissionmutating webhook
+	// because it will default all args
+
+	if join != "" {
+		args = append(args, "--network", join)
+	}
+
+	// TODO: create per client type(besu, geth ... etc)
+	if node.SyncMode != "" {
+		args = append(args, "--sync-mode", node.SyncMode.String())
+	}
+
+	if node.Miner {
+		args = append(args, "--miner-enabled")
+	}
+
+	if node.RPC {
+		args = append(args, "--rpc-http-enabled")
+	}
+
+	if node.RPCPort != 0 {
+		args = append(args, "--rpc-http-port", fmt.Sprintf("%d", node.RPCPort))
+	}
+
+	if node.RPCHost != "" {
+		args = append(args, "--rpc-http-host", node.RPCHost)
+	}
+
+	if len(node.RPCServices) != 0 {
+		apis := []string{}
+		for _, api := range node.RPCServices {
+			apis = append(apis, api.String())
+		}
+		commaSeperatedAPIs := strings.Join(apis, ",")
+		args = append(args, "--rpc-http-api", commaSeperatedAPIs)
+	}
+
+	if len(node.Hosts) != 0 {
+		commaSeperatedHosts := strings.Join(node.Hosts, ",")
+		args = append(args, "--host-whitelist", commaSeperatedHosts)
+	}
+
+	if len(node.CORSDomains) != 0 {
+		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
+		// TODO: add graphql cors domains option if graphql is enabled
+		args = append(args, "--rpc-http-cors-origins", commaSeperatedDomains)
+	}
+
+	return args
+}
+
+// createDeploymentForNode creates a new deployment for node
+func (r *NetworkReconciler) createDeploymentForNode(node *ethereumv1alpha1.Node, ns string, args []string) appsv1.Deployment {
 	return appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -136,10 +192,7 @@ func (r *NetworkReconciler) CreateDeploymentForNode(node *ethereumv1alpha1.Node,
 							Command: []string{
 								"besu",
 							},
-							Args: []string{
-								"--network",
-								join,
-							},
+							Args: args,
 						},
 					},
 				},
