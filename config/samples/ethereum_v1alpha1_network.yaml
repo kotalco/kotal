@@ -6,6 +6,8 @@ spec:
   join: rinkeby
   nodes:
     - name: node-1
+      miner: true
+      minerAccount: 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c
       rpc: true
       rpcPort: 8599
       rpcHost: 0.0.0.0

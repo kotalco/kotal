@@ -67,6 +67,10 @@ spec:
                     description: Miner is whether node is mining/validating blocks
                       or no
                     type: boolean
+                  minerAccount:
+                    description: MinerAccount is the account to which mining rewards
+                      are paid
+                    type: string
                   name:
                     description: Name is the node name
                     type: string
@@ -80,8 +84,7 @@ spec:
                     description: RPCPort is HTTP-RPC server listening port
                     type: integer
                   rpcServices:
-                    description: 'RPCServices is a list of rpc services to enable
-                      TODO: +kubebuilder:validation:UniqueItems=true'
+                    description: RPCServices is a list of rpc services to enable
                     items:
                       description: RPCService is name of the RPC service
                       enum:

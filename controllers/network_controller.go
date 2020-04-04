@@ -129,6 +129,10 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 		args = append(args, "--miner-enabled")
 	}
 
+	if node.MinerAccount != "" {
+		args = append(args, "--miner-coinbase", node.MinerAccount)
+	}
+
 	if node.RPC {
 		args = append(args, "--rpc-http-enabled")
 	}

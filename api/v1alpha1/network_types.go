@@ -137,7 +137,9 @@ type Node struct {
 
 	// Miner is whether node is mining/validating blocks or no
 	Miner bool `json:"miner,omitempty"`
-	// TODO: add MinerAccount option
+
+	// MinerAccount is the account to which mining rewards are paid
+	MinerAccount string `json:"minerAccount,omitempty"`
 
 	// Hosts is a list of hostnames to to whitelist for RPC access
 	Hosts []string `json:"hosts,omitempty"`
@@ -155,7 +157,6 @@ type Node struct {
 	RPCHost string `json:"rpcHost,omitempty"`
 
 	// RPCServices is a list of rpc services to enable
-	// TODO: +kubebuilder:validation:UniqueItems=true
 	RPCServices []RPCService `json:"rpcServices,omitempty"`
 }
 
