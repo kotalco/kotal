@@ -51,6 +51,7 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 
 	var network ethereumv1alpha1.Network
 
+	// Get desired ethereum network
 	if err := r.Client.Get(ctx, req.NamespacedName, &network); err != nil {
 		log.Error(err, "Unable to fetch Ethereum Network")
 		return ctrl.Result{}, client.IgnoreNotFound(err)
@@ -75,10 +76,12 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 	var deps appsv1.DeploymentList
 	names := map[string]bool{}
 
+	// all node names in the spec
 	for _, node := range nodes {
 		names[node.Name] = true
 	}
 
+	// all nodes deployments that's currently running
 	if err := r.Client.List(ctx, &deps, client.MatchingLabels{"app": "node"}); err != nil {
 		r.Log.Error(err, "unable to list all node deployments")
 		return err
@@ -87,18 +90,11 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 	for _, dep := range deps.Items {
 		name := dep.GetName()
 		if exist := names[name]; !exist {
-			r.Log.Info("node deployment doesn't exist in the spec")
-			toDelete := appsv1.Deployment{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      name,
-					Namespace: ns,
-					Labels: map[string]string{
-						"app": "node",
-					},
-				},
-			}
-			if err := r.Client.Delete(ctx, &toDelete); err != nil {
-				r.Log.Error(err, "unable to delete node deployment")
+			r.Log.Info(fmt.Sprintf("node (%s) deployment doesn't exist anymore in the spec", name))
+			r.Log.Info(fmt.Sprintf("deleting node (%s) deployment", name))
+
+			if err := r.Client.Delete(ctx, &dep); err != nil {
+				r.Log.Error(err, fmt.Sprintf("unable to delete node (%s) deployment", name))
 				return err
 			}
 		}
