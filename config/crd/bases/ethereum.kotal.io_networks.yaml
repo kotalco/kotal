@@ -75,18 +75,13 @@ spec:
                     description: Name is the node name
                     type: string
                   rpc:
-                    description: RPC is whether HTTP-RPC server is enabled or no
+                    description: RPC is whether HTTP-RPC server is enabled or not
                     type: boolean
-                  rpcHost:
-                    description: RPCHost is HTTP-RPC server host address
-                    type: string
-                  rpcPort:
-                    description: RPCPort is HTTP-RPC server listening port
-                    type: integer
-                  rpcServices:
-                    description: RPCServices is a list of rpc services to enable
+                  rpcAPI:
+                    description: RPCAPI is a list of rpc services to enable
                     items:
-                      description: RPCService is name of the RPC service
+                      description: API is RPC API to be exposed by RPC or web socket
+                        server
                       enum:
                       - admin
                       - clique
@@ -103,6 +98,12 @@ spec:
                       - web3
                       type: string
                     type: array
+                  rpcHost:
+                    description: RPCHost is HTTP-RPC server host address
+                    type: string
+                  rpcPort:
+                    description: RPCPort is HTTP-RPC server listening port
+                    type: integer
                   syncMode:
                     description: SyncMode is the node synchronization mode
                     enum:
@@ -110,6 +111,36 @@ spec:
                     - full
                     - archive
                     type: string
+                  ws:
+                    description: WS is whether web socket server is enabled or not
+                    type: boolean
+                  wsAPI:
+                    description: WSAPI is a list of WS services to enable
+                    items:
+                      description: API is RPC API to be exposed by RPC or web socket
+                        server
+                      enum:
+                      - admin
+                      - clique
+                      - debug
+                      - eea
+                      - eth
+                      - ibft
+                      - miner
+                      - net
+                      - perm
+                      - plugins
+                      - priv
+                      - txpool
+                      - web3
+                      type: string
+                    type: array
+                  wsHost:
+                    description: WSHost is HTTP-WS server host address
+                    type: string
+                  wsPort:
+                    description: WSPort is the web socket server listening port
+                    type: integer
                 required:
                 - name
                 type: object

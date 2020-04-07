@@ -13,7 +13,7 @@ spec:
       rpcHost: 0.0.0.0
       corsDomains:
         - example.kotal.io
-      rpcServices:
+      rpcAPI:
         - web3
         - net
         - eth

@@ -131,6 +131,8 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 	return nil
 }
 
+// createOrUpdateNode creates a node deployment if it doesn't exist
+// updates existing deployment if node spec changed
 func (r *NetworkReconciler) createOrUpdateNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, ns string, found bool) error {
 	log := r.Log.WithValues("node", node.Name)
 	args := r.createArgsForClient(node, network.Spec.Join)
@@ -195,13 +197,34 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 		args = append(args, "--rpc-http-host", node.RPCHost)
 	}
 
-	if len(node.RPCServices) != 0 {
+	if len(node.RPCAPI) != 0 {
 		apis := []string{}
-		for _, api := range node.RPCServices {
+		for _, api := range node.RPCAPI {
 			apis = append(apis, api.String())
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		args = append(args, "--rpc-http-api", commaSeperatedAPIs)
+	}
+
+	if node.WS {
+		args = append(args, "--rpc-ws-enabled")
+	}
+
+	if node.WSPort != 0 {
+		args = append(args, "--rpc-ws-port", fmt.Sprintf("%d", node.WSPort))
+	}
+
+	if node.WSHost != "" {
+		args = append(args, "--rpc-ws-host", node.WSHost)
+	}
+
+	if len(node.WSAPI) != 0 {
+		apis := []string{}
+		for _, api := range node.WSAPI {
+			apis = append(apis, api.String())
+		}
+		commaSeperatedAPIs := strings.Join(apis, ",")
+		args = append(args, "--rpc-ws-api", commaSeperatedAPIs)
 	}
 
 	if len(node.Hosts) != 0 {

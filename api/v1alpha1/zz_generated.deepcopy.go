@@ -133,9 +133,14 @@ func (in *Node) DeepCopyInto(out *Node) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
-	if in.RPCServices != nil {
-		in, out := &in.RPCServices, &out.RPCServices
-		*out = make([]RPCService, len(*in))
+	if in.RPCAPI != nil {
+		in, out := &in.RPCAPI, &out.RPCAPI
+		*out = make([]API, len(*in))
+		copy(*out, *in)
+	}
+	if in.WSAPI != nil {
+		in, out := &in.WSAPI, &out.WSAPI
+		*out = make([]API, len(*in))
 		copy(*out, *in)
 	}
 }

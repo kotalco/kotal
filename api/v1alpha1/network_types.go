@@ -77,54 +77,54 @@ const (
 	FullSynchronization SynchronizationMode = "full"
 )
 
-// RPCService is name of the RPC service
+// API is RPC API to be exposed by RPC or web socket server
 // +kubebuilder:validation:Enum=admin;clique;debug;eea;eth;ibft;miner;net;perm;plugins;priv;txpool;web3
-type RPCService string
+type API string
 
 // String returns string value of the RPC service
-func (rs RPCService) String() string {
-	return string(rs)
+func (a API) String() string {
+	return string(a)
 }
 
 const (
-	// AdminService is administration service
-	AdminService RPCService = "admin"
+	// AdminAPI is administration API
+	AdminAPI API = "admin"
 
-	// CliqueService is clique (Proof of Authority consensus) service
-	CliqueService RPCService = "clique"
+	// CliqueAPI is clique (Proof of Authority consensus) API
+	CliqueAPI API = "clique"
 
-	// DebugService is debugging service
-	DebugService RPCService = "debug"
+	// DebugAPI is debugging API
+	DebugAPI API = "debug"
 
-	// EEAService is EEA (Enterprise Ethereum Alliance) service
-	EEAService RPCService = "eea"
+	// EEAAPI is EEA (Enterprise Ethereum Alliance) API
+	EEAAPI API = "eea"
 
-	// ETHService is ethereum service
-	ETHService RPCService = "eth"
+	// ETHAPI is ethereum API
+	ETHAPI API = "eth"
 
-	// IBFTService is IBFT consensus service
-	IBFTService RPCService = "ibft"
+	// IBFTAPI is IBFT consensus API
+	IBFTAPI API = "ibft"
 
-	// MinerService is miner service
-	MinerService RPCService = "miner"
+	// MinerAPI is miner API
+	MinerAPI API = "miner"
 
-	// NetworkService is network service
-	NetworkService RPCService = "net"
+	// NetworkAPI is network API
+	NetworkAPI API = "net"
 
-	// PermissionService is permission service
-	PermissionService RPCService = "perm"
+	// PermissionAPI is permission API
+	PermissionAPI API = "perm"
 
-	// PluginsService is plugins service
-	PluginsService RPCService = "plugins"
+	// PluginsAPI is plugins API
+	PluginsAPI API = "plugins"
 
-	// PrivacyService is privacy service
-	PrivacyService RPCService = "privacy"
+	// PrivacyAPI is privacy API
+	PrivacyAPI API = "privacy"
 
-	// TransactionPoolService is transaction pool service
-	TransactionPoolService RPCService = "txpool"
+	// TransactionPoolAPI is transaction pool API
+	TransactionPoolAPI API = "txpool"
 
-	// Web3Service is web3 service
-	Web3Service RPCService = "web3"
+	// Web3API is web3 API
+	Web3API API = "web3"
 )
 
 //Node is the specification of the node
@@ -147,17 +147,29 @@ type Node struct {
 	// CORSDomains is the domains from which to accept cross origin requests
 	CORSDomains []string `json:"corsDomains,omitempty"`
 
-	// RPC is whether HTTP-RPC server is enabled or no
+	// RPC is whether HTTP-RPC server is enabled or not
 	RPC bool `json:"rpc,omitempty"`
-
-	// RPCPort is HTTP-RPC server listening port
-	RPCPort uint `json:"rpcPort,omitempty"`
 
 	// RPCHost is HTTP-RPC server host address
 	RPCHost string `json:"rpcHost,omitempty"`
 
-	// RPCServices is a list of rpc services to enable
-	RPCServices []RPCService `json:"rpcServices,omitempty"`
+	// RPCPort is HTTP-RPC server listening port
+	RPCPort uint `json:"rpcPort,omitempty"`
+
+	// RPCAPI is a list of rpc services to enable
+	RPCAPI []API `json:"rpcAPI,omitempty"`
+
+	// WS is whether web socket server is enabled or not
+	WS bool `json:"ws,omitempty"`
+
+	// WSHost is HTTP-WS server host address
+	WSHost string `json:"wsHost,omitempty"`
+
+	// WSPort is the web socket server listening port
+	WSPort uint `json:"wsPort,omitempty"`
+
+	// WSAPI is a list of WS services to enable
+	WSAPI []API `json:"wsAPI,omitempty"`
 }
 
 // NetworkStatus defines the observed state of Network
