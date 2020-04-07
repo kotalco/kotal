@@ -172,6 +172,10 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 		args = append(args, "--network", join)
 	}
 
+	if node.P2PPort != 0 {
+		args = append(args, "--p2p-port", fmt.Sprintf("%d", node.P2PPort))
+	}
+
 	// TODO: create per client type(besu, geth ... etc)
 	if node.SyncMode != "" {
 		args = append(args, "--sync-mode", node.SyncMode.String())

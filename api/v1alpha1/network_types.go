@@ -132,6 +132,9 @@ type Node struct {
 	// Name is the node name
 	Name string `json:"name"`
 
+	// P2PPort is port used for peer to peer communication
+	P2PPort uint `json:"p2pPort,omitempty"`
+
 	// SyncMode is the node synchronization mode
 	SyncMode SynchronizationMode `json:"syncMode,omitempty"`
 

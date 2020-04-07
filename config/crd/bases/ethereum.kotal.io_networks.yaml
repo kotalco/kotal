@@ -74,6 +74,9 @@ spec:
                   name:
                     description: Name is the node name
                     type: string
+                  p2pPort:
+                    description: P2PPort is port used for peer to peer communication
+                    type: integer
                   rpc:
                     description: RPC is whether HTTP-RPC server is enabled or not
                     type: boolean
