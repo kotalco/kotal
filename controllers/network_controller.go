@@ -275,9 +275,8 @@ func (r *NetworkReconciler) createDeploymentForNode(node *ethereumv1alpha1.Node,
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						corev1.Container{
-							Name: "node",
-							// TODO: use tag
-							Image: "hyperledger/besu",
+							Name:  "node",
+							Image: "hyperledger/besu:1.4.2",
 							Command: []string{
 								"besu",
 							},
