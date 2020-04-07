@@ -168,37 +168,42 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 	// TODO: update after admissionmutating webhook
 	// because it will default all args
 
+	// appendArg appends argument with optional value to the arguments array
+	appendArg := func(arg ...string) {
+		args = append(args, arg...)
+	}
+
 	if join != "" {
-		args = append(args, "--network", join)
+		appendArg("--network", join)
 	}
 
 	if node.P2PPort != 0 {
-		args = append(args, "--p2p-port", fmt.Sprintf("%d", node.P2PPort))
+		appendArg("--p2p-port", fmt.Sprintf("%d", node.P2PPort))
 	}
 
 	// TODO: create per client type(besu, geth ... etc)
 	if node.SyncMode != "" {
-		args = append(args, "--sync-mode", node.SyncMode.String())
+		appendArg("--sync-mode", node.SyncMode.String())
 	}
 
 	if node.Miner {
-		args = append(args, "--miner-enabled")
+		appendArg("--miner-enabled")
 	}
 
 	if node.MinerAccount != "" {
-		args = append(args, "--miner-coinbase", node.MinerAccount)
+		appendArg("--miner-coinbase", node.MinerAccount)
 	}
 
 	if node.RPC {
-		args = append(args, "--rpc-http-enabled")
+		appendArg("--rpc-http-enabled")
 	}
 
 	if node.RPCPort != 0 {
-		args = append(args, "--rpc-http-port", fmt.Sprintf("%d", node.RPCPort))
+		appendArg("--rpc-http-port", fmt.Sprintf("%d", node.RPCPort))
 	}
 
 	if node.RPCHost != "" {
-		args = append(args, "--rpc-http-host", node.RPCHost)
+		appendArg("--rpc-http-host", node.RPCHost)
 	}
 
 	if len(node.RPCAPI) != 0 {
@@ -207,19 +212,19 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 			apis = append(apis, api.String())
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
-		args = append(args, "--rpc-http-api", commaSeperatedAPIs)
+		appendArg("--rpc-http-api", commaSeperatedAPIs)
 	}
 
 	if node.WS {
-		args = append(args, "--rpc-ws-enabled")
+		appendArg("--rpc-ws-enabled")
 	}
 
 	if node.WSPort != 0 {
-		args = append(args, "--rpc-ws-port", fmt.Sprintf("%d", node.WSPort))
+		appendArg("--rpc-ws-port", fmt.Sprintf("%d", node.WSPort))
 	}
 
 	if node.WSHost != "" {
-		args = append(args, "--rpc-ws-host", node.WSHost)
+		appendArg("--rpc-ws-host", node.WSHost)
 	}
 
 	if len(node.WSAPI) != 0 {
@@ -228,18 +233,18 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 			apis = append(apis, api.String())
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
-		args = append(args, "--rpc-ws-api", commaSeperatedAPIs)
+		appendArg("--rpc-ws-api", commaSeperatedAPIs)
 	}
 
 	if len(node.Hosts) != 0 {
 		commaSeperatedHosts := strings.Join(node.Hosts, ",")
-		args = append(args, "--host-whitelist", commaSeperatedHosts)
+		appendArg("--host-whitelist", commaSeperatedHosts)
 	}
 
 	if len(node.CORSDomains) != 0 {
 		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
 		// TODO: add graphql cors domains option if graphql is enabled
-		args = append(args, "--rpc-http-cors-origins", commaSeperatedDomains)
+		appendArg("--rpc-http-cors-origins", commaSeperatedDomains)
 	}
 
 	return args
