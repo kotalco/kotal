@@ -24,7 +24,6 @@ import (
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -107,58 +106,24 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 // updates existing deployments if node spec changed
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
 	log := r.Log.WithValues("node", node.Name)
-	dep := &appsv1.Deployment{}
-	ns := network.ObjectMeta.Namespace
 
-	err := r.Client.Get(ctx, client.ObjectKey{
-		Name:      node.Name,
-		Namespace: ns,
-	}, dep)
+	dep := r.createDeploymentForNode(node, network.GetNamespace())
 
-	notFound := errors.IsNotFound(err)
-
-	if err != nil && !notFound {
-
-		log.Error(err, fmt.Sprintf("unable to find node (%s) deployment", node.Name))
-		return err
-
-	}
-
-	if err := r.createOrUpdateNode(ctx, node, network, ns, !notFound); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// createOrUpdateNode creates a node deployment if it doesn't exist
-// updates existing deployment if node spec changed
-func (r *NetworkReconciler) createOrUpdateNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, ns string, found bool) error {
-	log := r.Log.WithValues("node", node.Name)
-	args := r.createArgsForClient(node, network.Spec.Join)
-	newDep := r.createDeploymentForNode(node, ns, args)
-
-	if err := ctrl.SetControllerReference(network, &newDep, r.Scheme); err != nil {
+	if err := ctrl.SetControllerReference(network, &dep, r.Scheme); err != nil {
 		log.Error(err, "Unable to set controller reference")
 		return err
 	}
 
-	if found {
-		log.Info(fmt.Sprintf("updating node (%s) deployment", node.Name))
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &dep, func() error {
+		args := r.createArgsForClient(node, network.Spec.Join)
+		dep.Spec.Template.Spec.Containers[0].Args = args
+		return nil
+	})
 
-		if err := r.Client.Update(ctx, &newDep); err != nil {
-			log.Error(err, fmt.Sprintf("unable to update node (%s) deployment", node.Name))
-			return err
-		}
-	} else {
-		log.Info(fmt.Sprintf("node (%s) deployment is not found", node.Name))
-		log.Info(fmt.Sprintf("creating a new deployment for node (%s)", node.Name))
-
-		if err := r.Client.Create(ctx, &newDep); err != nil {
-			log.Error(err, "Unable to create node deployment")
-			return err
-		}
+	if err != nil {
+		return err
 	}
+
 	return nil
 }
 
@@ -251,7 +216,7 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 }
 
 // createDeploymentForNode creates a new deployment for node
-func (r *NetworkReconciler) createDeploymentForNode(node *ethereumv1alpha1.Node, ns string, args []string) appsv1.Deployment {
+func (r *NetworkReconciler) createDeploymentForNode(node *ethereumv1alpha1.Node, ns string) appsv1.Deployment {
 	return appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -280,7 +245,6 @@ func (r *NetworkReconciler) createDeploymentForNode(node *ethereumv1alpha1.Node,
 							Command: []string{
 								"besu",
 							},
-							Args: args,
 						},
 					},
 				},
