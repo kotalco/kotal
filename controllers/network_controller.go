@@ -258,5 +258,6 @@ func (r *NetworkReconciler) createDeploymentForNode(node *ethereumv1alpha1.Node,
 func (r *NetworkReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ethereumv1alpha1.Network{}).
+		Owns(&appsv1.Deployment{}).
 		Complete(r)
 }
