@@ -18,14 +18,20 @@ package controllers
 
 import (
 	"context"
+	"crypto/ecdsa"
+	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -61,13 +67,98 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		return ctrl.Result{}, err
 	}
 
-	for _, node := range network.Spec.Nodes {
-		if err := r.reconcileNode(ctx, &node, &network); err != nil {
+	bootnodes := []string{}
+
+	for i, node := range network.Spec.Nodes {
+		// one node is a bootnode for every three nodes
+		isBootnode := i%3 == 0
+
+		bootnode, err := r.reconcileNode(ctx, &node, &network, isBootnode, bootnodes)
+		if err != nil {
 			return ctrl.Result{}, err
 		}
+
+		if isBootnode {
+			bootnodes = append(bootnodes, bootnode)
+		}
+
 	}
 
 	return ctrl.Result{}, nil
+}
+
+// createNodekey creates private key for node to be used for enodeURL
+func (r *NetworkReconciler) createNodekey(hex string) (privateKeyHex, publicKeyHex string, err error) {
+	// private key
+	var privateKey *ecdsa.PrivateKey
+
+	if hex != "" {
+		privateKey, err = crypto.HexToECDSA(hex)
+		if err != nil {
+			return
+		}
+		privateKeyHex = hex
+	} else {
+		privateKey, err = crypto.GenerateKey()
+		if err != nil {
+			return
+		}
+		privateKeyBytes := crypto.FromECDSA(privateKey)
+		privateKeyHex = hexutil.Encode(privateKeyBytes)[2:]
+	}
+
+	// public key
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		err = errors.New("publicKey is not of type *ecdsa.PublicKey")
+	}
+	publicKeyBytes := crypto.FromECDSAPub(publicKeyECDSA)
+	publicKeyHex = hexutil.Encode(publicKeyBytes)[4:]
+
+	return
+
+}
+
+// createSecretForNode creates a secret for bootnode
+func (r *NetworkReconciler) createSecretForNode(name, ns string) *corev1.Secret {
+
+	return &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: ns,
+		},
+	}
+}
+
+// createServiceForNode creates a service that directs traffic to the node
+func (r *NetworkReconciler) createServiceForNode(name, ns string) *corev1.Service {
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: ns,
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       30303,
+					TargetPort: intstr.FromInt(30303),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       30303,
+					TargetPort: intstr.FromInt(30303),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			},
+			Selector: map[string]string{
+				"app":      "node",
+				"instance": name,
+			},
+		},
+	}
 }
 
 // deleteRedundantNode deletes all nodes that has been removed from spec
@@ -104,32 +195,115 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 
 // reconcileNode create a new node deployment if it doesn't exist
 // updates existing deployments if node spec changed
-func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, isBootnode bool, bootnodes []string) (enodeURL string, err error) {
 	log := r.Log.WithValues("node", node.Name)
+
+	log.Info("using bootnodes", "bootnodes", bootnodes)
 
 	dep := r.createDeploymentForNode(node, network.GetNamespace())
 
-	if err := ctrl.SetControllerReference(network, &dep, r.Scheme); err != nil {
-		log.Error(err, "Unable to set controller reference")
-		return err
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &dep, func() error {
-		args := r.createArgsForClient(node, network.Spec.Join)
+	// TODO: take into account resource and its owner being deleted
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, dep, func() error {
+		args := r.createArgsForClient(node, network.Spec.Join, bootnodes)
+		if err := ctrl.SetControllerReference(network, dep, r.Scheme); err != nil {
+			log.Error(err, "Unable to set controller reference")
+			return err
+		}
+		if isBootnode {
+			// add node key arg to the client
+			args = append(args, "--node-private-key-file", "/mnt/bootnode/nodekey")
+			// create volume from nodekey secret
+			volume := corev1.Volume{
+				Name: "nodekey",
+				VolumeSource: corev1.VolumeSource{
+					Secret: &corev1.SecretVolumeSource{
+						SecretName: node.Name,
+					},
+				},
+			}
+			// create volume mount
+			volumeMount := corev1.VolumeMount{
+				Name:      "nodekey",
+				MountPath: "/mnt/bootnode/",
+				ReadOnly:  true,
+			}
+			spec := &dep.Spec.Template.Spec
+			// attach the volume to the deployment
+			spec.Volumes = []corev1.Volume{volume}
+			// mount the volume
+			spec.Containers[0].VolumeMounts = []corev1.VolumeMount{volumeMount}
+		}
 		dep.Spec.Template.Spec.Containers[0].Args = args
 		return nil
 	})
 
 	if err != nil {
-		return err
+		return
 	}
 
-	return nil
+	if !isBootnode {
+		return
+	}
+
+	var privateKey, publicKey string
+
+	// create node key
+	privateKey, publicKey, err = r.createNodekey("")
+	if err != nil {
+		return
+	}
+
+	// create node key secret
+	secret := r.createSecretForNode(node.Name, network.GetNamespace())
+	if err = ctrl.SetControllerReference(network, secret, r.Scheme); err != nil {
+		log.Error(err, "Unable to set controller reference")
+		return
+	}
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, secret, func() error {
+		if secret.CreationTimestamp.IsZero() {
+			secret.StringData = map[string]string{
+				"nodekey": privateKey,
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return
+	}
+
+	// get node key from deployed secret
+	nodekey := string(secret.Data["nodekey"])
+	// if deployed nodekey and new generated key differ
+	// return old deployed one
+	if nodekey != privateKey {
+		privateKey, publicKey, err = r.createNodekey(nodekey)
+		if err != nil {
+			return
+		}
+	}
+
+	// create service for the node
+	svc := r.createServiceForNode(node.Name, network.GetNamespace())
+	if err = ctrl.SetControllerReference(network, svc, r.Scheme); err != nil {
+		log.Error(err, "Unable to set controller reference")
+		return
+	}
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
+		return nil
+	})
+	if err != nil {
+		return
+	}
+
+	// TODO: use p2pPort instead of hardcoded 30303 after defaulting
+	enodeURL = fmt.Sprintf("enode://%s@%s:30303", publicKey, svc.Spec.ClusterIP)
+
+	return
 }
 
 // createArgsForClient create arguments to be passed to the node client from node specs
-func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, join string) []string {
-	args := []string{}
+func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, join string, bootnodes []string) []string {
+	args := []string{"--nat-method", "KUBERNETES"}
 	// TODO: update after admissionmutating webhook
 	// because it will default all args
 
@@ -144,6 +318,11 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 
 	if node.P2PPort != 0 {
 		appendArg("--p2p-port", fmt.Sprintf("%d", node.P2PPort))
+	}
+
+	if len(bootnodes) != 0 {
+		commaSeperatedBootnodes := strings.Join(bootnodes, ",")
+		appendArg("--bootnodes", commaSeperatedBootnodes)
 	}
 
 	// TODO: create per client type(besu, geth ... etc)
@@ -216,30 +395,33 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 }
 
 // createDeploymentForNode creates a new deployment for node
-func (r *NetworkReconciler) createDeploymentForNode(node *ethereumv1alpha1.Node, ns string) appsv1.Deployment {
-	return appsv1.Deployment{
+func (r *NetworkReconciler) createDeploymentForNode(node *ethereumv1alpha1.Node, ns string) *appsv1.Deployment {
+	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
 			Namespace: ns,
 			Labels: map[string]string{
-				"app": "node",
+				"app":      "node",
+				"instance": node.Name,
 			},
 		},
 		Spec: appsv1.DeploymentSpec{
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"app": "node",
+					"app":      "node",
+					"instance": node.Name,
 				},
 			},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
-						"app": "node",
+						"app":      "node",
+						"instance": node.Name,
 					},
 				},
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
-						corev1.Container{
+						{
 							Name:  "node",
 							Image: "hyperledger/besu:1.4.2",
 							Command: []string{
@@ -259,5 +441,7 @@ func (r *NetworkReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ethereumv1alpha1.Network{}).
 		Owns(&appsv1.Deployment{}).
+		Owns(&corev1.Service{}).
+		Owns(&corev1.Secret{}).
 		Complete(r)
 }
