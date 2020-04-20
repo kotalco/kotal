@@ -62,11 +62,6 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	log.Info("deleting all redundant nodes")
-	if err := r.deleteRedundantNodes(ctx, network.Spec.Nodes, req.Namespace); err != nil {
-		return ctrl.Result{}, err
-	}
-
 	bootnodes := []string{}
 
 	for i, node := range network.Spec.Nodes {
@@ -82,6 +77,10 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 			bootnodes = append(bootnodes, bootnode)
 		}
 
+	}
+
+	if err := r.deleteRedundantNodes(ctx, network.Spec.Nodes, req.Namespace); err != nil {
+		return ctrl.Result{}, err
 	}
 
 	return ctrl.Result{}, nil
@@ -163,6 +162,8 @@ func (r *NetworkReconciler) createServiceForNode(name, ns string) *corev1.Servic
 
 // deleteRedundantNode deletes all nodes that has been removed from spec
 func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []ethereumv1alpha1.Node, ns string) error {
+	log := r.Log.WithName("delete redunudant nodes")
+
 	var deps appsv1.DeploymentList
 	names := map[string]bool{}
 
@@ -173,18 +174,18 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 
 	// all nodes deployments that's currently running
 	if err := r.Client.List(ctx, &deps, client.MatchingLabels{"app": "node"}); err != nil {
-		r.Log.Error(err, "unable to list all node deployments")
+		log.Error(err, "unable to list all node deployments")
 		return err
 	}
 
 	for _, dep := range deps.Items {
 		name := dep.GetName()
 		if exist := names[name]; !exist {
-			r.Log.Info(fmt.Sprintf("node (%s) deployment doesn't exist anymore in the spec", name))
-			r.Log.Info(fmt.Sprintf("deleting node (%s) deployment", name))
+			log.Info(fmt.Sprintf("node (%s) deployment doesn't exist anymore in the spec", name))
+			log.Info(fmt.Sprintf("deleting node (%s) deployment", name))
 
 			if err := r.Client.Delete(ctx, &dep); err != nil {
-				r.Log.Error(err, fmt.Sprintf("unable to delete node (%s) deployment", name))
+				log.Error(err, fmt.Sprintf("unable to delete node (%s) deployment", name))
 				return err
 			}
 		}
@@ -197,8 +198,6 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 // updates existing deployments if node spec changed
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, isBootnode bool, bootnodes []string) (enodeURL string, err error) {
 	log := r.Log.WithValues("node", node.Name)
-
-	log.Info("using bootnodes", "bootnodes", bootnodes)
 
 	dep := r.createDeploymentForNode(node, network.GetNamespace())
 
