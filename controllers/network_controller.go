@@ -379,6 +379,18 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 		appendArg("--rpc-ws-api", commaSeperatedAPIs)
 	}
 
+	if node.GraphQL {
+		appendArg("--graphql-http-enabled")
+	}
+
+	if node.GraphQLPort != 0 {
+		appendArg("--graphql-http-port", fmt.Sprintf("%d", node.GraphQLPort))
+	}
+
+	if node.GraphQLHost != "" {
+		appendArg("--graphql-http-host", node.GraphQLHost)
+	}
+
 	if len(node.Hosts) != 0 {
 		commaSeperatedHosts := strings.Join(node.Hosts, ",")
 		appendArg("--host-whitelist", commaSeperatedHosts)
@@ -386,8 +398,12 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 
 	if len(node.CORSDomains) != 0 {
 		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
-		// TODO: add graphql cors domains option if graphql is enabled
-		appendArg("--rpc-http-cors-origins", commaSeperatedDomains)
+		if node.RPC {
+			appendArg("--rpc-http-cors-origins", commaSeperatedDomains)
+		}
+		if node.GraphQL {
+			appendArg("--graphql-http-cors-origins", commaSeperatedDomains)
+		}
 	}
 
 	return args

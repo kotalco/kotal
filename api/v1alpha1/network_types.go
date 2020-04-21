@@ -173,6 +173,15 @@ type Node struct {
 
 	// WSAPI is a list of WS services to enable
 	WSAPI []API `json:"wsAPI,omitempty"`
+
+	// GraphQL is whether GraphQL server is enabled or not
+	GraphQL bool `json:"graphql,omitempty"`
+
+	// GraphQLHost is GraphQL server host address
+	GraphQLHost string `json:"graphqlHost,omitempty"`
+
+	// GraphQLPort is the GraphQL server listening port
+	GraphQLPort uint `json:"graphqlPort,omitempty"`
 }
 
 // NetworkStatus defines the observed state of Network
