@@ -422,7 +422,7 @@ func (r *NetworkReconciler) createDeploymentForNode(node *ethereumv1alpha1.Node,
 					Containers: []corev1.Container{
 						{
 							Name:  "node",
-							Image: "hyperledger/besu:1.4.2",
+							Image: "hyperledger/besu:1.4.3",
 							Command: []string{
 								"besu",
 							},
