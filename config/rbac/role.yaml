@@ -12,6 +12,16 @@ rules:
   - deployments
   verbs:
   - create
+  - delete
+  - get
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - services
+  verbs:
+  - create
   - get
   - update
 - apiGroups:
