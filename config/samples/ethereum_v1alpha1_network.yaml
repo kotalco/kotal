@@ -17,3 +17,6 @@ spec:
         - web3
         - net
         - eth
+      graphql: true
+      graphqlPort: 8777
+      graphqlHost: 0.0.0.0
