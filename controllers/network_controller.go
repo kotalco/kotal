@@ -29,6 +29,7 @@ import (
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -200,6 +201,19 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, isBootnode bool, bootnodes []string) (enodeURL string, err error) {
 	log := r.Log.WithValues("node", node.Name)
 
+	pvc := r.createPersistentVolumeClaimForNode(node, network.GetNamespace())
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
+		if err := ctrl.SetControllerReference(network, pvc, r.Scheme); err != nil {
+			log.Error(err, "Unable to set controller reference")
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		log.Error(err, "unable to create/update pvc")
+		return
+	}
+
 	dep := r.createDeploymentForNode(node, network.GetNamespace())
 
 	// TODO: take into account resource and its owner being deleted
@@ -209,11 +223,14 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 			log.Error(err, "Unable to set controller reference")
 			return err
 		}
+		volumes := []corev1.Volume{}
+		volumeMounts := []corev1.VolumeMount{}
+
 		if isBootnode {
 			// add node key arg to the client
 			args = append(args, "--node-private-key-file", "/mnt/bootnode/nodekey")
 			// create volume from nodekey secret
-			volume := corev1.Volume{
+			nodekeyVolume := corev1.Volume{
 				Name: "nodekey",
 				VolumeSource: corev1.VolumeSource{
 					Secret: &corev1.SecretVolumeSource{
@@ -221,18 +238,38 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 					},
 				},
 			}
+			volumes = append(volumes, nodekeyVolume)
 			// create volume mount
-			volumeMount := corev1.VolumeMount{
+			nodekeyMount := corev1.VolumeMount{
 				Name:      "nodekey",
 				MountPath: "/mnt/bootnode/",
 				ReadOnly:  true,
 			}
-			spec := &dep.Spec.Template.Spec
-			// attach the volume to the deployment
-			spec.Volumes = []corev1.Volume{volume}
-			// mount the volume
-			spec.Containers[0].VolumeMounts = []corev1.VolumeMount{volumeMount}
+			volumeMounts = append(volumeMounts, nodekeyMount)
 		}
+		// create volume from nodekey secret
+		dataVolume := corev1.Volume{
+			Name: "data",
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: node.Name,
+				},
+			},
+		}
+		volumes = append(volumes, dataVolume)
+		// create volume mount
+		dataMount := corev1.VolumeMount{
+			Name:      "data",
+			MountPath: "/mnt/data/",
+		}
+		volumeMounts = append(volumeMounts, dataMount)
+		args = append(args, "--data-path", "/mnt/data/")
+
+		spec := &dep.Spec.Template.Spec
+		// attach the volumes to the deployment
+		spec.Volumes = volumes
+		// mount the volumes
+		spec.Containers[0].VolumeMounts = volumeMounts
 		dep.Spec.Template.Spec.Containers[0].Args = args
 		return nil
 	})
@@ -299,6 +336,26 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 	enodeURL = fmt.Sprintf("enode://%s@%s:30303", publicKey, svc.Spec.ClusterIP)
 
 	return
+}
+
+// createPersistentVolumeClaimForNode creates a new pvc for node
+func (r *NetworkReconciler) createPersistentVolumeClaimForNode(node *ethereumv1alpha1.Node, ns string) *corev1.PersistentVolumeClaim {
+	return &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: ns,
+		},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{
+				corev1.ReadWriteOnce,
+			},
+			Resources: corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse("10Gi"),
+				},
+			},
+		},
+	}
 }
 
 // createArgsForClient create arguments to be passed to the node client from node specs
@@ -459,5 +516,6 @@ func (r *NetworkReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&appsv1.Deployment{}).
 		Owns(&corev1.Service{}).
 		Owns(&corev1.Secret{}).
+		Owns(&corev1.PersistentVolumeClaim{}).
 		Complete(r)
 }
