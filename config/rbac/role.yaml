@@ -14,10 +14,12 @@ rules:
   - create
   - delete
   - get
+  - list
   - update
 - apiGroups:
   - ""
   resources:
+  - configmap
   - secrets
   - services
   verbs:
