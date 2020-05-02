@@ -34,9 +34,101 @@ type NetworkSpec struct {
 	// Consensus is the consensus algorithm to be used by the network nodes to reach consensus
 	Consensus ConsensusAlgorithm `json:"consensus,omitempty"`
 
+	// Genesis is genesis block specification
+	Genesis Genesis `json:"genesis,omitempty"`
+
 	// Nodes is array of node specifications
 	// +kubebuilder:validation:MinItems=1
 	Nodes []Node `json:"nodes"`
+}
+
+// HexString is String in hexadecial format
+// +kubebuilder:validation:Pattern=0[xX][0-9a-fA-F]+
+type HexString string
+
+// Genesis is genesis block sepcficition
+type Genesis struct {
+	// Accounts is array of accounts to fund or associate with code and storage
+	Accounts []Account `json:"accounts,omitempty"`
+
+	// ChainID is the the chain ID used in transaction signature to prevent reply attack
+	// more details https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
+	ChainID uint `json:"chainId"`
+
+	// Address to pay mining rewards to
+	Coinbase HexString `json:"coinbase,omitempty"`
+
+	// Difficulty is the diffculty of the genesis block
+	Difficulty HexString `json:"difficulty,omitempty"`
+
+	// Ethash PoW engine configuration
+	Ethash Ethash `json:"ethash,omitempty"`
+
+	// Forks is supported forks (network upgrade) and corresponding block number
+	Forks Forks `json:"forks,omitempty"`
+
+	// GastLimit is the total gas limit for all transactions in a block
+	GasLimit HexString `json:"gasLimit,omitempty"`
+
+	// Nonce is random number used in block computation
+	Nonce HexString `json:"nonce,omitempty"`
+
+	// Timestamp is block creation date
+	Timestamp HexString `json:"timestamp,omitempty"`
+}
+
+// Ethash configurations
+type Ethash struct {
+	// FixedDifficulty is fixed difficulty to be used in private PoW networks
+	FixedDifficulty uint `json:"fixedDifficulty,omitempty"`
+}
+
+// Forks is the supported forks by the network
+type Forks struct {
+	// Homestead fork
+	Homestead uint `json:"homestead,omitempty"`
+
+	// DAO fork
+	DAO uint `json:"dao,omitempty"`
+
+	// EIP150 (Tangerine Whistle) fork
+	EIP150 uint `json:"eip150,omitempty"`
+
+	// EIP155 (Spurious Dragon) fork
+	EIP155 uint `json:"eip155,omitempty"`
+
+	// EIP158 (Tangerine Whistle) fork
+	EIP158 uint `json:"eip158,omitempty"`
+
+	// Byzantium fork
+	Byzantium uint `json:"byzantium,omitempty"`
+
+	// Constantinople fork
+	Constantinople uint `json:"constantinople,omitempty"`
+
+	// Petersburg fork
+	Petersburg uint `json:"petersburg,omitempty"`
+
+	// Istanbul fork
+	Istanbul uint `json:"istanbul,omitempty"`
+
+	// MuirGlacier fork
+	MuirGlacier uint `json:"muirglacier,omitempty"`
+}
+
+// Account is Ethereum account
+type Account struct {
+	// Address is account address
+	Address HexString `json:"address"`
+
+	// Balance is account balance in wei
+	Balance HexString `json:"balance,omitempty"`
+
+	// Code is account contract byte code
+	Code HexString `json:"code,omitempty"`
+
+	// Storage is account contract storage as key value pair
+	Storage map[HexString]HexString `json:"storage,omitempty"`
 }
 
 // ConsensusAlgorithm is the algorithm nodes use to reach consensus

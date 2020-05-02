@@ -43,6 +43,110 @@ spec:
               - ibft2
               - quorum
               type: string
+            genesis:
+              description: Genesis is genesis block specification
+              properties:
+                accounts:
+                  description: Accounts is array of accounts to fund or associate
+                    with code and storage
+                  items:
+                    description: Account is Ethereum account
+                    properties:
+                      address:
+                        description: Address is account address
+                        pattern: 0[xX][0-9a-fA-F]+
+                        type: string
+                      balance:
+                        description: Balance is account balance in wei
+                        pattern: 0[xX][0-9a-fA-F]+
+                        type: string
+                      code:
+                        description: Code is account contract byte code
+                        pattern: 0[xX][0-9a-fA-F]+
+                        type: string
+                      storage:
+                        additionalProperties:
+                          description: HexString is String in hexadecial format
+                          pattern: 0[xX][0-9a-fA-F]+
+                          type: string
+                        description: Storage is account contract storage as key value
+                          pair
+                        type: object
+                    required:
+                    - address
+                    type: object
+                  type: array
+                chainId:
+                  description: ChainID is the the chain ID used in transaction signature
+                    to prevent reply attack more details https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
+                  type: integer
+                coinbase:
+                  description: Address to pay mining rewards to
+                  pattern: 0[xX][0-9a-fA-F]+
+                  type: string
+                difficulty:
+                  description: Difficulty is the diffculty of the genesis block
+                  pattern: 0[xX][0-9a-fA-F]+
+                  type: string
+                ethash:
+                  description: Ethash PoW engine configuration
+                  properties:
+                    fixedDifficulty:
+                      description: FixedDifficulty is fixed difficulty to be used
+                        in private PoW networks
+                      type: integer
+                  type: object
+                forks:
+                  description: Forks is supported forks (network upgrade) and corresponding
+                    block number
+                  properties:
+                    byzantium:
+                      description: Byzantium fork
+                      type: integer
+                    constantinople:
+                      description: Constantinople fork
+                      type: integer
+                    dao:
+                      description: DAO fork
+                      type: integer
+                    eip150:
+                      description: EIP150 (Tangerine Whistle) fork
+                      type: integer
+                    eip155:
+                      description: EIP155 (Spurious Dragon) fork
+                      type: integer
+                    eip158:
+                      description: EIP158 (Tangerine Whistle) fork
+                      type: integer
+                    homestead:
+                      description: Homestead fork
+                      type: integer
+                    istanbul:
+                      description: Istanbul fork
+                      type: integer
+                    muirglacier:
+                      description: MuirGlacier fork
+                      type: integer
+                    petersburg:
+                      description: Petersburg fork
+                      type: integer
+                  type: object
+                gasLimit:
+                  description: GastLimit is the total gas limit for all transactions
+                    in a block
+                  pattern: 0[xX][0-9a-fA-F]+
+                  type: string
+                nonce:
+                  description: Nonce is random number used in block computation
+                  pattern: 0[xX][0-9a-fA-F]+
+                  type: string
+                timestamp:
+                  description: Timestamp is block creation date
+                  pattern: 0[xX][0-9a-fA-F]+
+                  type: string
+              required:
+              - chainId
+              type: object
             join:
               description: Join specifies the network to join
               type: string
