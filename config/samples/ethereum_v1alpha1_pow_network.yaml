@@ -1,0 +1,46 @@
+apiVersion: ethereum.kotal.io/v1alpha1
+kind: Network
+metadata:
+  name: pow-network
+spec:
+  consensus: pow
+  ########### Genesis block spec ###########
+  genesis:
+    chainId: 20189
+    ethash:
+      fixedDifficulty: 100
+    forks:
+      homestead: 0
+      dao: 0
+      eip150: 0
+      eip155: 0
+      eip158: 0
+      byzantium: 0
+      constantinople: 0
+      petersburg: 0
+      istanbul: 0
+      muirglacier: 0
+    coinbase: "0x071E2c1067c24607fF00cEEBbe83a38063BDEDd8"
+    difficulty: "0xfff"
+    gasLimit: "0x47b760"
+    nonce: "0x0"
+    timestamp: "0x0"
+    accounts:
+      - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"
+        balance: "0xffffffffffffffffffff"
+  ########### network nodes spec ###########
+  nodes:
+    - name: node-1
+      miner: true
+      minerAccount: 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c
+      rpc: true
+      rpcPort: 8599
+      rpcHost: 0.0.0.0
+      corsDomains:
+        - all
+      hosts:
+        - all
+      rpcAPI:
+        - web3
+        - net
+        - eth
