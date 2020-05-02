@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 	"crypto/ecdsa"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -64,6 +65,15 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
+	// network is not using existing network genesis block
+	// TODO:validaiton: genesis is required if there's no network to join
+	if network.Spec.Join == "" {
+		err := r.reconcileGenesis(ctx, &network)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+	}
+
 	bootnodes := []string{}
 
 	for i, node := range network.Spec.Nodes {
@@ -86,6 +96,95 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	}
 
 	return ctrl.Result{}, nil
+}
+
+func (r *NetworkReconciler) reconcileGenesis(ctx context.Context, network *ethereumv1alpha1.Network) error {
+	log := r.Log.WithValues("genesis block", network.Name)
+
+	configmap := r.createConfigmapForGenesis(network.Name, network.Namespace)
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
+		if err := ctrl.SetControllerReference(network, configmap, r.Scheme); err != nil {
+			log.Error(err, "Unable to set controller reference")
+			return err
+		}
+		configmap.Data = make(map[string]string)
+		b, err := r.createGenesisFile(network)
+		if err != nil {
+			return err
+		}
+
+		configmap.Data["genesis.json"] = string(b)
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *NetworkReconciler) createConfigmapForGenesis(name, ns string) *corev1.ConfigMap {
+	return &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      fmt.Sprintf("%s-genesis", name),
+			Namespace: ns,
+		},
+	}
+}
+
+// createGenesisFile creates genesis config file
+func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network) (config string, err error) {
+	genesis := network.Spec.Genesis
+	result := map[string]interface{}{}
+
+	// ethash PoW settings
+	var ethash map[string]uint
+	if network.Spec.Consensus == ethereumv1alpha1.ProofOfWork {
+		ethash = map[string]uint{
+			"fixeddifficulty": genesis.Ethash.FixedDifficulty,
+		}
+	}
+
+	result["config"] = map[string]interface{}{
+		"chainId":                genesis.ChainID,
+		"homesteadBlock":         genesis.Forks.Homestead,
+		"daoForkBlock":           genesis.Forks.DAO,
+		"eip150Block":            genesis.Forks.EIP150,
+		"eip155Block":            genesis.Forks.EIP155,
+		"eip158Block":            genesis.Forks.EIP158,
+		"byzantiumBlock":         genesis.Forks.Byzantium,
+		"constantinopleBlock":    genesis.Forks.Constantinople,
+		"constantinopleFixBlock": genesis.Forks.Petersburg,
+		"istanbulBlock":          genesis.Forks.Istanbul,
+		"muirGlacierForkBlock":   genesis.Forks.MuirGlacier,
+		"ethash":                 ethash,
+	}
+
+	result["nonce"] = genesis.Nonce
+	result["timestamp"] = genesis.Timestamp
+	result["gasLimit"] = genesis.GasLimit
+	result["difficulty"] = genesis.Difficulty
+	result["coinbase"] = genesis.Coinbase
+
+	alloc := map[ethereumv1alpha1.HexString]interface{}{}
+	for _, account := range genesis.Accounts {
+		alloc[account.Address] = map[string]interface{}{
+			"balance": account.Balance,
+			"code":    account.Code,
+			"storage": account.Storage,
+		}
+	}
+
+	result["alloc"] = alloc
+
+	b, err := json.Marshal(result)
+	if err != nil {
+		return
+	}
+
+	config = string(b)
+
+	return
 }
 
 // createNodekey creates private key for node to be used for enodeURL
@@ -247,6 +346,28 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 			}
 			volumeMounts = append(volumeMounts, nodekeyMount)
 		}
+
+		if network.Spec.Join == "" {
+			genesisVolume := corev1.Volume{
+				Name: "genesis",
+				VolumeSource: corev1.VolumeSource{
+					ConfigMap: &corev1.ConfigMapVolumeSource{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: fmt.Sprintf("%s-genesis", network.Name),
+						},
+					},
+				},
+			}
+			volumes = append(volumes, genesisVolume)
+			genesisMount := corev1.VolumeMount{
+				Name:      "genesis",
+				MountPath: "/mnt/config/",
+				ReadOnly:  true,
+			}
+			volumeMounts = append(volumeMounts, genesisMount)
+			args = append(args, "--genesis-file", "/mnt/config/genesis.json")
+		}
+
 		// create volume from nodekey secret
 		dataVolume := corev1.Volume{
 			Name: "data",
@@ -517,5 +638,6 @@ func (r *NetworkReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&corev1.Service{}).
 		Owns(&corev1.Secret{}).
 		Owns(&corev1.PersistentVolumeClaim{}).
+		Owns(&corev1.ConfigMap{}).
 		Complete(r)
 }
