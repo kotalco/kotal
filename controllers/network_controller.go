@@ -132,17 +132,45 @@ func (r *NetworkReconciler) createConfigmapForGenesis(name, ns string) *corev1.C
 	}
 }
 
+// createExtraDataFromSigners creates extraDta genesis field value from initial signers
+func (r *NetworkReconciler) createExtraDataFromSigners(signers []ethereumv1alpha1.Signer) string {
+	extraData := "0x"
+	// vanity data
+	extraData += strings.Repeat("00", 32)
+	// signers
+	for _, signer := range signers {
+		// append address without the 0x
+		extraData += string(signer)[2:]
+	}
+	// proposer signature
+	extraData += strings.Repeat("00", 65)
+	return extraData
+}
+
 // createGenesisFile creates genesis config file
 func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network) (config string, err error) {
 	genesis := network.Spec.Genesis
 	result := map[string]interface{}{}
 
-	// ethash PoW settings
-	var ethash map[string]uint
+	var consensusConfig map[string]uint
+	var extraData string
+	var engine string
+
 	if network.Spec.Consensus == ethereumv1alpha1.ProofOfWork {
-		ethash = map[string]uint{
+		consensusConfig = map[string]uint{
 			"fixeddifficulty": genesis.Ethash.FixedDifficulty,
 		}
+		engine = "ethash"
+	}
+
+	// clique PoA settings
+	if network.Spec.Consensus == ethereumv1alpha1.ProofOfAuthority {
+		consensusConfig = map[string]uint{
+			"blockperiodseconds": genesis.Clique.BlockPeriod,
+			"epochlength":        genesis.Clique.EpochLength,
+		}
+		engine = "clique"
+		extraData = r.createExtraDataFromSigners(network.Spec.Genesis.Clique.InitialSigners)
 	}
 
 	result["config"] = map[string]interface{}{
@@ -157,7 +185,7 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 		"constantinopleFixBlock": genesis.Forks.Petersburg,
 		"istanbulBlock":          genesis.Forks.Istanbul,
 		"muirGlacierForkBlock":   genesis.Forks.MuirGlacier,
-		"ethash":                 ethash,
+		engine:                   consensusConfig,
 	}
 
 	result["nonce"] = genesis.Nonce
@@ -165,6 +193,7 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 	result["gasLimit"] = genesis.GasLimit
 	result["difficulty"] = genesis.Difficulty
 	result["coinbase"] = genesis.Coinbase
+	result["extraData"] = extraData
 
 	alloc := map[ethereumv1alpha1.HexString]interface{}{}
 	for _, account := range genesis.Accounts {
@@ -300,6 +329,8 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, isBootnode bool, bootnodes []string) (enodeURL string, err error) {
 	log := r.Log.WithValues("node", node.Name)
 
+	requireNodekey := isBootnode || node.Nodekey != ""
+
 	pvc := r.createPersistentVolumeClaimForNode(node, network.GetNamespace())
 	_, err = ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
 		if err := ctrl.SetControllerReference(network, pvc, r.Scheme); err != nil {
@@ -325,7 +356,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		volumes := []corev1.Volume{}
 		volumeMounts := []corev1.VolumeMount{}
 
-		if isBootnode {
+		if requireNodekey {
 			// add node key arg to the client
 			args = append(args, "--node-private-key-file", "/mnt/bootnode/nodekey")
 			// create volume from nodekey secret
@@ -368,7 +399,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 			args = append(args, "--genesis-file", "/mnt/config/genesis.json")
 		}
 
-		// create volume from nodekey secret
+		// create volume from blockchain data
 		dataVolume := corev1.Volume{
 			Name: "data",
 			VolumeSource: corev1.VolumeSource{
@@ -399,16 +430,13 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		return
 	}
 
-	if !isBootnode {
+	if !requireNodekey {
 		return
 	}
 
-	var privateKey, publicKey string
-
-	// create node key
-	privateKey, publicKey, err = r.createNodekey("")
-	if err != nil {
-		return
+	var privateKey, publicKey, from string
+	if node.Nodekey != "" {
+		from = node.Nodekey[2:]
 	}
 
 	// create node key secret
@@ -419,6 +447,11 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 	}
 	_, err = ctrl.CreateOrUpdate(ctx, r.Client, secret, func() error {
 		if secret.CreationTimestamp.IsZero() {
+			privateKey, publicKey, err = r.createNodekey(from)
+			if err != nil {
+				log.Error(err, "Error creating node key")
+				return err
+			}
 			secret.StringData = map[string]string{
 				"nodekey": privateKey,
 			}
@@ -429,11 +462,14 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		return
 	}
 
-	// get node key from deployed secret
-	nodekey := string(secret.Data["nodekey"])
-	// if deployed nodekey and new generated key differ
-	// return old deployed one
-	if nodekey != privateKey {
+	if !isBootnode {
+		return
+	}
+
+	// if no keypair has been generated, because it's already there in secret
+	if publicKey == "" {
+		// get node key from deployed secret
+		nodekey := string(secret.Data["nodekey"])
 		privateKey, publicKey, err = r.createNodekey(nodekey)
 		if err != nil {
 			return
