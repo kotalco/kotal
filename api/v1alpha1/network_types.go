@@ -64,6 +64,9 @@ type Genesis struct {
 	// Ethash PoW engine configuration
 	Ethash Ethash `json:"ethash,omitempty"`
 
+	// Clique PoA engine cinfiguration
+	Clique Clique `json:"clique,omitempty"`
+
 	// Forks is supported forks (network upgrade) and corresponding block number
 	Forks Forks `json:"forks,omitempty"`
 
@@ -76,6 +79,23 @@ type Genesis struct {
 	// Timestamp is block creation date
 	Timestamp HexString `json:"timestamp,omitempty"`
 }
+
+// Clique configuration
+type Clique struct {
+	// BlockPeriod is block time in seconds
+	BlockPeriod uint `json:"blockPeriod,omitempty"`
+
+	// EpochLength is the Number of blocks after which to reset all votes
+	EpochLength uint `json:"epochLength,omitempty"`
+
+	// InitialSigners are PoA initial signers, at least one signer is required
+	// +kubebuilder:validation:MinItems=1
+	InitialSigners []Signer `json:"initialSigners"`
+}
+
+// Signer is ethereum node address
+// +kubebuilder:validation:Pattern=0[xX][0-9a-fA-F]+
+type Signer string
 
 // Ethash configurations
 type Ethash struct {
@@ -223,6 +243,9 @@ const (
 type Node struct {
 	// Name is the node name
 	Name string `json:"name"`
+
+	// Nodekey is the node private key
+	Nodekey string `json:"nodekey,omitempty"`
 
 	// P2PPort is port used for peer to peer communication
 	P2PPort uint `json:"p2pPort,omitempty"`

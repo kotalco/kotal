@@ -80,6 +80,28 @@ spec:
                   description: ChainID is the the chain ID used in transaction signature
                     to prevent reply attack more details https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
                   type: integer
+                clique:
+                  description: Clique PoA engine cinfiguration
+                  properties:
+                    blockPeriod:
+                      description: BlockPeriod is block time in seconds
+                      type: integer
+                    epochLength:
+                      description: EpochLength is the Number of blocks after which
+                        to reset all votes
+                      type: integer
+                    initialSigners:
+                      description: InitialSigners are PoA initial signers, at least
+                        one signer is required
+                      items:
+                        description: Signer is ethereum node address
+                        pattern: 0[xX][0-9a-fA-F]+
+                        type: string
+                      minItems: 1
+                      type: array
+                  required:
+                  - initialSigners
+                  type: object
                 coinbase:
                   description: Address to pay mining rewards to
                   pattern: 0[xX][0-9a-fA-F]+
@@ -186,6 +208,9 @@ spec:
                     type: string
                   name:
                     description: Name is the node name
+                    type: string
+                  nodekey:
+                    description: Nodekey is the node private key
                     type: string
                   p2pPort:
                     description: P2PPort is port used for peer to peer communication
