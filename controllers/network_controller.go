@@ -325,6 +325,44 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 	return nil
 }
 
+// specNodeDataPVC update node data pvc spec
+func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim) {
+	pvc.Spec = corev1.PersistentVolumeClaimSpec{
+		AccessModes: []corev1.PersistentVolumeAccessMode{
+			corev1.ReadWriteOnce,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: corev1.ResourceList{
+				// TODO: update storage per network i.e: mainnet, rinkeby, goreli ... etc
+				corev1.ResourceStorage: resource.MustParse("10Gi"),
+			},
+		},
+	}
+}
+
+// reconcileNodeDataPVC creates node data pvc if it doesn't exist
+func (r *NetworkReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
+
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: network.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
+		if err := ctrl.SetControllerReference(network, pvc, r.Scheme); err != nil {
+			return err
+		}
+		if pvc.CreationTimestamp.IsZero() {
+			r.specNodeDataPVC(pvc)
+		}
+		return nil
+	})
+
+	return err
+}
+
 // reconcileNode create a new node deployment if it doesn't exist
 // updates existing deployments if node spec changed
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, isBootnode bool, bootnodes []string) (enodeURL string, err error) {
@@ -332,16 +370,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 
 	requireNodekey := isBootnode || node.Nodekey != ""
 
-	pvc := r.createPersistentVolumeClaimForNode(node, network.GetNamespace())
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
-		if err := ctrl.SetControllerReference(network, pvc, r.Scheme); err != nil {
-			log.Error(err, "Unable to set controller reference")
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		log.Error(err, "unable to create/update pvc")
+	if err = r.reconcileNodeDataPVC(ctx, node, network); err != nil {
 		return
 	}
 
