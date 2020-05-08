@@ -241,6 +241,7 @@ func (r *NetworkReconciler) createNodekey(hex string) (privateKeyHex, publicKeyH
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
 		err = errors.New("publicKey is not of type *ecdsa.PublicKey")
+		return
 	}
 	publicKeyBytes := crypto.FromECDSAPub(publicKeyECDSA)
 	publicKeyHex = hexutil.Encode(publicKeyBytes)[4:]
