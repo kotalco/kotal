@@ -508,6 +508,53 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 	return err
 }
 
+// reconcileNodeSecret creates node secret if it doesn't exist, update it if it exists
+func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, nodekey string) (publicKey string, err error) {
+
+	secret := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: network.Namespace,
+		},
+	}
+
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, secret, func() error {
+		if err := ctrl.SetControllerReference(network, secret, r.Scheme); err != nil {
+			return err
+		}
+
+		if secret.CreationTimestamp.IsZero() {
+			// if there's node key, create a new private key
+			var privateKey string
+			privateKey, publicKey, err = r.createNodekey(nodekey)
+			if err != nil {
+				return err
+			}
+
+			secret.StringData = map[string]string{
+				"nodekey": privateKey,
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		return
+	}
+
+	// if no keypair has been generated, because it's already there in secret
+	if publicKey == "" {
+		// get node public key from deployed secret
+		nodekey := string(secret.Data["nodekey"])
+		_, publicKey, err = r.createNodekey(nodekey)
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
 // reconcileNode create a new node deployment if it doesn't exist
 // updates existing deployments if node spec changed
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, isBootnode bool, bootnodes []string) (enodeURL string, err error) {
@@ -532,46 +579,17 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		return
 	}
 
-	var privateKey, publicKey, from string
+	var publicKey, from string
 	if node.Nodekey != "" {
 		from = node.Nodekey[2:]
 	}
 
-	// create node key secret
-	secret := r.createSecretForNode(node.Name, network.GetNamespace())
-	if err = ctrl.SetControllerReference(network, secret, r.Scheme); err != nil {
-		log.Error(err, "Unable to set controller reference")
-		return
-	}
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, secret, func() error {
-		if secret.CreationTimestamp.IsZero() {
-			privateKey, publicKey, err = r.createNodekey(from)
-			if err != nil {
-				log.Error(err, "Error creating node key")
-				return err
-			}
-			secret.StringData = map[string]string{
-				"nodekey": privateKey,
-			}
-		}
-		return nil
-	})
-	if err != nil {
+	if publicKey, err = r.reconcileNodeSecret(ctx, node, network, from); err != nil {
 		return
 	}
 
 	if !isBootnode {
 		return
-	}
-
-	// if no keypair has been generated, because it's already there in secret
-	if publicKey == "" {
-		// get node key from deployed secret
-		nodekey := string(secret.Data["nodekey"])
-		privateKey, publicKey, err = r.createNodekey(nodekey)
-		if err != nil {
-			return
-		}
 	}
 
 	// create service for the node

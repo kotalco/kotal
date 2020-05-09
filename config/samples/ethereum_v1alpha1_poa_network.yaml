@@ -49,3 +49,5 @@ spec:
         - clique
     - name: node-2
     - name: node-3
+    - name: node-4
+    - name: node-5
