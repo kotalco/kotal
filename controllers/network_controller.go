@@ -40,6 +40,12 @@ import (
 	ethereumv1alpha1 "github.com/mfarghaly/kotal/api/v1alpha1"
 )
 
+const (
+	nodekeyPath        = "/mnt/bootnode"
+	genesisFilePath    = "/mnt/config"
+	blockchainDataPath = "/mnt/data"
+)
+
 // NetworkReconciler reconciles a Network object
 type NetworkReconciler struct {
 	client.Client
@@ -363,100 +369,162 @@ func (r *NetworkReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethe
 	return err
 }
 
+// createNodeVolumes creates all the required volumes for the node
+func (r *NetworkReconciler) createNodeVolumes(node, network string, nodekey, customGenesis bool) []corev1.Volume {
+
+	volumes := []corev1.Volume{}
+
+	if nodekey {
+		nodekeyVolume := corev1.Volume{
+			Name: "nodekey",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: node,
+				},
+			},
+		}
+		volumes = append(volumes, nodekeyVolume)
+	}
+
+	if customGenesis {
+		genesisVolume := corev1.Volume{
+			Name: "genesis",
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: fmt.Sprintf("%s-genesis", network),
+					},
+				},
+			},
+		}
+		volumes = append(volumes, genesisVolume)
+	}
+
+	dataVolume := corev1.Volume{
+		Name: "data",
+		VolumeSource: corev1.VolumeSource{
+			PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+				ClaimName: node,
+			},
+		},
+	}
+	volumes = append(volumes, dataVolume)
+
+	return volumes
+}
+
+// createNodeVolumeMounts creates all required volume mounts for the node
+func (r *NetworkReconciler) createNodeVolumeMounts(node, network string, nodekey, customGenesis bool) []corev1.VolumeMount {
+
+	volumeMounts := []corev1.VolumeMount{}
+
+	if nodekey {
+		nodekeyMount := corev1.VolumeMount{
+			Name:      "nodekey",
+			MountPath: nodekeyPath,
+			ReadOnly:  true,
+		}
+		volumeMounts = append(volumeMounts, nodekeyMount)
+	}
+
+	if customGenesis {
+		genesisMount := corev1.VolumeMount{
+			Name:      "genesis",
+			MountPath: genesisFilePath,
+			ReadOnly:  true,
+		}
+		volumeMounts = append(volumeMounts, genesisMount)
+	}
+
+	dataMount := corev1.VolumeMount{
+		Name:      "data",
+		MountPath: blockchainDataPath,
+	}
+	volumeMounts = append(volumeMounts, dataMount)
+
+	return volumeMounts
+}
+
+// specNodeDeployment updates node deployment spec
+func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount) {
+	nodeName := dep.ObjectMeta.Name
+	dep.ObjectMeta.Labels = map[string]string{
+		"app":      "node",
+		"instance": nodeName,
+	}
+	dep.Spec = appsv1.DeploymentSpec{
+		Selector: &metav1.LabelSelector{
+			MatchLabels: map[string]string{
+				"app":      "node",
+				"instance": nodeName,
+			},
+		},
+		Template: corev1.PodTemplateSpec{
+			ObjectMeta: metav1.ObjectMeta{
+				Labels: map[string]string{
+					"app":      "node",
+					"instance": nodeName,
+				},
+			},
+			Spec: corev1.PodSpec{
+				Containers: []corev1.Container{
+					{
+						Name:  "node",
+						Image: "hyperledger/besu:1.4.3",
+						Command: []string{
+							"besu",
+						},
+					},
+				},
+			},
+		},
+	}
+	// attach the volumes to the deployment
+	dep.Spec.Template.Spec.Volumes = volumes
+	// mount the volumes
+	dep.Spec.Template.Spec.Containers[0].VolumeMounts = volumeMounts
+	// TODO: recfactor this, will fail if container order change
+	dep.Spec.Template.Spec.Containers[0].Args = args
+}
+
+// reconcileNodeDeployment creates creates node deployment if it doesn't exist, update it if it does exist
+func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount) error {
+
+	dep := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: network.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, dep, func() error {
+		if err := ctrl.SetControllerReference(network, dep, r.Scheme); err != nil {
+			return err
+		}
+		r.specNodeDeployment(dep, args, volumes, volumeMounts)
+		return nil
+	})
+
+	return err
+}
+
 // reconcileNode create a new node deployment if it doesn't exist
 // updates existing deployments if node spec changed
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, isBootnode bool, bootnodes []string) (enodeURL string, err error) {
 	log := r.Log.WithValues("node", node.Name)
 
 	requireNodekey := isBootnode || node.Nodekey != ""
+	customGenesis := network.Spec.Join == ""
 
 	if err = r.reconcileNodeDataPVC(ctx, node, network); err != nil {
 		return
 	}
 
-	dep := r.createDeploymentForNode(node, network.GetNamespace())
+	args := r.createArgsForClient(node, network.Spec.Join, bootnodes, requireNodekey, customGenesis)
+	volumes := r.createNodeVolumes(node.Name, network.Name, requireNodekey, customGenesis)
+	mounts := r.createNodeVolumeMounts(node.Name, network.Name, requireNodekey, customGenesis)
 
-	// TODO: take into account resource and its owner being deleted
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, dep, func() error {
-		args := r.createArgsForClient(node, network.Spec.Join, bootnodes)
-		if err := ctrl.SetControllerReference(network, dep, r.Scheme); err != nil {
-			log.Error(err, "Unable to set controller reference")
-			return err
-		}
-		volumes := []corev1.Volume{}
-		volumeMounts := []corev1.VolumeMount{}
-
-		if requireNodekey {
-			// add node key arg to the client
-			args = append(args, "--node-private-key-file", "/mnt/bootnode/nodekey")
-			// create volume from nodekey secret
-			nodekeyVolume := corev1.Volume{
-				Name: "nodekey",
-				VolumeSource: corev1.VolumeSource{
-					Secret: &corev1.SecretVolumeSource{
-						SecretName: node.Name,
-					},
-				},
-			}
-			volumes = append(volumes, nodekeyVolume)
-			// create volume mount
-			nodekeyMount := corev1.VolumeMount{
-				Name:      "nodekey",
-				MountPath: "/mnt/bootnode/",
-				ReadOnly:  true,
-			}
-			volumeMounts = append(volumeMounts, nodekeyMount)
-		}
-
-		if network.Spec.Join == "" {
-			genesisVolume := corev1.Volume{
-				Name: "genesis",
-				VolumeSource: corev1.VolumeSource{
-					ConfigMap: &corev1.ConfigMapVolumeSource{
-						LocalObjectReference: corev1.LocalObjectReference{
-							Name: fmt.Sprintf("%s-genesis", network.Name),
-						},
-					},
-				},
-			}
-			volumes = append(volumes, genesisVolume)
-			genesisMount := corev1.VolumeMount{
-				Name:      "genesis",
-				MountPath: "/mnt/config/",
-				ReadOnly:  true,
-			}
-			volumeMounts = append(volumeMounts, genesisMount)
-			args = append(args, "--genesis-file", "/mnt/config/genesis.json")
-		}
-
-		// create volume from blockchain data
-		dataVolume := corev1.Volume{
-			Name: "data",
-			VolumeSource: corev1.VolumeSource{
-				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-					ClaimName: node.Name,
-				},
-			},
-		}
-		volumes = append(volumes, dataVolume)
-		// create volume mount
-		dataMount := corev1.VolumeMount{
-			Name:      "data",
-			MountPath: "/mnt/data/",
-		}
-		volumeMounts = append(volumeMounts, dataMount)
-		args = append(args, "--data-path", "/mnt/data/")
-
-		spec := &dep.Spec.Template.Spec
-		// attach the volumes to the deployment
-		spec.Volumes = volumes
-		// mount the volumes
-		spec.Containers[0].VolumeMounts = volumeMounts
-		dep.Spec.Template.Spec.Containers[0].Args = args
-		return nil
-	})
-
-	if err != nil {
+	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts); err != nil {
 		return
 	}
 
@@ -546,7 +614,7 @@ func (r *NetworkReconciler) createPersistentVolumeClaimForNode(node *ethereumv1a
 }
 
 // createArgsForClient create arguments to be passed to the node client from node specs
-func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, join string, bootnodes []string) []string {
+func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, join string, bootnodes []string, nodekey, customGenesis bool) []string {
 	args := []string{"--nat-method", "KUBERNETES"}
 	// TODO: update after admissionmutating webhook
 	// because it will default all args
@@ -555,6 +623,16 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 	appendArg := func(arg ...string) {
 		args = append(args, arg...)
 	}
+
+	if nodekey {
+		appendArg("--node-private-key-file", fmt.Sprintf("%s/nodekey", nodekeyPath))
+	}
+
+	if customGenesis {
+		appendArg("--genesis-file", fmt.Sprintf("%s/genesis.json", genesisFilePath))
+	}
+
+	appendArg("--data-path", blockchainDataPath)
 
 	if join != "" {
 		appendArg("--network", join)
