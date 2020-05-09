@@ -256,17 +256,6 @@ func (r *NetworkReconciler) createNodekey(hex string) (privateKeyHex, publicKeyH
 
 }
 
-// createSecretForNode creates a secret for bootnode
-func (r *NetworkReconciler) createSecretForNode(name, ns string) *corev1.Secret {
-
-	return &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      name,
-			Namespace: ns,
-		},
-	}
-}
-
 // createServiceForNode creates a service that directs traffic to the node
 func (r *NetworkReconciler) createServiceForNode(name, ns string) *corev1.Service {
 	return &corev1.Service{
@@ -611,26 +600,6 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 	return
 }
 
-// createPersistentVolumeClaimForNode creates a new pvc for node
-func (r *NetworkReconciler) createPersistentVolumeClaimForNode(node *ethereumv1alpha1.Node, ns string) *corev1.PersistentVolumeClaim {
-	return &corev1.PersistentVolumeClaim{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: ns,
-		},
-		Spec: corev1.PersistentVolumeClaimSpec{
-			AccessModes: []corev1.PersistentVolumeAccessMode{
-				corev1.ReadWriteOnce,
-			},
-			Resources: corev1.ResourceRequirements{
-				Requests: corev1.ResourceList{
-					corev1.ResourceStorage: resource.MustParse("10Gi"),
-				},
-			},
-		},
-	}
-}
-
 // createArgsForClient create arguments to be passed to the node client from node specs
 func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, join string, bootnodes []string, nodekey, customGenesis bool) []string {
 	args := []string{"--nat-method", "KUBERNETES"}
@@ -748,48 +717,6 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 	}
 
 	return args
-}
-
-// createDeploymentForNode creates a new deployment for node
-func (r *NetworkReconciler) createDeploymentForNode(node *ethereumv1alpha1.Node, ns string) *appsv1.Deployment {
-	return &appsv1.Deployment{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: ns,
-			Labels: map[string]string{
-				"app":      "node",
-				"instance": node.Name,
-			},
-		},
-		Spec: appsv1.DeploymentSpec{
-			Selector: &metav1.LabelSelector{
-				MatchLabels: map[string]string{
-					"app":      "node",
-					"instance": node.Name,
-				},
-			},
-			Template: corev1.PodTemplateSpec{
-				ObjectMeta: metav1.ObjectMeta{
-					Labels: map[string]string{
-						"app":      "node",
-						"instance": node.Name,
-					},
-				},
-				Spec: corev1.PodSpec{
-					Containers: []corev1.Container{
-						{
-							Name:  "node",
-							Image: "hyperledger/besu:1.4.3",
-							Command: []string{
-								"besu",
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
 }
 
 // SetupWithManager adds reconciler to the manager
