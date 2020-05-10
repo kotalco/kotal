@@ -256,36 +256,6 @@ func (r *NetworkReconciler) createNodekey(hex string) (privateKeyHex, publicKeyH
 
 }
 
-// createServiceForNode creates a service that directs traffic to the node
-func (r *NetworkReconciler) createServiceForNode(name, ns string) *corev1.Service {
-	return &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      name,
-			Namespace: ns,
-		},
-		Spec: corev1.ServiceSpec{
-			Ports: []corev1.ServicePort{
-				{
-					Name:       "discovery",
-					Port:       30303,
-					TargetPort: intstr.FromInt(30303),
-					Protocol:   corev1.ProtocolUDP,
-				},
-				{
-					Name:       "p2p",
-					Port:       30303,
-					TargetPort: intstr.FromInt(30303),
-					Protocol:   corev1.ProtocolTCP,
-				},
-			},
-			Selector: map[string]string{
-				"app":      "node",
-				"instance": name,
-			},
-		},
-	}
-}
-
 // deleteRedundantNode deletes all nodes that has been removed from spec
 func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []ethereumv1alpha1.Node, ns string) error {
 	log := r.Log.WithName("delete redunudant nodes")
