@@ -544,10 +544,61 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 	return
 }
 
+// specNodeService updates node service spec
+func (r *NetworkReconciler) specNodeService(svc *corev1.Service) {
+	svc.Spec.Ports = []corev1.ServicePort{
+		{
+			Name:       "discovery",
+			Port:       30303,
+			TargetPort: intstr.FromInt(30303),
+			Protocol:   corev1.ProtocolUDP,
+		},
+		{
+			Name:       "p2p",
+			Port:       30303,
+			TargetPort: intstr.FromInt(30303),
+			Protocol:   corev1.ProtocolTCP,
+		},
+	}
+
+	svc.Spec.Selector = map[string]string{
+		"app":      "node",
+		"instance": svc.ObjectMeta.Name,
+	}
+}
+
+// reconcileNodeService reconciles node service
+func (r *NetworkReconciler) reconcileNodeService(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) (ip string, err error) {
+
+	svc := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: network.Namespace,
+		},
+	}
+
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
+		if err = ctrl.SetControllerReference(network, svc, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specNodeService(svc)
+
+		return nil
+	})
+
+	if err != nil {
+		return
+	}
+
+	ip = svc.Spec.ClusterIP
+
+	return
+}
+
 // reconcileNode create a new node deployment if it doesn't exist
 // updates existing deployments if node spec changed
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, isBootnode bool, bootnodes []string) (enodeURL string, err error) {
-	log := r.Log.WithValues("node", node.Name)
 
 	requireNodekey := isBootnode || node.Nodekey != ""
 	customGenesis := network.Spec.Join == ""
@@ -581,21 +632,13 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		return
 	}
 
-	// create service for the node
-	svc := r.createServiceForNode(node.Name, network.GetNamespace())
-	if err = ctrl.SetControllerReference(network, svc, r.Scheme); err != nil {
-		log.Error(err, "Unable to set controller reference")
-		return
-	}
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
-		return nil
-	})
+	ip, err := r.reconcileNodeService(ctx, node, network)
 	if err != nil {
 		return
 	}
 
 	// TODO: use p2pPort instead of hardcoded 30303 after defaulting
-	enodeURL = fmt.Sprintf("enode://%s@%s:30303", publicKey, svc.Spec.ClusterIP)
+	enodeURL = fmt.Sprintf("enode://%s@%s:30303", publicKey, ip)
 
 	return
 }
