@@ -1,0 +1,59 @@
+apiVersion: ethereum.kotal.io/v1alpha1
+kind: Network
+metadata:
+  name: ibft2-network
+spec:
+  consensus: ibft2
+  ########### Genesis block spec ###########
+  genesis:
+    chainId: 20189
+    ibft2:
+      blockPeriod: 2
+      epochLength: 30000
+      requestTimeout: 10
+      validators:
+        - "0x427e2c7cecd72bc4cdd4f7ebb8bb6e49789c8044"
+        - "0xd2c21213027cbf4d46c16b55fa98e5252b048706"
+        - "0x8e1f6c7c76a1d7f74eda342d330ca9749f31cc2b"
+    forks:
+      homestead: 0
+      dao: 0
+      eip150: 0
+      eip155: 0
+      eip158: 0
+      byzantium: 0
+      constantinople: 0
+      petersburg: 0
+      istanbul: 0
+      muirglacier: 0
+    coinbase: "0x071E2c1067c24607fF00cEEBbe83a38063BDEDd8"
+    difficulty: "0xfff"
+    gasLimit: "0x47b760"
+    nonce: "0x0"
+    timestamp: "0x0"
+    accounts:
+      - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"
+        balance: "0xffffffffffffffffffff"
+  ########### network nodes spec ###########
+  nodes:
+    - name: node-1
+      rpc: true
+      nodekey: "0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e"
+      rpcPort: 8599
+      rpcHost: 0.0.0.0
+      corsDomains:
+        - all
+      hosts:
+        - all
+      rpcAPI:
+        - web3
+        - net
+        - eth
+        - ibft
+    - name: node-2
+      nodekey: "0xb4c6097d5db1fabb037f71e21229d59a0161e0f8d407d787f3ba92f25bd39eaf"
+    - name: node-3
+      nodekey: "0xcb9db0b0927a3095eb2dcd82666c6a602e03379e09ac115260091cb68ca5b075"
+    - name: node-4
+    - name: node-5
+
