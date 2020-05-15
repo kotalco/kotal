@@ -61,11 +61,17 @@ type Genesis struct {
 	// Difficulty is the diffculty of the genesis block
 	Difficulty HexString `json:"difficulty,omitempty"`
 
+	// MixHash is hash combined with nonce to prove effort spent to create block
+	MixHash HexString `json:"mixHash,omitempty"`
+
 	// Ethash PoW engine configuration
 	Ethash Ethash `json:"ethash,omitempty"`
 
 	// Clique PoA engine cinfiguration
 	Clique Clique `json:"clique,omitempty"`
+
+	// IBFT2 PoA engine configuration
+	IBFT2 IBFT2 `json:"ibft2,omitempty"`
 
 	// Forks is supported forks (network upgrade) and corresponding block number
 	Forks Forks `json:"forks,omitempty"`
@@ -80,13 +86,42 @@ type Genesis struct {
 	Timestamp HexString `json:"timestamp,omitempty"`
 }
 
-// Clique configuration
-type Clique struct {
+// PoA is Shared PoA engine config
+type PoA struct {
 	// BlockPeriod is block time in seconds
 	BlockPeriod uint `json:"blockPeriod,omitempty"`
 
 	// EpochLength is the Number of blocks after which to reset all votes
 	EpochLength uint `json:"epochLength,omitempty"`
+}
+
+// IBFT2 configuration
+type IBFT2 struct {
+	PoA `json:",inline"`
+
+	// Validators are initial ibft2 validators
+	// +kubebuilder:validation:MinItems=1
+	Validators []Validator `json:"validators"`
+
+	// RequestTimeout is the timeout for each consensus round in seconds
+	RequestTimeout uint `json:"requestTimeout,omitempty"`
+
+	// MessageQueueLimit is the message queue limit
+	MessageQueueLimit uint `json:"messageQueueLimit,omitempty"`
+
+	// DuplicateMesageLimit is duplicate messages limit
+	DuplicateMesageLimit uint `json:"duplicateMesageLimit,omitempty"`
+
+	// futureMessagesLimit is future messages buffer limit
+	FutureMessagesLimit uint `json:"futureMessagesLimit,omitempty"`
+
+	// FutureMessagesMaxDistance is maximum height from current chain height for buffering future messages
+	FutureMessagesMaxDistance uint `json:"futureMessagesMaxDistance,omitempty"`
+}
+
+// Clique configuration
+type Clique struct {
+	PoA `json:",inline"`
 
 	// InitialSigners are PoA initial signers, at least one signer is required
 	// +kubebuilder:validation:MinItems=1
@@ -96,6 +131,10 @@ type Clique struct {
 // Signer is ethereum node address
 // +kubebuilder:validation:Pattern=0[xX][0-9a-fA-F]+
 type Signer string
+
+// Validator is ethereum node address
+// +kubebuilder:validation:Pattern=0[xX][0-9a-fA-F]+
+type Validator string
 
 // Ethash configurations
 type Ethash struct {
@@ -162,8 +201,8 @@ const (
 	// ProofOfWork is proof of work (nakamoto consensus) consensus algorithm
 	ProofOfWork ConsensusAlgorithm = "pow"
 
-	// IBFT2 is Istanbul Byzantine Fault Tolerant consensus algorithm
-	IBFT2 ConsensusAlgorithm = "ibft2"
+	// IstanbulBFT is Istanbul Byzantine Fault Tolerant consensus algorithm
+	IstanbulBFT ConsensusAlgorithm = "ibft2"
 
 	//Quorum is Quorum IBFT consensus algorithm
 	Quorum ConsensusAlgorithm = "quorum"

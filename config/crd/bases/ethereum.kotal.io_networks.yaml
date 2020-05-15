@@ -158,6 +158,49 @@ spec:
                     in a block
                   pattern: 0[xX][0-9a-fA-F]+
                   type: string
+                ibft2:
+                  description: IBFT2 PoA engine configuration
+                  properties:
+                    blockPeriod:
+                      description: BlockPeriod is block time in seconds
+                      type: integer
+                    duplicateMesageLimit:
+                      description: DuplicateMesageLimit is duplicate messages limit
+                      type: integer
+                    epochLength:
+                      description: EpochLength is the Number of blocks after which
+                        to reset all votes
+                      type: integer
+                    futureMessagesLimit:
+                      description: futureMessagesLimit is future messages buffer limit
+                      type: integer
+                    futureMessagesMaxDistance:
+                      description: FutureMessagesMaxDistance is maximum height from
+                        current chain height for buffering future messages
+                      type: integer
+                    messageQueueLimit:
+                      description: MessageQueueLimit is the message queue limit
+                      type: integer
+                    requestTimeout:
+                      description: RequestTimeout is the timeout for each consensus
+                        round in seconds
+                      type: integer
+                    validators:
+                      description: Validators are initial ibft2 validators
+                      items:
+                        description: Validator is ethereum node address
+                        pattern: 0[xX][0-9a-fA-F]+
+                        type: string
+                      minItems: 1
+                      type: array
+                  required:
+                  - validators
+                  type: object
+                mixHash:
+                  description: MixHash is hash combined with nonce to prove effort
+                    spent to create block
+                  pattern: 0[xX][0-9a-fA-F]+
+                  type: string
                 nonce:
                   description: Nonce is random number used in block computation
                   pattern: 0[xX][0-9a-fA-F]+
