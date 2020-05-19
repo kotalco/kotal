@@ -1,0 +1,37 @@
+apiVersion: ethereum.kotal.io/v1alpha1
+kind: Network
+metadata:
+  name: poa-network-no-genesis
+spec:
+  consensus: poa
+  ########### Genesis block spec ###########
+  genesis:
+    chainId: 20189
+    clique:
+      blockPeriod: 15
+      epochLength: 100
+      initialSigners:
+        - "0xd2c21213027cbf4d46c16b55fa98e5252b048706"
+    accounts:
+      - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"
+        balance: "0xffffffffffffffffffff"
+  ########### network nodes spec ###########
+  nodes:
+    - name: node-1
+      rpc: true
+      nodekey: "0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e"
+      rpcPort: 8599
+      rpcHost: 0.0.0.0
+      corsDomains:
+        - all
+      hosts:
+        - all
+      rpcAPI:
+        - web3
+        - net
+        - eth
+        - clique
+    - name: node-2
+    - name: node-3
+    - name: node-4
+    - name: node-5
