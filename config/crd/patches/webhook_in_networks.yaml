@@ -5,6 +5,7 @@ kind: CustomResourceDefinition
 metadata:
   name: networks.ethereum.kotal.io
 spec:
+  preserveUnknownFields: false
   conversion:
     strategy: Webhook
     webhookClientConfig:

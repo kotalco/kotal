@@ -99,8 +99,6 @@ spec:
                         type: string
                       minItems: 1
                       type: array
-                  required:
-                  - initialSigners
                   type: object
                 coinbase:
                   description: Address to pay mining rewards to
@@ -193,8 +191,6 @@ spec:
                         type: string
                       minItems: 1
                       type: array
-                  required:
-                  - validators
                   type: object
                 mixHash:
                   description: MixHash is hash combined with nonce to prove effort

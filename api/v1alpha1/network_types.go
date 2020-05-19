@@ -101,7 +101,7 @@ type IBFT2 struct {
 
 	// Validators are initial ibft2 validators
 	// +kubebuilder:validation:MinItems=1
-	Validators []Validator `json:"validators"`
+	Validators []Validator `json:"validators,omitempty"`
 
 	// RequestTimeout is the timeout for each consensus round in seconds
 	RequestTimeout uint `json:"requestTimeout,omitempty"`
@@ -125,7 +125,7 @@ type Clique struct {
 
 	// InitialSigners are PoA initial signers, at least one signer is required
 	// +kubebuilder:validation:MinItems=1
-	InitialSigners []Signer `json:"initialSigners"`
+	InitialSigners []Signer `json:"initialSigners,omitempty"`
 }
 
 // Signer is ethereum node address
