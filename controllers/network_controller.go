@@ -503,7 +503,7 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, args []st
 				Containers: []corev1.Container{
 					{
 						Name:  "node",
-						Image: "hyperledger/besu:1.4.3",
+						Image: "hyperledger/besu:1.4.4",
 						Command: []string{
 							"besu",
 						},
