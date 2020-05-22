@@ -90,9 +90,9 @@ spec:
                       description: EpochLength is the Number of blocks after which
                         to reset all votes
                       type: integer
-                    initialSigners:
-                      description: InitialSigners are PoA initial signers, at least
-                        one signer is required
+                    signers:
+                      description: Signers are PoA initial signers, at least one signer
+                        is required
                       items:
                         description: EthereumAddress is ethereum address
                         pattern: ^0[xX][0-9a-fA-F]{40}$

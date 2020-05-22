@@ -135,9 +135,9 @@ type IBFT2 struct {
 type Clique struct {
 	PoA `json:",inline"`
 
-	// InitialSigners are PoA initial signers, at least one signer is required
+	// Signers are PoA initial signers, at least one signer is required
 	// +kubebuilder:validation:MinItems=1
-	InitialSigners []EthereumAddress `json:"initialSigners,omitempty"`
+	Signers []EthereumAddress `json:"signers,omitempty"`
 }
 
 // Ethash configurations

@@ -8,7 +8,7 @@ spec:
   genesis:
     chainId: 20189
     clique:
-      initialSigners:
+      signers:
         - "0xd2c21213027cbf4d46c16b55fa98e5252b048706"
     accounts:
       - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"

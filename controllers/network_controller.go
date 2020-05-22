@@ -227,7 +227,7 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 			"epochlength":        genesis.Clique.EpochLength,
 		}
 		engine = "clique"
-		extraData = r.createExtraDataFromSigners(network.Spec.Genesis.Clique.InitialSigners)
+		extraData = r.createExtraDataFromSigners(network.Spec.Genesis.Clique.Signers)
 	}
 
 	// clique ibft2 settings

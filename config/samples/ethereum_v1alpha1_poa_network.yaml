@@ -10,7 +10,7 @@ spec:
     clique:
       blockPeriod: 15
       epochLength: 100
-      initialSigners:
+      signers:
         - "0xd2c21213027cbf4d46c16b55fa98e5252b048706"
     forks:
       homestead: 0

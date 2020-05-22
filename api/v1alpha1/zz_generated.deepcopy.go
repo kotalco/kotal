@@ -50,8 +50,8 @@ func (in *Account) DeepCopy() *Account {
 func (in *Clique) DeepCopyInto(out *Clique) {
 	*out = *in
 	out.PoA = in.PoA
-	if in.InitialSigners != nil {
-		in, out := &in.InitialSigners, &out.InitialSigners
+	if in.Signers != nil {
+		in, out := &in.Signers, &out.Signers
 		*out = make([]EthereumAddress, len(*in))
 		copy(*out, *in)
 	}
