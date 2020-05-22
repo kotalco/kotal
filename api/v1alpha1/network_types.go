@@ -43,12 +43,20 @@ type NetworkSpec struct {
 }
 
 // HexString is String in hexadecial format
-// +kubebuilder:validation:Pattern=0[xX][0-9a-fA-F]+
+// +kubebuilder:validation:Pattern="^0[xX][0-9a-fA-F]+$"
 type HexString string
 
 // EthereumAddress is ethereum address
-// +kubebuilder:validation:Pattern="0[xX][0-9a-fA-F]{40}"
+// +kubebuilder:validation:Pattern="^0[xX][0-9a-fA-F]{40}$"
 type EthereumAddress string
+
+// Hash is KECCAK-256 hash
+// +kubebuilder:validation:Pattern="^0[xX][0-9a-fA-F]{64}$"
+type Hash string
+
+// PrivateKey is a private key
+// +kubebuilder:validation:Pattern="^0[xX][0-9a-fA-F]{64}$"
+type PrivateKey string
 
 // Genesis is genesis block sepcficition
 type Genesis struct {
@@ -66,7 +74,7 @@ type Genesis struct {
 	Difficulty HexString `json:"difficulty,omitempty"`
 
 	// MixHash is hash combined with nonce to prove effort spent to create block
-	MixHash HexString `json:"mixHash,omitempty"`
+	MixHash Hash `json:"mixHash,omitempty"`
 
 	// Ethash PoW engine configuration
 	Ethash *Ethash `json:"ethash,omitempty"`
@@ -132,14 +140,6 @@ type Clique struct {
 	InitialSigners []EthereumAddress `json:"initialSigners,omitempty"`
 }
 
-// Signer is ethereum node address
-// +kubebuilder:validation:Pattern=0[xX][0-9a-fA-F]+
-type Signer string
-
-// Validator is ethereum node address
-// +kubebuilder:validation:Pattern=0[xX][0-9a-fA-F]+
-type Validator string
-
 // Ethash configurations
 type Ethash struct {
 	// FixedDifficulty is fixed difficulty to be used in private PoW networks
@@ -156,6 +156,9 @@ type Forks struct {
 
 	// EIP150 (Tangerine Whistle) fork
 	EIP150 uint `json:"eip150,omitempty"`
+
+	// EIP150Hash (Tangerine Whistle) fork hash
+	EIP150Hash Hash `json:"eip150Hash,omitempty"`
 
 	// EIP155 (Spurious Dragon) fork
 	EIP155 uint `json:"eip155,omitempty"`
@@ -288,7 +291,7 @@ type Node struct {
 	Name string `json:"name"`
 
 	// Nodekey is the node private key
-	Nodekey string `json:"nodekey,omitempty"`
+	Nodekey PrivateKey `json:"nodekey,omitempty"`
 
 	// P2PPort is port used for peer to peer communication
 	P2PPort uint `json:"p2pPort,omitempty"`

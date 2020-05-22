@@ -665,7 +665,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 
 	var publicKey, from string
 	if node.Nodekey != "" {
-		from = node.Nodekey[2:]
+		from = string(node.Nodekey)[2:]
 	}
 
 	if publicKey, err = r.reconcileNodeSecret(ctx, node, network, from); err != nil {
