@@ -54,7 +54,7 @@ spec:
                     properties:
                       address:
                         description: Address is account address
-                        pattern: 0[xX][0-9a-fA-F]+
+                        pattern: 0[xX][0-9a-fA-F]{40}
                         type: string
                       balance:
                         description: Balance is account balance in wei
@@ -94,15 +94,15 @@ spec:
                       description: InitialSigners are PoA initial signers, at least
                         one signer is required
                       items:
-                        description: Signer is ethereum node address
-                        pattern: 0[xX][0-9a-fA-F]+
+                        description: EthereumAddress is ethereum address
+                        pattern: 0[xX][0-9a-fA-F]{40}
                         type: string
                       minItems: 1
                       type: array
                   type: object
                 coinbase:
                   description: Address to pay mining rewards to
-                  pattern: 0[xX][0-9a-fA-F]+
+                  pattern: 0[xX][0-9a-fA-F]{40}
                   type: string
                 difficulty:
                   description: Difficulty is the diffculty of the genesis block
@@ -186,8 +186,8 @@ spec:
                     validators:
                       description: Validators are initial ibft2 validators
                       items:
-                        description: Validator is ethereum node address
-                        pattern: 0[xX][0-9a-fA-F]+
+                        description: EthereumAddress is ethereum address
+                        pattern: 0[xX][0-9a-fA-F]{40}
                         type: string
                       minItems: 1
                       type: array
@@ -244,6 +244,7 @@ spec:
                   minerAccount:
                     description: MinerAccount is the account to which mining rewards
                       are paid
+                    pattern: 0[xX][0-9a-fA-F]{40}
                     type: string
                   name:
                     description: Name is the node name

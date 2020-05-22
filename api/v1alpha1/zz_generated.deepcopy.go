@@ -52,7 +52,7 @@ func (in *Clique) DeepCopyInto(out *Clique) {
 	out.PoA = in.PoA
 	if in.InitialSigners != nil {
 		in, out := &in.InitialSigners, &out.InitialSigners
-		*out = make([]Signer, len(*in))
+		*out = make([]EthereumAddress, len(*in))
 		copy(*out, *in)
 	}
 }
@@ -145,7 +145,7 @@ func (in *IBFT2) DeepCopyInto(out *IBFT2) {
 	out.PoA = in.PoA
 	if in.Validators != nil {
 		in, out := &in.Validators, &out.Validators
-		*out = make([]Validator, len(*in))
+		*out = make([]EthereumAddress, len(*in))
 		copy(*out, *in)
 	}
 }

@@ -6,7 +6,7 @@ spec:
   consensus: pow
   ########### Genesis block spec ###########
   genesis:
-    chainId: 1
+    chainId: 9999
     ethash:
       fixedDifficulty: 100
     accounts:

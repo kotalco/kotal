@@ -46,6 +46,10 @@ type NetworkSpec struct {
 // +kubebuilder:validation:Pattern=0[xX][0-9a-fA-F]+
 type HexString string
 
+// EthereumAddress is ethereum address
+// +kubebuilder:validation:Pattern="0[xX][0-9a-fA-F]{40}"
+type EthereumAddress string
+
 // Genesis is genesis block sepcficition
 type Genesis struct {
 	// Accounts is array of accounts to fund or associate with code and storage
@@ -56,7 +60,7 @@ type Genesis struct {
 	ChainID uint `json:"chainId"`
 
 	// Address to pay mining rewards to
-	Coinbase HexString `json:"coinbase,omitempty"`
+	Coinbase EthereumAddress `json:"coinbase,omitempty"`
 
 	// Difficulty is the diffculty of the genesis block
 	Difficulty HexString `json:"difficulty,omitempty"`
@@ -101,7 +105,7 @@ type IBFT2 struct {
 
 	// Validators are initial ibft2 validators
 	// +kubebuilder:validation:MinItems=1
-	Validators []Validator `json:"validators,omitempty"`
+	Validators []EthereumAddress `json:"validators,omitempty"`
 
 	// RequestTimeout is the timeout for each consensus round in seconds
 	RequestTimeout uint `json:"requestTimeout,omitempty"`
@@ -125,7 +129,7 @@ type Clique struct {
 
 	// InitialSigners are PoA initial signers, at least one signer is required
 	// +kubebuilder:validation:MinItems=1
-	InitialSigners []Signer `json:"initialSigners,omitempty"`
+	InitialSigners []EthereumAddress `json:"initialSigners,omitempty"`
 }
 
 // Signer is ethereum node address
@@ -178,7 +182,7 @@ type Forks struct {
 // Account is Ethereum account
 type Account struct {
 	// Address is account address
-	Address HexString `json:"address"`
+	Address EthereumAddress `json:"address"`
 
 	// Balance is account balance in wei
 	Balance HexString `json:"balance,omitempty"`
@@ -296,7 +300,7 @@ type Node struct {
 	Miner bool `json:"miner,omitempty"`
 
 	// MinerAccount is the account to which mining rewards are paid
-	MinerAccount string `json:"minerAccount,omitempty"`
+	MinerAccount EthereumAddress `json:"minerAccount,omitempty"`
 
 	// Hosts is a list of hostnames to to whitelist for RPC access
 	Hosts []string `json:"hosts,omitempty"`

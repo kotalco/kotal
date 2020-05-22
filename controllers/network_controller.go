@@ -143,7 +143,7 @@ func (r *NetworkReconciler) createConfigmapForGenesis(name, ns string) *corev1.C
 }
 
 // createExtraDataFromSigners creates extraDta genesis field value from initial signers
-func (r *NetworkReconciler) createExtraDataFromSigners(signers []ethereumv1alpha1.Signer) string {
+func (r *NetworkReconciler) createExtraDataFromSigners(signers []ethereumv1alpha1.EthereumAddress) string {
 	extraData := "0x"
 	// vanity data
 	extraData += strings.Repeat("00", 32)
@@ -158,7 +158,7 @@ func (r *NetworkReconciler) createExtraDataFromSigners(signers []ethereumv1alpha
 }
 
 // createExtraDataFromValidators creates extraDta genesis field value from initial validators
-func (r *NetworkReconciler) createExtraDataFromValidators(validators []ethereumv1alpha1.Validator) (string, error) {
+func (r *NetworkReconciler) createExtraDataFromValidators(validators []ethereumv1alpha1.EthereumAddress) (string, error) {
 	data := []interface{}{}
 	extraData := "0x"
 
@@ -275,7 +275,7 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 	result["mixHash"] = mixHash
 	result["extraData"] = extraData
 
-	alloc := map[ethereumv1alpha1.HexString]interface{}{}
+	alloc := map[ethereumv1alpha1.EthereumAddress]interface{}{}
 	for _, account := range genesis.Accounts {
 		alloc[account.Address] = map[string]interface{}{
 			"balance": account.Balance,
@@ -731,7 +731,7 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 	}
 
 	if node.MinerAccount != "" {
-		appendArg("--miner-coinbase", node.MinerAccount)
+		appendArg("--miner-coinbase", string(node.MinerAccount))
 	}
 
 	if node.RPC {
