@@ -35,7 +35,7 @@ type NetworkSpec struct {
 	Consensus ConsensusAlgorithm `json:"consensus,omitempty"`
 
 	// Genesis is genesis block specification
-	Genesis Genesis `json:"genesis,omitempty"`
+	Genesis *Genesis `json:"genesis,omitempty"`
 
 	// Nodes is array of node specifications
 	// +kubebuilder:validation:MinItems=1
@@ -65,16 +65,16 @@ type Genesis struct {
 	MixHash HexString `json:"mixHash,omitempty"`
 
 	// Ethash PoW engine configuration
-	Ethash Ethash `json:"ethash,omitempty"`
+	Ethash *Ethash `json:"ethash,omitempty"`
 
 	// Clique PoA engine cinfiguration
-	Clique Clique `json:"clique,omitempty"`
+	Clique *Clique `json:"clique,omitempty"`
 
 	// IBFT2 PoA engine configuration
-	IBFT2 IBFT2 `json:"ibft2,omitempty"`
+	IBFT2 *IBFT2 `json:"ibft2,omitempty"`
 
 	// Forks is supported forks (network upgrade) and corresponding block number
-	Forks Forks `json:"forks,omitempty"`
+	Forks *Forks `json:"forks,omitempty"`
 
 	// GastLimit is the total gas limit for all transactions in a block
 	GasLimit HexString `json:"gasLimit,omitempty"`

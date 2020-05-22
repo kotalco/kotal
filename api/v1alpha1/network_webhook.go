@@ -17,7 +17,12 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"fmt"
+
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/validation/field"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
@@ -49,12 +54,26 @@ func (r *Network) Default() {
 		}
 	}
 
+	//TODO: default genesis only if no join
+	if r.Spec.Genesis != nil {
+		r.DefaultGenesis()
+	}
+
+}
+
+// DefaultGenesis defaults genesis block parameters
+func (r *Network) DefaultGenesis() {
 	if r.Spec.Genesis.Coinbase == "" {
 		r.Spec.Genesis.Coinbase = "0x0000000000000000000000000000000000000000"
 	}
 
 	if r.Spec.Genesis.Difficulty == "" {
 		r.Spec.Genesis.Difficulty = "0x1"
+	}
+
+	if r.Spec.Genesis.Forks == nil {
+		// all milestones will be activated at block 0
+		r.Spec.Genesis.Forks = &Forks{}
 	}
 
 	if r.Spec.Genesis.MixHash == "" {
@@ -106,7 +125,6 @@ func (r *Network) Default() {
 		}
 
 	}
-
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
@@ -116,10 +134,66 @@ var _ webhook.Validator = &Network{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (r *Network) ValidateCreate() error {
+	var allErrors field.ErrorList
+
 	networklog.Info("validate create", "name", r.Name)
 
-	// TODO(user): fill in your validation logic upon object creation.
-	return nil
+	// join: can't specifiy genesis while joining existing network
+	if r.Spec.Join != "" && r.Spec.Genesis != nil {
+		err := field.Invalid(field.NewPath("spec").Child("join"), r.Spec.Join, "must be None if spec.genesis is specified")
+		allErrors = append(allErrors, err)
+	}
+
+	// consensus: can't specify consensus while joining existing network
+	if r.Spec.Join != "" && r.Spec.Consensus != "" {
+		err := field.Invalid(field.NewPath("spec").Child("consensus"), r.Spec.Consensus, "must be None while joining a network")
+		allErrors = append(allErrors, err)
+	}
+
+	chainByID := map[uint]string{
+		1:    "mainnet",
+		3:    "ropsten",
+		4:    "rinkeby",
+		5:    "goerli",
+		6:    "kotti",
+		61:   "classic",
+		63:   "mordor",
+		2018: "dev",
+	}
+
+	// genesis
+	if r.Spec.Genesis != nil {
+		// don't use existing network chain id
+		if chain := chainByID[r.Spec.Genesis.ChainID]; chain != "" {
+			err := field.Invalid(field.NewPath("spec").Child("genesis").Child("chainId"), r.Spec.Genesis.ChainID, fmt.Sprintf("can't use chain id of %s network to avoid tx replay", chain))
+			allErrors = append(allErrors, err)
+		}
+
+		// ethash must be nil of consensus is not Pow
+		if r.Spec.Consensus != ProofOfWork && r.Spec.Genesis.Ethash != nil {
+			err := field.Invalid(field.NewPath("spec").Child("consensus"), r.Spec.Consensus, fmt.Sprintf("must be %s if spec.genesis.ethash is specified", ProofOfWork))
+			allErrors = append(allErrors, err)
+		}
+
+		// clique must be nil of consensus is not PoA
+		if r.Spec.Consensus != ProofOfAuthority && r.Spec.Genesis.Clique != nil {
+			err := field.Invalid(field.NewPath("spec").Child("consensus"), r.Spec.Consensus, fmt.Sprintf("must be %s if spec.genesis.clique is specified", ProofOfAuthority))
+			allErrors = append(allErrors, err)
+		}
+
+		// ibft2 must be nil of consensus is not ibft2
+		if r.Spec.Consensus != IstanbulBFT && r.Spec.Genesis.IBFT2 != nil {
+			err := field.Invalid(field.NewPath("spec").Child("consensus"), r.Spec.Consensus, fmt.Sprintf("must be %s if spec.genesis.ibft2 is specified", IstanbulBFT))
+			allErrors = append(allErrors, err)
+		}
+	}
+
+	if len(allErrors) == 0 {
+		return nil
+	}
+
+	return apierrors.NewInvalid(schema.GroupKind{}, r.Name, allErrors)
+
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
