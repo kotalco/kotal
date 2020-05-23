@@ -8,6 +8,16 @@ metadata:
   creationTimestamp: null
   name: networks.ethereum.kotal.io
 spec:
+  additionalPrinterColumns:
+  - JSONPath: .spec.consensus
+    name: Consensus
+    type: string
+  - JSONPath: .spec.join
+    name: Join
+    type: string
+  - JSONPath: .status.nodesCount
+    name: Nodes
+    type: integer
   group: ethereum.kotal.io
   names:
     kind: Network
@@ -15,6 +25,8 @@ spec:
     plural: networks
     singular: network
   scope: Namespaced
+  subresources:
+    status: {}
   validation:
     openAPIV3Schema:
       description: Network is the Schema for the networks API
@@ -337,6 +349,10 @@ spec:
           type: object
         status:
           description: NetworkStatus defines the observed state of Network
+          properties:
+            nodesCount:
+              description: NodesCount is number of nodes in this network
+              type: integer
           type: object
       type: object
   version: v1alpha1

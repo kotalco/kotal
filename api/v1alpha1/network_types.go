@@ -347,13 +347,18 @@ type Node struct {
 
 // NetworkStatus defines the observed state of Network
 type NetworkStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+
+	// NodesCount is number of nodes in this network
+	NodesCount int `json:"nodesCount,omitempty"`
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // Network is the Schema for the networks API
+// +kubebuilder:printcolumn:name="Consensus",type=string,JSONPath=".spec.consensus"
+// +kubebuilder:printcolumn:name="Join",type=string,JSONPath=".spec.join"
+// +kubebuilder:printcolumn:name="Nodes",type=integer,JSONPath=".status.nodesCount"
 type Network struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

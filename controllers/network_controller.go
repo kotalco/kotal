@@ -75,6 +75,12 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
+	network.Status.NodesCount = len(network.Spec.Nodes)
+	if err := r.Status().Update(ctx, &network); err != nil {
+		log.Error(err, "unable to update network status")
+		return ctrl.Result{}, err
+	}
+
 	// network is not using existing network genesis block
 	// TODO:validaiton: genesis is required if there's no network to join
 	if network.Spec.Join == "" {
