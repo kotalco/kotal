@@ -688,8 +688,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		return
 	}
 
-	// TODO: use p2pPort instead of hardcoded 30303 after defaulting
-	enodeURL = fmt.Sprintf("enode://%s@%s:30303", publicKey, ip)
+	enodeURL = fmt.Sprintf("enode://%s@%s:%d", publicKey, ip, node.P2PPort)
 
 	return
 }

@@ -47,16 +47,76 @@ func (r *Network) Default() {
 	networklog.Info("default", "name", r.Name)
 
 	for i := range r.Spec.Nodes {
-		// default only p2p port, leave the rest to the client
-		// TODO: change this after multi-client support
-		if r.Spec.Nodes[i].P2PPort == 0 {
-			r.Spec.Nodes[i].P2PPort = 30303
+		r.DefaultNode(&r.Spec.Nodes[i])
+	}
+
+	if r.Spec.Genesis != nil {
+		r.DefaultGenesis()
+	}
+
+}
+
+// DefaultNode defaults a single node
+func (r *Network) DefaultNode(node *Node) {
+
+	defaultAPIs := []API{Web3API, ETHAPI, NetworkAPI}
+	anyAddress := "0.0.0.0"
+	allOrigins := []string{"*"}
+
+	if node.P2PPort == 0 {
+		node.P2PPort = 30303
+	}
+
+	if node.SyncMode == "" {
+		node.SyncMode = FastSynchronization
+	}
+
+	if node.RPC || node.WS || node.GraphQL {
+		if len(node.Hosts) == 0 {
+			node.Hosts = allOrigins
+		}
+
+		if len(node.CORSDomains) == 0 {
+			node.CORSDomains = allOrigins
 		}
 	}
 
-	//TODO: default genesis only if no join
-	if r.Spec.Genesis != nil {
-		r.DefaultGenesis()
+	if node.RPC {
+		if node.RPCHost == "" {
+			node.RPCHost = anyAddress
+		}
+
+		if node.RPCPort == 0 {
+			node.RPCPort = 8545
+		}
+
+		if len(node.RPCAPI) == 0 {
+			node.RPCAPI = defaultAPIs
+		}
+	}
+
+	if node.WS {
+		if node.WSHost == "" {
+			node.WSHost = anyAddress
+		}
+
+		if node.WSPort == 0 {
+			node.WSPort = 8546
+		}
+
+		if len(node.WSAPI) == 0 {
+			node.WSAPI = defaultAPIs
+		}
+	}
+
+	if node.GraphQL {
+		if node.GraphQLHost == "" {
+			node.GraphQLHost = anyAddress
+		}
+
+		if node.GraphQLPort == 0 {
+			node.GraphQLPort = 8547
+		}
 	}
 
 }
