@@ -18,6 +18,7 @@ package v1alpha1
 
 import (
 	"fmt"
+	"reflect"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -260,10 +261,43 @@ func (r *Network) ValidateCreate() error {
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
 func (r *Network) ValidateUpdate(old runtime.Object) error {
+	var allErrors field.ErrorList
+
 	networklog.Info("validate update", "name", r.Name)
 
-	// TODO(user): fill in your validation logic upon object update.
-	return nil
+	oldNetwork := old.(*Network)
+
+	if oldNetwork.Spec.Join != r.Spec.Join {
+		err := field.Invalid(field.NewPath("spec").Child("join"), r.Spec.Join, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
+	if oldNetwork.Spec.Consensus != r.Spec.Consensus {
+		err := field.Invalid(field.NewPath("spec").Child("consensus"), r.Spec.Join, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
+	// TODO: move to validate genesis
+	if !reflect.DeepEqual(r.Spec.Genesis, oldNetwork.Spec.Genesis) {
+		err := field.Invalid(field.NewPath("spec").Child("genesis"), "", "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
+	// TODO: move to validate node
+	for i, node := range oldNetwork.Spec.Nodes {
+		newName := r.Spec.Nodes[i].Name
+		if node.Name != newName {
+			err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("name"), newName, "field is immutable")
+			allErrors = append(allErrors, err)
+		}
+	}
+
+	if len(allErrors) == 0 {
+		return nil
+	}
+
+	return apierrors.NewInvalid(schema.GroupKind{}, r.Name, allErrors)
+
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
