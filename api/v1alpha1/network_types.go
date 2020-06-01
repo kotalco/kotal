@@ -290,6 +290,9 @@ type Node struct {
 	// Name is the node name
 	Name string `json:"name"`
 
+	// Bootnode is whether node is bootnode or no
+	Bootnode bool `json:"bootnode,omitempty"`
+
 	// Nodekey is the node private key
 	Nodekey PrivateKey `json:"nodekey,omitempty"`
 
@@ -343,6 +346,16 @@ type Node struct {
 
 	// GraphQLPort is the GraphQL server listening port
 	GraphQLPort uint `json:"graphqlPort,omitempty"`
+}
+
+// IsBootnode is whether node is bootnode or no
+func (n Node) IsBootnode() bool {
+	return n.Bootnode
+}
+
+// WithNodekey is whether node is configured with private key
+func (n Node) WithNodekey() bool {
+	return n.Nodekey != ""
 }
 
 // NetworkStatus defines the observed state of Network

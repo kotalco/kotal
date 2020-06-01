@@ -232,6 +232,9 @@ spec:
               items:
                 description: Node is the specification of the node
                 properties:
+                  bootnode:
+                    description: Bootnode is whether node is bootnode or no
+                    type: boolean
                   corsDomains:
                     description: CORSDomains is the domains from which to accept cross
                       origin requests

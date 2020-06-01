@@ -19,16 +19,12 @@ package controllers
 import (
 	"bytes"
 	"context"
-	"crypto/ecdsa"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/rlp"
 
 	"github.com/go-logr/logr"
@@ -42,6 +38,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ethereumv1alpha1 "github.com/mfarghaly/kotal/api/v1alpha1"
+	"github.com/mfarghaly/kotal/helpers"
 )
 
 const (
@@ -92,16 +89,14 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 
 	bootnodes := []string{}
 
-	for i, node := range network.Spec.Nodes {
-		// one node is a bootnode for every three nodes
-		isBootnode := i%3 == 0
+	for _, node := range network.Spec.Nodes {
 
-		bootnode, err := r.reconcileNode(ctx, &node, &network, isBootnode, bootnodes)
+		bootnode, err := r.reconcileNode(ctx, &node, &network, bootnodes)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
 
-		if isBootnode {
+		if node.IsBootnode() {
 			bootnodes = append(bootnodes, bootnode)
 		}
 
@@ -301,40 +296,6 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 	config = string(b)
 
 	return
-}
-
-// createNodekey creates private key for node to be used for enodeURL
-func (r *NetworkReconciler) createNodekey(hex string) (privateKeyHex, publicKeyHex string, err error) {
-	// private key
-	var privateKey *ecdsa.PrivateKey
-
-	if hex != "" {
-		privateKey, err = crypto.HexToECDSA(hex)
-		if err != nil {
-			return
-		}
-		privateKeyHex = hex
-	} else {
-		privateKey, err = crypto.GenerateKey()
-		if err != nil {
-			return
-		}
-		privateKeyBytes := crypto.FromECDSA(privateKey)
-		privateKeyHex = hexutil.Encode(privateKeyBytes)[2:]
-	}
-
-	// public key
-	publicKey := privateKey.Public()
-	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-	if !ok {
-		err = errors.New("publicKey is not of type *ecdsa.PublicKey")
-		return
-	}
-	publicKeyBytes := crypto.FromECDSAPub(publicKeyECDSA)
-	publicKeyHex = hexutil.Encode(publicKeyBytes)[4:]
-
-	return
-
 }
 
 // deleteRedundantNode deletes all nodes that has been removed from spec
@@ -566,7 +527,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 		if secret.CreationTimestamp.IsZero() {
 			// if there's node key, create a new private key
 			var privateKey string
-			privateKey, publicKey, err = r.createNodekey(nodekey)
+			privateKey, publicKey, err = helpers.CreateNodeKeypair(nodekey)
 			if err != nil {
 				return err
 			}
@@ -586,7 +547,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 	if publicKey == "" {
 		// get node public key from deployed secret
 		nodekey := string(secret.Data["nodekey"])
-		_, publicKey, err = r.createNodekey(nodekey)
+		_, publicKey, err = helpers.CreateNodeKeypair(nodekey)
 		if err != nil {
 			return
 		}
@@ -649,37 +610,34 @@ func (r *NetworkReconciler) reconcileNodeService(ctx context.Context, node *ethe
 
 // reconcileNode create a new node deployment if it doesn't exist
 // updates existing deployments if node spec changed
-func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, isBootnode bool, bootnodes []string) (enodeURL string, err error) {
+func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (enodeURL string, err error) {
 
-	requireNodekey := isBootnode || node.Nodekey != ""
 	customGenesis := network.Spec.Join == ""
 
 	if err = r.reconcileNodeDataPVC(ctx, node, network); err != nil {
 		return
 	}
 
-	args := r.createArgsForClient(node, network.Spec.Join, bootnodes, requireNodekey, customGenesis)
-	volumes := r.createNodeVolumes(node.Name, network.Name, requireNodekey, customGenesis)
-	mounts := r.createNodeVolumeMounts(node.Name, network.Name, requireNodekey, customGenesis)
+	args := r.createArgsForClient(node, network.Spec.Join, bootnodes, customGenesis)
+	volumes := r.createNodeVolumes(node.Name, network.Name, node.WithNodekey(), customGenesis)
+	mounts := r.createNodeVolumeMounts(node.Name, network.Name, node.WithNodekey(), customGenesis)
 
 	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts); err != nil {
 		return
 	}
 
-	if !requireNodekey {
+	if !node.WithNodekey() {
 		return
 	}
 
-	var publicKey, from string
-	if node.Nodekey != "" {
-		from = string(node.Nodekey)[2:]
-	}
+	var publicKey string
+	from := string(node.Nodekey)[2:]
 
 	if publicKey, err = r.reconcileNodeSecret(ctx, node, network, from); err != nil {
 		return
 	}
 
-	if !isBootnode {
+	if !node.IsBootnode() {
 		return
 	}
 
@@ -694,7 +652,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 }
 
 // createArgsForClient create arguments to be passed to the node client from node specs
-func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, join string, bootnodes []string, nodekey, customGenesis bool) []string {
+func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, join string, bootnodes []string, customGenesis bool) []string {
 	args := []string{"--nat-method", "KUBERNETES"}
 	// TODO: update after admissionmutating webhook
 	// because it will default all args
@@ -704,7 +662,7 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 		args = append(args, arg...)
 	}
 
-	if nodekey {
+	if node.WithNodekey() {
 		appendArg("--node-private-key-file", fmt.Sprintf("%s/nodekey", nodekeyPath))
 	}
 

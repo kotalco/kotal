@@ -16,6 +16,7 @@ spec:
   ########### network nodes spec ###########
   nodes:
     - name: node-1
+      bootnode: true
       rpc: true
       nodekey: "0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e"
       rpcPort: 8599

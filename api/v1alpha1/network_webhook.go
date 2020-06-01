@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/mfarghaly/kotal/helpers"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -66,6 +67,12 @@ func (r *Network) DefaultNode(node *Node) {
 
 	if node.P2PPort == 0 {
 		node.P2PPort = 30303
+	}
+
+	if node.Bootnode && node.Nodekey == "" {
+		// TODO: handle key creation error
+		key, _, _ := helpers.CreateNodeKeypair("")
+		node.Nodekey = PrivateKey("0x" + key)
 	}
 
 	if node.SyncMode == "" {
