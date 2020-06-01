@@ -283,11 +283,34 @@ func (r *Network) ValidateUpdate(old runtime.Object) error {
 		allErrors = append(allErrors, err)
 	}
 
-	// TODO: move to validate node
-	for i, node := range oldNetwork.Spec.Nodes {
-		newName := r.Spec.Nodes[i].Name
-		if node.Name != newName {
-			err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("name"), newName, "field is immutable")
+	// maximum allowed nodes with different name
+	var maxDiff int
+	// all old nodes names
+	oldNodesNames := map[string]bool{}
+	// nodes count in the old network spec
+	oldNodesCount := len(oldNetwork.Spec.Nodes)
+	// nodes count in the new network spec
+	newNodesCount := len(r.Spec.Nodes)
+	// nodes with different names than the old spec
+	differentNodes := map[string]int{}
+
+	if newNodesCount > oldNodesCount {
+		maxDiff = newNodesCount - oldNodesCount
+	}
+
+	for _, node := range oldNetwork.Spec.Nodes {
+		oldNodesNames[node.Name] = true
+	}
+
+	for i, node := range r.Spec.Nodes {
+		if exists := oldNodesNames[node.Name]; !exists {
+			differentNodes[node.Name] = i
+		}
+	}
+
+	if len(differentNodes) > maxDiff {
+		for nodeName, i := range differentNodes {
+			err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("name"), nodeName, "field is immutable")
 			allErrors = append(allErrors, err)
 		}
 	}
