@@ -259,6 +259,7 @@ func (r *Network) ValidateCreate() error {
 	}
 
 	if len(r.Spec.Nodes) > 1 {
+		// TODO: move to validateNetworkBootnodes
 		missingBootnodes := true
 		firstNode := r.Spec.Nodes[0]
 
@@ -280,6 +281,19 @@ func (r *Network) ValidateCreate() error {
 		if missingBootnodes {
 			err := field.Invalid(field.NewPath("spec").Child("nodes"), nil, "at least one node should be a bootnode")
 			allErrors = append(allErrors, err)
+		}
+
+		// TODO: move to validateNodeNamesUniqeness
+		// unique node names and their index in spec.nodes[]
+		nodeNames := map[string]int{}
+
+		for i, node := range r.Spec.Nodes {
+			if ii, exists := nodeNames[node.Name]; exists {
+				err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("name"), node.Name, fmt.Sprintf("provided name already used by spec.nodes[%d].name", ii))
+				allErrors = append(allErrors, err)
+			} else {
+				nodeNames[node.Name] = i
+			}
 		}
 
 	}
