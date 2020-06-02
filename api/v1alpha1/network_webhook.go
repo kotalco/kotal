@@ -258,6 +258,32 @@ func (r *Network) ValidateCreate() error {
 		}
 	}
 
+	if len(r.Spec.Nodes) > 1 {
+		missingBootnodes := true
+		firstNode := r.Spec.Nodes[0]
+
+		// check if all nodes are not bootnode
+		for _, node := range r.Spec.Nodes {
+			if node.IsBootnode() {
+				missingBootnodes = false
+				break
+			}
+		}
+
+		// first node must be a bootnode or it will be orphaned
+		if !firstNode.IsBootnode() {
+			err := field.Invalid(field.NewPath("spec").Child("nodes").Index(0).Child("bootnode"), false, "must be true or it will be orphaned")
+			allErrors = append(allErrors, err)
+		}
+
+		//at least one node should be a bootnode
+		if missingBootnodes {
+			err := field.Invalid(field.NewPath("spec").Child("nodes"), nil, "at least one node should be a bootnode")
+			allErrors = append(allErrors, err)
+		}
+
+	}
+
 	if len(allErrors) == 0 {
 		return nil
 	}
