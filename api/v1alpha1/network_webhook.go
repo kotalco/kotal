@@ -76,7 +76,7 @@ func (r *Network) DefaultNode(node *Node) {
 	}
 
 	if node.SyncMode == "" {
-		node.SyncMode = FastSynchronization
+		node.SyncMode = FullSynchronization
 	}
 
 	if node.RPC || node.WS || node.GraphQL {
