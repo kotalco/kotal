@@ -681,8 +681,8 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 		appendArg("--miner-enabled")
 	}
 
-	if node.MinerAccount != "" {
-		appendArg("--miner-coinbase", string(node.MinerAccount))
+	if node.Coinbase != "" {
+		appendArg("--miner-coinbase", string(node.Coinbase))
 	}
 
 	if node.RPC {

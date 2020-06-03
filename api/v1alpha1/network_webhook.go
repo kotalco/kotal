@@ -263,6 +263,7 @@ func (r *Network) ValidateCreate() error {
 		for i, node := range r.Spec.Nodes {
 			bootnode := node.IsBootnode()
 
+			// validate node name is not used more than once
 			if ii, exists := nodeNames[node.Name]; exists {
 				err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("name"), node.Name, fmt.Sprintf("provided name already used by spec.nodes[%d].name", ii))
 				allErrors = append(allErrors, err)
@@ -274,8 +275,15 @@ func (r *Network) ValidateCreate() error {
 				missingBootnodes = false
 			}
 
+			// validate nodekey is provided if node is bootnode
 			if bootnode && node.Nodekey == "" {
 				err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("nodekey"), node.Nodekey, "must provide nodekey if bootnode is true")
+				allErrors = append(allErrors, err)
+			}
+
+			// validate coinbase is provided if node is miner
+			if node.Miner && node.Coinbase == "" {
+				err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("coinbase"), "", "must provide coinbase if miner is true")
 				allErrors = append(allErrors, err)
 			}
 

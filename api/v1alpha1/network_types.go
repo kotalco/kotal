@@ -305,8 +305,8 @@ type Node struct {
 	// Miner is whether node is mining/validating blocks or no
 	Miner bool `json:"miner,omitempty"`
 
-	// MinerAccount is the account to which mining rewards are paid
-	MinerAccount EthereumAddress `json:"minerAccount,omitempty"`
+	// Coinbase is the account to which mining rewards are paid
+	Coinbase EthereumAddress `json:"coinbase,omitempty"`
 
 	// Hosts is a list of hostnames to to whitelist for RPC access
 	Hosts []string `json:"hosts,omitempty"`

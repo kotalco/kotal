@@ -235,6 +235,11 @@ spec:
                   bootnode:
                     description: Bootnode is whether node is bootnode or no
                     type: boolean
+                  coinbase:
+                    description: Coinbase is the account to which mining rewards are
+                      paid
+                    pattern: ^0[xX][0-9a-fA-F]{40}$
+                    type: string
                   corsDomains:
                     description: CORSDomains is the domains from which to accept cross
                       origin requests
@@ -260,11 +265,6 @@ spec:
                     description: Miner is whether node is mining/validating blocks
                       or no
                     type: boolean
-                  minerAccount:
-                    description: MinerAccount is the account to which mining rewards
-                      are paid
-                    pattern: ^0[xX][0-9a-fA-F]{40}$
-                    type: string
                   name:
                     description: Name is the node name
                     type: string
