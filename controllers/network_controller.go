@@ -519,38 +519,25 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 		},
 	}
 
+	privateKey, publicKey, err := helpers.CreateNodeKeypair(nodekey)
+	if err != nil {
+		return
+	}
+
 	_, err = ctrl.CreateOrUpdate(ctx, r.Client, secret, func() error {
 		if err := ctrl.SetControllerReference(network, secret, r.Scheme); err != nil {
 			return err
 		}
 
-		if secret.CreationTimestamp.IsZero() {
-			// if there's node key, create a new private key
-			var privateKey string
-			privateKey, publicKey, err = helpers.CreateNodeKeypair(nodekey)
-			if err != nil {
-				return err
-			}
-
-			secret.StringData = map[string]string{
-				"nodekey": privateKey,
-			}
+		secret.StringData = map[string]string{
+			"nodekey": privateKey,
 		}
+
 		return nil
 	})
 
 	if err != nil {
 		return
-	}
-
-	// if no keypair has been generated, because it's already there in secret
-	if publicKey == "" {
-		// get node public key from deployed secret
-		nodekey := string(secret.Data["nodekey"])
-		_, publicKey, err = helpers.CreateNodeKeypair(nodekey)
-		if err != nil {
-			return
-		}
 	}
 
 	return

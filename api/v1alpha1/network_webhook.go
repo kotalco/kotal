@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/mfarghaly/kotal/helpers"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -67,12 +66,6 @@ func (r *Network) DefaultNode(node *Node) {
 
 	if node.P2PPort == 0 {
 		node.P2PPort = 30303
-	}
-
-	if node.Bootnode && node.Nodekey == "" {
-		// TODO: handle key creation error
-		key, _, _ := helpers.CreateNodeKeypair("")
-		node.Nodekey = PrivateKey("0x" + key)
 	}
 
 	if node.SyncMode == "" {
@@ -263,12 +256,29 @@ func (r *Network) ValidateCreate() error {
 		missingBootnodes := true
 		firstNode := r.Spec.Nodes[0]
 
-		// check if all nodes are not bootnode
-		for _, node := range r.Spec.Nodes {
-			if node.IsBootnode() {
-				missingBootnodes = false
-				break
+		// TODO: move to validateNodeNamesUniqeness
+		// unique node names and their index in spec.nodes[]
+		nodeNames := map[string]int{}
+
+		for i, node := range r.Spec.Nodes {
+			bootnode := node.IsBootnode()
+
+			if ii, exists := nodeNames[node.Name]; exists {
+				err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("name"), node.Name, fmt.Sprintf("provided name already used by spec.nodes[%d].name", ii))
+				allErrors = append(allErrors, err)
+			} else {
+				nodeNames[node.Name] = i
 			}
+
+			if bootnode {
+				missingBootnodes = false
+			}
+
+			if bootnode && node.Nodekey == "" {
+				err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("nodekey"), node.Nodekey, "must provide nodekey if bootnode is true")
+				allErrors = append(allErrors, err)
+			}
+
 		}
 
 		// first node must be a bootnode or it will be orphaned
@@ -279,21 +289,8 @@ func (r *Network) ValidateCreate() error {
 
 		//at least one node should be a bootnode
 		if missingBootnodes {
-			err := field.Invalid(field.NewPath("spec").Child("nodes"), nil, "at least one node should be a bootnode")
+			err := field.Invalid(field.NewPath("spec").Child("nodes"), nil, "at least one node must be a bootnode")
 			allErrors = append(allErrors, err)
-		}
-
-		// TODO: move to validateNodeNamesUniqeness
-		// unique node names and their index in spec.nodes[]
-		nodeNames := map[string]int{}
-
-		for i, node := range r.Spec.Nodes {
-			if ii, exists := nodeNames[node.Name]; exists {
-				err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("name"), node.Name, fmt.Sprintf("provided name already used by spec.nodes[%d].name", ii))
-				allErrors = append(allErrors, err)
-			} else {
-				nodeNames[node.Name] = i
-			}
 		}
 
 	}
