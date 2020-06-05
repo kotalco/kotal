@@ -203,13 +203,19 @@ func (r *Network) ValidateCreate() error {
 
 	// join: can't specifiy genesis while joining existing network
 	if r.Spec.Join != "" && r.Spec.Genesis != nil {
-		err := field.Invalid(field.NewPath("spec").Child("join"), r.Spec.Join, "must be None if spec.genesis is specified")
+		err := field.Invalid(field.NewPath("spec").Child("join"), r.Spec.Join, "must be none if spec.genesis is specified")
+		allErrors = append(allErrors, err)
+	}
+
+	// genesis: must specify genesis if there's no network to join
+	if r.Spec.Join == "" && r.Spec.Genesis == nil {
+		err := field.Invalid(field.NewPath("spec").Child("genesis"), "", "must be specified if spec.join is none")
 		allErrors = append(allErrors, err)
 	}
 
 	// consensus: can't specify consensus while joining existing network
 	if r.Spec.Join != "" && r.Spec.Consensus != "" {
-		err := field.Invalid(field.NewPath("spec").Child("consensus"), r.Spec.Consensus, "must be None while joining a network")
+		err := field.Invalid(field.NewPath("spec").Child("consensus"), r.Spec.Consensus, "must be none while joining a network")
 		allErrors = append(allErrors, err)
 	}
 

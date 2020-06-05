@@ -79,8 +79,7 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	}
 
 	// network is not using existing network genesis block
-	// TODO:validaiton: genesis is required if there's no network to join
-	if network.Spec.Join == "" {
+	if network.Spec.Genesis != nil {
 		err := r.reconcileGenesis(ctx, &network)
 		if err != nil {
 			return ctrl.Result{}, err
