@@ -86,13 +86,24 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		}
 	}
 
+	if err := r.reconcileNodes(ctx, &network, req.Namespace); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	return ctrl.Result{}, nil
+
+}
+
+// reconcileNodes creates or updates nodes according to nodes spec
+// deletes nodes missing from nodes spec
+func (r *NetworkReconciler) reconcileNodes(ctx context.Context, network *ethereumv1alpha1.Network, ns string) error {
 	bootnodes := []string{}
 
 	for _, node := range network.Spec.Nodes {
 
-		bootnode, err := r.reconcileNode(ctx, &node, &network, bootnodes)
+		bootnode, err := r.reconcileNode(ctx, &node, network, bootnodes)
 		if err != nil {
-			return ctrl.Result{}, err
+			return err
 		}
 
 		if node.IsBootnode() {
@@ -101,11 +112,11 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 
 	}
 
-	if err := r.deleteRedundantNodes(ctx, network.Spec.Nodes, req.Namespace); err != nil {
-		return ctrl.Result{}, err
+	if err := r.deleteRedundantNodes(ctx, network.Spec.Nodes, ns); err != nil {
+		return err
 	}
 
-	return ctrl.Result{}, nil
+	return nil
 }
 
 func (r *NetworkReconciler) reconcileGenesis(ctx context.Context, network *ethereumv1alpha1.Network) error {
