@@ -650,7 +650,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 
 // createArgsForClient create arguments to be passed to the node client from node specs
 func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, join string, bootnodes []string, customGenesis bool) []string {
-	args := []string{"--nat-method", "KUBERNETES"}
+	args := []string{ArgNatMethod, "KUBERNETES"}
 	// TODO: update after admissionmutating webhook
 	// because it will default all args
 
@@ -660,51 +660,51 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 	}
 
 	if node.WithNodekey() {
-		appendArg("--node-private-key-file", fmt.Sprintf("%s/nodekey", nodekeyPath))
+		appendArg(ArgNodePrivateKey, fmt.Sprintf("%s/nodekey", nodekeyPath))
 	}
 
 	if customGenesis {
-		appendArg("--genesis-file", fmt.Sprintf("%s/genesis.json", genesisFilePath))
+		appendArg(ArgGenesisFile, fmt.Sprintf("%s/genesis.json", genesisFilePath))
 	}
 
-	appendArg("--data-path", blockchainDataPath)
+	appendArg(ArgDataPath, blockchainDataPath)
 
 	if join != "" {
-		appendArg("--network", join)
+		appendArg(ArgNetwork, join)
 	}
 
 	if node.P2PPort != 0 {
-		appendArg("--p2p-port", fmt.Sprintf("%d", node.P2PPort))
+		appendArg(ArgP2PPort, fmt.Sprintf("%d", node.P2PPort))
 	}
 
 	if len(bootnodes) != 0 {
 		commaSeperatedBootnodes := strings.Join(bootnodes, ",")
-		appendArg("--bootnodes", commaSeperatedBootnodes)
+		appendArg(ArgBootnodes, commaSeperatedBootnodes)
 	}
 
 	// TODO: create per client type(besu, geth ... etc)
 	if node.SyncMode != "" {
-		appendArg("--sync-mode", node.SyncMode.String())
+		appendArg(ArgSyncMode, node.SyncMode.String())
 	}
 
 	if node.Miner {
-		appendArg("--miner-enabled")
+		appendArg(ArgMinerEnabled)
 	}
 
 	if node.Coinbase != "" {
-		appendArg("--miner-coinbase", string(node.Coinbase))
+		appendArg(ArgMinerCoinbase, string(node.Coinbase))
 	}
 
 	if node.RPC {
-		appendArg("--rpc-http-enabled")
+		appendArg(ArgRPCHTTPEnabled)
 	}
 
 	if node.RPCPort != 0 {
-		appendArg("--rpc-http-port", fmt.Sprintf("%d", node.RPCPort))
+		appendArg(ArgRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
 	}
 
 	if node.RPCHost != "" {
-		appendArg("--rpc-http-host", node.RPCHost)
+		appendArg(ArgRPCHTTPHost, node.RPCHost)
 	}
 
 	if len(node.RPCAPI) != 0 {
@@ -713,19 +713,19 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 			apis = append(apis, api.String())
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg("--rpc-http-api", commaSeperatedAPIs)
+		appendArg(ArgRPCHTTPAPI, commaSeperatedAPIs)
 	}
 
 	if node.WS {
-		appendArg("--rpc-ws-enabled")
+		appendArg(ArgRPCWSEnabled)
 	}
 
 	if node.WSPort != 0 {
-		appendArg("--rpc-ws-port", fmt.Sprintf("%d", node.WSPort))
+		appendArg(ArgRPCWSPort, fmt.Sprintf("%d", node.WSPort))
 	}
 
 	if node.WSHost != "" {
-		appendArg("--rpc-ws-host", node.WSHost)
+		appendArg(ArgRPCWSHost, node.WSHost)
 	}
 
 	if len(node.WSAPI) != 0 {
@@ -734,33 +734,33 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 			apis = append(apis, api.String())
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg("--rpc-ws-api", commaSeperatedAPIs)
+		appendArg(ArgRPCWSAPI, commaSeperatedAPIs)
 	}
 
 	if node.GraphQL {
-		appendArg("--graphql-http-enabled")
+		appendArg(ArgGraphQLHTTPEnabled)
 	}
 
 	if node.GraphQLPort != 0 {
-		appendArg("--graphql-http-port", fmt.Sprintf("%d", node.GraphQLPort))
+		appendArg(ArgGraphQLHTTPPort, fmt.Sprintf("%d", node.GraphQLPort))
 	}
 
 	if node.GraphQLHost != "" {
-		appendArg("--graphql-http-host", node.GraphQLHost)
+		appendArg(ArgGraphQLHTTPHost, node.GraphQLHost)
 	}
 
 	if len(node.Hosts) != 0 {
 		commaSeperatedHosts := strings.Join(node.Hosts, ",")
-		appendArg("--host-whitelist", commaSeperatedHosts)
+		appendArg(ArgHostWhitelist, commaSeperatedHosts)
 	}
 
 	if len(node.CORSDomains) != 0 {
 		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
 		if node.RPC {
-			appendArg("--rpc-http-cors-origins", commaSeperatedDomains)
+			appendArg(ArgRPCHTTPCorsOrigins, commaSeperatedDomains)
 		}
 		if node.GraphQL {
-			appendArg("--graphql-http-cors-origins", commaSeperatedDomains)
+			appendArg(ArgGraphQLHTTPCorsOrigins, commaSeperatedDomains)
 		}
 	}
 
