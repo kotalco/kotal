@@ -2,11 +2,14 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	ethereumv1alpha1 "github.com/mfarghaly/kotal/api/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	appsv1 "k8s.io/api/apps/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 )
@@ -14,8 +17,8 @@ import (
 var _ = Describe("Ethereum network", func() {
 
 	const (
-		timeout  = time.Second * 30
-		interval = time.Second * 1
+		sleepTime  = 5 * time.Second
+		privatekey = ethereumv1alpha1.PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
 	)
 
 	Context("Joining Rinkeby", func() {
@@ -29,7 +32,9 @@ var _ = Describe("Ethereum network", func() {
 			Join: "rinkeby",
 			Nodes: []ethereumv1alpha1.Node{
 				{
-					Name: "node-1",
+					Name:     "node-1",
+					Bootnode: true,
+					Nodekey:  privatekey,
 				},
 			},
 		}
@@ -41,10 +46,27 @@ var _ = Describe("Ethereum network", func() {
 			},
 			Spec: spec,
 		}
+		t := true
+		ownerReference := metav1.OwnerReference{
+			// TODO: update version
+			APIVersion:         "ethereum.kotal.io/v1alpha1",
+			Kind:               "Network",
+			Name:               toCreate.Name,
+			Controller:         &t,
+			BlockOwnerDeletion: &t,
+		}
+		bootnodeKey := types.NamespacedName{
+			Name:      "node-1",
+			Namespace: key.Namespace,
+		}
+		node2Key := types.NamespacedName{
+			Name:      "node-2",
+			Namespace: key.Namespace,
+		}
 
 		It("Should create the network", func() {
 			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
-			time.Sleep(5 * time.Second)
+			time.Sleep(sleepTime)
 		})
 
 		It("Should Get the network", func() {
@@ -52,36 +74,123 @@ var _ = Describe("Ethereum network", func() {
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			Expect(fetched.Spec).To(Equal(toCreate.Spec))
 			Expect(fetched.Status.NodesCount).To(Equal(len(toCreate.Spec.Nodes)))
+			ownerReference.UID = fetched.GetUID()
+		})
+
+		It("Should not create genesis block configmap", func() {
+			genesisConfig := &v1.ConfigMap{}
+			genesisKey := types.NamespacedName{
+				Name:      fmt.Sprintf("%s-genesis", key.Name),
+				Namespace: key.Namespace,
+			}
+			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(Succeed())
+		})
+
+		It("Should create bootnode privatekey secret with correct data", func() {
+			nodeSecret := &v1.Secret{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
+			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
+		})
+
+		It("Should create bootnode service", func() {
+			nodeSvc := &v1.Service{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+		})
+
+		It("Should create bootnode deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				ArgNetwork,
+				"rinkeby",
+				ArgDataPath,
+				ArgNodePrivateKey,
+			}))
+		})
+
+		It("Should create bootnode data persistent volume", func() {
+			nodePVC := &v1.PersistentVolumeClaim{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodePVC)).To(Succeed())
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
 		It("Should update the network", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			updatedNodes := []ethereumv1alpha1.Node{
-				{
-					Name: "node-1",
-				},
-				{
-					Name: "node-2",
-				},
+			newNode := ethereumv1alpha1.Node{
+				Name:    "node-2",
+				RPC:     true,
+				RPCPort: 8547,
 			}
-			fetched.Spec.Nodes = updatedNodes
+			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			Expect(k8sClient.Update(context.Background(), fetched)).To(Succeed())
 			fetchedUpdated := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetchedUpdated)).To(Succeed())
 			Expect(fetchedUpdated.Spec).To(Equal(fetched.Spec))
+			time.Sleep(sleepTime)
 		})
+
+		It("Should create node-2 deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				ArgNetwork,
+				"rinkeby",
+				ArgDataPath,
+				ArgBootnodes,
+				ArgRPCHTTPEnabled,
+				"8547",
+			}))
+		})
+
+		It("Should create node-2 data persistent volume", func() {
+			nodePVC := &v1.PersistentVolumeClaim{}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+		})
+
+		It("Should not create privatekey secret for node-2 (without nodekey)", func() {
+			nodeSecret := &v1.Secret{}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSecret)).ToNot(Succeed())
+		})
+
+		It("Should create bootnode service (not a bootnode)", func() {
+			nodeSvc := &v1.Service{}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
+		})
+
+		It("Should update the network by removing noed-2", func() {
+			fetched := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+			fetched.Spec.Nodes = fetched.Spec.Nodes[:1]
+			Expect(k8sClient.Update(context.Background(), fetched)).To(Succeed())
+			fetchedUpdated := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetchedUpdated)).To(Succeed())
+			Expect(fetchedUpdated.Spec).To(Equal(fetched.Spec))
+			time.Sleep(sleepTime)
+		})
+
+		// In real cluster scenario
+		// TODO: test node-2 resources deleted after update
 
 		It("Should delete network", func() {
 			toDelete := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, toDelete)).To(Succeed())
 			Expect(k8sClient.Delete(context.Background(), toDelete)).To(Succeed())
+			time.Sleep(sleepTime)
 		})
 
 		It("Should not get network after deletion", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).ToNot(Succeed())
 		})
+
+		// In real cluster scenario
+		// TODO: test node-1 resources deleted after update
 
 	})
 
