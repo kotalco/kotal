@@ -257,56 +257,54 @@ func (r *Network) ValidateCreate() error {
 		}
 	}
 
-	if len(r.Spec.Nodes) > 1 {
-		// TODO: move to validateNetworkBootnodes
-		missingBootnodes := true
-		firstNode := r.Spec.Nodes[0]
+	singleNode := len(r.Spec.Nodes) == 1
 
-		// TODO: move to validateNodeNamesUniqeness
-		// unique node names and their index in spec.nodes[]
-		nodeNames := map[string]int{}
+	// TODO: move to validateNetworkBootnodes
+	missingBootnodes := true
+	firstNode := r.Spec.Nodes[0]
 
-		for i, node := range r.Spec.Nodes {
-			bootnode := node.IsBootnode()
+	// TODO: move to validateNodeNamesUniqeness
+	// unique node names and their index in spec.nodes[]
+	nodeNames := map[string]int{}
+	for i, node := range r.Spec.Nodes {
+		bootnode := node.IsBootnode()
 
-			// validate node name is not used more than once
-			if ii, exists := nodeNames[node.Name]; exists {
-				err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("name"), node.Name, fmt.Sprintf("provided name already used by spec.nodes[%d].name", ii))
-				allErrors = append(allErrors, err)
-			} else {
-				nodeNames[node.Name] = i
-			}
-
-			if bootnode {
-				missingBootnodes = false
-			}
-
-			// validate nodekey is provided if node is bootnode
-			if bootnode && node.Nodekey == "" {
-				err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("nodekey"), node.Nodekey, "must provide nodekey if bootnode is true")
-				allErrors = append(allErrors, err)
-			}
-
-			// validate coinbase is provided if node is miner
-			if node.Miner && node.Coinbase == "" {
-				err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("coinbase"), "", "must provide coinbase if miner is true")
-				allErrors = append(allErrors, err)
-			}
-
+		// validate node name is not used more than once
+		if ii, exists := nodeNames[node.Name]; exists {
+			err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("name"), node.Name, fmt.Sprintf("already used by spec.nodes[%d].name", ii))
+			allErrors = append(allErrors, err)
+		} else {
+			nodeNames[node.Name] = i
 		}
 
-		// first node must be a bootnode or it will be orphaned
-		if !firstNode.IsBootnode() {
-			err := field.Invalid(field.NewPath("spec").Child("nodes").Index(0).Child("bootnode"), false, "must be true or it will be orphaned")
+		if bootnode {
+			missingBootnodes = false
+		}
+
+		// validate nodekey is provided if node is bootnode
+		if bootnode && node.Nodekey == "" {
+			err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("nodekey"), node.Nodekey, "must provide nodekey if bootnode is true")
 			allErrors = append(allErrors, err)
 		}
 
-		//at least one node should be a bootnode
-		if missingBootnodes {
-			err := field.Invalid(field.NewPath("spec").Child("nodes"), nil, "at least one node must be a bootnode")
+		// validate coinbase is provided if node is miner
+		if node.Miner && node.Coinbase == "" {
+			err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("coinbase"), "", "must provide coinbase if miner is true")
 			allErrors = append(allErrors, err)
 		}
 
+	}
+
+	// first node must be a bootnode or it will be orphaned
+	if !singleNode && !firstNode.IsBootnode() {
+		err := field.Invalid(field.NewPath("spec").Child("nodes").Index(0).Child("bootnode"), false, "must be true or it will be orphaned")
+		allErrors = append(allErrors, err)
+	}
+
+	//at least one node should be a bootnode
+	if !singleNode && missingBootnodes {
+		err := field.Invalid(field.NewPath("spec").Child("nodes"), nil, "at least one node must be a bootnode")
+		allErrors = append(allErrors, err)
 	}
 
 	if len(allErrors) == 0 {
