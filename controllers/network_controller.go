@@ -523,7 +523,9 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 		},
 	}
 
-	privateKey, publicKey, err := helpers.CreateNodeKeypair(nodekey)
+	// hex private key without the leading 0x
+	privateKey := nodekey[2:]
+	publicKey, err = helpers.DerivePublicKey(privateKey)
 	if err != nil {
 		return
 	}
@@ -534,6 +536,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 		}
 
 		secret.StringData = map[string]string{
+			// save hex private key without 0x
 			"nodekey": privateKey,
 		}
 
@@ -622,9 +625,8 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 	}
 
 	var publicKey string
-	from := string(node.Nodekey)[2:]
 
-	if publicKey, err = r.reconcileNodeSecret(ctx, node, network, from); err != nil {
+	if publicKey, err = r.reconcileNodeSecret(ctx, node, network, string(node.Nodekey)); err != nil {
 		return
 	}
 
