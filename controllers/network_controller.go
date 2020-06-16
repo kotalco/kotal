@@ -41,12 +41,6 @@ import (
 	"github.com/mfarghaly/kotal/helpers"
 )
 
-const (
-	nodekeyPath        = "/mnt/bootnode"
-	genesisFilePath    = "/mnt/config"
-	blockchainDataPath = "/mnt/data"
-)
-
 // NetworkReconciler reconciles a Network object
 type NetworkReconciler struct {
 	client.Client
@@ -432,7 +426,7 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node, network string, nodekey
 	if nodekey {
 		nodekeyMount := corev1.VolumeMount{
 			Name:      "nodekey",
-			MountPath: nodekeyPath,
+			MountPath: PathNodekey,
 			ReadOnly:  true,
 		}
 		volumeMounts = append(volumeMounts, nodekeyMount)
@@ -441,7 +435,7 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node, network string, nodekey
 	if customGenesis {
 		genesisMount := corev1.VolumeMount{
 			Name:      "genesis",
-			MountPath: genesisFilePath,
+			MountPath: PathGenesisFile,
 			ReadOnly:  true,
 		}
 		volumeMounts = append(volumeMounts, genesisMount)
@@ -449,7 +443,7 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node, network string, nodekey
 
 	dataMount := corev1.VolumeMount{
 		Name:      "data",
-		MountPath: blockchainDataPath,
+		MountPath: PathBlockchainData,
 	}
 	volumeMounts = append(volumeMounts, dataMount)
 
@@ -660,14 +654,14 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 	}
 
 	if node.WithNodekey() {
-		appendArg(ArgNodePrivateKey, fmt.Sprintf("%s/nodekey", nodekeyPath))
+		appendArg(ArgNodePrivateKey, fmt.Sprintf("%s/nodekey", PathNodekey))
 	}
 
 	if customGenesis {
-		appendArg(ArgGenesisFile, fmt.Sprintf("%s/genesis.json", genesisFilePath))
+		appendArg(ArgGenesisFile, fmt.Sprintf("%s/genesis.json", PathGenesisFile))
 	}
 
-	appendArg(ArgDataPath, blockchainDataPath)
+	appendArg(ArgDataPath, PathBlockchainData)
 
 	if join != "" {
 		appendArg(ArgNetwork, join)

@@ -1,6 +1,15 @@
 package controllers
 
 const (
+	// PathNodekey is the node key path
+	PathNodekey = "/mnt/bootnode"
+	// PathGenesisFile is the genesis file path
+	PathGenesisFile = "/mnt/config"
+	// PathBlockchainData is the blockchain data path
+	PathBlockchainData = "/mnt/data"
+)
+
+const (
 	// ArgNatMethod is the argument used for nat method
 	ArgNatMethod = "--nat-method"
 	// ArgNodePrivateKey is the argument used for node private key
