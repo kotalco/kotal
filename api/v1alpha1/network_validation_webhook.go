@@ -22,13 +22,12 @@ func (r *Network) ValidateMissingBootnodes() *field.Error {
 		return nil
 	}
 
-	for _, node := range r.Spec.Nodes {
-		if node.IsBootnode() {
-			return nil
-		}
+	if !r.Spec.Nodes[0].IsBootnode() {
+		msg := "first node must be a bootnode if network has multiple nodes"
+		return field.Invalid(field.NewPath("spec").Child("nodes").Index(0).Child("bootnode"), false, msg)
 	}
 
-	return field.Invalid(field.NewPath("spec").Child("nodes"), "", "at least one node must be a bootnode")
+	return nil
 }
 
 // ValidateNodeNameUniqeness validates that all node names are unique
