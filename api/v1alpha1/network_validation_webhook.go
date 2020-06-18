@@ -66,6 +66,13 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 		err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("coinbase"), "", "must provide coinbase if miner is true")
 		nodeErrors = append(nodeErrors, err)
 	}
+
+	// validate coinbase can't be set if miner is not set explicitly as true
+	if node.Coinbase != "" && node.Miner == false {
+		err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("miner"), false, "must set miner to true if coinbase is provided")
+		nodeErrors = append(nodeErrors, err)
+	}
+
 	return nodeErrors
 }
 
