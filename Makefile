@@ -58,6 +58,13 @@ generate: controller-gen
 docker-build: test
 	docker build . -t ${IMG}
 
+load:
+	kind load docker-image ${IMG}
+
+# Build the docker image
+kind: docker-build load deploy
+
+
 # Push the docker image
 docker-push:
 	docker push ${IMG}
