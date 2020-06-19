@@ -51,7 +51,7 @@ type NetworkReconciler struct {
 // +kubebuilder:rbac:groups=ethereum.kotal.io,resources=networks,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ethereum.kotal.io,resources=networks/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=watch;get;list;create;update;delete
-// +kubebuilder:rbac:groups=core,resources=secrets;services;configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list
+// +kubebuilder:rbac:groups=core,resources=secrets;services;configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 // Reconcile reconciles ethereum networks
 func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
@@ -303,18 +303,25 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 }
 
 // deleteRedundantNode deletes all nodes that has been removed from spec
+// network is the owner of the redundant resources (node deployment, svc, secret and pvc)
+// removing nodes from spec won't remove these resources by grabage collection
+// that's why we're deleting them manually
 func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []ethereumv1alpha1.Node, ns string) error {
 	log := r.Log.WithName("delete redunudant nodes")
 
 	var deps appsv1.DeploymentList
-	names := map[string]bool{}
+	var pvcs corev1.PersistentVolumeClaimList
+	var secrets corev1.SecretList
+	var services corev1.ServiceList
 
 	// all node names in the spec
+	names := map[string]bool{}
+
 	for _, node := range nodes {
 		names[node.Name] = true
 	}
 
-	// all nodes deployments that's currently running
+	// Node deployments
 	if err := r.Client.List(ctx, &deps, client.MatchingLabels{"app": "node"}); err != nil {
 		log.Error(err, "unable to list all node deployments")
 		return err
@@ -323,11 +330,64 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 	for _, dep := range deps.Items {
 		name := dep.GetName()
 		if exist := names[name]; !exist {
-			log.Info(fmt.Sprintf("node (%s) deployment doesn't exist anymore in the spec", name))
 			log.Info(fmt.Sprintf("deleting node (%s) deployment", name))
 
 			if err := r.Client.Delete(ctx, &dep); err != nil {
 				log.Error(err, fmt.Sprintf("unable to delete node (%s) deployment", name))
+				return err
+			}
+		}
+	}
+
+	// Node PVCs
+	if err := r.Client.List(ctx, &pvcs, client.MatchingLabels{"app": "node-pvc"}); err != nil {
+		log.Error(err, "unable to list all node pvcs")
+		return err
+	}
+
+	for _, pvc := range pvcs.Items {
+		name := pvc.GetName()
+		if exist := names[name]; !exist {
+			log.Info(fmt.Sprintf("deleting node (%s) pvc", name))
+
+			if err := r.Client.Delete(ctx, &pvc); err != nil {
+				log.Error(err, fmt.Sprintf("unable to delete node (%s) pvc", name))
+				return err
+			}
+		}
+	}
+
+	// Node Secrets
+	if err := r.Client.List(ctx, &secrets, client.MatchingLabels{"app": "node-secret"}); err != nil {
+		log.Error(err, "unable to list all node secrets")
+		return err
+	}
+
+	for _, secret := range secrets.Items {
+		name := secret.GetName()
+		if exist := names[name]; !exist {
+			log.Info(fmt.Sprintf("deleting node (%s) secret", name))
+
+			if err := r.Client.Delete(ctx, &secret); err != nil {
+				log.Error(err, fmt.Sprintf("unable to delete node (%s) secret", name))
+				return err
+			}
+		}
+	}
+
+	// Node Services
+	if err := r.Client.List(ctx, &services, client.MatchingLabels{"app": "node-service"}); err != nil {
+		log.Error(err, "unable to list all node services")
+		return err
+	}
+
+	for _, service := range services.Items {
+		name := service.GetName()
+		if exist := names[name]; !exist {
+			log.Info(fmt.Sprintf("deleting node (%s) service", name))
+
+			if err := r.Client.Delete(ctx, &service); err != nil {
+				log.Error(err, fmt.Sprintf("unable to delete node (%s) service", name))
 				return err
 			}
 		}
@@ -338,6 +398,10 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 
 // specNodeDataPVC update node data pvc spec
 func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim) {
+	pvc.ObjectMeta.Labels = map[string]string{
+		"app":      "node-pvc",
+		"instance": pvc.Name,
+	}
 	pvc.Spec = corev1.PersistentVolumeClaimSpec{
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
@@ -513,6 +577,16 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 	return err
 }
 
+func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, nodekey string) {
+	secret.ObjectMeta.Labels = map[string]string{
+		"app":      "node-secret",
+		"instance": secret.Name,
+	}
+	secret.StringData = map[string]string{
+		"nodekey": nodekey,
+	}
+}
+
 // reconcileNodeSecret creates node secret if it doesn't exist, update it if it exists
 func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, nodekey string) (publicKey string, err error) {
 
@@ -535,10 +609,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 			return err
 		}
 
-		secret.StringData = map[string]string{
-			// save hex private key without 0x
-			"nodekey": privateKey,
-		}
+		r.specNodeSecret(secret, privateKey)
 
 		return nil
 	})
@@ -552,6 +623,10 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 
 // specNodeService updates node service spec
 func (r *NetworkReconciler) specNodeService(svc *corev1.Service) {
+	svc.ObjectMeta.Labels = map[string]string{
+		"app":      "node-service",
+		"instance": svc.Name,
+	}
 	svc.Spec.Ports = []corev1.ServicePort{
 		{
 			Name:       "discovery",
