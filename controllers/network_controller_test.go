@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	ethereumv1alpha1 "github.com/mfarghaly/kotal/api/v1alpha1"
@@ -18,7 +19,13 @@ var _ = Describe("Ethereum network", func() {
 
 	const (
 		sleepTime  = 5 * time.Second
+		interval   = 2 * time.Second
+		timeout    = 30 * time.Second
 		privatekey = ethereumv1alpha1.PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
+	)
+
+	var (
+		useExistingCluster = os.Getenv("USE_EXISTING_CLUSTER") == "true"
 	)
 
 	Context("Joining Rinkeby", func() {
@@ -158,12 +165,12 @@ var _ = Describe("Ethereum network", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSecret)).ToNot(Succeed())
 		})
 
-		It("Should create bootnode service (not a bootnode)", func() {
+		It("Should not create bootnode service (not a bootnode)", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
 		})
 
-		It("Should update the network by removing noed-2", func() {
+		It("Should update the network by removing node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			fetched.Spec.Nodes = fetched.Spec.Nodes[:1]
@@ -174,8 +181,19 @@ var _ = Describe("Ethereum network", func() {
 			time.Sleep(sleepTime)
 		})
 
-		// In real cluster scenario
-		// TODO: test node-2 resources deleted after update
+		if useExistingCluster {
+			It("Should delete node-2 deployment", func() {
+				nodeDep := &appsv1.Deployment{}
+				Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).ToNot(Succeed())
+			})
+
+			It("Should delete node-2 data persistent volume", func() {
+				Eventually(func() error {
+					nodePVC := &v1.PersistentVolumeClaim{}
+					return k8sClient.Get(context.Background(), node2Key, nodePVC)
+				}, timeout, interval).ShouldNot(Succeed())
+			})
+		}
 
 		It("Should delete network", func() {
 			toDelete := &ethereumv1alpha1.Network{}
@@ -189,8 +207,29 @@ var _ = Describe("Ethereum network", func() {
 			Expect(k8sClient.Get(context.Background(), key, fetched)).ToNot(Succeed())
 		})
 
-		// In real cluster scenario
-		// TODO: test node-1 resources deleted after update
+		if useExistingCluster {
+			It("Should delete bootnode deployment", func() {
+				nodeDep := &appsv1.Deployment{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).ToNot(Succeed())
+			})
+
+			It("Should delete bootnode data persistent volume", func() {
+				Eventually(func() error {
+					nodePVC := &v1.PersistentVolumeClaim{}
+					return k8sClient.Get(context.Background(), bootnodeKey, nodePVC)
+				}, timeout, interval).ShouldNot(Succeed())
+			})
+
+			It("Should delete bootnode privatekey secret", func() {
+				nodeSecret := &v1.Secret{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).ToNot(Succeed())
+			})
+
+			It("Should delete bootnode service", func() {
+				nodeSvc := &v1.Service{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).ToNot(Succeed())
+			})
+		}
 
 	})
 
