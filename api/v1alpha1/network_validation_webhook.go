@@ -160,6 +160,12 @@ func (r *Network) Validate() field.ErrorList {
 		validateErrors = append(validateErrors, err)
 	}
 
+	// consensus: must be provided if genesis is provided
+	if r.Spec.Genesis != nil && r.Spec.Consensus == "" {
+		err := field.Invalid(field.NewPath("spec").Child("consensus"), "", "must be specified if spec.genesis is provided")
+		validateErrors = append(validateErrors, err)
+	}
+
 	// validate non nil genesis
 	if r.Spec.Genesis != nil {
 		validateErrors = append(validateErrors, r.ValidateGenesis()...)

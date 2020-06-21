@@ -265,7 +265,7 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #10",
+			Title: "network #11",
 			Network: &Network{
 				Spec: NetworkSpec{
 					Consensus: IstanbulBFT,
@@ -290,7 +290,7 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #10",
+			Title: "network #12",
 			Network: &Network{
 				Spec: NetworkSpec{
 					Consensus: IstanbulBFT,
@@ -311,6 +311,29 @@ var _ = Describe("Ethereum network validation", func() {
 					Field:    "spec.nodes[0].miner",
 					BadValue: false,
 					Detail:   "must set miner to true if coinbase is provided",
+				},
+			},
+		},
+		{
+			Title: "network #13",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
+					Nodes: []Node{
+						{
+							Name: "node-1",
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.consensus",
+					BadValue: "",
+					Detail:   "must be specified if spec.genesis is provided",
 				},
 			},
 		},
