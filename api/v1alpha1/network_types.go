@@ -235,11 +235,6 @@ const (
 // +kubebuilder:validation:Enum=fast;full;archive
 type SynchronizationMode string
 
-// String returns the string value of the synchronization mode
-func (sm SynchronizationMode) String() string {
-	return string(sm)
-}
-
 const (
 	//FastSynchronization is the full (archive) synchronization mode, alias for archive
 	FastSynchronization SynchronizationMode = "fast"
@@ -254,11 +249,6 @@ const (
 // API is RPC API to be exposed by RPC or web socket server
 // +kubebuilder:validation:Enum=admin;clique;debug;eea;eth;ibft;miner;net;perm;plugins;priv;txpool;web3
 type API string
-
-// String returns string value of the RPC service
-func (a API) String() string {
-	return string(a)
-}
 
 const (
 	// AdminAPI is administration API

@@ -755,7 +755,7 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 
 	// TODO: create per client type(besu, geth ... etc)
 	if node.SyncMode != "" {
-		appendArg(ArgSyncMode, node.SyncMode.String())
+		appendArg(ArgSyncMode, string(node.SyncMode))
 	}
 
 	if node.Miner {
@@ -781,7 +781,7 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 	if len(node.RPCAPI) != 0 {
 		apis := []string{}
 		for _, api := range node.RPCAPI {
-			apis = append(apis, api.String())
+			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		appendArg(ArgRPCHTTPAPI, commaSeperatedAPIs)
@@ -802,7 +802,7 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 	if len(node.WSAPI) != 0 {
 		apis := []string{}
 		for _, api := range node.WSAPI {
-			apis = append(apis, api.String())
+			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		appendArg(ArgRPCWSAPI, commaSeperatedAPIs)
