@@ -204,7 +204,7 @@ func (r *Network) ValidateUpdate(old runtime.Object) error {
 	}
 
 	if oldNetwork.Spec.Consensus != r.Spec.Consensus {
-		err := field.Invalid(field.NewPath("spec").Child("consensus"), r.Spec.Join, "field is immutable")
+		err := field.Invalid(field.NewPath("spec").Child("consensus"), r.Spec.Consensus, "field is immutable")
 		allErrors = append(allErrors, err)
 	}
 
