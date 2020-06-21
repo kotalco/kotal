@@ -41,6 +41,12 @@ const (
 	DefaultEIP150Hash = Hash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0")
 )
 
+// Ethash engine defaults
+const (
+	// DefaultEthashFixedDifficulty is the default ethash fixed difficulty
+	DefaultEthashFixedDifficulty uint = 1000
+)
+
 // Clique engine defaults
 const (
 	// DefaultCliqueBlockPeriod is the default clique block period
