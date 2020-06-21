@@ -15,6 +15,20 @@ import (
 
 var _ webhook.Validator = &Network{}
 
+var (
+	// ChainByID is public chains indexed by ID
+	ChainByID = map[uint]string{
+		1:    MainNetwork,
+		3:    RopstenNetwork,
+		4:    RinkebyNetwork,
+		5:    GoerliNetwork,
+		6:    KottiNetwork,
+		61:   ClassicNetwork,
+		63:   MordorNetwork,
+		2018: DevNetwork,
+	}
+)
+
 // ValidateMissingBootnodes validates that at least one bootnode in the network
 func (r *Network) ValidateMissingBootnodes() *field.Error {
 	// it's fine for a network of 1 node to have no bootnodes
@@ -98,17 +112,6 @@ func (r *Network) ValidateGenesis() field.ErrorList {
 
 	var allErrors field.ErrorList
 
-	chainByID := map[uint]string{
-		1:    "mainnet",
-		3:    "ropsten",
-		4:    "rinkeby",
-		5:    "goerli",
-		6:    "kotti",
-		61:   "classic",
-		63:   "mordor",
-		2018: "dev",
-	}
-
 	// join: can't specifiy genesis while joining existing network
 	if r.Spec.Join != "" {
 		err := field.Invalid(field.NewPath("spec").Child("join"), r.Spec.Join, "must be none if spec.genesis is specified")
@@ -116,8 +119,8 @@ func (r *Network) ValidateGenesis() field.ErrorList {
 	}
 
 	// don't use existing network chain id
-	if chain := chainByID[r.Spec.Genesis.ChainID]; chain != "" {
-		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("chainId"), r.Spec.Genesis.ChainID, fmt.Sprintf("can't use chain id of %s network to avoid tx replay", chain))
+	if chain := ChainByID[r.Spec.Genesis.ChainID]; chain != "" {
+		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("chainId"), fmt.Sprintf("%d", r.Spec.Genesis.ChainID), fmt.Sprintf("can't use chain id of %s network to avoid tx replay", chain))
 		allErrors = append(allErrors, err)
 	}
 

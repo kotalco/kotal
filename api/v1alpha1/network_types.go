@@ -20,8 +20,24 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+const (
+	// MainNetwork is ethereum main network
+	MainNetwork = "mainnet"
+	// RopstenNetwork is ropsten pow network
+	RopstenNetwork = "ropsten"
+	// RinkebyNetwork is rinkeby poa network
+	RinkebyNetwork = "rinkeby"
+	// GoerliNetwork is goerli poa cross-client network
+	GoerliNetwork = "goerli"
+	// KottiNetwork is kotti poa ethereum classic test network
+	KottiNetwork = "kotti"
+	// ClassicNetwork is ethereum classic network
+	ClassicNetwork = "classic"
+	// MordorNetwork is mordon poe ethereum classic test network
+	MordorNetwork = "mordor"
+	// DevNetwork is local development network
+	DevNetwork = "dev"
+)
 
 // NetworkSpec defines the desired state of Network
 type NetworkSpec struct {
