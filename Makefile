@@ -17,6 +17,9 @@ all: manager
 test: generate fmt vet manifests
 	go test ./... -v -ginkgo.v -coverprofile cover.out
 
+cover:
+	go tool cover -html=cover.out
+
 # Build manager binary
 manager: generate fmt vet
 	go build -o bin/manager main.go
