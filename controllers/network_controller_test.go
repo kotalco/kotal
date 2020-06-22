@@ -29,10 +29,14 @@ var _ = Describe("Ethereum network controller", func() {
 	)
 
 	Context("Joining Rinkeby", func() {
-
+		ns := &v1.Namespace{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "rinkeby",
+			},
+		}
 		key := types.NamespacedName{
 			Name:      "my-network",
-			Namespace: "default",
+			Namespace: ns.Name,
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
@@ -71,7 +75,14 @@ var _ = Describe("Ethereum network controller", func() {
 			Namespace: key.Namespace,
 		}
 
+		It(fmt.Sprintf("should create %s namespace", ns.Name), func() {
+			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
+		})
+
 		It("Should create the network", func() {
+			if !useExistingCluster {
+				toCreate.Default()
+			}
 			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
 			time.Sleep(sleepTime)
 		})
@@ -231,12 +242,20 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 		}
 
+		It(fmt.Sprintf("should delete %s namespace", ns.Name), func() {
+			Expect(k8sClient.Delete(context.Background(), ns)).Should(Succeed())
+		})
 	})
 
 	Context("private PoA network", func() {
+		ns := &v1.Namespace{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "poa",
+			},
+		}
 		key := types.NamespacedName{
 			Name:      "my-poa-network",
-			Namespace: "default",
+			Namespace: ns.Name,
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
@@ -283,7 +302,14 @@ var _ = Describe("Ethereum network controller", func() {
 			Namespace: key.Namespace,
 		}
 
+		It(fmt.Sprintf("should create %s namespace", ns.Name), func() {
+			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
+		})
+
 		It("Should create the network", func() {
+			if !useExistingCluster {
+				toCreate.Default()
+			}
 			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
 			time.Sleep(sleepTime)
 		})
@@ -449,12 +475,21 @@ var _ = Describe("Ethereum network controller", func() {
 				Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(Succeed())
 			})
 		}
+
+		It(fmt.Sprintf("should delete %s namespace", ns.Name), func() {
+			Expect(k8sClient.Delete(context.Background(), ns)).Should(Succeed())
+		})
 	})
 
 	Context("private PoW network", func() {
+		ns := &v1.Namespace{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "pow",
+			},
+		}
 		key := types.NamespacedName{
 			Name:      "my-pow-network",
-			Namespace: "default",
+			Namespace: ns.Name,
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
@@ -499,7 +534,14 @@ var _ = Describe("Ethereum network controller", func() {
 			Namespace: key.Namespace,
 		}
 
+		It(fmt.Sprintf("should create %s namespace", ns.Name), func() {
+			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
+		})
+
 		It("Should create the network", func() {
+			if !useExistingCluster {
+				toCreate.Default()
+			}
 			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
 			time.Sleep(sleepTime)
 		})
@@ -663,12 +705,21 @@ var _ = Describe("Ethereum network controller", func() {
 				Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(Succeed())
 			})
 		}
+
+		It(fmt.Sprintf("should delete %s namespace", ns.Name), func() {
+			Expect(k8sClient.Delete(context.Background(), ns)).Should(Succeed())
+		})
 	})
 
 	Context("private ibft2 network", func() {
+		ns := &v1.Namespace{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "ibft2",
+			},
+		}
 		key := types.NamespacedName{
 			Name:      "my-ibft2-network",
-			Namespace: "default",
+			Namespace: ns.Name,
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
@@ -717,7 +768,14 @@ var _ = Describe("Ethereum network controller", func() {
 			Namespace: key.Namespace,
 		}
 
+		It(fmt.Sprintf("should create %s namespace", ns.Name), func() {
+			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
+		})
+
 		It("Should create the network", func() {
+			if !useExistingCluster {
+				toCreate.Default()
+			}
 			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
 			time.Sleep(sleepTime)
 		})
@@ -883,6 +941,10 @@ var _ = Describe("Ethereum network controller", func() {
 				Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(Succeed())
 			})
 		}
+
+		It(fmt.Sprintf("should delete %s namespace", ns.Name), func() {
+			Expect(k8sClient.Delete(context.Background(), ns)).Should(Succeed())
+		})
 	})
 
 })
