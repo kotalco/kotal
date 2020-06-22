@@ -337,6 +337,34 @@ var _ = Describe("Ethereum network validation", func() {
 				},
 			},
 		},
+		{
+			Title: "network #14",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: ProofOfAuthority,
+					Genesis: &Genesis{
+						ChainID: 55555,
+						Forks: &Forks{
+							DAO:       1,
+							Homestead: 2,
+						},
+					},
+					Nodes: []Node{
+						{
+							Name: "node-1",
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.genesis.forks.dao",
+					BadValue: "1",
+					Detail:   "Fork dao can't be activated (at block 1) before fork homestead (at block 2)",
+				},
+			},
+		},
 	}
 
 	// errorsToCauses converts field error list into array of status cause

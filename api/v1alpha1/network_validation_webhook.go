@@ -141,7 +141,53 @@ func (r *Network) ValidateGenesis() field.ErrorList {
 		err := field.Invalid(field.NewPath("spec").Child("consensus"), r.Spec.Consensus, fmt.Sprintf("must be %s if spec.genesis.ibft2 is specified", IstanbulBFT))
 		allErrors = append(allErrors, err)
 	}
+
+	// validate forks order
+	allErrors = append(allErrors, r.ValidateForksOrder()...)
 	return allErrors
+}
+
+// ValidateForksOrder validates that forks are in correct order
+func (r *Network) ValidateForksOrder() field.ErrorList {
+	var orderErrors field.ErrorList
+	forks := r.Spec.Genesis.Forks
+
+	forkNames := []string{
+		"homestead",
+		"dao",
+		"eip150",
+		"eip155",
+		"eip155",
+		"byzantium",
+		"constantinople",
+		"petersburg",
+		"istanbul",
+		"muirglacier",
+	}
+
+	milestones := []uint{
+		forks.Homestead,
+		forks.DAO,
+		forks.EIP150,
+		forks.EIP155,
+		forks.EIP155,
+		forks.Byzantium,
+		forks.Constantinople,
+		forks.Petersburg,
+		forks.Istanbul,
+		forks.MuirGlacier,
+	}
+
+	for i := 1; i < len(milestones); i++ {
+		if milestones[i] < milestones[i-1] {
+			path := field.NewPath("spec").Child("genesis").Child("forks").Child(forkNames[i])
+			msg := fmt.Sprintf("Fork %s can't be activated (at block %d) before fork %s (at block %d)", forkNames[i], milestones[i], forkNames[i-1], milestones[i-1])
+			orderErrors = append(orderErrors, field.Invalid(path, fmt.Sprintf("%d", milestones[i]), msg))
+		}
+	}
+
+	return orderErrors
+
 }
 
 // Validate is the shared validation between create and update
