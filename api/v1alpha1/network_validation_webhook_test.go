@@ -538,6 +538,7 @@ var _ = Describe("Ethereum network validation", func() {
 			func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
+					cc.Network.Default()
 					err := cc.Network.ValidateCreate()
 
 					errStatus := err.(*errors.StatusError)
@@ -555,6 +556,7 @@ var _ = Describe("Ethereum network validation", func() {
 			func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
+					cc.NewNetwork.Default()
 					err := cc.NewNetwork.ValidateUpdate(cc.OldNetwork)
 
 					errStatus := err.(*errors.StatusError)
