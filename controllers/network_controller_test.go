@@ -67,11 +67,11 @@ var _ = Describe("Ethereum network controller", func() {
 			BlockOwnerDeletion: &t,
 		}
 		bootnodeKey := types.NamespacedName{
-			Name:      "node-1",
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-1"),
 			Namespace: key.Namespace,
 		}
 		node2Key := types.NamespacedName{
-			Name:      "node-2",
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-2"),
 			Namespace: key.Namespace,
 		}
 
@@ -294,11 +294,11 @@ var _ = Describe("Ethereum network controller", func() {
 			BlockOwnerDeletion: &t,
 		}
 		bootnodeKey := types.NamespacedName{
-			Name:      "node-1",
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-1"),
 			Namespace: key.Namespace,
 		}
 		node2Key := types.NamespacedName{
-			Name:      "node-2",
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-2"),
 			Namespace: key.Namespace,
 		}
 
@@ -526,11 +526,11 @@ var _ = Describe("Ethereum network controller", func() {
 			BlockOwnerDeletion: &t,
 		}
 		bootnodeKey := types.NamespacedName{
-			Name:      "node-1",
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-1"),
 			Namespace: key.Namespace,
 		}
 		node2Key := types.NamespacedName{
-			Name:      "node-2",
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-2"),
 			Namespace: key.Namespace,
 		}
 
@@ -760,11 +760,11 @@ var _ = Describe("Ethereum network controller", func() {
 			BlockOwnerDeletion: &t,
 		}
 		bootnodeKey := types.NamespacedName{
-			Name:      "node-1",
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-1"),
 			Namespace: key.Namespace,
 		}
 		node2Key := types.NamespacedName{
-			Name:      "node-2",
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-2"),
 			Namespace: key.Namespace,
 		}
 

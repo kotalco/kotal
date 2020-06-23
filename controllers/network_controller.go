@@ -106,7 +106,7 @@ func (r *NetworkReconciler) reconcileNodes(ctx context.Context, network *ethereu
 
 	}
 
-	if err := r.deleteRedundantNodes(ctx, network.Spec.Nodes, ns); err != nil {
+	if err := r.deleteRedundantNodes(ctx, network); err != nil {
 		return err
 	}
 
@@ -116,7 +116,13 @@ func (r *NetworkReconciler) reconcileNodes(ctx context.Context, network *ethereu
 func (r *NetworkReconciler) reconcileGenesis(ctx context.Context, network *ethereumv1alpha1.Network) error {
 	log := r.Log.WithValues("genesis block", network.Name)
 
-	configmap := r.createConfigmapForGenesis(network.Name, network.Namespace)
+	configmap := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      fmt.Sprintf("%s-genesis", network.Name),
+			Namespace: network.Namespace,
+		},
+	}
+
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
 		if err := ctrl.SetControllerReference(network, configmap, r.Scheme); err != nil {
 			log.Error(err, "Unable to set controller reference")
@@ -136,15 +142,6 @@ func (r *NetworkReconciler) reconcileGenesis(ctx context.Context, network *ether
 	}
 
 	return nil
-}
-
-func (r *NetworkReconciler) createConfigmapForGenesis(name, ns string) *corev1.ConfigMap {
-	return &corev1.ConfigMap{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-genesis", name),
-			Namespace: ns,
-		},
-	}
 }
 
 // createExtraDataFromSigners creates extraDta genesis field value from initial signers
@@ -306,7 +303,7 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 // network is the owner of the redundant resources (node deployment, svc, secret and pvc)
 // removing nodes from spec won't remove these resources by grabage collection
 // that's why we're deleting them manually
-func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []ethereumv1alpha1.Node, ns string) error {
+func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *ethereumv1alpha1.Network) error {
 	log := r.Log.WithName("delete redunudant nodes")
 
 	var deps appsv1.DeploymentList
@@ -314,15 +311,18 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 	var secrets corev1.SecretList
 	var services corev1.ServiceList
 
+	ns := network.Namespace
+	nodes := network.Spec.Nodes
 	// all node names in the spec
 	names := map[string]bool{}
 
 	for _, node := range nodes {
-		names[node.Name] = true
+		nodeName := fmt.Sprintf("%s-%s", network.Name, node.Name)
+		names[nodeName] = true
 	}
 
 	// Node deployments
-	if err := r.Client.List(ctx, &deps, client.MatchingLabels{"app": "node"}); err != nil {
+	if err := r.Client.List(ctx, &deps, client.MatchingLabels{"app": "node"}, client.InNamespace(ns)); err != nil {
 		log.Error(err, "unable to list all node deployments")
 		return err
 	}
@@ -340,7 +340,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 	}
 
 	// Node PVCs
-	if err := r.Client.List(ctx, &pvcs, client.MatchingLabels{"app": "node-pvc"}); err != nil {
+	if err := r.Client.List(ctx, &pvcs, client.MatchingLabels{"app": "node-pvc"}, client.InNamespace(ns)); err != nil {
 		log.Error(err, "unable to list all node pvcs")
 		return err
 	}
@@ -358,7 +358,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 	}
 
 	// Node Secrets
-	if err := r.Client.List(ctx, &secrets, client.MatchingLabels{"app": "node-secret"}); err != nil {
+	if err := r.Client.List(ctx, &secrets, client.MatchingLabels{"app": "node-secret"}, client.InNamespace(ns)); err != nil {
 		log.Error(err, "unable to list all node secrets")
 		return err
 	}
@@ -376,7 +376,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, nodes []et
 	}
 
 	// Node Services
-	if err := r.Client.List(ctx, &services, client.MatchingLabels{"app": "node-service"}); err != nil {
+	if err := r.Client.List(ctx, &services, client.MatchingLabels{"app": "node-service"}, client.InNamespace(ns)); err != nil {
 		log.Error(err, "unable to list all node services")
 		return err
 	}
@@ -420,7 +420,7 @@ func (r *NetworkReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethe
 
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
+			Name:      fmt.Sprintf("%s-%s", network.Name, node.Name),
 			Namespace: network.Namespace,
 		},
 	}
@@ -448,7 +448,7 @@ func (r *NetworkReconciler) createNodeVolumes(node, network string, nodekey, cus
 			Name: "nodekey",
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
-					SecretName: node,
+					SecretName: fmt.Sprintf("%s-%s", network, node),
 				},
 			},
 		}
@@ -473,7 +473,7 @@ func (r *NetworkReconciler) createNodeVolumes(node, network string, nodekey, cus
 		Name: "data",
 		VolumeSource: corev1.VolumeSource{
 			PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-				ClaimName: node,
+				ClaimName: fmt.Sprintf("%s-%s", network, node),
 			},
 		},
 	}
@@ -561,7 +561,7 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 
 	dep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
+			Name:      fmt.Sprintf("%s-%s", network.Name, node.Name),
 			Namespace: network.Namespace,
 		},
 	}
@@ -592,7 +592,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
+			Name:      fmt.Sprintf("%s-%s", network.Name, node.Name),
 			Namespace: network.Namespace,
 		},
 	}
@@ -653,7 +653,7 @@ func (r *NetworkReconciler) reconcileNodeService(ctx context.Context, node *ethe
 
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
+			Name:      fmt.Sprintf("%s-%s", network.Name, node.Name),
 			Namespace: network.Namespace,
 		},
 	}
