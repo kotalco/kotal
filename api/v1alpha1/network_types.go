@@ -17,6 +17,8 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"fmt"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -112,6 +114,11 @@ type Genesis struct {
 
 	// Timestamp is block creation date
 	Timestamp HexString `json:"timestamp,omitempty"`
+}
+
+// ConfigmapName returns name to be used by genesis configmap
+func (g *Genesis) ConfigmapName(network string) string {
+	return fmt.Sprintf("%s-genesis", network)
 }
 
 // PoA is Shared PoA engine config
@@ -355,13 +362,33 @@ type Node struct {
 }
 
 // IsBootnode is whether node is bootnode or no
-func (n Node) IsBootnode() bool {
+func (n *Node) IsBootnode() bool {
 	return n.Bootnode
 }
 
 // WithNodekey is whether node is configured with private key
-func (n Node) WithNodekey() bool {
+func (n *Node) WithNodekey() bool {
 	return n.Nodekey != ""
+}
+
+// DeploymentName returns name to be used by node deployment
+func (n *Node) DeploymentName(network string) string {
+	return fmt.Sprintf("%s-%s", network, n.Name)
+}
+
+// PVCName returns name to be used by node pvc
+func (n *Node) PVCName(network string) string {
+	return n.DeploymentName(network) // same as deployment name
+}
+
+// SecretName returns name to be used by node secret
+func (n *Node) SecretName(network string) string {
+	return n.DeploymentName(network) // same as deployment name
+}
+
+// ServiceName returns name to be used by node service
+func (n *Node) ServiceName(network string) string {
+	return n.DeploymentName(network) // same as deployment name
 }
 
 // NetworkStatus defines the observed state of Network

@@ -118,7 +118,7 @@ func (r *NetworkReconciler) reconcileGenesis(ctx context.Context, network *ether
 
 	configmap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-genesis", network.Name),
+			Name:      network.Spec.Genesis.ConfigmapName(network.Name),
 			Namespace: network.Namespace,
 		},
 	}
@@ -317,8 +317,8 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 	names := map[string]bool{}
 
 	for _, node := range nodes {
-		nodeName := fmt.Sprintf("%s-%s", network.Name, node.Name)
-		names[nodeName] = true
+		depName := node.DeploymentName(network.Name)
+		names[depName] = true
 	}
 
 	// Node deployments
@@ -420,7 +420,7 @@ func (r *NetworkReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethe
 
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-%s", network.Name, node.Name),
+			Name:      node.PVCName(network.Name),
 			Namespace: network.Namespace,
 		},
 	}
@@ -439,29 +439,29 @@ func (r *NetworkReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethe
 }
 
 // createNodeVolumes creates all the required volumes for the node
-func (r *NetworkReconciler) createNodeVolumes(node, network string, nodekey, customGenesis bool) []corev1.Volume {
+func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) []corev1.Volume {
 
 	volumes := []corev1.Volume{}
 
-	if nodekey {
+	if node.WithNodekey() {
 		nodekeyVolume := corev1.Volume{
 			Name: "nodekey",
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
-					SecretName: fmt.Sprintf("%s-%s", network, node),
+					SecretName: node.SecretName(network.Name),
 				},
 			},
 		}
 		volumes = append(volumes, nodekeyVolume)
 	}
 
-	if customGenesis {
+	if network.Spec.Genesis != nil {
 		genesisVolume := corev1.Volume{
 			Name: "genesis",
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: fmt.Sprintf("%s-genesis", network),
+						Name: network.Spec.Genesis.ConfigmapName(network.Name),
 					},
 				},
 			},
@@ -473,7 +473,7 @@ func (r *NetworkReconciler) createNodeVolumes(node, network string, nodekey, cus
 		Name: "data",
 		VolumeSource: corev1.VolumeSource{
 			PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-				ClaimName: fmt.Sprintf("%s-%s", network, node),
+				ClaimName: node.PVCName(network.Name),
 			},
 		},
 	}
@@ -483,11 +483,11 @@ func (r *NetworkReconciler) createNodeVolumes(node, network string, nodekey, cus
 }
 
 // createNodeVolumeMounts creates all required volume mounts for the node
-func (r *NetworkReconciler) createNodeVolumeMounts(node, network string, nodekey, customGenesis bool) []corev1.VolumeMount {
+func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) []corev1.VolumeMount {
 
 	volumeMounts := []corev1.VolumeMount{}
 
-	if nodekey {
+	if node.WithNodekey() {
 		nodekeyMount := corev1.VolumeMount{
 			Name:      "nodekey",
 			MountPath: PathNodekey,
@@ -496,7 +496,7 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node, network string, nodekey
 		volumeMounts = append(volumeMounts, nodekeyMount)
 	}
 
-	if customGenesis {
+	if network.Spec.Genesis != nil {
 		genesisMount := corev1.VolumeMount{
 			Name:      "genesis",
 			MountPath: PathGenesisFile,
@@ -561,7 +561,7 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 
 	dep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-%s", network.Name, node.Name),
+			Name:      node.DeploymentName(network.Name),
 			Namespace: network.Namespace,
 		},
 	}
@@ -592,7 +592,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-%s", network.Name, node.Name),
+			Name:      node.SecretName(network.Name),
 			Namespace: network.Namespace,
 		},
 	}
@@ -653,7 +653,7 @@ func (r *NetworkReconciler) reconcileNodeService(ctx context.Context, node *ethe
 
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-%s", network.Name, node.Name),
+			Name:      node.ServiceName(network.Name),
 			Namespace: network.Namespace,
 		},
 	}
@@ -681,15 +681,13 @@ func (r *NetworkReconciler) reconcileNodeService(ctx context.Context, node *ethe
 // updates existing deployments if node spec changed
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (enodeURL string, err error) {
 
-	customGenesis := network.Spec.Join == ""
-
 	if err = r.reconcileNodeDataPVC(ctx, node, network); err != nil {
 		return
 	}
 
-	args := r.createArgsForClient(node, network.Spec.Join, bootnodes, customGenesis)
-	volumes := r.createNodeVolumes(node.Name, network.Name, node.WithNodekey(), customGenesis)
-	mounts := r.createNodeVolumeMounts(node.Name, network.Name, node.WithNodekey(), customGenesis)
+	args := r.createArgsForClient(node, network, bootnodes)
+	volumes := r.createNodeVolumes(node, network)
+	mounts := r.createNodeVolumeMounts(node, network)
 
 	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts); err != nil {
 		return
@@ -720,7 +718,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 }
 
 // createArgsForClient create arguments to be passed to the node client from node specs
-func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, join string, bootnodes []string, customGenesis bool) []string {
+func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) []string {
 	args := []string{ArgNatMethod, "KUBERNETES"}
 	// TODO: update after admissionmutating webhook
 	// because it will default all args
@@ -734,14 +732,14 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, joi
 		appendArg(ArgNodePrivateKey, fmt.Sprintf("%s/nodekey", PathNodekey))
 	}
 
-	if customGenesis {
+	if network.Spec.Genesis != nil {
 		appendArg(ArgGenesisFile, fmt.Sprintf("%s/genesis.json", PathGenesisFile))
 	}
 
 	appendArg(ArgDataPath, PathBlockchainData)
 
-	if join != "" {
-		appendArg(ArgNetwork, join)
+	if network.Spec.Join != "" {
+		appendArg(ArgNetwork, network.Spec.Join)
 	}
 
 	if node.P2PPort != 0 {

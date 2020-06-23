@@ -1,20 +1,30 @@
 package v1alpha1
 
-import "testing"
+import (
+	"testing"
 
-func TestIsBootnode(t *testing.T) {
-	n := &Network{
-		Spec: NetworkSpec{
-			Join: RinkebyNetwork,
-			Nodes: []Node{
-				{
-					Name: "node-1",
-				},
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+var network = &Network{
+	ObjectMeta: metav1.ObjectMeta{
+		Name: "test-network",
+	},
+	Spec: NetworkSpec{
+		Join: RinkebyNetwork,
+		Nodes: []Node{
+			{
+				Name:    "node-1",
+				Nodekey: PrivateKey("0xd42baddc4e6072f670da327e2ebc835d695bb9b911642dd70b81d522f0afe90c"),
 			},
 		},
-	}
+	},
+}
+
+func TestIsBootnode(t *testing.T) {
+	node := network.Spec.Nodes[0]
 	expected := false
-	got := n.Spec.Nodes[0].IsBootnode()
+	got := node.IsBootnode()
 
 	if got != expected {
 		t.Errorf("Expecting bootnode to be %t got %t", expected, got)
@@ -23,21 +33,60 @@ func TestIsBootnode(t *testing.T) {
 }
 
 func TestWithNodekey(t *testing.T) {
-	n := &Network{
-		Spec: NetworkSpec{
-			Join: RinkebyNetwork,
-			Nodes: []Node{
-				{
-					Name:    "node-1",
-					Nodekey: PrivateKey("0xd42baddc4e6072f670da327e2ebc835d695bb9b911642dd70b81d522f0afe90c"),
-				},
-			},
-		},
-	}
+	node := network.Spec.Nodes[0]
 	expected := true
-	got := n.Spec.Nodes[0].WithNodekey()
+	got := node.WithNodekey()
 
 	if got != expected {
 		t.Errorf("Expecting bootnode to be %t got %t", expected, got)
+	}
+}
+
+func TestDeploymentName(t *testing.T) {
+	node := network.Spec.Nodes[0]
+	expected := "test-network-node-1"
+	got := node.DeploymentName(network.Name)
+
+	if got != expected {
+		t.Errorf("Expecting bootnode to be %s got %s", expected, got)
+	}
+}
+
+func TestPVCName(t *testing.T) {
+	node := network.Spec.Nodes[0]
+	expected := "test-network-node-1"
+	got := node.PVCName(network.Name)
+
+	if got != expected {
+		t.Errorf("Expecting bootnode to be %s got %s", expected, got)
+	}
+}
+
+func TestSecretName(t *testing.T) {
+	node := network.Spec.Nodes[0]
+	expected := "test-network-node-1"
+	got := node.SecretName(network.Name)
+
+	if got != expected {
+		t.Errorf("Expecting bootnode to be %s got %s", expected, got)
+	}
+}
+
+func TestServiceName(t *testing.T) {
+	node := network.Spec.Nodes[0]
+	expected := "test-network-node-1"
+	got := node.ServiceName(network.Name)
+
+	if got != expected {
+		t.Errorf("Expecting bootnode to be %s got %s", expected, got)
+	}
+}
+
+func TestConfigmapName(t *testing.T) {
+	expected := "test-network-genesis"
+	got := network.Spec.Genesis.ConfigmapName(network.Name)
+
+	if got != expected {
+		t.Errorf("Expecting bootnode to be %s got %s", expected, got)
 	}
 }

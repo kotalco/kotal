@@ -10,8 +10,6 @@ import (
 
 var _ = Describe("Ethereum client arguments", func() {
 
-	// var noNetwork string
-	var genesis bool
 	var bootnodes []string
 	rinkeby := "rinkeby"
 	bootnode := "enode://publickey@ip:port"
@@ -20,18 +18,23 @@ var _ = Describe("Ethereum client arguments", func() {
 
 	cases := []struct {
 		title     string
-		join      string
-		genesis   bool
 		bootnodes []string
-		node      *ethereumv1alpha1.Node
+		network   *ethereumv1alpha1.Network
 		result    []string
 	}{
 		{
 			"node joining rinkeby",
-			rinkeby,
-			genesis,
 			bootnodes,
-			&ethereumv1alpha1.Node{},
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name: "node-1",
+						},
+					},
+				},
+			},
 			[]string{
 				ArgNatMethod,
 				ArgNetwork,
@@ -42,12 +45,18 @@ var _ = Describe("Ethereum client arguments", func() {
 		},
 		{
 			"bootnode joining rinkeby",
-			rinkeby,
-			genesis,
 			bootnodes,
-			&ethereumv1alpha1.Node{
-				Bootnode: true,
-				Nodekey:  nodekey,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Bootnode: true,
+							Nodekey:  nodekey,
+						},
+					},
+				},
 			},
 			[]string{
 				ArgNatMethod,
@@ -60,13 +69,19 @@ var _ = Describe("Ethereum client arguments", func() {
 		},
 		{
 			"bootnode joining rinkeby with rpc",
-			rinkeby,
-			genesis,
 			bootnodes,
-			&ethereumv1alpha1.Node{
-				Bootnode: true,
-				Nodekey:  nodekey,
-				RPC:      true,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Bootnode: true,
+							Nodekey:  nodekey,
+							RPC:      true,
+						},
+					},
+				},
 			},
 			[]string{
 				ArgNatMethod,
@@ -80,18 +95,24 @@ var _ = Describe("Ethereum client arguments", func() {
 		},
 		{
 			"bootnode joining rinkeby with rpc settings",
-			rinkeby,
-			genesis,
 			bootnodes,
-			&ethereumv1alpha1.Node{
-				Bootnode: true,
-				Nodekey:  nodekey,
-				RPC:      true,
-				RPCPort:  8599,
-				RPCAPI: []ethereumv1alpha1.API{
-					ethereumv1alpha1.ETHAPI,
-					ethereumv1alpha1.Web3API,
-					ethereumv1alpha1.NetworkAPI,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Bootnode: true,
+							Nodekey:  nodekey,
+							RPC:      true,
+							RPCPort:  8599,
+							RPCAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.ETHAPI,
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.NetworkAPI,
+							},
+						},
+					},
 				},
 			},
 			[]string{
@@ -110,26 +131,32 @@ var _ = Describe("Ethereum client arguments", func() {
 		},
 		{
 			"bootnode joining rinkeby with rpc, ws settings",
-			rinkeby,
-			genesis,
 			bootnodes,
-			&ethereumv1alpha1.Node{
-				Bootnode: true,
-				Nodekey:  nodekey,
-				RPC:      true,
-				RPCHost:  "0.0.0.0",
-				RPCPort:  8599,
-				RPCAPI: []ethereumv1alpha1.API{
-					ethereumv1alpha1.ETHAPI,
-					ethereumv1alpha1.Web3API,
-					ethereumv1alpha1.NetworkAPI,
-				},
-				WS:     true,
-				WSHost: "127.0.0.1",
-				WSPort: 8588,
-				WSAPI: []ethereumv1alpha1.API{
-					ethereumv1alpha1.Web3API,
-					ethereumv1alpha1.ETHAPI,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Bootnode: true,
+							Nodekey:  nodekey,
+							RPC:      true,
+							RPCHost:  "0.0.0.0",
+							RPCPort:  8599,
+							RPCAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.ETHAPI,
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.NetworkAPI,
+							},
+							WS:     true,
+							WSHost: "127.0.0.1",
+							WSPort: 8588,
+							WSAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.ETHAPI,
+							},
+						},
+					},
 				},
 			},
 			[]string{
@@ -157,31 +184,37 @@ var _ = Describe("Ethereum client arguments", func() {
 		},
 		{
 			"bootnode joining rinkeby with rpc, ws, graphql settings and cors domains",
-			rinkeby,
-			genesis,
 			bootnodes,
-			&ethereumv1alpha1.Node{
-				Bootnode: true,
-				Nodekey:  nodekey,
-				RPC:      true,
-				RPCHost:  "0.0.0.0",
-				RPCPort:  8599,
-				RPCAPI: []ethereumv1alpha1.API{
-					ethereumv1alpha1.ETHAPI,
-					ethereumv1alpha1.Web3API,
-					ethereumv1alpha1.NetworkAPI,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Bootnode: true,
+							Nodekey:  nodekey,
+							RPC:      true,
+							RPCHost:  "0.0.0.0",
+							RPCPort:  8599,
+							RPCAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.ETHAPI,
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.NetworkAPI,
+							},
+							CORSDomains: []string{"cors.example.com"},
+							WS:          true,
+							WSHost:      "127.0.0.1",
+							WSPort:      8588,
+							WSAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.ETHAPI,
+							},
+							GraphQL:     true,
+							GraphQLHost: "127.0.0.2",
+							GraphQLPort: 8511,
+						},
+					},
 				},
-				CORSDomains: []string{"cors.example.com"},
-				WS:          true,
-				WSHost:      "127.0.0.1",
-				WSPort:      8588,
-				WSAPI: []ethereumv1alpha1.API{
-					ethereumv1alpha1.Web3API,
-					ethereumv1alpha1.ETHAPI,
-				},
-				GraphQL:     true,
-				GraphQLHost: "127.0.0.2",
-				GraphQLPort: 8511,
 			},
 			[]string{
 				ArgNatMethod,
@@ -216,12 +249,19 @@ var _ = Describe("Ethereum client arguments", func() {
 		},
 		{
 			"miner node of private network that connects to bootnode",
-			"",   // no network
-			true, // genesis
 			[]string{bootnode},
-			&ethereumv1alpha1.Node{
-				Miner:    true,
-				Coinbase: coinbase,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join:    rinkeby,
+					Genesis: &ethereumv1alpha1.Genesis{},
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Miner:    true,
+							Coinbase: coinbase,
+						},
+					},
+				},
 			},
 			[]string{
 				ArgNatMethod,
@@ -240,7 +280,7 @@ var _ = Describe("Ethereum client arguments", func() {
 		func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
-				args := reconciler.createArgsForClient(cc.node, cc.join, cc.bootnodes, cc.genesis)
+				args := reconciler.createArgsForClient(&cc.network.Spec.Nodes[0], cc.network, cc.bootnodes)
 				Expect(args).To(ContainElements(cc.result))
 			})
 		}()
