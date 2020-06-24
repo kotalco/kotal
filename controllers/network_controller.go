@@ -311,10 +311,10 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 	var secrets corev1.SecretList
 	var services corev1.ServiceList
 
-	ns := network.Namespace
 	nodes := network.Spec.Nodes
-	// all node names in the spec
 	names := map[string]bool{}
+	matchingLabels := client.MatchingLabels{"name": "node"}
+	inNamespace := client.InNamespace(network.Namespace)
 
 	for _, node := range nodes {
 		depName := node.DeploymentName(network.Name)
@@ -322,7 +322,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 	}
 
 	// Node deployments
-	if err := r.Client.List(ctx, &deps, client.MatchingLabels{"app": "node"}, client.InNamespace(ns)); err != nil {
+	if err := r.Client.List(ctx, &deps, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node deployments")
 		return err
 	}
@@ -340,7 +340,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 	}
 
 	// Node PVCs
-	if err := r.Client.List(ctx, &pvcs, client.MatchingLabels{"app": "node-pvc"}, client.InNamespace(ns)); err != nil {
+	if err := r.Client.List(ctx, &pvcs, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node pvcs")
 		return err
 	}
@@ -358,7 +358,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 	}
 
 	// Node Secrets
-	if err := r.Client.List(ctx, &secrets, client.MatchingLabels{"app": "node-secret"}, client.InNamespace(ns)); err != nil {
+	if err := r.Client.List(ctx, &secrets, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node secrets")
 		return err
 	}
@@ -376,7 +376,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 	}
 
 	// Node Services
-	if err := r.Client.List(ctx, &services, client.MatchingLabels{"app": "node-service"}, client.InNamespace(ns)); err != nil {
+	if err := r.Client.List(ctx, &services, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node services")
 		return err
 	}
@@ -397,11 +397,8 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 }
 
 // specNodeDataPVC update node data pvc spec
-func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim) {
-	pvc.ObjectMeta.Labels = map[string]string{
-		"app":      "node-pvc",
-		"instance": pvc.Name,
-	}
+func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereumv1alpha1.Node) {
+	pvc.ObjectMeta.Labels = node.Labels()
 	pvc.Spec = corev1.PersistentVolumeClaimSpec{
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
@@ -430,7 +427,7 @@ func (r *NetworkReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethe
 			return err
 		}
 		if pvc.CreationTimestamp.IsZero() {
-			r.specNodeDataPVC(pvc)
+			r.specNodeDataPVC(pvc, node)
 		}
 		return nil
 	})
@@ -515,25 +512,16 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, 
 }
 
 // specNodeDeployment updates node deployment spec
-func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount) {
-	nodeName := dep.ObjectMeta.Name
-	dep.ObjectMeta.Labels = map[string]string{
-		"app":      "node",
-		"instance": nodeName,
-	}
+func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount) {
+	labels := node.Labels()
+	dep.ObjectMeta.Labels = labels
 	dep.Spec = appsv1.DeploymentSpec{
 		Selector: &metav1.LabelSelector{
-			MatchLabels: map[string]string{
-				"app":      "node",
-				"instance": nodeName,
-			},
+			MatchLabels: labels,
 		},
 		Template: corev1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
-				Labels: map[string]string{
-					"app":      "node",
-					"instance": nodeName,
-				},
+				Labels: labels,
 			},
 			Spec: corev1.PodSpec{
 				Containers: []corev1.Container{
@@ -570,18 +558,15 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 		if err := ctrl.SetControllerReference(network, dep, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeDeployment(dep, args, volumes, volumeMounts)
+		r.specNodeDeployment(dep, node, args, volumes, volumeMounts)
 		return nil
 	})
 
 	return err
 }
 
-func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, nodekey string) {
-	secret.ObjectMeta.Labels = map[string]string{
-		"app":      "node-secret",
-		"instance": secret.Name,
-	}
+func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node, nodekey string) {
+	secret.ObjectMeta.Labels = node.Labels()
 	secret.StringData = map[string]string{
 		"nodekey": nodekey,
 	}
@@ -609,7 +594,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 			return err
 		}
 
-		r.specNodeSecret(secret, privateKey)
+		r.specNodeSecret(secret, node, privateKey)
 
 		return nil
 	})
@@ -622,11 +607,9 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 }
 
 // specNodeService updates node service spec
-func (r *NetworkReconciler) specNodeService(svc *corev1.Service) {
-	svc.ObjectMeta.Labels = map[string]string{
-		"app":      "node-service",
-		"instance": svc.Name,
-	}
+func (r *NetworkReconciler) specNodeService(svc *corev1.Service, node *ethereumv1alpha1.Node) {
+	labels := node.Labels()
+	svc.ObjectMeta.Labels = labels
 	svc.Spec.Ports = []corev1.ServicePort{
 		{
 			Name:       "discovery",
@@ -642,10 +625,7 @@ func (r *NetworkReconciler) specNodeService(svc *corev1.Service) {
 		},
 	}
 
-	svc.Spec.Selector = map[string]string{
-		"app":      "node",
-		"instance": svc.ObjectMeta.Name,
-	}
+	svc.Spec.Selector = labels
 }
 
 // reconcileNodeService reconciles node service
@@ -663,7 +643,7 @@ func (r *NetworkReconciler) reconcileNodeService(ctx context.Context, node *ethe
 			return err
 		}
 
-		r.specNodeService(svc)
+		r.specNodeService(svc, node)
 
 		return nil
 	})

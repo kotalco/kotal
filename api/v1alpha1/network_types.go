@@ -391,6 +391,14 @@ func (n *Node) ServiceName(network string) string {
 	return n.DeploymentName(network) // same as deployment name
 }
 
+// Labels to be used by node resources
+func (n *Node) Labels() map[string]string {
+	return map[string]string{
+		"name":     "node",
+		"instance": n.Name,
+	}
+}
+
 // NetworkStatus defines the observed state of Network
 type NetworkStatus struct {
 

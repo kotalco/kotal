@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"reflect"
 	"testing"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -88,5 +89,18 @@ func TestConfigmapName(t *testing.T) {
 
 	if got != expected {
 		t.Errorf("Expecting bootnode to be %s got %s", expected, got)
+	}
+}
+
+func TestLabels(t *testing.T) {
+	node := network.Spec.Nodes[0]
+	expected := map[string]string{
+		"name":     "node",
+		"instance": "node-1",
+	}
+	got := node.Labels()
+
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("Expecting node labels to be %s got %s", expected, got)
 	}
 }
