@@ -527,7 +527,7 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 				Containers: []corev1.Container{
 					{
 						Name:  "node",
-						Image: "hyperledger/besu:1.4.5",
+						Image: "hyperledger/besu:1.4.6",
 						Command: []string{
 							"besu",
 						},
