@@ -11,6 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 )
@@ -117,8 +118,14 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments", func() {
+		It("Should create bootnode deployment with correct arguments and resources", func() {
 			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(DefaultPublicNetworkNodeCPURequest),
+					v1.ResourceMemory: resource.MustParse(DefaultPublicNetworkNodeMemoryRequest),
+				},
+			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
@@ -127,6 +134,8 @@ var _ = Describe("Ethereum network controller", func() {
 				ArgDataPath,
 				ArgNodePrivateKey,
 			}))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+
 		})
 
 		It("Should create bootnode data persistent volume", func() {
@@ -346,14 +355,21 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments", func() {
+		It("Should create bootnode deployment with correct arguments and resources", func() {
 			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(DefaultPrivateNetworkNodeCPURequest),
+					v1.ResourceMemory: resource.MustParse(DefaultPrivateNetworkNodeMemoryRequest),
+				},
+			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ArgDataPath,
 				ArgNodePrivateKey,
 			}))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create bootnode data persistent volume", func() {
@@ -576,14 +592,21 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments", func() {
+		It("Should create bootnode deployment with correct arguments and resources", func() {
 			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(DefaultPrivateNetworkNodeCPURequest),
+					v1.ResourceMemory: resource.MustParse(DefaultPrivateNetworkNodeMemoryRequest),
+				},
+			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ArgDataPath,
 				ArgNodePrivateKey,
 			}))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create bootnode data persistent volume", func() {
@@ -812,14 +835,21 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments", func() {
+		It("Should create bootnode deployment with correct arguments and resources", func() {
 			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(DefaultPrivateNetworkNodeCPURequest),
+					v1.ResourceMemory: resource.MustParse(DefaultPrivateNetworkNodeMemoryRequest),
+				},
+			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ArgDataPath,
 				ArgNodePrivateKey,
 			}))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create bootnode data persistent volume", func() {

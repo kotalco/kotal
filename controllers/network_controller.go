@@ -512,7 +512,7 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, 
 }
 
 // specNodeDeployment updates node deployment spec
-func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount) {
+func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements) {
 	labels := node.Labels()
 	dep.ObjectMeta.Labels = labels
 	dep.Spec = appsv1.DeploymentSpec{
@@ -531,6 +531,7 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 						Command: []string{
 							"besu",
 						},
+						Resources: resources,
 					},
 				},
 			},
@@ -544,8 +545,33 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 	dep.Spec.Template.Spec.Containers[0].Args = args
 }
 
+// getNodeComputeRequirements get node resource requirements
+func (r *NetworkReconciler) getNodeComputeRequirements(network *ethereumv1alpha1.Network) corev1.ResourceRequirements {
+	// TODO: add resource limits
+	// TODO: update node type with resource requirements
+	// TODO: precedence to node resource requirements
+
+	req := corev1.ResourceRequirements{}
+
+	// private network
+	if network.Spec.Genesis != nil {
+		req.Requests = corev1.ResourceList{
+			corev1.ResourceCPU:    resource.MustParse(DefaultPrivateNetworkNodeCPURequest),
+			corev1.ResourceMemory: resource.MustParse(DefaultPrivateNetworkNodeMemoryRequest),
+		}
+		return req
+	}
+
+	// public network
+	req.Requests = corev1.ResourceList{
+		corev1.ResourceCPU:    resource.MustParse(DefaultPublicNetworkNodeCPURequest),
+		corev1.ResourceMemory: resource.MustParse(DefaultPublicNetworkNodeMemoryRequest),
+	}
+	return req
+}
+
 // reconcileNodeDeployment creates creates node deployment if it doesn't exist, update it if it does exist
-func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount) error {
+func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements) error {
 
 	dep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -558,7 +584,7 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 		if err := ctrl.SetControllerReference(network, dep, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeDeployment(dep, node, args, volumes, volumeMounts)
+		r.specNodeDeployment(dep, node, args, volumes, volumeMounts, resources)
 		return nil
 	})
 
@@ -668,8 +694,9 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 	args := r.createArgsForClient(node, network, bootnodes)
 	volumes := r.createNodeVolumes(node, network)
 	mounts := r.createNodeVolumeMounts(node, network)
+	resources := r.getNodeComputeRequirements(network)
 
-	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts); err != nil {
+	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts, resources); err != nil {
 		return
 	}
 
