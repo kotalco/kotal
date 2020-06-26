@@ -397,18 +397,13 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 }
 
 // specNodeDataPVC update node data pvc spec
-func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereumv1alpha1.Node) {
+func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereumv1alpha1.Node, resources corev1.ResourceRequirements) {
 	pvc.ObjectMeta.Labels = node.Labels()
 	pvc.Spec = corev1.PersistentVolumeClaimSpec{
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
 		},
-		Resources: corev1.ResourceRequirements{
-			Requests: corev1.ResourceList{
-				// TODO: update storage per network i.e: mainnet, rinkeby, goreli ... etc
-				corev1.ResourceStorage: resource.MustParse("10Gi"),
-			},
-		},
+		Resources: resources,
 	}
 }
 
@@ -427,7 +422,8 @@ func (r *NetworkReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethe
 			return err
 		}
 		if pvc.CreationTimestamp.IsZero() {
-			r.specNodeDataPVC(pvc, node)
+			resources := r.getNodeStorageRequirements(node, network)
+			r.specNodeDataPVC(pvc, node, resources)
 		}
 		return nil
 	})
@@ -553,19 +549,56 @@ func (r *NetworkReconciler) getNodeComputeRequirements(network *ethereumv1alpha1
 
 	req := corev1.ResourceRequirements{}
 
-	// private network
-	if network.Spec.Genesis != nil {
+	// public network
+	if network.Spec.Genesis == nil {
 		req.Requests = corev1.ResourceList{
-			corev1.ResourceCPU:    resource.MustParse(DefaultPrivateNetworkNodeCPURequest),
-			corev1.ResourceMemory: resource.MustParse(DefaultPrivateNetworkNodeMemoryRequest),
+			corev1.ResourceCPU:    resource.MustParse(DefaultPublicNetworkNodeCPURequest),
+			corev1.ResourceMemory: resource.MustParse(DefaultPublicNetworkNodeMemoryRequest),
 		}
 		return req
 	}
 
-	// public network
+	// private network
 	req.Requests = corev1.ResourceList{
-		corev1.ResourceCPU:    resource.MustParse(DefaultPublicNetworkNodeCPURequest),
-		corev1.ResourceMemory: resource.MustParse(DefaultPublicNetworkNodeMemoryRequest),
+		corev1.ResourceCPU:    resource.MustParse(DefaultPrivateNetworkNodeCPURequest),
+		corev1.ResourceMemory: resource.MustParse(DefaultPrivateNetworkNodeMemoryRequest),
+	}
+
+	return req
+}
+
+// getNodeStorageRequirements get node resource requirements
+func (r *NetworkReconciler) getNodeStorageRequirements(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) corev1.ResourceRequirements {
+
+	req := corev1.ResourceRequirements{}
+
+	// public network
+	if network.Spec.Genesis == nil {
+		if network.Spec.Join == ethereumv1alpha1.MainNetwork {
+			//mainnet full node
+			if node.SyncMode == ethereumv1alpha1.FullSynchronization {
+				req.Requests = corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(DefaultMainNetworkFullNodeStorageRequest),
+				}
+			}
+			//mainnet fast node
+			if node.SyncMode == ethereumv1alpha1.FastSynchronization {
+				req.Requests = corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(DefaultMainNetworkFastNodeStorageRequest),
+				}
+			}
+		} else {
+			// testnet node
+			req.Requests = corev1.ResourceList{
+				corev1.ResourceStorage: resource.MustParse(DefaultTestNetworkStorageRequest),
+			}
+		}
+		return req
+	}
+
+	// private network
+	req.Requests = corev1.ResourceList{
+		corev1.ResourceStorage: resource.MustParse(DefaultPrivateNetworkNodeStorageRequest),
 	}
 	return req
 }

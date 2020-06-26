@@ -243,11 +243,11 @@ const (
 type SynchronizationMode string
 
 const (
-	//FastSynchronization is the full (archive) synchronization mode, alias for archive
+	//FastSynchronization is the fast synchronization mode
 	FastSynchronization SynchronizationMode = "fast"
 
-	//ArchiveSynchronization is the archive synchronization mode, alias for full
-	ArchiveSynchronization SynchronizationMode = "archive"
+	//LightSynchronization is the light synchronization mode
+	LightSynchronization SynchronizationMode = "light"
 
 	//FullSynchronization is the fast (non-archival) synchronization mode
 	FullSynchronization SynchronizationMode = "full"
