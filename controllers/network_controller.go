@@ -62,7 +62,6 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 
 	// Get desired ethereum network
 	if err := r.Client.Get(ctx, req.NamespacedName, &network); err != nil {
-		log.Error(err, "Unable to fetch Ethereum Network")
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
@@ -531,35 +530,27 @@ func (r *NetworkReconciler) getNodeAffinity(network *ethereumv1alpha1.Network) *
 func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements, affinity *corev1.Affinity) {
 	labels := node.Labels()
 	dep.ObjectMeta.Labels = labels
-	dep.Spec = appsv1.DeploymentSpec{
-		Selector: &metav1.LabelSelector{
-			MatchLabels: labels,
-		},
-		Template: corev1.PodTemplateSpec{
-			ObjectMeta: metav1.ObjectMeta{
-				Labels: labels,
-			},
-			Spec: corev1.PodSpec{
-				Containers: []corev1.Container{
-					{
-						Name:  "node",
-						Image: "hyperledger/besu:1.4.6",
-						Command: []string{
-							"besu",
-						},
-						Resources: resources,
-					},
-				},
-				Affinity: affinity,
-			},
-		},
+	if dep.Spec.Selector == nil {
+		dep.Spec.Selector = &metav1.LabelSelector{}
 	}
-	// attach the volumes to the deployment
-	dep.Spec.Template.Spec.Volumes = volumes
-	// mount the volumes
-	dep.Spec.Template.Spec.Containers[0].VolumeMounts = volumeMounts
-	// TODO: recfactor this, will fail if container order change
-	dep.Spec.Template.Spec.Containers[0].Args = args
+	dep.Spec.Selector.MatchLabels = labels
+	dep.Spec.Template.ObjectMeta.Labels = labels
+	dep.Spec.Template.Spec = corev1.PodSpec{
+		Volumes: volumes,
+		Containers: []corev1.Container{
+			{
+				Name:  "node",
+				Image: "hyperledger/besu:1.4.6",
+				Command: []string{
+					"besu",
+				},
+				Args:         args,
+				Resources:    resources,
+				VolumeMounts: volumeMounts,
+			},
+		},
+		Affinity: affinity,
+	}
 }
 
 // getNodeComputeRequirements get node resource requirements
