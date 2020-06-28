@@ -24,6 +24,7 @@ spec:
     listKind: NetworkList
     plural: networks
     singular: network
+  preserveUnknownFields: false
   scope: Namespaced
   subresources:
     status: {}
