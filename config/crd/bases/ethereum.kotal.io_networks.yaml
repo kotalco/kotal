@@ -46,6 +46,10 @@ spec:
         spec:
           description: NetworkSpec defines the desired state of Network
           properties:
+            TopologyKey:
+              description: TopologyKey is the k8s node label used to distribute blockchain
+                nodes
+              type: string
             consensus:
               description: Consensus is the consensus algorithm to be used by the
                 network nodes to reach consensus
@@ -224,6 +228,10 @@ spec:
               required:
               - chainId
               type: object
+            highlyAvailable:
+              description: HighlyAvailable is whether blockchain nodes can land on
+                the same k8s node or no
+              type: boolean
             join:
               description: Join specifies the network to join
               type: string

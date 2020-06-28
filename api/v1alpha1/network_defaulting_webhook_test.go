@@ -9,7 +9,8 @@ var _ = Describe("Ethereum defaulting", func() {
 	It("Should default network joining rinkeby", func() {
 		network := &Network{
 			Spec: NetworkSpec{
-				Join: "rinkeby",
+				Join:            "rinkeby",
+				HighlyAvailable: true,
 				Nodes: []Node{
 					{
 						Name: "node-1",
@@ -18,6 +19,7 @@ var _ = Describe("Ethereum defaulting", func() {
 			},
 		}
 		network.Default()
+		Expect(network.Spec.TopologyKey).To(Equal(DefaultTopologyKey))
 		node := network.Spec.Nodes[0]
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.SyncMode).To(Equal(DefaultSyncMode))

@@ -14,6 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 var _ = Describe("Ethereum network controller", func() {
@@ -29,6 +30,17 @@ var _ = Describe("Ethereum network controller", func() {
 		useExistingCluster = os.Getenv("USE_EXISTING_CLUSTER") == "true"
 	)
 
+	if useExistingCluster {
+		It("Should label all nodes with topology key", func() {
+			nodes := &v1.NodeList{}
+			Expect(k8sClient.List(context.Background(), nodes)).To(Succeed())
+			for i, node := range nodes.Items {
+				node.Labels[ethereumv1alpha1.DefaultTopologyKey] = fmt.Sprintf("zone-%d", i)
+				Expect(k8sClient.Update(context.Background(), &node)).To(Succeed())
+			}
+		})
+	}
+
 	Context("Joining Mainnet", func() {
 		ns := &v1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
@@ -41,7 +53,8 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
-			Join: "mainnet",
+			Join:            "mainnet",
+			HighlyAvailable: true,
 			Nodes: []ethereumv1alpha1.Node{
 				{
 					Name:     "node-1",
@@ -171,6 +184,16 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
+		if useExistingCluster {
+			It("Should schedule node-1 and node-2 on different nodes", func() {
+				pods := &v1.PodList{}
+				matchingLabels := client.MatchingLabels{"name": "node"}
+				inNamespace := client.InNamespace(ns.Name)
+				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
+				Expect(pods.Items[0].Spec.NodeName).NotTo(Equal(pods.Items[1].Spec.NodeName))
+			})
+		}
+
 		It("Should create node-2 deployment with correct arguments", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
@@ -288,7 +311,8 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
-			Join: "rinkeby",
+			Join:            "rinkeby",
+			HighlyAvailable: true,
 			Nodes: []ethereumv1alpha1.Node{
 				{
 					Name:     "node-1",
@@ -415,6 +439,16 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetchedUpdated.Spec).To(Equal(fetched.Spec))
 			time.Sleep(sleepTime)
 		})
+
+		if useExistingCluster {
+			It("Should schedule node-1 and node-2 on different nodes", func() {
+				pods := &v1.PodList{}
+				matchingLabels := client.MatchingLabels{"name": "node"}
+				inNamespace := client.InNamespace(ns.Name)
+				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
+				Expect(pods.Items[0].Spec.NodeName).NotTo(Equal(pods.Items[1].Spec.NodeName))
+			})
+		}
 
 		It("Should create node-2 deployment with correct arguments", func() {
 			nodeDep := &appsv1.Deployment{}

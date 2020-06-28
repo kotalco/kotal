@@ -7,6 +7,11 @@ var (
 	DefaultOrigins []string = []string{"*"}
 )
 
+// Network defaults
+const (
+	DefaultTopologyKey = "topology.kubernetes.io/zone"
+)
+
 // Node defaults
 const (
 	// DefaultHost is the default host

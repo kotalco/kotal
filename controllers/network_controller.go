@@ -507,8 +507,28 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, 
 	return volumeMounts
 }
 
+func (r *NetworkReconciler) getNodeAffinity(network *ethereumv1alpha1.Network) *corev1.Affinity {
+	if network.Spec.HighlyAvailable {
+		return &corev1.Affinity{
+			PodAntiAffinity: &corev1.PodAntiAffinity{
+				RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+					{
+						LabelSelector: &metav1.LabelSelector{
+							MatchLabels: map[string]string{
+								"name": "node",
+							},
+						},
+						TopologyKey: network.Spec.TopologyKey,
+					},
+				},
+			},
+		}
+	}
+	return nil
+}
+
 // specNodeDeployment updates node deployment spec
-func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements) {
+func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements, affinity *corev1.Affinity) {
 	labels := node.Labels()
 	dep.ObjectMeta.Labels = labels
 	dep.Spec = appsv1.DeploymentSpec{
@@ -530,6 +550,7 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 						Resources: resources,
 					},
 				},
+				Affinity: affinity,
 			},
 		},
 	}
@@ -604,7 +625,7 @@ func (r *NetworkReconciler) getNodeStorageRequirements(node *ethereumv1alpha1.No
 }
 
 // reconcileNodeDeployment creates creates node deployment if it doesn't exist, update it if it does exist
-func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements) error {
+func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements, affinity *corev1.Affinity) error {
 
 	dep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -617,7 +638,7 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 		if err := ctrl.SetControllerReference(network, dep, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeDeployment(dep, node, args, volumes, volumeMounts, resources)
+		r.specNodeDeployment(dep, node, args, volumes, volumeMounts, resources, affinity)
 		return nil
 	})
 
@@ -728,8 +749,9 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 	volumes := r.createNodeVolumes(node, network)
 	mounts := r.createNodeVolumeMounts(node, network)
 	resources := r.getNodeComputeRequirements(network)
+	affinity := r.getNodeAffinity(network)
 
-	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts, resources); err != nil {
+	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts, resources, affinity); err != nil {
 		return
 	}
 

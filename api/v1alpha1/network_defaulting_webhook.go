@@ -10,6 +10,12 @@ var _ webhook.Defaulter = &Network{}
 func (r *Network) Default() {
 	networklog.Info("default", "name", r.Name)
 
+	if r.Spec.HighlyAvailable {
+		if r.Spec.TopologyKey == "" {
+			r.Spec.TopologyKey = DefaultTopologyKey
+		}
+	}
+
 	// default genesis block
 	if r.Spec.Genesis != nil {
 		r.DefaultGenesis()
