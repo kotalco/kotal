@@ -309,10 +309,10 @@ const (
 type EthereumClient string
 
 const (
-	// Besu is hyperledger besu ethereum client
-	Besu EthereumClient = "besu"
-	// Geth is go ethereum client
-	Geth EthereumClient = "geth"
+	// BesuClient is hyperledger besu ethereum client
+	BesuClient EthereumClient = "besu"
+	// GethClient is go ethereum client
+	GethClient EthereumClient = "geth"
 )
 
 //Node is the specification of the node
