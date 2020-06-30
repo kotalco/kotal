@@ -23,6 +23,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		node := network.Spec.Nodes[0]
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.SyncMode).To(Equal(DefaultSyncMode))
+		Expect(node.Client).To(Equal(DefaultClient))
 	})
 
 	It("Should default network with pow consensus", func() {
@@ -45,6 +46,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		var block0 uint = 0
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.SyncMode).To(Equal(DefaultSyncMode))
+		Expect(node.Client).To(Equal(DefaultClient))
 		// genesis defaulting
 		Expect(network.Spec.Genesis.Coinbase).To(Equal(DefaultCoinbase))
 		Expect(network.Spec.Genesis.MixHash).To(Equal(DefaultMixHash))
@@ -87,6 +89,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		// node defaulting
 		node := network.Spec.Nodes[0]
 		var block0 uint = 0
+		Expect(node.Client).To(Equal(DefaultClient))
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.SyncMode).To(Equal(DefaultSyncMode))
 		Expect(node.Hosts).To(Equal(DefaultOrigins))
@@ -138,6 +141,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		// node defaulting
 		node := network.Spec.Nodes[0]
 		var block0 uint = 0
+		Expect(node.Client).To(Equal(DefaultClient))
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.SyncMode).To(Equal(DefaultSyncMode))
 		Expect(node.Hosts).To(Equal(DefaultOrigins))

@@ -32,6 +32,10 @@ func (r *Network) Default() {
 func (r *Network) DefaultNode(node *Node) {
 	defaultAPIs := []API{Web3API, ETHAPI, NetworkAPI}
 
+	if node.Client == "" {
+		node.Client = DefaultClient
+	}
+
 	if node.P2PPort == 0 {
 		node.P2PPort = DefaultP2PPort
 	}

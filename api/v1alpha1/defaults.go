@@ -14,6 +14,8 @@ const (
 
 // Node defaults
 const (
+	// DefaultClient is the default ethereum client
+	DefaultClient = Besu
 	// DefaultHost is the default host
 	DefaultHost = "0.0.0.0"
 	// DefaultP2PPort is the default p2p port
