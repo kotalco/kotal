@@ -244,6 +244,12 @@ spec:
                   bootnode:
                     description: Bootnode is whether node is bootnode or no
                     type: boolean
+                  client:
+                    description: Client is ethereum client running on the node
+                    enum:
+                    - besu
+                    - geth
+                    type: string
                   coinbase:
                     description: Coinbase is the account to which mining rewards are
                       paid

@@ -304,8 +304,22 @@ const (
 	Web3API API = "web3"
 )
 
+// EthereumClient is the ethereum client running on a given node
+// +kubebuilder:validation:Enum=besu;geth
+type EthereumClient string
+
+const (
+	// Besu is hyperledger besu ethereum client
+	Besu EthereumClient = "besu"
+	// Geth is go ethereum client
+	Geth EthereumClient = "geth"
+)
+
 //Node is the specification of the node
 type Node struct {
+	// Client is ethereum client running on the node
+	Client EthereumClient `json:"client,omitempty"`
+
 	// Name is the node name
 	Name string `json:"name"`
 
