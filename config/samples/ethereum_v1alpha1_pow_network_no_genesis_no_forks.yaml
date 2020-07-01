@@ -4,6 +4,7 @@ metadata:
   name: pow-network
 spec:
   consensus: pow
+  id: 11
   ########### Genesis block spec ###########
   genesis:
     chainId: 9999

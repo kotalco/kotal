@@ -233,6 +233,9 @@ spec:
               description: HighlyAvailable is whether blockchain nodes can land on
                 the same k8s node or no
               type: boolean
+            id:
+              description: ID is network id
+              type: integer
             join:
               description: Join specifies the network to join
               type: string

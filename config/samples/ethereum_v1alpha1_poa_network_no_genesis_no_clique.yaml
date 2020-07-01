@@ -4,6 +4,7 @@ metadata:
   name: poa-network-no-genesis-clique
 spec:
   consensus: poa
+  id: 11
   ########### Genesis block spec ###########
   genesis:
     chainId: 20189

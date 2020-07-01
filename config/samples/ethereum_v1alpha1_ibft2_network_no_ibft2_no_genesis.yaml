@@ -4,6 +4,7 @@ metadata:
   name: ibft2-network-no-genesis-ibft2
 spec:
   consensus: ibft2
+  id: 11
   ########### Genesis block spec ###########
   genesis:
     chainId: 20189
