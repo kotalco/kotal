@@ -142,10 +142,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				ArgNetwork,
+				BesuNetwork,
 				"mainnet",
-				ArgDataPath,
-				ArgNodePrivateKey,
+				BesuDataPath,
+				BesuNodePrivateKey,
 			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 
@@ -199,14 +199,14 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				ArgNetwork,
+				BesuNetwork,
 				"mainnet",
-				ArgDataPath,
-				ArgBootnodes,
-				ArgRPCHTTPEnabled,
-				ArgRPCHTTPPort,
+				BesuDataPath,
+				BesuBootnodes,
+				BesuRPCHTTPEnabled,
+				BesuRPCHTTPPort,
 				"8547",
-				ArgSyncMode,
+				BesuSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 			}))
 		})
@@ -400,10 +400,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				ArgNetwork,
+				BesuNetwork,
 				"rinkeby",
-				ArgDataPath,
-				ArgNodePrivateKey,
+				BesuDataPath,
+				BesuNodePrivateKey,
 			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 
@@ -455,11 +455,11 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				ArgNetwork,
+				BesuNetwork,
 				"rinkeby",
-				ArgDataPath,
-				ArgBootnodes,
-				ArgRPCHTTPEnabled,
+				BesuDataPath,
+				BesuBootnodes,
+				BesuRPCHTTPEnabled,
 				"8547",
 			}))
 		})
@@ -662,8 +662,8 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				ArgDataPath,
-				ArgNodePrivateKey,
+				BesuDataPath,
+				BesuNodePrivateKey,
 			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
@@ -704,9 +704,9 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				ArgDataPath,
-				ArgBootnodes,
-				ArgRPCHTTPEnabled,
+				BesuDataPath,
+				BesuBootnodes,
+				BesuRPCHTTPEnabled,
 				"8547",
 			}))
 		})
@@ -914,8 +914,8 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				ArgDataPath,
-				ArgNodePrivateKey,
+				BesuDataPath,
+				BesuNodePrivateKey,
 			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
@@ -956,9 +956,9 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				ArgDataPath,
-				ArgBootnodes,
-				ArgRPCHTTPEnabled,
+				BesuDataPath,
+				BesuBootnodes,
+				BesuRPCHTTPEnabled,
 				"8547",
 			}))
 		})
@@ -1172,8 +1172,8 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				ArgDataPath,
-				ArgNodePrivateKey,
+				BesuDataPath,
+				BesuNodePrivateKey,
 			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
@@ -1214,9 +1214,9 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				ArgDataPath,
-				ArgBootnodes,
-				ArgRPCHTTPEnabled,
+				BesuDataPath,
+				BesuBootnodes,
+				BesuRPCHTTPEnabled,
 				"8547",
 			}))
 		})

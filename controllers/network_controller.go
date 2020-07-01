@@ -772,7 +772,136 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 
 // createArgsForClient create arguments to be passed to the node client from node specs
 func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) []string {
-	args := []string{ArgNatMethod, "KUBERNETES"}
+	switch node.Client {
+	case ethereumv1alpha1.BesuClient:
+		return r.createArgsForBesu(node, network, bootnodes)
+	case ethereumv1alpha1.GethClient:
+		return r.createArgsForGeth(node, network, bootnodes)
+	}
+	return []string{}
+}
+
+// createArgsForGeth create arguments to be passed to the node client from node specs
+func (r *NetworkReconciler) createArgsForGeth(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) []string {
+	args := []string{}
+
+	// appendArg appends argument with optional value to the arguments array
+	appendArg := func(arg ...string) {
+		args = append(args, arg...)
+	}
+
+	if node.WithNodekey() {
+		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", PathNodekey))
+	}
+
+	appendArg(GethDataDir, PathBlockchainData)
+
+	// TODO: restrict networks to be rinkeby, ropsten, and goerli if client is geth
+	if network.Spec.Join != "" {
+		appendArg(fmt.Sprintf("--%s", network.Spec.Join))
+	}
+
+	if node.P2PPort != 0 {
+		appendArg(GethP2PPort, fmt.Sprintf("%d", node.P2PPort))
+	}
+
+	if len(bootnodes) != 0 {
+		commaSeperatedBootnodes := strings.Join(bootnodes, ",")
+		appendArg(GethBootnodes, commaSeperatedBootnodes)
+	}
+
+	if node.SyncMode != "" {
+		appendArg(GethSyncMode, string(node.SyncMode))
+	}
+
+	if node.Miner {
+		appendArg(GethMinerEnabled)
+	}
+
+	if node.Coinbase != "" {
+		appendArg(GethMinerCoinbase, string(node.Coinbase))
+	}
+
+	if node.RPC {
+		appendArg(GethRPCHTTPEnabled)
+	}
+
+	if node.RPCPort != 0 {
+		appendArg(GethRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
+	}
+
+	if node.RPCHost != "" {
+		appendArg(GethRPCHTTPHost, node.RPCHost)
+	}
+
+	if len(node.RPCAPI) != 0 {
+		apis := []string{}
+		for _, api := range node.RPCAPI {
+			apis = append(apis, string(api))
+		}
+		commaSeperatedAPIs := strings.Join(apis, ",")
+		appendArg(GethRPCHTTPAPI, commaSeperatedAPIs)
+	}
+
+	if node.WS {
+		appendArg(GethRPCWSEnabled)
+	}
+
+	if node.WSPort != 0 {
+		appendArg(GethRPCWSPort, fmt.Sprintf("%d", node.WSPort))
+	}
+
+	if node.WSHost != "" {
+		appendArg(GethRPCWSHost, node.WSHost)
+	}
+
+	if len(node.WSAPI) != 0 {
+		apis := []string{}
+		for _, api := range node.WSAPI {
+			apis = append(apis, string(api))
+		}
+		commaSeperatedAPIs := strings.Join(apis, ",")
+		appendArg(GethRPCWSAPI, commaSeperatedAPIs)
+	}
+
+	if node.GraphQL {
+		appendArg(GethGraphQLHTTPEnabled)
+	}
+
+	if node.GraphQLPort != 0 {
+		appendArg(GethGraphQLHTTPPort, fmt.Sprintf("%d", node.GraphQLPort))
+	}
+
+	if node.GraphQLHost != "" {
+		appendArg(GethGraphQLHTTPHost, node.GraphQLHost)
+	}
+
+	if len(node.Hosts) != 0 {
+		commaSeperatedHosts := strings.Join(node.Hosts, ",")
+		if node.RPC {
+			appendArg(GethRPCHostWhitelist, commaSeperatedHosts)
+		}
+		if node.GraphQL {
+			appendArg(GethGraphQLHostWhitelist, commaSeperatedHosts)
+		}
+	}
+
+	if len(node.CORSDomains) != 0 {
+		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
+		if node.RPC {
+			appendArg(GethRPCHTTPCorsOrigins, commaSeperatedDomains)
+		}
+		if node.GraphQL {
+			appendArg(GethGraphQLHTTPCorsOrigins, commaSeperatedDomains)
+		}
+	}
+
+	return args
+}
+
+// createArgsForBesu create arguments to be passed to the node client from node specs
+func (r *NetworkReconciler) createArgsForBesu(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) []string {
+	args := []string{BesuNatMethod, "KUBERNETES"}
 	// TODO: update after admissionmutating webhook
 	// because it will default all args
 
@@ -782,51 +911,50 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, net
 	}
 
 	if node.WithNodekey() {
-		appendArg(ArgNodePrivateKey, fmt.Sprintf("%s/nodekey", PathNodekey))
+		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", PathNodekey))
 	}
 
 	if network.Spec.Genesis != nil {
-		appendArg(ArgGenesisFile, fmt.Sprintf("%s/genesis.json", PathGenesisFile))
+		appendArg(BesuGenesisFile, fmt.Sprintf("%s/genesis.json", PathGenesisFile))
 	}
 
-	appendArg(ArgDataPath, PathBlockchainData)
+	appendArg(BesuDataPath, PathBlockchainData)
 
 	if network.Spec.Join != "" {
-		appendArg(ArgNetwork, network.Spec.Join)
+		appendArg(BesuNetwork, network.Spec.Join)
 	}
 
 	if node.P2PPort != 0 {
-		appendArg(ArgP2PPort, fmt.Sprintf("%d", node.P2PPort))
+		appendArg(BesuP2PPort, fmt.Sprintf("%d", node.P2PPort))
 	}
 
 	if len(bootnodes) != 0 {
 		commaSeperatedBootnodes := strings.Join(bootnodes, ",")
-		appendArg(ArgBootnodes, commaSeperatedBootnodes)
+		appendArg(BesuBootnodes, commaSeperatedBootnodes)
 	}
 
-	// TODO: create per client type(besu, geth ... etc)
 	if node.SyncMode != "" {
-		appendArg(ArgSyncMode, string(node.SyncMode))
+		appendArg(BesuSyncMode, string(node.SyncMode))
 	}
 
 	if node.Miner {
-		appendArg(ArgMinerEnabled)
+		appendArg(BesuMinerEnabled)
 	}
 
 	if node.Coinbase != "" {
-		appendArg(ArgMinerCoinbase, string(node.Coinbase))
+		appendArg(BesuMinerCoinbase, string(node.Coinbase))
 	}
 
 	if node.RPC {
-		appendArg(ArgRPCHTTPEnabled)
+		appendArg(BesuRPCHTTPEnabled)
 	}
 
 	if node.RPCPort != 0 {
-		appendArg(ArgRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
+		appendArg(BesuRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
 	}
 
 	if node.RPCHost != "" {
-		appendArg(ArgRPCHTTPHost, node.RPCHost)
+		appendArg(BesuRPCHTTPHost, node.RPCHost)
 	}
 
 	if len(node.RPCAPI) != 0 {
@@ -835,19 +963,19 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, net
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg(ArgRPCHTTPAPI, commaSeperatedAPIs)
+		appendArg(BesuRPCHTTPAPI, commaSeperatedAPIs)
 	}
 
 	if node.WS {
-		appendArg(ArgRPCWSEnabled)
+		appendArg(BesuRPCWSEnabled)
 	}
 
 	if node.WSPort != 0 {
-		appendArg(ArgRPCWSPort, fmt.Sprintf("%d", node.WSPort))
+		appendArg(BesuRPCWSPort, fmt.Sprintf("%d", node.WSPort))
 	}
 
 	if node.WSHost != "" {
-		appendArg(ArgRPCWSHost, node.WSHost)
+		appendArg(BesuRPCWSHost, node.WSHost)
 	}
 
 	if len(node.WSAPI) != 0 {
@@ -856,33 +984,33 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, net
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg(ArgRPCWSAPI, commaSeperatedAPIs)
+		appendArg(BesuRPCWSAPI, commaSeperatedAPIs)
 	}
 
 	if node.GraphQL {
-		appendArg(ArgGraphQLHTTPEnabled)
+		appendArg(BesuGraphQLHTTPEnabled)
 	}
 
 	if node.GraphQLPort != 0 {
-		appendArg(ArgGraphQLHTTPPort, fmt.Sprintf("%d", node.GraphQLPort))
+		appendArg(BesuGraphQLHTTPPort, fmt.Sprintf("%d", node.GraphQLPort))
 	}
 
 	if node.GraphQLHost != "" {
-		appendArg(ArgGraphQLHTTPHost, node.GraphQLHost)
+		appendArg(BesuGraphQLHTTPHost, node.GraphQLHost)
 	}
 
 	if len(node.Hosts) != 0 {
 		commaSeperatedHosts := strings.Join(node.Hosts, ",")
-		appendArg(ArgHostWhitelist, commaSeperatedHosts)
+		appendArg(BesuHostWhitelist, commaSeperatedHosts)
 	}
 
 	if len(node.CORSDomains) != 0 {
 		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
 		if node.RPC {
-			appendArg(ArgRPCHTTPCorsOrigins, commaSeperatedDomains)
+			appendArg(BesuRPCHTTPCorsOrigins, commaSeperatedDomains)
 		}
 		if node.GraphQL {
-			appendArg(ArgGraphQLHTTPCorsOrigins, commaSeperatedDomains)
+			appendArg(BesuGraphQLHTTPCorsOrigins, commaSeperatedDomains)
 		}
 	}
 

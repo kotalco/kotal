@@ -9,53 +9,106 @@ const (
 	PathBlockchainData = "/mnt/data"
 )
 
+// Hyperledger Besu client arguments
 const (
-	// ArgNatMethod is the argument used for nat method
-	ArgNatMethod = "--nat-method"
-	// ArgNodePrivateKey is the argument used for node private key
-	ArgNodePrivateKey = "--node-private-key-file"
-	// ArgGenesisFile is the argument used for genesis file
-	ArgGenesisFile = "--genesis-file"
-	// ArgDataPath is the argument used for data path
-	ArgDataPath = "--data-path"
-	// ArgNetwork is the argument used for selecting network
-	ArgNetwork = "--network"
-	// ArgP2PPort is the argument used for p2p port
-	ArgP2PPort = "--p2p-port"
-	// ArgBootnodes is the argument used for bootnodes
-	ArgBootnodes = "--bootnodes"
-	// ArgSyncMode is the argument used for sync mode
-	ArgSyncMode = "--sync-mode"
-	// ArgMinerEnabled is the argument used for turning on mining
-	ArgMinerEnabled = "--miner-enabled"
-	// ArgMinerCoinbase is the argument used for setting coinbase account
-	ArgMinerCoinbase = "--miner-coinbase"
-	// ArgRPCHTTPCorsOrigins is the argument used for setting rpc HTTP cors origins
-	ArgRPCHTTPCorsOrigins = "--rpc-http-cors-origins"
-	// ArgRPCHTTPEnabled is the argument used to enable RPC over HTTP
-	ArgRPCHTTPEnabled = "--rpc-http-enabled"
-	// ArgRPCHTTPPort is the argument used for RPC HTTP port
-	ArgRPCHTTPPort = "--rpc-http-port"
-	// ArgRPCHTTPHost is the argument used for RPC HTTP Host
-	ArgRPCHTTPHost = "--rpc-http-host"
-	// ArgRPCHTTPAPI is the argument used for RPC HTTP APIs
-	ArgRPCHTTPAPI = "--rpc-http-api"
-	// ArgRPCWSEnabled is the argument used to enable RPC WS
-	ArgRPCWSEnabled = "--rpc-ws-enabled"
-	// ArgRPCWSPort is the argument used for RPC WS port
-	ArgRPCWSPort = "--rpc-ws-port"
-	// ArgRPCWSHost is the argument used for RPC WS host
-	ArgRPCWSHost = "--rpc-ws-host"
-	// ArgRPCWSAPI is the argument used for RPC WS APIs
-	ArgRPCWSAPI = "--rpc-ws-api"
-	// ArgGraphQLHTTPEnabled is the argument used to enable QraphQL HTTP server
-	ArgGraphQLHTTPEnabled = "--graphql-http-enabled"
-	// ArgGraphQLHTTPPort is the argument used for GraphQL HTTP port
-	ArgGraphQLHTTPPort = "--graphql-http-port"
-	// ArgGraphQLHTTPHost is the argument used for GraphQL HTTP host
-	ArgGraphQLHTTPHost = "--graphql-http-host"
-	// ArgGraphQLHTTPCorsOrigins is the argument used for GraphQL HTTP Cors origins
-	ArgGraphQLHTTPCorsOrigins = "--graphql-http-cors-origins"
-	// ArgHostWhitelist is the argument used for whitelisting hosts
-	ArgHostWhitelist = "--host-whitelist"
+	// BesuNatMethod is the argument used for nat method
+	BesuNatMethod = "--nat-method"
+	// BesuNodePrivateKey is the argument used for node private key
+	BesuNodePrivateKey = "--node-private-key-file"
+	// BesuGenesisFile is the argument used for genesis file
+	BesuGenesisFile = "--genesis-file"
+	// BesuDataPath is the argument used for data path
+	BesuDataPath = "--data-path"
+	// BesuNetwork is the argument used for selecting network
+	BesuNetwork = "--network"
+	// BesuP2PPort is the argument used for p2p port
+	BesuP2PPort = "--p2p-port"
+	// BesuBootnodes is the argument used for bootnodes
+	BesuBootnodes = "--bootnodes"
+	// BesuSyncMode is the argument used for sync mode
+	BesuSyncMode = "--sync-mode"
+	// BesuMinerEnabled is the argument used for turning on mining
+	BesuMinerEnabled = "--miner-enabled"
+	// BesuMinerCoinbase is the argument used for setting coinbase account
+	BesuMinerCoinbase = "--miner-coinbase"
+	// BesuRPCHTTPCorsOrigins is the argument used for setting rpc HTTP cors origins
+	BesuRPCHTTPCorsOrigins = "--rpc-http-cors-origins"
+	// BesuRPCHTTPEnabled is the argument used to enable RPC over HTTP
+	BesuRPCHTTPEnabled = "--rpc-http-enabled"
+	// BesuRPCHTTPPort is the argument used for RPC HTTP port
+	BesuRPCHTTPPort = "--rpc-http-port"
+	// BesuRPCHTTPHost is the argument used for RPC HTTP Host
+	BesuRPCHTTPHost = "--rpc-http-host"
+	// BesuRPCHTTPAPI is the argument used for RPC HTTP APIs
+	BesuRPCHTTPAPI = "--rpc-http-api"
+	// BesuRPCWSEnabled is the argument used to enable RPC WS
+	BesuRPCWSEnabled = "--rpc-ws-enabled"
+	// BesuRPCWSPort is the argument used for RPC WS port
+	BesuRPCWSPort = "--rpc-ws-port"
+	// BesuRPCWSHost is the argument used for RPC WS host
+	BesuRPCWSHost = "--rpc-ws-host"
+	// BesuRPCWSAPI is the argument used for RPC WS APIs
+	BesuRPCWSAPI = "--rpc-ws-api"
+	// BesuGraphQLHTTPEnabled is the argument used to enable QraphQL HTTP server
+	BesuGraphQLHTTPEnabled = "--graphql-http-enabled"
+	// BesuGraphQLHTTPPort is the argument used for GraphQL HTTP port
+	BesuGraphQLHTTPPort = "--graphql-http-port"
+	// BesuGraphQLHTTPHost is the argument used for GraphQL HTTP host
+	BesuGraphQLHTTPHost = "--graphql-http-host"
+	// BesuGraphQLHTTPCorsOrigins is the argument used for GraphQL HTTP Cors origins
+	BesuGraphQLHTTPCorsOrigins = "--graphql-http-cors-origins"
+	// BesuHostWhitelist is the argument used for whitelisting hosts
+	BesuHostWhitelist = "--host-whitelist"
+)
+
+// Go ethereum client arguments
+const (
+	// GethNodeKey is the argument used for node private key
+	GethNodeKey = "--nodekey"
+	// GethDataDir is the argument used for data path
+	GethDataDir = "--datadir"
+	// GethP2PPort is the argument used for p2p port
+	GethP2PPort = "--port"
+	// GethBootnodes is the argument used for bootnodes
+	GethBootnodes = "--bootnodes"
+	// GethSyncMode is the argument used for sync mode
+	GethSyncMode = "--syncmode"
+
+	// GethMinerEnabled is the argument used for turning on mining
+	GethMinerEnabled = "--mine"
+	// GethMinerCoinbase is the argument used for setting coinbase account
+	GethMinerCoinbase = "--miner.etherbase"
+
+	// GethRPCHTTPCorsOrigins is the argument used for setting rpc HTTP cors origins
+	GethRPCHTTPCorsOrigins = "--http.corsdomain"
+	// GethRPCHTTPEnabled is the argument used to enable RPC over HTTP
+	GethRPCHTTPEnabled = "--http"
+	// GethRPCHTTPPort is the argument used for RPC HTTP port
+	GethRPCHTTPPort = "--http.port"
+	// GethRPCHTTPHost is the argument used for RPC HTTP Host
+	GethRPCHTTPHost = "--http.addr"
+	// GethRPCHTTPAPI is the argument used for RPC HTTP APIs
+	GethRPCHTTPAPI = "--http.api"
+	// GethRPCHostWhitelist is the argument used for whitelisting hosts
+	GethRPCHostWhitelist = "--http.vhosts"
+
+	// GethRPCWSEnabled is the argument used to enable RPC WS
+	GethRPCWSEnabled = "--ws"
+	// GethRPCWSPort is the argument used for RPC WS port
+	GethRPCWSPort = "--ws.port"
+	// GethRPCWSHost is the argument used for RPC WS host
+	GethRPCWSHost = "--ws.addr"
+	// GethRPCWSAPI is the argument used for RPC WS APIs
+	GethRPCWSAPI = "--ws.api"
+
+	// GethGraphQLHTTPEnabled is the argument used to enable QraphQL HTTP server
+	GethGraphQLHTTPEnabled = "--graphql"
+	// GethGraphQLHTTPPort is the argument used for GraphQL HTTP port
+	GethGraphQLHTTPPort = "--graphql.port"
+	// GethGraphQLHTTPHost is the argument used for GraphQL HTTP host
+	GethGraphQLHTTPHost = "--graphql.addr"
+	// GethGraphQLHTTPCorsOrigins is the argument used for GraphQL HTTP Cors origins
+	GethGraphQLHTTPCorsOrigins = "--graphql.corsdomain"
+	// GethGraphQLHostWhitelist is the argument used for whitelisting hosts
+	GethGraphQLHostWhitelist = "--graphql.vhosts"
 )
