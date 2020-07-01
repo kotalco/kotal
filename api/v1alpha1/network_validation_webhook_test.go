@@ -12,6 +12,11 @@ import (
 
 var _ = Describe("Ethereum network validation", func() {
 
+	var (
+		networkID    uint = 77777
+		newNetworkID uint = 8888
+	)
+
 	createCases := []struct {
 		Title   string
 		Network *Network
@@ -365,6 +370,49 @@ var _ = Describe("Ethereum network validation", func() {
 				},
 			},
 		},
+		{
+			Title: "network #15",
+			Network: &Network{
+				Spec: NetworkSpec{
+					ID:   networkID,
+					Join: RinkebyNetwork,
+					Nodes: []Node{
+						{
+							Name: "node-1",
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.id",
+					BadValue: fmt.Sprintf("%d", networkID),
+					Detail:   "must be none if spec.join is provided",
+				},
+			},
+		},
+		{
+			Title: "network #16",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: ProofOfWork,
+					Nodes: []Node{
+						{
+							Name: "node-1",
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.id",
+					BadValue: "",
+					Detail:   "must be specified if spec.join is none",
+				},
+			},
+		},
 	}
 
 	// errorsToCauses converts field error list into array of status cause
@@ -527,6 +575,45 @@ var _ = Describe("Ethereum network validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.nodes[0].name",
 					BadValue: "node-2",
+					Detail:   "field is immutable",
+				},
+			},
+		},
+		{
+			Title: "network #5",
+			OldNetwork: &Network{
+				Spec: NetworkSpec{
+					ID:        networkID,
+					Consensus: ProofOfAuthority,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
+					Nodes: []Node{
+						{
+							Name: "node-1",
+						},
+					},
+				},
+			},
+			NewNetwork: &Network{
+				Spec: NetworkSpec{
+					ID:        newNetworkID,
+					Consensus: ProofOfAuthority,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
+					Nodes: []Node{
+						{
+							Name: "node-1",
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.id",
+					BadValue: fmt.Sprintf("%d", newNetworkID),
 					Detail:   "field is immutable",
 				},
 			},

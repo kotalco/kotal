@@ -206,6 +206,18 @@ func (r *Network) Validate() field.ErrorList {
 		validateErrors = append(validateErrors, err)
 	}
 
+	// id: must be provided if join is none
+	if r.Spec.Join == "" && r.Spec.ID == 0 {
+		err := field.Invalid(field.NewPath("spec").Child("id"), "", "must be specified if spec.join is none")
+		validateErrors = append(validateErrors, err)
+	}
+
+	// id: must be none if join is provided
+	if r.Spec.Join != "" && r.Spec.ID != 0 {
+		err := field.Invalid(field.NewPath("spec").Child("id"), fmt.Sprintf("%d", r.Spec.ID), "must be none if spec.join is provided")
+		validateErrors = append(validateErrors, err)
+	}
+
 	// consensus: must be provided if genesis is provided
 	if r.Spec.Genesis != nil && r.Spec.Consensus == "" {
 		err := field.Invalid(field.NewPath("spec").Child("consensus"), "", "must be specified if spec.genesis is provided")
@@ -249,6 +261,11 @@ func (r *Network) ValidateUpdate(old runtime.Object) error {
 	allErrors = append(allErrors, r.Validate()...)
 
 	oldNetwork := old.(*Network)
+
+	if oldNetwork.Spec.ID != r.Spec.ID {
+		err := field.Invalid(field.NewPath("spec").Child("id"), fmt.Sprintf("%d", r.Spec.ID), "field is immutable")
+		allErrors = append(allErrors, err)
+	}
 
 	if oldNetwork.Spec.Join != r.Spec.Join {
 		err := field.Invalid(field.NewPath("spec").Child("join"), r.Spec.Join, "field is immutable")

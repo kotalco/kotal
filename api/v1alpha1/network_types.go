@@ -43,8 +43,8 @@ const (
 
 // NetworkSpec defines the desired state of Network
 type NetworkSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// ID is network id
+	ID uint `json:"id,omitempty"`
 
 	// Join specifies the network to join
 	Join string `json:"join,omitempty"`
