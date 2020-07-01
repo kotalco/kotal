@@ -790,6 +790,10 @@ func (r *NetworkReconciler) createArgsForGeth(node *ethereumv1alpha1.Node, netwo
 		args = append(args, arg...)
 	}
 
+	if network.Spec.ID != 0 {
+		appendArg(GethNetworkID, fmt.Sprintf("%d", network.Spec.ID))
+	}
+
 	if node.WithNodekey() {
 		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", PathNodekey))
 	}
@@ -908,6 +912,10 @@ func (r *NetworkReconciler) createArgsForBesu(node *ethereumv1alpha1.Node, netwo
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
 		args = append(args, arg...)
+	}
+
+	if network.Spec.ID != 0 {
+		appendArg(BesuNetworkID, fmt.Sprintf("%d", network.Spec.ID))
 	}
 
 	if node.WithNodekey() {

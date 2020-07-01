@@ -44,6 +44,29 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
+			"geth bootnode joining rinkeby",
+			bootnodes,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.GethClient,
+							Bootnode: true,
+							Nodekey:  nodekey,
+						},
+					},
+				},
+			},
+			[]string{
+				"--rinkeby",
+				GethNodeKey,
+				GethDataDir,
+				PathBlockchainData,
+			},
+		},
+		{
 			"bootnode joining rinkeby",
 			bootnodes,
 			&ethereumv1alpha1.Network{
@@ -64,6 +87,29 @@ var _ = Describe("Ethereum client arguments", func() {
 				rinkeby,
 				BesuNodePrivateKey,
 				BesuDataPath,
+				PathBlockchainData,
+			},
+		},
+		{
+			"geth bootnode joining rinkeby",
+			bootnodes,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.GethClient,
+							Bootnode: true,
+							Nodekey:  nodekey,
+						},
+					},
+				},
+			},
+			[]string{
+				"--rinkeby",
+				GethNodeKey,
+				GethDataDir,
 				PathBlockchainData,
 			},
 		},
@@ -91,6 +137,31 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuDataPath,
 				PathBlockchainData,
 				BesuRPCHTTPEnabled,
+			},
+		},
+		{
+			"geth bootnode joining rinkeby with rpc",
+			bootnodes,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.GethClient,
+							Bootnode: true,
+							Nodekey:  nodekey,
+							RPC:      true,
+						},
+					},
+				},
+			},
+			[]string{
+				"--rinkeby",
+				GethNodeKey,
+				GethDataDir,
+				PathBlockchainData,
+				GethRPCHTTPEnabled,
 			},
 		},
 		{
@@ -126,6 +197,41 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuRPCHTTPPort,
 				"8599",
 				BesuRPCHTTPAPI,
+				"eth,web3,net",
+			},
+		},
+		{
+			"geth bootnode joining rinkeby with rpc settings",
+			bootnodes,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.GethClient,
+							Bootnode: true,
+							Nodekey:  nodekey,
+							RPC:      true,
+							RPCPort:  8599,
+							RPCAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.ETHAPI,
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.NetworkAPI,
+							},
+						},
+					},
+				},
+			},
+			[]string{
+				"--rinkeby",
+				GethNodeKey,
+				GethDataDir,
+				PathBlockchainData,
+				GethRPCHTTPEnabled,
+				GethRPCHTTPPort,
+				"8599",
+				GethRPCHTTPAPI,
 				"eth,web3,net",
 			},
 		},
@@ -179,6 +285,58 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuRPCWSPort,
 				"8588",
 				BesuRPCWSAPI,
+				"web3,eth",
+			},
+		},
+		{
+			"geth bootnode joining rinkeby with rpc, ws settings",
+			bootnodes,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.GethClient,
+							Bootnode: true,
+							Nodekey:  nodekey,
+							RPC:      true,
+							RPCHost:  "0.0.0.0",
+							RPCPort:  8599,
+							RPCAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.ETHAPI,
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.NetworkAPI,
+							},
+							WS:     true,
+							WSHost: "127.0.0.1",
+							WSPort: 8588,
+							WSAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.ETHAPI,
+							},
+						},
+					},
+				},
+			},
+			[]string{
+				"--rinkeby",
+				GethNodeKey,
+				GethDataDir,
+				PathBlockchainData,
+				GethRPCHTTPEnabled,
+				GethRPCHTTPPort,
+				"8599",
+				GethRPCHTTPHost,
+				"0.0.0.0",
+				GethRPCHTTPAPI,
+				"eth,web3,net",
+				GethRPCWSEnabled,
+				GethRPCWSHost,
+				"127.0.0.1",
+				GethRPCWSPort,
+				"8588",
+				GethRPCWSAPI,
 				"web3,eth",
 			},
 		},
@@ -248,11 +406,75 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
+			"geth bootnode joining rinkeby with rpc, ws, graphql settings and cors domains",
+			bootnodes,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.GethClient,
+							Bootnode: true,
+							Nodekey:  nodekey,
+							RPC:      true,
+							RPCHost:  "0.0.0.0",
+							RPCPort:  8599,
+							RPCAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.ETHAPI,
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.NetworkAPI,
+							},
+							CORSDomains: []string{"cors.example.com"},
+							WS:          true,
+							WSHost:      "127.0.0.1",
+							WSPort:      8588,
+							WSAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.ETHAPI,
+							},
+							GraphQL:     true,
+							GraphQLHost: "127.0.0.2",
+							GraphQLPort: 8511,
+						},
+					},
+				},
+			},
+			[]string{
+				"--rinkeby",
+				GethNodeKey,
+				GethDataDir,
+				PathBlockchainData,
+				GethRPCHTTPCorsOrigins,
+				GethRPCHTTPEnabled,
+				GethRPCHTTPPort,
+				"8599",
+				GethRPCHTTPHost,
+				"0.0.0.0",
+				GethRPCHTTPAPI,
+				"eth,web3,net",
+				GethRPCWSEnabled,
+				GethRPCWSHost,
+				"127.0.0.1",
+				GethRPCWSPort,
+				"8588",
+				GethRPCWSAPI,
+				"web3,eth",
+				GethGraphQLHTTPEnabled,
+				GethGraphQLHTTPHost,
+				"127.0.0.2",
+				GethGraphQLHTTPPort,
+				"8511",
+				GethGraphQLHTTPCorsOrigins,
+				"cors.example.com",
+			},
+		},
+		{
 			"miner node of private network that connects to bootnode",
 			[]string{bootnode},
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
-					Join:    rinkeby,
+					ID:      8888,
 					Genesis: &ethereumv1alpha1.Genesis{},
 					Nodes: []ethereumv1alpha1.Node{
 						{
@@ -265,12 +487,43 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 			[]string{
 				BesuNatMethod,
+				BesuNetworkID,
+				"8888",
 				BesuDataPath,
 				PathBlockchainData,
 				BesuBootnodes,
 				bootnode,
 				BesuMinerEnabled,
 				BesuMinerCoinbase,
+				string(coinbase),
+			},
+		},
+		{
+			"geth miner node of private network that connects to bootnode",
+			[]string{bootnode},
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					ID:      7777,
+					Genesis: &ethereumv1alpha1.Genesis{},
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.GethClient,
+							Miner:    true,
+							Coinbase: coinbase,
+						},
+					},
+				},
+			},
+			[]string{
+				GethDataDir,
+				GethNetworkID,
+				"7777",
+				PathBlockchainData,
+				GethBootnodes,
+				bootnode,
+				GethMinerEnabled,
+				GethMinerCoinbase,
 				string(coinbase),
 			},
 		},

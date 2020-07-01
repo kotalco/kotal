@@ -11,6 +11,8 @@ const (
 
 // Hyperledger Besu client arguments
 const (
+	// BesuNetworkID is the argument used for network id
+	BesuNetworkID = "--network-id"
 	// BesuNatMethod is the argument used for nat method
 	BesuNatMethod = "--nat-method"
 	// BesuNodePrivateKey is the argument used for node private key
@@ -63,6 +65,8 @@ const (
 
 // Go ethereum client arguments
 const (
+	// GethNetworkID is the argument used for network id
+	GethNetworkID = "--networkid"
 	// GethNodeKey is the argument used for node private key
 	GethNodeKey = "--nodekey"
 	// GethDataDir is the argument used for data path
