@@ -23,6 +23,7 @@ var _ = Describe("Ethereum network controller", func() {
 		sleepTime  = 5 * time.Second
 		interval   = 2 * time.Second
 		timeout    = 60 * time.Second
+		networkID  = 7777
 		privatekey = ethereumv1alpha1.PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
 	)
 
@@ -564,6 +565,7 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
+			ID:        networkID,
 			Consensus: ethereumv1alpha1.ProofOfAuthority,
 			Genesis: &ethereumv1alpha1.Genesis{
 				ChainID: 55555,
@@ -820,6 +822,7 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
+			ID:        networkID,
 			Consensus: ethereumv1alpha1.ProofOfWork,
 			Genesis: &ethereumv1alpha1.Genesis{
 				ChainID: 55555,
@@ -1072,6 +1075,7 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
+			ID:        networkID,
 			Consensus: ethereumv1alpha1.IstanbulBFT,
 			Genesis: &ethereumv1alpha1.Genesis{
 				ChainID: 55555,
