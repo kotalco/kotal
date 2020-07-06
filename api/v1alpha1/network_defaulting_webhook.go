@@ -106,9 +106,11 @@ func (r *Network) DefaultGenesis() {
 
 	if r.Spec.Genesis.Forks == nil {
 		// all milestones will be activated at block 0
-		r.Spec.Genesis.Forks = &Forks{
-			EIP150Hash: DefaultEIP150Hash,
-		}
+		r.Spec.Genesis.Forks = &Forks{}
+	}
+
+	if r.Spec.Genesis.Forks.EIP150Hash == "" {
+		r.Spec.Genesis.Forks.EIP150Hash = DefaultEIP150Hash
 	}
 
 	if r.Spec.Genesis.MixHash == "" {
