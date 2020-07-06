@@ -224,8 +224,12 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 	// clique PoA settings
 	if network.Spec.Consensus == ethereumv1alpha1.ProofOfAuthority {
 		consensusConfig = map[string]uint{
+			// besu
 			"blockperiodseconds": genesis.Clique.BlockPeriod,
 			"epochlength":        genesis.Clique.EpochLength,
+			// geth
+			"period": genesis.Clique.BlockPeriod,
+			"epoch":  genesis.Clique.EpochLength,
 		}
 		engine = "clique"
 		extraData = r.createExtraDataFromSigners(network.Spec.Genesis.Clique.Signers)
@@ -254,19 +258,20 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 	}
 
 	result["config"] = map[string]interface{}{
-		"chainId":                genesis.ChainID,
-		"homesteadBlock":         genesis.Forks.Homestead,
-		"daoForkBlock":           genesis.Forks.DAO,
-		"eip150Block":            genesis.Forks.EIP150,
-		"eip150Hash":             genesis.Forks.EIP150Hash,
-		"eip155Block":            genesis.Forks.EIP155,
-		"eip158Block":            genesis.Forks.EIP158,
-		"byzantiumBlock":         genesis.Forks.Byzantium,
-		"constantinopleBlock":    genesis.Forks.Constantinople,
-		"constantinopleFixBlock": genesis.Forks.Petersburg,
-		"istanbulBlock":          genesis.Forks.Istanbul,
-		"muirGlacierForkBlock":   genesis.Forks.MuirGlacier,
-		engine:                   consensusConfig,
+		"chainId":              genesis.ChainID,
+		"homesteadBlock":       genesis.Forks.Homestead,
+		"daoForkBlock":         genesis.Forks.DAO,
+		"daoForkSupport":       true, //geth
+		"eip150Block":          genesis.Forks.EIP150,
+		"eip150Hash":           genesis.Forks.EIP150Hash,
+		"eip155Block":          genesis.Forks.EIP155,
+		"eip158Block":          genesis.Forks.EIP158,
+		"byzantiumBlock":       genesis.Forks.Byzantium,
+		"constantinopleBlock":  genesis.Forks.Constantinople,
+		"petersburgBlock":      genesis.Forks.Petersburg,
+		"istanbulBlock":        genesis.Forks.Istanbul,
+		"muirGlacierForkBlock": genesis.Forks.MuirGlacier,
+		engine:                 consensusConfig,
 	}
 
 	result["nonce"] = nonce
@@ -279,11 +284,19 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 
 	alloc := map[ethereumv1alpha1.EthereumAddress]interface{}{}
 	for _, account := range genesis.Accounts {
-		alloc[account.Address] = map[string]interface{}{
+		m := map[string]interface{}{
 			"balance": account.Balance,
-			"code":    account.Code,
-			"storage": account.Storage,
 		}
+
+		if account.Code != "" {
+			m["code"] = account.Code
+		}
+
+		if account.Storage != nil {
+			m["storage"] = account.Storage
+		}
+
+		alloc[account.Address] = m
 	}
 
 	result["alloc"] = alloc
