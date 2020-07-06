@@ -9,6 +9,14 @@ const (
 	PathBlockchainData = "/mnt/data"
 )
 
+// Images
+const (
+	// BesuImage is hyperledger besu image
+	BesuImage = "hyperledger/besu:1.5"
+	// GethImage is go-ethereum image
+	GethImage = "ethereum/client-go:v1.9.15"
+)
+
 // Hyperledger Besu client arguments
 const (
 	// BesuNetworkID is the argument used for network id

@@ -542,6 +542,40 @@ func (r *NetworkReconciler) getNodeAffinity(network *ethereumv1alpha1.Network) *
 // specNodeDeployment updates node deployment spec
 func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements, affinity *corev1.Affinity) {
 	labels := node.Labels()
+	// used by geth to init genesis and import account(s)
+	initContainers := []corev1.Container{}
+	// node client container
+	nodeContainer := corev1.Container{
+		Name:         "node",
+		Args:         args,
+		Resources:    resources,
+		VolumeMounts: volumeMounts,
+	}
+
+	if node.Client == ethereumv1alpha1.GethClient {
+		initGenesis := corev1.Container{
+			Name:  "init-genesis",
+			Image: GethImage,
+			Command: []string{
+				"geth",
+			},
+			Args: []string{
+				"init",
+				GethDataDir,
+				PathBlockchainData,
+				fmt.Sprintf("%s/genesis.json", PathGenesisFile),
+			},
+			VolumeMounts: volumeMounts,
+		}
+		initContainers = append(initContainers, initGenesis)
+		nodeContainer.Image = GethImage
+		nodeContainer.Command = []string{"geth"}
+
+	} else if node.Client == ethereumv1alpha1.BesuClient {
+		nodeContainer.Image = BesuImage
+		nodeContainer.Command = []string{"besu"}
+	}
+
 	dep.ObjectMeta.Labels = labels
 	if dep.Spec.Selector == nil {
 		dep.Spec.Selector = &metav1.LabelSelector{}
@@ -549,20 +583,10 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 	dep.Spec.Selector.MatchLabels = labels
 	dep.Spec.Template.ObjectMeta.Labels = labels
 	dep.Spec.Template.Spec = corev1.PodSpec{
-		Volumes: volumes,
-		Containers: []corev1.Container{
-			{
-				Name:  "node",
-				Image: "hyperledger/besu:1.4.6",
-				Command: []string{
-					"besu",
-				},
-				Args:         args,
-				Resources:    resources,
-				VolumeMounts: volumeMounts,
-			},
-		},
-		Affinity: affinity,
+		Volumes:        volumes,
+		InitContainers: initContainers,
+		Containers:     []corev1.Container{nodeContainer},
+		Affinity:       affinity,
 	}
 }
 
@@ -796,7 +820,7 @@ func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, net
 
 // createArgsForGeth create arguments to be passed to the node client from node specs
 func (r *NetworkReconciler) createArgsForGeth(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) []string {
-	args := []string{}
+	args := []string{"--nousb"}
 
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
