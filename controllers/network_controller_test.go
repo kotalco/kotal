@@ -400,6 +400,7 @@ var _ = Describe("Ethereum network controller", func() {
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuNetwork,
 				"rinkeby",
@@ -427,6 +428,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			newNode := ethereumv1alpha1.Node{
 				Name:    "node-2",
+				Client:  ethereumv1alpha1.GethClient,
 				RPC:     true,
 				RPCPort: 8547,
 			}
@@ -455,12 +457,12 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuNetwork,
-				"rinkeby",
-				BesuDataPath,
-				BesuBootnodes,
-				BesuRPCHTTPEnabled,
+				"--rinkeby",
+				GethDataDir,
+				GethBootnodes,
+				GethRPCHTTPEnabled,
 				"8547",
 			}))
 		})

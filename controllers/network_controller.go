@@ -540,7 +540,7 @@ func (r *NetworkReconciler) getNodeAffinity(network *ethereumv1alpha1.Network) *
 }
 
 // specNodeDeployment updates node deployment spec
-func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements, affinity *corev1.Affinity) {
+func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements, affinity *corev1.Affinity) {
 	labels := node.Labels()
 	// used by geth to init genesis and import account(s)
 	initContainers := []corev1.Container{}
@@ -553,21 +553,23 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 	}
 
 	if node.Client == ethereumv1alpha1.GethClient {
-		initGenesis := corev1.Container{
-			Name:  "init-genesis",
-			Image: GethImage,
-			Command: []string{
-				"geth",
-			},
-			Args: []string{
-				"init",
-				GethDataDir,
-				PathBlockchainData,
-				fmt.Sprintf("%s/genesis.json", PathGenesisFile),
-			},
-			VolumeMounts: volumeMounts,
+		if network.Spec.Join == "" {
+			initGenesis := corev1.Container{
+				Name:  "init-genesis",
+				Image: GethImage,
+				Command: []string{
+					"geth",
+				},
+				Args: []string{
+					"init",
+					GethDataDir,
+					PathBlockchainData,
+					fmt.Sprintf("%s/genesis.json", PathGenesisFile),
+				},
+				VolumeMounts: volumeMounts,
+			}
+			initContainers = append(initContainers, initGenesis)
 		}
-		initContainers = append(initContainers, initGenesis)
 		nodeContainer.Image = GethImage
 		nodeContainer.Command = []string{"geth"}
 
@@ -666,7 +668,7 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 		if err := ctrl.SetControllerReference(network, dep, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeDeployment(dep, node, args, volumes, volumeMounts, resources, affinity)
+		r.specNodeDeployment(dep, node, network, args, volumes, volumeMounts, resources, affinity)
 		return nil
 	})
 
