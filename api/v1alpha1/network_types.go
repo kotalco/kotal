@@ -315,6 +315,14 @@ const (
 	GethClient EthereumClient = "geth"
 )
 
+// ImportedAccount is account derived from private key
+type ImportedAccount struct {
+	// Privatekey is the account private key
+	PrivateKey `json:"privatekey"`
+	// Password is the password used to encrypt account private key
+	Password string `json:"password"`
+}
+
 //Node is the specification of the node
 type Node struct {
 	// Client is ethereum client running on the node
@@ -322,6 +330,9 @@ type Node struct {
 
 	// Name is the node name
 	Name string `json:"name"`
+
+	// import is account to import
+	Import *ImportedAccount `json:"import,omitempty"`
 
 	// Bootnode is whether node is bootnode or no
 	Bootnode bool `json:"bootnode,omitempty"`

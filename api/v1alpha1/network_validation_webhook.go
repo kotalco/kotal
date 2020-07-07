@@ -3,7 +3,9 @@ package v1alpha1
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
+	"github.com/mfarghaly/kotal/helpers"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -67,24 +69,51 @@ func (r *Network) ValidateNodeNameUniqeness() field.ErrorList {
 // ValidateNode validates a single node
 func (r *Network) ValidateNode(i int) field.ErrorList {
 	node := r.Spec.Nodes[i]
+	nodePath := field.NewPath("spec").Child("nodes").Index(i)
 	var nodeErrors field.ErrorList
 
 	// validate nodekey is provided if node is bootnode
 	if node.IsBootnode() && node.Nodekey == "" {
-		err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("nodekey"), node.Nodekey, "must provide nodekey if bootnode is true")
+		err := field.Invalid(nodePath.Child("nodekey"), node.Nodekey, "must provide nodekey if bootnode is true")
 		nodeErrors = append(nodeErrors, err)
 	}
 
 	// validate coinbase is provided if node is miner
 	if node.Miner && node.Coinbase == "" {
-		err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("coinbase"), "", "must provide coinbase if miner is true")
+		err := field.Invalid(nodePath.Child("coinbase"), "", "must provide coinbase if miner is true")
 		nodeErrors = append(nodeErrors, err)
 	}
 
 	// validate coinbase can't be set if miner is not set explicitly as true
 	if node.Coinbase != "" && node.Miner == false {
-		err := field.Invalid(field.NewPath("spec").Child("nodes").Index(i).Child("miner"), false, "must set miner to true if coinbase is provided")
+		err := field.Invalid(nodePath.Child("miner"), false, "must set miner to true if coinbase is provided")
 		nodeErrors = append(nodeErrors, err)
+	}
+
+	// validate only geth client can import accounts
+	if node.Client != GethClient && node.Import != nil {
+		err := field.Invalid(nodePath.Child("client"), node.Client, "must be geth if node.import is provided")
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	// Geth specfic validations
+	if node.Client == GethClient && node.Coinbase != "" && node.Import == nil {
+		err := field.Invalid(nodePath.Child("import"), "", "must import coinbase account")
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	if node.Client == GethClient && node.Coinbase != "" && node.Import != nil {
+		privateKey := node.Import.PrivateKey[2:]
+		address, err := helpers.DeriveAddress(string(privateKey))
+		if err != nil {
+			err := field.Invalid(nodePath.Child("import").Child("privatekey"), "<private key>", "invalid private key")
+			nodeErrors = append(nodeErrors, err)
+		}
+
+		if strings.ToLower(string(node.Coinbase)) != strings.ToLower(address) {
+			err := field.Invalid(nodePath.Child("import").Child("privatekey"), "<private key>", "private key doesn't correspond to the coinbase address")
+			nodeErrors = append(nodeErrors, err)
+		}
 	}
 
 	return nodeErrors

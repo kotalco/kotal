@@ -279,6 +279,21 @@ spec:
                     items:
                       type: string
                     type: array
+                  import:
+                    description: import is account to import
+                    properties:
+                      password:
+                        description: Password is the password used to encrypt account
+                          private key
+                        type: string
+                      privatekey:
+                        description: Privatekey is the account private key
+                        pattern: ^0[xX][0-9a-fA-F]{64}$
+                        type: string
+                    required:
+                    - password
+                    - privatekey
+                    type: object
                   miner:
                     description: Miner is whether node is mining/validating blocks
                       or no

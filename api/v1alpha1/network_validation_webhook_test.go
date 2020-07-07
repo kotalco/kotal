@@ -13,8 +13,11 @@ import (
 var _ = Describe("Ethereum network validation", func() {
 
 	var (
-		networkID    uint = 77777
-		newNetworkID uint = 8888
+		networkID       uint = 77777
+		newNetworkID    uint = 8888
+		coinbase             = EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706")
+		privatekey           = PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
+		wrongPrivatekey      = PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4f")
 	)
 
 	createCases := []struct {
@@ -410,6 +413,88 @@ var _ = Describe("Ethereum network validation", func() {
 					Field:    "spec.id",
 					BadValue: "",
 					Detail:   "must be specified if spec.join is none",
+				},
+			},
+		},
+		{
+			Title: "network #17",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: ProofOfWork,
+					ID:        networkID,
+					Nodes: []Node{
+						{
+							Name:     "node-1",
+							Client:   GethClient,
+							Miner:    true,
+							Coinbase: coinbase,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].import",
+					BadValue: "",
+					Detail:   "must import coinbase account",
+				},
+			},
+		},
+		{
+			Title: "network #18",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: ProofOfWork,
+					ID:        networkID,
+					Nodes: []Node{
+						{
+							Name:     "node-1",
+							Client:   GethClient,
+							Miner:    true,
+							Coinbase: coinbase,
+							Import: &ImportedAccount{
+								PrivateKey: wrongPrivatekey,
+								Password:   "secret",
+							},
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].import.privatekey",
+					BadValue: "<private key>",
+					Detail:   "private key doesn't correspond to the coinbase address",
+				},
+			},
+		},
+		{
+			Title: "network #19",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: ProofOfWork,
+					ID:        networkID,
+					Nodes: []Node{
+						{
+							Name:     "node-1",
+							Miner:    true,
+							Coinbase: coinbase,
+							Import: &ImportedAccount{
+								PrivateKey: privatekey,
+								Password:   "secret",
+							},
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].client",
+					BadValue: "besu",
+					Detail:   "must be geth if node.import is provided",
 				},
 			},
 		},
