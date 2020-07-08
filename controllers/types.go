@@ -7,6 +7,8 @@ const (
 	PathGenesisFile = "/mnt/config"
 	// PathBlockchainData is the blockchain data path
 	PathBlockchainData = "/mnt/data"
+	// PathImportedAccount is the imported account path
+	PathImportedAccount = "/mnt/import"
 )
 
 // Images

@@ -474,6 +474,18 @@ func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.Node, netwo
 		volumes = append(volumes, genesisVolume)
 	}
 
+	if node.Import != nil {
+		importedAccount := corev1.Volume{
+			Name: "imported-account",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: node.ImportedAccountName(network.Name),
+				},
+			},
+		}
+		volumes = append(volumes, importedAccount)
+	}
+
 	dataVolume := corev1.Volume{
 		Name: "data",
 		VolumeSource: corev1.VolumeSource{
@@ -508,6 +520,15 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, 
 			ReadOnly:  true,
 		}
 		volumeMounts = append(volumeMounts, genesisMount)
+	}
+
+	if node.Import != nil {
+		importedAccountMount := corev1.VolumeMount{
+			Name:      "imported-account",
+			MountPath: PathImportedAccount,
+			ReadOnly:  true,
+		}
+		volumeMounts = append(volumeMounts, importedAccountMount)
 	}
 
 	dataMount := corev1.VolumeMount{
@@ -570,6 +591,27 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 			}
 			initContainers = append(initContainers, initGenesis)
 		}
+		if node.Import != nil {
+			importAccount := corev1.Container{
+				Name:  "import-account",
+				Image: GethImage,
+				Command: []string{
+					"geth",
+				},
+				Args: []string{
+					"account",
+					"import",
+					GethDataDir,
+					PathBlockchainData,
+					"--password",
+					fmt.Sprintf("%s/account.password", PathImportedAccount),
+					fmt.Sprintf("%s/account.key", PathImportedAccount),
+				},
+				VolumeMounts: volumeMounts,
+			}
+			initContainers = append(initContainers, importAccount)
+		}
+
 		nodeContainer.Image = GethImage
 		nodeContainer.Command = []string{"geth"}
 
@@ -767,6 +809,35 @@ func (r *NetworkReconciler) reconcileNodeService(ctx context.Context, node *ethe
 	return
 }
 
+func (r *NetworkReconciler) specImportedAccountSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node) {
+	// TODO: update labels for delete redundant nodes resources
+	secret.StringData = map[string]string{
+		"account.key":      string(node.Import.PrivateKey)[2:],
+		"account.password": node.Import.Password,
+	}
+}
+
+func (r *NetworkReconciler) reconcileImportedAccountSecret(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
+	secret := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.ImportedAccountName(network.Name),
+			Namespace: network.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, secret, func() error {
+		if err := ctrl.SetControllerReference(network, secret, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specImportedAccountSecret(secret, node)
+
+		return nil
+	})
+
+	return err
+}
+
 // reconcileNode create a new node deployment if it doesn't exist
 // updates existing deployments if node spec changed
 func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (enodeURL string, err error) {
@@ -783,6 +854,12 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 
 	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts, resources, affinity); err != nil {
 		return
+	}
+
+	if node.Import != nil {
+		if err = r.reconcileImportedAccountSecret(ctx, node, network); err != nil {
+			return
+		}
 	}
 
 	if !node.WithNodekey() {
@@ -863,6 +940,8 @@ func (r *NetworkReconciler) createArgsForGeth(node *ethereumv1alpha1.Node, netwo
 
 	if node.Coinbase != "" {
 		appendArg(GethMinerCoinbase, string(node.Coinbase))
+		appendArg("--unlock", string(node.Coinbase))
+		appendArg("--password", fmt.Sprintf("%s/account.password", PathImportedAccount))
 	}
 
 	if node.RPC {
