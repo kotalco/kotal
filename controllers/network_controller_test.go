@@ -25,6 +25,10 @@ var _ = Describe("Ethereum network controller", func() {
 		timeout    = 60 * time.Second
 		networkID  = 7777
 		privatekey = ethereumv1alpha1.PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
+		// imported account
+		accountKey      = ethereumv1alpha1.PrivateKey("0x5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd")
+		accountAddress  = ethereumv1alpha1.EthereumAddress("0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d")
+		accountPassword = "secret"
 	)
 
 	var (
@@ -427,8 +431,14 @@ var _ = Describe("Ethereum network controller", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			newNode := ethereumv1alpha1.Node{
-				Name:    "node-2",
-				Client:  ethereumv1alpha1.GethClient,
+				Name:     "node-2",
+				Client:   ethereumv1alpha1.GethClient,
+				Miner:    true,
+				Coinbase: accountAddress,
+				Import: &ethereumv1alpha1.ImportedAccount{
+					PrivateKey: accountKey,
+					Password:   accountPassword,
+				},
 				RPC:     true,
 				RPCPort: 8547,
 			}
@@ -458,13 +468,38 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+				"account",
+				"import",
+				GethDataDir,
+				PathBlockchainData,
+				GethPassword,
+				fmt.Sprintf("%s/account.password", PathImportedAccount),
+				fmt.Sprintf("%s/account.key", PathImportedAccount),
+			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				"--rinkeby",
 				GethDataDir,
 				GethBootnodes,
 				GethRPCHTTPEnabled,
 				"8547",
+				GethMinerEnabled,
+				GethMinerCoinbase,
+				GethUnlock,
+				GethPassword,
 			}))
+		})
+
+		It("Should create node-2 imported account secret", func() {
+			secret := &v1.Secret{}
+			secretKey := types.NamespacedName{
+				Name:      fmt.Sprintf("%s-%s-imported-account", toCreate.Name, "node-2"),
+				Namespace: key.Namespace,
+			}
+			Expect(k8sClient.Get(context.Background(), secretKey, secret)).To(Succeed())
+			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
+			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-2 data persistent volume", func() {
@@ -689,8 +724,14 @@ var _ = Describe("Ethereum network controller", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			newNode := ethereumv1alpha1.Node{
-				Name:    "node-2",
-				Client:  ethereumv1alpha1.GethClient,
+				Name:     "node-2",
+				Client:   ethereumv1alpha1.GethClient,
+				Miner:    true,
+				Coinbase: accountAddress,
+				Import: &ethereumv1alpha1.ImportedAccount{
+					PrivateKey: accountKey,
+					Password:   accountPassword,
+				},
 				RPC:     true,
 				RPCPort: 8547,
 			}
@@ -714,12 +755,33 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 			}))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
+				"account",
+				"import",
+				GethDataDir,
+				PathBlockchainData,
+				GethPassword,
+				fmt.Sprintf("%s/account.password", PathImportedAccount),
+				fmt.Sprintf("%s/account.key", PathImportedAccount),
+			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 				GethBootnodes,
 				GethRPCHTTPEnabled,
 				"8547",
 			}))
+		})
+
+		It("Should create node-2 imported account secret", func() {
+			secret := &v1.Secret{}
+			secretKey := types.NamespacedName{
+				Name:      fmt.Sprintf("%s-%s-imported-account", toCreate.Name, "node-2"),
+				Namespace: key.Namespace,
+			}
+			Expect(k8sClient.Get(context.Background(), secretKey, secret)).To(Succeed())
+			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
+			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-2 data persistent volume with correct resources", func() {
@@ -949,8 +1011,14 @@ var _ = Describe("Ethereum network controller", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			newNode := ethereumv1alpha1.Node{
-				Name:    "node-2",
-				Client:  ethereumv1alpha1.GethClient,
+				Name:     "node-2",
+				Client:   ethereumv1alpha1.GethClient,
+				Miner:    true,
+				Coinbase: accountAddress,
+				Import: &ethereumv1alpha1.ImportedAccount{
+					PrivateKey: accountKey,
+					Password:   accountPassword,
+				},
 				RPC:     true,
 				RPCPort: 8547,
 			}
@@ -974,12 +1042,33 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 			}))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
+				"account",
+				"import",
+				GethDataDir,
+				PathBlockchainData,
+				GethPassword,
+				fmt.Sprintf("%s/account.password", PathImportedAccount),
+				fmt.Sprintf("%s/account.key", PathImportedAccount),
+			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 				GethBootnodes,
 				GethRPCHTTPEnabled,
 				"8547",
 			}))
+		})
+
+		It("Should create node-2 imported account secret", func() {
+			secret := &v1.Secret{}
+			secretKey := types.NamespacedName{
+				Name:      fmt.Sprintf("%s-%s-imported-account", toCreate.Name, "node-2"),
+				Namespace: key.Namespace,
+			}
+			Expect(k8sClient.Get(context.Background(), secretKey, secret)).To(Succeed())
+			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
+			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-2 data persistent volume with correct resources", func() {

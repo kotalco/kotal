@@ -125,4 +125,8 @@ const (
 	GethGraphQLHTTPCorsOrigins = "--graphql.corsdomain"
 	// GethGraphQLHostWhitelist is the argument used for whitelisting hosts
 	GethGraphQLHostWhitelist = "--graphql.vhosts"
+	// GethUnlock is the argument used for unlocking imported ethereum account
+	GethUnlock = "--unlock"
+	// GethPassword is the argument used for locking imported ethereum address
+	GethPassword = "--password"
 )

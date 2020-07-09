@@ -603,7 +603,7 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 					"import",
 					GethDataDir,
 					PathBlockchainData,
-					"--password",
+					GethPassword,
 					fmt.Sprintf("%s/account.password", PathImportedAccount),
 					fmt.Sprintf("%s/account.key", PathImportedAccount),
 				},
@@ -940,8 +940,8 @@ func (r *NetworkReconciler) createArgsForGeth(node *ethereumv1alpha1.Node, netwo
 
 	if node.Coinbase != "" {
 		appendArg(GethMinerCoinbase, string(node.Coinbase))
-		appendArg("--unlock", string(node.Coinbase))
-		appendArg("--password", fmt.Sprintf("%s/account.password", PathImportedAccount))
+		appendArg(GethUnlock, string(node.Coinbase))
+		appendArg(GethPassword, fmt.Sprintf("%s/account.password", PathImportedAccount))
 	}
 
 	if node.RPC {
