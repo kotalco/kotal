@@ -22,7 +22,7 @@ var _ = Describe("Ethereum network controller", func() {
 	const (
 		sleepTime  = 5 * time.Second
 		interval   = 2 * time.Second
-		timeout    = 60 * time.Second
+		timeout    = 2 * time.Minute
 		networkID  = 7777
 		privatekey = ethereumv1alpha1.PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
 		// imported account
@@ -889,9 +889,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Consensus: ethereumv1alpha1.ProofOfWork,
 			Genesis: &ethereumv1alpha1.Genesis{
 				ChainID: 55555,
-				Ethash: &ethereumv1alpha1.Ethash{
-					FixedDifficulty: 1500,
-				},
+				Ethash:  &ethereumv1alpha1.Ethash{},
 			},
 			Nodes: []ethereumv1alpha1.Node{
 				{

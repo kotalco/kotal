@@ -15,6 +15,7 @@ var _ = Describe("Ethereum network validation", func() {
 	var (
 		networkID       uint = 77777
 		newNetworkID    uint = 8888
+		fixedDifficulty uint = 1500
 		coinbase             = EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706")
 		privatekey           = PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
 		wrongPrivatekey      = PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4f")
@@ -400,6 +401,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Consensus: ProofOfWork,
+					Genesis:   &Genesis{},
 					Nodes: []Node{
 						{
 							Name: "node-1",
@@ -422,6 +424,7 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					Consensus: ProofOfWork,
 					ID:        networkID,
+					Genesis:   &Genesis{},
 					Nodes: []Node{
 						{
 							Name:     "node-1",
@@ -447,6 +450,7 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					Consensus: ProofOfWork,
 					ID:        networkID,
+					Genesis:   &Genesis{},
 					Nodes: []Node{
 						{
 							Name:     "node-1",
@@ -608,6 +612,34 @@ var _ = Describe("Ethereum network validation", func() {
 					Field:    "spec.nodes[0].graphql",
 					BadValue: true,
 					Detail:   "must be false if node.import is provided",
+				},
+			},
+		},
+		{
+			Title: "network #24",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: ProofOfWork,
+					ID:        networkID,
+					Genesis: &Genesis{
+						Ethash: &Ethash{
+							FixedDifficulty: &fixedDifficulty,
+						},
+					},
+					Nodes: []Node{
+						{
+							Name:   "node-1",
+							Client: GethClient,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].client",
+					BadValue: "geth",
+					Detail:   "client doesn't support fixed difficulty pow networks",
 				},
 			},
 		},

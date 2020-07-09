@@ -172,7 +172,7 @@ type Clique struct {
 // Ethash configurations
 type Ethash struct {
 	// FixedDifficulty is fixed difficulty to be used in private PoW networks
-	FixedDifficulty uint `json:"fixedDifficulty,omitempty"`
+	FixedDifficulty *uint `json:"fixedDifficulty,omitempty"`
 }
 
 // Forks is the supported forks by the network

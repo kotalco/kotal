@@ -215,9 +215,12 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 	var engine string
 
 	if network.Spec.Consensus == ethereumv1alpha1.ProofOfWork {
-		consensusConfig = map[string]uint{
-			"fixeddifficulty": genesis.Ethash.FixedDifficulty,
+		consensusConfig = map[string]uint{}
+
+		if genesis.Ethash.FixedDifficulty != nil {
+			consensusConfig["fixeddifficulty"] = *genesis.Ethash.FixedDifficulty
 		}
+
 		engine = "ethash"
 	}
 

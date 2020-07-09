@@ -115,6 +115,12 @@ func (r *Network) ValidateGethNode(node *Node, i int) field.ErrorList {
 		gethErrors = append(gethErrors, err)
 	}
 
+	// validate geth doesn't support fixed difficulty ethash networks
+	if r.Spec.Join == "" && r.Spec.Consensus == ProofOfWork && r.Spec.Genesis.Ethash.FixedDifficulty != nil {
+		err := field.Invalid(nodePath.Child("client"), node.Client, "client doesn't support fixed difficulty pow networks")
+		gethErrors = append(gethErrors, err)
+	}
+
 	// validate account must be imported if coinbase is provided
 	if node.Coinbase != "" && node.Import == nil {
 		err := field.Invalid(nodePath.Child("import"), "", "must import coinbase account")

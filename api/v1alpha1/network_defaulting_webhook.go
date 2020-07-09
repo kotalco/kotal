@@ -133,9 +133,6 @@ func (r *Network) DefaultGenesis() {
 		if r.Spec.Genesis.Ethash == nil {
 			r.Spec.Genesis.Ethash = &Ethash{}
 		}
-		if r.Spec.Genesis.Ethash.FixedDifficulty == 0 {
-			r.Spec.Genesis.Ethash.FixedDifficulty = DefaultEthashFixedDifficulty
-		}
 	}
 
 	if r.Spec.Consensus == ProofOfAuthority {

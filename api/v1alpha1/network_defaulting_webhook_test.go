@@ -66,8 +66,6 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(network.Spec.Genesis.Forks.Petersburg).To(Equal(block0))
 		Expect(network.Spec.Genesis.Forks.Istanbul).To(Equal(block0))
 		Expect(network.Spec.Genesis.Forks.MuirGlacier).To(Equal(block0))
-		// ethash defaulting
-		Expect(network.Spec.Genesis.Ethash.FixedDifficulty).To(Equal(DefaultEthashFixedDifficulty))
 	})
 
 	It("Should default network with poa consensus", func() {
