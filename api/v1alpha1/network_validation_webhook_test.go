@@ -498,6 +498,119 @@ var _ = Describe("Ethereum network validation", func() {
 				},
 			},
 		},
+		{
+			Title: "network #20",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: IstanbulBFT,
+					ID:        networkID,
+					Nodes: []Node{
+						{
+							Name:   "node-1",
+							Client: GethClient,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].client",
+					BadValue: "geth",
+					Detail:   "client doesn't support ibft2 consensus",
+				},
+			},
+		},
+		{
+			Title: "network #21",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: ProofOfAuthority,
+					ID:        networkID,
+					Nodes: []Node{
+						{
+							Name:     "node-1",
+							Client:   GethClient,
+							RPC:      true,
+							Miner:    true,
+							Coinbase: coinbase,
+							Import: &ImportedAccount{
+								PrivateKey: privatekey,
+								Password:   "secret",
+							},
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].rpc",
+					BadValue: true,
+					Detail:   "must be false if node.import is provided",
+				},
+			},
+		},
+		{
+			Title: "network #22",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: ProofOfAuthority,
+					ID:        networkID,
+					Nodes: []Node{
+						{
+							Name:     "node-1",
+							Client:   GethClient,
+							WS:       true,
+							Miner:    true,
+							Coinbase: coinbase,
+							Import: &ImportedAccount{
+								PrivateKey: privatekey,
+								Password:   "secret",
+							},
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].ws",
+					BadValue: true,
+					Detail:   "must be false if node.import is provided",
+				},
+			},
+		},
+		{
+			Title: "network #23",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: ProofOfAuthority,
+					ID:        networkID,
+					Nodes: []Node{
+						{
+							Name:     "node-1",
+							Client:   GethClient,
+							GraphQL:  true,
+							Miner:    true,
+							Coinbase: coinbase,
+							Import: &ImportedAccount{
+								PrivateKey: privatekey,
+								Password:   "secret",
+							},
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].graphql",
+					BadValue: true,
+					Detail:   "must be false if node.import is provided",
+				},
+			},
+		},
 	}
 
 	// errorsToCauses converts field error list into array of status cause

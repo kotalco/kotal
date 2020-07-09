@@ -439,8 +439,6 @@ var _ = Describe("Ethereum network controller", func() {
 					PrivateKey: accountKey,
 					Password:   accountPassword,
 				},
-				RPC:     true,
-				RPCPort: 8547,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -482,8 +480,6 @@ var _ = Describe("Ethereum network controller", func() {
 				"--rinkeby",
 				GethDataDir,
 				GethBootnodes,
-				GethRPCHTTPEnabled,
-				"8547",
 				GethMinerEnabled,
 				GethMinerCoinbase,
 				GethUnlock,
@@ -732,8 +728,6 @@ var _ = Describe("Ethereum network controller", func() {
 					PrivateKey: accountKey,
 					Password:   accountPassword,
 				},
-				RPC:     true,
-				RPCPort: 8547,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -768,8 +762,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 				GethBootnodes,
-				GethRPCHTTPEnabled,
-				"8547",
 			}))
 		})
 
@@ -1019,8 +1011,6 @@ var _ = Describe("Ethereum network controller", func() {
 					PrivateKey: accountKey,
 					Password:   accountPassword,
 				},
-				RPC:     true,
-				RPCPort: 8547,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -1055,8 +1045,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 				GethBootnodes,
-				GethRPCHTTPEnabled,
-				"8547",
 			}))
 		})
 

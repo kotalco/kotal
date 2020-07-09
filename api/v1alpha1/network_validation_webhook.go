@@ -96,27 +96,65 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
-	// Geth specfic validations
-	if node.Client == GethClient && node.Coinbase != "" && node.Import == nil {
-		err := field.Invalid(nodePath.Child("import"), "", "must import coinbase account")
-		nodeErrors = append(nodeErrors, err)
+	// Validate geth node
+	if node.Client == GethClient {
+		nodeErrors = append(nodeErrors, r.ValidateGethNode(&node, i)...)
 	}
 
-	if node.Client == GethClient && node.Coinbase != "" && node.Import != nil {
+	return nodeErrors
+}
+
+// ValidateGethNode validates a node with client geth
+func (r *Network) ValidateGethNode(node *Node, i int) field.ErrorList {
+	var gethErrors field.ErrorList
+	nodePath := field.NewPath("spec").Child("nodes").Index(i)
+
+	// validate geth supports only pow and poa
+	if r.Spec.Join == "" && r.Spec.Consensus != ProofOfWork && r.Spec.Consensus != ProofOfAuthority {
+		err := field.Invalid(nodePath.Child("client"), node.Client, fmt.Sprintf("client doesn't support %s consensus", r.Spec.Consensus))
+		gethErrors = append(gethErrors, err)
+	}
+
+	// validate account must be imported if coinbase is provided
+	if node.Coinbase != "" && node.Import == nil {
+		err := field.Invalid(nodePath.Child("import"), "", "must import coinbase account")
+		gethErrors = append(gethErrors, err)
+	}
+
+	// validate imported account private key is valid and coinbase account is derived from it
+	if node.Coinbase != "" && node.Import != nil {
 		privateKey := node.Import.PrivateKey[2:]
 		address, err := helpers.DeriveAddress(string(privateKey))
 		if err != nil {
 			err := field.Invalid(nodePath.Child("import").Child("privatekey"), "<private key>", "invalid private key")
-			nodeErrors = append(nodeErrors, err)
+			gethErrors = append(gethErrors, err)
 		}
 
 		if strings.ToLower(string(node.Coinbase)) != strings.ToLower(address) {
 			err := field.Invalid(nodePath.Child("import").Child("privatekey"), "<private key>", "private key doesn't correspond to the coinbase address")
-			nodeErrors = append(nodeErrors, err)
+			gethErrors = append(gethErrors, err)
 		}
 	}
 
-	return nodeErrors
+	// validate rpc can't be enabled for node with imported account
+	if node.Import != nil && node.RPC {
+		err := field.Invalid(nodePath.Child("rpc"), node.RPC, "must be false if node.import is provided")
+		gethErrors = append(gethErrors, err)
+	}
+
+	// validate ws can't be enabled for node with imported account
+	if node.Import != nil && node.WS {
+		err := field.Invalid(nodePath.Child("ws"), node.WS, "must be false if node.import is provided")
+		gethErrors = append(gethErrors, err)
+	}
+
+	// validate graphql can't be enabled for node with imported account
+	if node.Import != nil && node.GraphQL {
+		err := field.Invalid(nodePath.Child("graphql"), node.GraphQL, "must be false if node.import is provided")
+		gethErrors = append(gethErrors, err)
+	}
+
+	return gethErrors
 }
 
 // ValidateNodes validate network nodes spec
