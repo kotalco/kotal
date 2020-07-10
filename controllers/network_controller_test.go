@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	ethereumv1alpha1 "github.com/mfarghaly/kotal/api/v1alpha1"
@@ -467,7 +468,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage))
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+			Expect(strings.Split(nodeDep.Spec.Template.Spec.InitContainers[0].Args[1], " ")).To(ContainElements([]string{
 				"account",
 				"import",
 				GethDataDir,
@@ -746,11 +747,11 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage))
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+			Expect(strings.Split(nodeDep.Spec.Template.Spec.InitContainers[0].Args[1], " ")).To(ContainElements([]string{
 				GethDataDir,
 			}))
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
+			Expect(strings.Split(nodeDep.Spec.Template.Spec.InitContainers[1].Args[1], " ")).To(ContainElements([]string{
 				"account",
 				"import",
 				GethDataDir,
@@ -1027,11 +1028,11 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage))
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+			Expect(strings.Split(nodeDep.Spec.Template.Spec.InitContainers[0].Args[1], " ")).To(ContainElements([]string{
 				GethDataDir,
 			}))
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
+			Expect(strings.Split(nodeDep.Spec.Template.Spec.InitContainers[1].Args[1], " ")).To(ContainElements([]string{
 				"account",
 				"import",
 				GethDataDir,

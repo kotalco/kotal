@@ -582,13 +582,18 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 				Name:  "init-genesis",
 				Image: GethImage,
 				Command: []string{
-					"geth",
+					"/bin/sh",
 				},
 				Args: []string{
-					"init",
-					GethDataDir,
-					PathBlockchainData,
-					fmt.Sprintf("%s/genesis.json", PathGenesisFile),
+					"-c",
+					fmt.Sprintf(
+						"if [ ! -d %s/geth ]; then geth init %s %s %s ;else echo \"%s\" ;fi",
+						PathBlockchainData,
+						GethDataDir,
+						PathBlockchainData,
+						fmt.Sprintf("%s/genesis.json", PathGenesisFile),
+						"Genesis block has been initialized before!",
+					),
 				},
 				VolumeMounts: volumeMounts,
 			}
@@ -599,16 +604,20 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 				Name:  "import-account",
 				Image: GethImage,
 				Command: []string{
-					"geth",
+					"/bin/sh",
 				},
 				Args: []string{
-					"account",
-					"import",
-					GethDataDir,
-					PathBlockchainData,
-					GethPassword,
-					fmt.Sprintf("%s/account.password", PathImportedAccount),
-					fmt.Sprintf("%s/account.key", PathImportedAccount),
+					"-c",
+					fmt.Sprintf(
+						"if [ -z \"$(ls -A %s/keystore)\" ]; then geth account import %s %s %s %s %s ;else echo \"%s\" ;fi",
+						PathBlockchainData,
+						GethDataDir,
+						PathBlockchainData,
+						GethPassword,
+						fmt.Sprintf("%s/account.password", PathImportedAccount),
+						fmt.Sprintf("%s/account.key", PathImportedAccount),
+						"Account has been imported before!",
+					),
 				},
 				VolumeMounts: volumeMounts,
 			}
