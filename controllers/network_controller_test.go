@@ -173,8 +173,9 @@ var _ = Describe("Ethereum network controller", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			newNode := ethereumv1alpha1.Node{
-				Name: "node-2",
-				RPC:  true,
+				Name:   "node-2",
+				RPC:    true,
+				Client: ethereumv1alpha1.GethClient,
 				// to test pvc storage resources
 				SyncMode: ethereumv1alpha1.FastSynchronization,
 				RPCPort:  8547,
@@ -205,15 +206,16 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuNetwork,
-				"mainnet",
-				BesuDataPath,
-				BesuBootnodes,
-				BesuRPCHTTPEnabled,
-				BesuRPCHTTPPort,
+				GethDataDir,
+				GethBootnodes,
+				GethRPCHTTPEnabled,
+				GethRPCHTTPPort,
 				"8547",
-				BesuSyncMode,
+				GethSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
+			}))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).ToNot(ContainElements([]string{
+				ethereumv1alpha1.MainNetwork,
 			}))
 		})
 

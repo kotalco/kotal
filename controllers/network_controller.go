@@ -929,7 +929,7 @@ func (r *NetworkReconciler) createArgsForGeth(node *ethereumv1alpha1.Node, netwo
 	appendArg(GethDataDir, PathBlockchainData)
 
 	// TODO: restrict networks to be rinkeby, ropsten, and goerli if client is geth
-	if network.Spec.Join != "" {
+	if network.Spec.Join != "" && network.Spec.Join != ethereumv1alpha1.MainNetwork {
 		appendArg(fmt.Sprintf("--%s", network.Spec.Join))
 	}
 
