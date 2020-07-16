@@ -354,7 +354,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 						Forks: &Forks{
-							DAO:       1,
+							EIP150:    1,
 							Homestead: 2,
 						},
 					},
@@ -368,9 +368,9 @@ var _ = Describe("Ethereum network validation", func() {
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.genesis.forks.dao",
+					Field:    "spec.genesis.forks.eip150",
 					BadValue: "1",
-					Detail:   "Fork dao can't be activated (at block 1) before fork homestead (at block 2)",
+					Detail:   "Fork eip150 can't be activated (at block 1) before fork homestead (at block 2)",
 				},
 			},
 		},

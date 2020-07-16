@@ -56,7 +56,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(network.Spec.Genesis.Timestamp).To(Equal(DefaultTimestamp))
 		// forks defaulting
 		Expect(network.Spec.Genesis.Forks.Homestead).To(Equal(block0))
-		Expect(network.Spec.Genesis.Forks.DAO).To(Equal(block0))
+		Expect(network.Spec.Genesis.Forks.DAO).To(BeNil())
 		Expect(network.Spec.Genesis.Forks.EIP150).To(Equal(block0))
 		Expect(network.Spec.Genesis.Forks.EIP150Hash).To(Equal(DefaultEIP150Hash))
 		Expect(network.Spec.Genesis.Forks.EIP155).To(Equal(block0))
@@ -104,7 +104,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(network.Spec.Genesis.Timestamp).To(Equal(DefaultTimestamp))
 		// forks defaulting
 		Expect(network.Spec.Genesis.Forks.Homestead).To(Equal(block0))
-		Expect(network.Spec.Genesis.Forks.DAO).To(Equal(block0))
+		Expect(network.Spec.Genesis.Forks.DAO).To(BeNil())
 		Expect(network.Spec.Genesis.Forks.EIP150).To(Equal(block0))
 		Expect(network.Spec.Genesis.Forks.EIP150Hash).To(Equal(DefaultEIP150Hash))
 		Expect(network.Spec.Genesis.Forks.EIP155).To(Equal(block0))
@@ -158,7 +158,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(network.Spec.Genesis.Timestamp).To(Equal(DefaultTimestamp))
 		// forks defaulting
 		Expect(network.Spec.Genesis.Forks.Homestead).To(Equal(block0))
-		Expect(network.Spec.Genesis.Forks.DAO).To(Equal(block0))
+		Expect(network.Spec.Genesis.Forks.DAO).To(BeNil())
 		Expect(network.Spec.Genesis.Forks.EIP150).To(Equal(block0))
 		Expect(network.Spec.Genesis.Forks.EIP150Hash).To(Equal(DefaultEIP150Hash))
 		Expect(network.Spec.Genesis.Forks.EIP155).To(Equal(block0))

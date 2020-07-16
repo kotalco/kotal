@@ -181,7 +181,7 @@ type Forks struct {
 	Homestead uint `json:"homestead,omitempty"`
 
 	// DAO fork
-	DAO uint `json:"dao,omitempty"`
+	DAO *uint `json:"dao,omitempty"`
 
 	// EIP150 (Tangerine Whistle) fork
 	EIP150 uint `json:"eip150,omitempty"`

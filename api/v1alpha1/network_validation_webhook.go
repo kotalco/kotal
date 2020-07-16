@@ -227,7 +227,6 @@ func (r *Network) ValidateForksOrder() field.ErrorList {
 
 	forkNames := []string{
 		"homestead",
-		"dao",
 		"eip150",
 		"eip155",
 		"eip155",
@@ -240,7 +239,6 @@ func (r *Network) ValidateForksOrder() field.ErrorList {
 
 	milestones := []uint{
 		forks.Homestead,
-		forks.DAO,
 		forks.EIP150,
 		forks.EIP155,
 		forks.EIP155,

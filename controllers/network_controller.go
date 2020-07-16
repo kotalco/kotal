@@ -203,7 +203,7 @@ func (r *NetworkReconciler) createExtraDataFromValidators(validators []ethereumv
 }
 
 // createGenesisFile creates genesis config file
-func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network) (config string, err error) {
+func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network) (content string, err error) {
 	genesis := network.Spec.Genesis
 	mixHash := genesis.MixHash
 	nonce := genesis.Nonce
@@ -260,22 +260,27 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 		}
 	}
 
-	result["config"] = map[string]interface{}{
-		"chainId":              genesis.ChainID,
-		"homesteadBlock":       genesis.Forks.Homestead,
-		"daoForkBlock":         genesis.Forks.DAO,
-		"daoForkSupport":       true, //geth
-		"eip150Block":          genesis.Forks.EIP150,
-		"eip150Hash":           genesis.Forks.EIP150Hash,
-		"eip155Block":          genesis.Forks.EIP155,
-		"eip158Block":          genesis.Forks.EIP158,
-		"byzantiumBlock":       genesis.Forks.Byzantium,
-		"constantinopleBlock":  genesis.Forks.Constantinople,
-		"petersburgBlock":      genesis.Forks.Petersburg,
-		"istanbulBlock":        genesis.Forks.Istanbul,
-		"muirGlacierForkBlock": genesis.Forks.MuirGlacier,
-		engine:                 consensusConfig,
+	config := map[string]interface{}{
+		"chainId":             genesis.ChainID,
+		"homesteadBlock":      genesis.Forks.Homestead,
+		"eip150Block":         genesis.Forks.EIP150,
+		"eip150Hash":          genesis.Forks.EIP150Hash,
+		"eip155Block":         genesis.Forks.EIP155,
+		"eip158Block":         genesis.Forks.EIP158,
+		"byzantiumBlock":      genesis.Forks.Byzantium,
+		"constantinopleBlock": genesis.Forks.Constantinople,
+		"petersburgBlock":     genesis.Forks.Petersburg,
+		"istanbulBlock":       genesis.Forks.Istanbul,
+		"muirGlacierBlock":    genesis.Forks.MuirGlacier,
+		engine:                consensusConfig,
 	}
+
+	if genesis.Forks.DAO != nil {
+		config["daoForkBlock"] = genesis.Forks.DAO
+		config["daoForkSupport"] = true //geth
+	}
+
+	result["config"] = config
 
 	result["nonce"] = nonce
 	result["timestamp"] = genesis.Timestamp
@@ -309,7 +314,7 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 		return
 	}
 
-	config = string(b)
+	content = string(b)
 
 	return
 }
