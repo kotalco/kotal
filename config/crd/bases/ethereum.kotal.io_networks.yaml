@@ -343,7 +343,7 @@ spec:
                     enum:
                     - fast
                     - full
-                    - archive
+                    - light
                     type: string
                   ws:
                     description: WS is whether web socket server is enabled or not

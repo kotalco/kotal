@@ -245,7 +245,7 @@ const (
 )
 
 // SynchronizationMode is the node synchronization mode
-// +kubebuilder:validation:Enum=fast;full;archive
+// +kubebuilder:validation:Enum=fast;full;light
 type SynchronizationMode string
 
 const (
