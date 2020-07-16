@@ -4,7 +4,7 @@ metadata:
   name: poa-network
 spec:
   consensus: poa
-  id: 11
+  id: 20189
   ########### Genesis block spec ###########
   genesis:
     chainId: 20189
@@ -13,6 +13,7 @@ spec:
       epochLength: 100
       signers:
         - "0xd2c21213027cbf4d46c16b55fa98e5252b048706"
+        - "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
     forks:
       homestead: 0
       dao: 0
@@ -35,6 +36,7 @@ spec:
   ########### network nodes spec ###########
   nodes:
     - name: node-1
+      client: besu
       bootnode: true
       rpc: true
       nodekey: "0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e"
@@ -50,6 +52,10 @@ spec:
         - eth
         - clique
     - name: node-2
-    - name: node-3
-    - name: node-4
-    - name: node-5
+      client: geth
+      miner: true
+      coinbase: "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
+      import:
+        privatekey: "0x5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd"
+        password: "secret"
+

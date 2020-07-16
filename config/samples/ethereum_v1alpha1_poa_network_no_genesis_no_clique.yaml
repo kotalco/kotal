@@ -17,6 +17,7 @@ spec:
   ########### network nodes spec ###########
   nodes:
     - name: node-1
+      client: besu
       bootnode: true
       rpc: true
       nodekey: "0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e"
@@ -32,6 +33,5 @@ spec:
         - eth
         - clique
     - name: node-2
-    - name: node-3
-    - name: node-4
-    - name: node-5
+      client: geth
+      rpc: true
