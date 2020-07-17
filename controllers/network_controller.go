@@ -38,37 +38,48 @@ type NetworkReconciler struct {
 // +kubebuilder:rbac:groups=core,resources=secrets;services;configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 // Reconcile reconciles ethereum networks
-func (r *NetworkReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *NetworkReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err error) {
 	ctx := context.Background()
-	log := r.Log.WithValues("network", req.NamespacedName)
 
 	var network ethereumv1alpha1.Network
 
 	// Get desired ethereum network
-	if err := r.Client.Get(ctx, req.NamespacedName, &network); err != nil {
-		return ctrl.Result{}, client.IgnoreNotFound(err)
+	if err = r.Client.Get(ctx, req.NamespacedName, &network); err != nil {
+		err = client.IgnoreNotFound(err)
+		return
 	}
 
-	network.Status.NodesCount = len(network.Spec.Nodes)
-	if err := r.Status().Update(ctx, &network); err != nil {
-		log.Error(err, "unable to update network status")
-		return ctrl.Result{}, err
+	// update network status
+	if err = r.updateStatus(ctx, &network); err != nil {
+		return
 	}
 
-	// network is not using existing network genesis block
+	// reconcile genesis for private network with custom genesis
 	if network.Spec.Genesis != nil {
-		err := r.reconcileGenesis(ctx, &network)
-		if err != nil {
-			return ctrl.Result{}, err
+		if err = r.reconcileGenesis(ctx, &network); err != nil {
+			return
 		}
 	}
 
-	if err := r.reconcileNodes(ctx, &network, req.Namespace); err != nil {
-		return ctrl.Result{}, err
+	// reconcile network nodes
+	if err = r.reconcileNodes(ctx, &network, req.Namespace); err != nil {
+		return
 	}
 
-	return ctrl.Result{}, nil
+	return
 
+}
+
+// updateStatus updates network status
+func (r *NetworkReconciler) updateStatus(ctx context.Context, network *ethereumv1alpha1.Network) error {
+	network.Status.NodesCount = len(network.Spec.Nodes)
+
+	if err := r.Status().Update(ctx, network); err != nil {
+		r.Log.Error(err, "unable to update network status")
+		return err
+	}
+
+	return nil
 }
 
 // reconcileNodes creates or updates nodes according to nodes spec
