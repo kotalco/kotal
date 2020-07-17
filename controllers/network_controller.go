@@ -107,8 +107,14 @@ func (r *NetworkReconciler) reconcileNodes(ctx context.Context, network *ethereu
 	return nil
 }
 
+// specGenesisConfigmap updates genesis config map spec
+func (r *NetworkReconciler) specGenesisConfigmap(configmap *corev1.ConfigMap, data string) {
+	configmap.Data = make(map[string]string)
+	configmap.Data["genesis.json"] = data
+}
+
+// reconcileGenesis creates genesis config map if it doesn't exist or update it
 func (r *NetworkReconciler) reconcileGenesis(ctx context.Context, network *ethereumv1alpha1.Network) error {
-	log := r.Log.WithValues("genesis block", network.Name)
 
 	configmap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
@@ -119,16 +125,17 @@ func (r *NetworkReconciler) reconcileGenesis(ctx context.Context, network *ether
 
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
 		if err := ctrl.SetControllerReference(network, configmap, r.Scheme); err != nil {
-			log.Error(err, "Unable to set controller reference")
+			r.Log.Error(err, "Unable to set controller reference on genesis configmap")
 			return err
 		}
-		configmap.Data = make(map[string]string)
-		b, err := r.createGenesisFile(network)
+
+		data, err := r.createGenesisFile(network)
 		if err != nil {
 			return err
 		}
 
-		configmap.Data["genesis.json"] = string(b)
+		r.specGenesisConfigmap(configmap, data)
+
 		return nil
 	})
 	if err != nil {
