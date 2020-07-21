@@ -92,7 +92,13 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 
 	// validate only geth client can import accounts
 	if node.Client != GethClient && node.Import != nil {
-		err := field.Invalid(nodePath.Child("client"), node.Client, "must be geth if node.import is provided")
+		err := field.Invalid(nodePath.Child("client"), node.Client, "must be geth if import is provided")
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	// validate only geth client supports light sync mode
+	if node.Client != GethClient && node.SyncMode == LightSynchronization {
+		err := field.Invalid(nodePath.Child("client"), node.Client, "must be geth if syncMode is light")
 		nodeErrors = append(nodeErrors, err)
 	}
 
@@ -144,19 +150,19 @@ func (r *Network) ValidateGethNode(node *Node, i int) field.ErrorList {
 
 	// validate rpc can't be enabled for node with imported account
 	if node.Import != nil && node.RPC {
-		err := field.Invalid(nodePath.Child("rpc"), node.RPC, "must be false if node.import is provided")
+		err := field.Invalid(nodePath.Child("rpc"), node.RPC, "must be false if import is provided")
 		gethErrors = append(gethErrors, err)
 	}
 
 	// validate ws can't be enabled for node with imported account
 	if node.Import != nil && node.WS {
-		err := field.Invalid(nodePath.Child("ws"), node.WS, "must be false if node.import is provided")
+		err := field.Invalid(nodePath.Child("ws"), node.WS, "must be false if import is provided")
 		gethErrors = append(gethErrors, err)
 	}
 
 	// validate graphql can't be enabled for node with imported account
 	if node.Import != nil && node.GraphQL {
-		err := field.Invalid(nodePath.Child("graphql"), node.GraphQL, "must be false if node.import is provided")
+		err := field.Invalid(nodePath.Child("graphql"), node.GraphQL, "must be false if import is provided")
 		gethErrors = append(gethErrors, err)
 	}
 
