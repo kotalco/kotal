@@ -173,7 +173,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(network.Spec.Genesis.IBFT2.EpochLength).To(Equal(DefaultIBFT2EpochLength))
 		Expect(network.Spec.Genesis.IBFT2.RequestTimeout).To(Equal(DefaultIBFT2RequestTimeout))
 		Expect(network.Spec.Genesis.IBFT2.MessageQueueLimit).To(Equal(DefaultIBFT2MessageQueueLimit))
-		Expect(network.Spec.Genesis.IBFT2.DuplicateMesageLimit).To(Equal(DefaultIBFT2DuplicateMesageLimit))
+		Expect(network.Spec.Genesis.IBFT2.DuplicateMessageLimit).To(Equal(DefaultIBFT2DuplicateMessageLimit))
 		Expect(network.Spec.Genesis.IBFT2.FutureMessagesLimit).To(Equal(DefaultIBFT2FutureMessagesLimit))
 		Expect(network.Spec.Genesis.IBFT2.FutureMessagesMaxDistance).To(Equal(DefaultIBFT2FutureMessagesMaxDistance))
 	})

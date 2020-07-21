@@ -248,7 +248,7 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 			"epochlength":               genesis.IBFT2.EpochLength,
 			"requesttimeoutseconds":     genesis.IBFT2.RequestTimeout,
 			"messageQueueLimit":         genesis.IBFT2.MessageQueueLimit,
-			"duplicateMesageLimit":      genesis.IBFT2.DuplicateMesageLimit,
+			"duplicateMessageLimit":     genesis.IBFT2.DuplicateMessageLimit,
 			"futureMessagesLimit":       genesis.IBFT2.FutureMessagesLimit,
 			"futureMessagesMaxDistance": genesis.IBFT2.FutureMessagesMaxDistance,
 		}

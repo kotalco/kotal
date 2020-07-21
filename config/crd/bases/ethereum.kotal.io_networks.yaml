@@ -183,8 +183,8 @@ spec:
                     blockPeriod:
                       description: BlockPeriod is block time in seconds
                       type: integer
-                    duplicateMesageLimit:
-                      description: DuplicateMesageLimit is duplicate messages limit
+                    duplicateMessageLimit:
+                      description: DuplicateMessageLimit is duplicate messages limit
                       type: integer
                     epochLength:
                       description: EpochLength is the Number of blocks after which

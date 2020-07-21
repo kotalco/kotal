@@ -163,8 +163,8 @@ func (r *Network) DefaultGenesis() {
 		if r.Spec.Genesis.IBFT2.MessageQueueLimit == 0 {
 			r.Spec.Genesis.IBFT2.MessageQueueLimit = DefaultIBFT2MessageQueueLimit
 		}
-		if r.Spec.Genesis.IBFT2.DuplicateMesageLimit == 0 {
-			r.Spec.Genesis.IBFT2.DuplicateMesageLimit = DefaultIBFT2DuplicateMesageLimit
+		if r.Spec.Genesis.IBFT2.DuplicateMessageLimit == 0 {
+			r.Spec.Genesis.IBFT2.DuplicateMessageLimit = DefaultIBFT2DuplicateMessageLimit
 		}
 		if r.Spec.Genesis.IBFT2.FutureMessagesLimit == 0 {
 			r.Spec.Genesis.IBFT2.FutureMessagesLimit = DefaultIBFT2FutureMessagesLimit

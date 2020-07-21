@@ -70,8 +70,8 @@ type IBFT2 struct {
 	// MessageQueueLimit is the message queue limit
 	MessageQueueLimit uint `json:"messageQueueLimit,omitempty"`
 
-	// DuplicateMesageLimit is duplicate messages limit
-	DuplicateMesageLimit uint `json:"duplicateMesageLimit,omitempty"`
+	// DuplicateMessageLimit is duplicate messages limit
+	DuplicateMessageLimit uint `json:"duplicateMessageLimit,omitempty"`
 
 	// futureMessagesLimit is future messages buffer limit
 	FutureMessagesLimit uint `json:"futureMessagesLimit,omitempty"`

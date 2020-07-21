@@ -72,8 +72,8 @@ const (
 	DefaultIBFT2RequestTimeout uint = 10
 	// DefaultIBFT2MessageQueueLimit is the default ibft2 message queue limit
 	DefaultIBFT2MessageQueueLimit uint = 1000
-	// DefaultIBFT2DuplicateMesageLimit is the default ibft2 duplicate message limit
-	DefaultIBFT2DuplicateMesageLimit uint = 100
+	// DefaultIBFT2DuplicateMessageLimit is the default ibft2 duplicate message limit
+	DefaultIBFT2DuplicateMessageLimit uint = 100
 	// DefaultIBFT2FutureMessagesLimit is the default ibft2 future message limit
 	DefaultIBFT2FutureMessagesLimit uint = 1000
 	// DefaultIBFT2FutureMessagesMaxDistance is the default ibft2 future message max distance
