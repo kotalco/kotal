@@ -311,12 +311,12 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 
 	result["alloc"] = alloc
 
-	b, err := json.Marshal(result)
+	data, err := json.Marshal(result)
 	if err != nil {
 		return
 	}
 
-	content = string(b)
+	content = string(data)
 
 	return
 }
