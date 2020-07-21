@@ -112,7 +112,7 @@ type Forks struct {
 	// EIP155 (Spurious Dragon) fork
 	EIP155 uint `json:"eip155,omitempty"`
 
-	// EIP158 (Tangerine Whistle) fork
+	// EIP158 (state trie clearing) fork
 	EIP158 uint `json:"eip158,omitempty"`
 
 	// Byzantium fork

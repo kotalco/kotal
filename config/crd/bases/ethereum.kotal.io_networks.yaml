@@ -157,7 +157,7 @@ spec:
                       description: EIP155 (Spurious Dragon) fork
                       type: integer
                     eip158:
-                      description: EIP158 (Tangerine Whistle) fork
+                      description: EIP158 (state trie clearing) fork
                       type: integer
                     homestead:
                       description: Homestead fork
