@@ -28,6 +28,72 @@ func (r *Network) Default() {
 
 }
 
+// DefaultNodeResources defaults node cpu, memory and storage resources
+func (r *Network) DefaultNodeResources(node *Node) {
+	var cpu, cpuLimit, memory, memoryLimit, storage string
+	privateNetwork := r.Spec.Genesis != nil
+	join := r.Spec.Join
+
+	if node.Resources == nil {
+		node.Resources = &NodeResources{}
+	}
+
+	if node.Resources.CPU == "" {
+		if privateNetwork {
+			cpu = DefaultPrivateNetworkNodeCPURequest
+		} else {
+			cpu = DefaultPublicNetworkNodeCPURequest
+		}
+
+		node.Resources.CPU = cpu
+	}
+
+	if node.Resources.CPULimit == "" {
+		if privateNetwork {
+			cpuLimit = DefaultPrivateNetworkNodeCPULimit
+		} else {
+			cpuLimit = DefaultPublicNetworkNodeCPULimit
+		}
+
+		node.Resources.CPULimit = cpuLimit
+	}
+
+	if node.Resources.Memory == "" {
+		if privateNetwork {
+			memory = DefaultPrivateNetworkNodeMemoryRequest
+		} else {
+			memory = DefaultPublicNetworkNodeMemoryRequest
+		}
+
+		node.Resources.Memory = memory
+	}
+
+	if node.Resources.MemoryLimit == "" {
+		if privateNetwork {
+			memoryLimit = DefaultPrivateNetworkNodeMemoryLimit
+		} else {
+			memoryLimit = DefaultPublicNetworkNodeMemoryLimit
+		}
+
+		node.Resources.MemoryLimit = memoryLimit
+	}
+
+	if node.Resources.Storage == "" {
+		if privateNetwork {
+			storage = DefaultPrivateNetworkNodeStorageRequest
+		} else if join == MainNetwork && node.SyncMode == FastSynchronization {
+			storage = DefaultMainNetworkFastNodeStorageRequest
+		} else if join == MainNetwork && node.SyncMode == FullSynchronization {
+			storage = DefaultMainNetworkFullNodeStorageRequest
+		} else {
+			storage = DefaultTestNetworkStorageRequest
+		}
+
+		node.Resources.Storage = storage
+	}
+
+}
+
 // DefaultNode defaults a single node
 func (r *Network) DefaultNode(node *Node) {
 	defaultAPIs := []API{Web3API, ETHAPI, NetworkAPI}
@@ -43,6 +109,9 @@ func (r *Network) DefaultNode(node *Node) {
 	if node.SyncMode == "" {
 		node.SyncMode = FullSynchronization
 	}
+
+	// must be called after defaulting sync mode because it's depending on its value
+	r.DefaultNodeResources(node)
 
 	if node.RPC || node.WS || node.GraphQL {
 		if len(node.Hosts) == 0 {

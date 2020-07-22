@@ -79,3 +79,31 @@ const (
 	// DefaultIBFT2FutureMessagesMaxDistance is the default ibft2 future message max distance
 	DefaultIBFT2FutureMessagesMaxDistance uint = 10
 )
+
+// Resources
+const (
+	// DefaultPrivateNetworkNodeCPURequest is the cpu requested by private network node
+	DefaultPrivateNetworkNodeCPURequest = "2"
+	// DefaultPrivateNetworkNodeCPULimit is the cpu limit for private network node
+	DefaultPrivateNetworkNodeCPULimit = "3"
+	// DefaultPublicNetworkNodeCPURequest is the cpu requested by public network node
+	DefaultPublicNetworkNodeCPURequest = "4"
+	// DefaultPublicNetworkNodeCPULimit is the cpu limit for public network node
+	DefaultPublicNetworkNodeCPULimit = "6"
+	// DefaultPrivateNetworkNodeMemoryRequest is the memory requested by private network node
+	DefaultPrivateNetworkNodeMemoryRequest = "4Gi"
+	// DefaultPrivateNetworkNodeMemoryLimit is the memory limit for private network node
+	DefaultPrivateNetworkNodeMemoryLimit = "6Gi"
+	// DefaultPublicNetworkNodeMemoryRequest is the Memory requested by public network node
+	DefaultPublicNetworkNodeMemoryRequest = "8Gi"
+	// DefaultPublicNetworkNodeMemoryLimit is the Memory limit for public network node
+	DefaultPublicNetworkNodeMemoryLimit = "16Gi"
+	// DefaultPrivateNetworkNodeStorageRequest is the Storage requested by private network node
+	DefaultPrivateNetworkNodeStorageRequest = "100Gi"
+	// DefaultMainNetworkFullNodeStorageRequest is the Storage requested by main network archive node
+	DefaultMainNetworkFullNodeStorageRequest = "6Ti"
+	// DefaultMainNetworkFastNodeStorageRequest is the Storage requested by main network full node
+	DefaultMainNetworkFastNodeStorageRequest = "750Gi"
+	// DefaultTestNetworkStorageRequest is the Storage requested by main network full node
+	DefaultTestNetworkStorageRequest = "25Gi"
+)

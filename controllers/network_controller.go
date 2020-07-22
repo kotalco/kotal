@@ -419,13 +419,17 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 }
 
 // specNodeDataPVC update node data pvc spec
-func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereumv1alpha1.Node, resources corev1.ResourceRequirements) {
+func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereumv1alpha1.Node) {
 	pvc.ObjectMeta.Labels = node.Labels()
 	pvc.Spec = corev1.PersistentVolumeClaimSpec{
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
 		},
-		Resources: resources,
+		Resources: corev1.ResourceRequirements{
+			Requests: corev1.ResourceList{
+				corev1.ResourceStorage: resource.MustParse(node.Resources.Storage),
+			},
+		},
 	}
 }
 
@@ -444,8 +448,7 @@ func (r *NetworkReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethe
 			return err
 		}
 		if pvc.CreationTimestamp.IsZero() {
-			resources := r.getNodeStorageRequirements(node, network)
-			r.specNodeDataPVC(pvc, node, resources)
+			r.specNodeDataPVC(pvc, node)
 		}
 		return nil
 	})
@@ -571,15 +574,24 @@ func (r *NetworkReconciler) getNodeAffinity(network *ethereumv1alpha1.Network) *
 }
 
 // specNodeDeployment updates node deployment spec
-func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements, affinity *corev1.Affinity) {
+func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
 	labels := node.Labels()
 	// used by geth to init genesis and import account(s)
 	initContainers := []corev1.Container{}
 	// node client container
 	nodeContainer := corev1.Container{
-		Name:         "node",
-		Args:         args,
-		Resources:    resources,
+		Name: "node",
+		Args: args,
+		Resources: corev1.ResourceRequirements{
+			Requests: corev1.ResourceList{
+				corev1.ResourceCPU:    resource.MustParse(node.Resources.CPU),
+				corev1.ResourceMemory: resource.MustParse(node.Resources.Memory),
+			},
+			Limits: corev1.ResourceList{
+				corev1.ResourceCPU:    resource.MustParse(node.Resources.CPULimit),
+				corev1.ResourceMemory: resource.MustParse(node.Resources.MemoryLimit),
+			},
+		},
 		VolumeMounts: volumeMounts,
 	}
 
@@ -653,70 +665,8 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 	}
 }
 
-// getNodeComputeRequirements get node resource requirements
-func (r *NetworkReconciler) getNodeComputeRequirements(network *ethereumv1alpha1.Network) corev1.ResourceRequirements {
-	// TODO: add resource limits
-	// TODO: update node type with resource requirements
-	// TODO: precedence to node resource requirements
-
-	req := corev1.ResourceRequirements{}
-
-	// public network
-	if network.Spec.Genesis == nil {
-		req.Requests = corev1.ResourceList{
-			corev1.ResourceCPU:    resource.MustParse(DefaultPublicNetworkNodeCPURequest),
-			corev1.ResourceMemory: resource.MustParse(DefaultPublicNetworkNodeMemoryRequest),
-		}
-		return req
-	}
-
-	// private network
-	req.Requests = corev1.ResourceList{
-		corev1.ResourceCPU:    resource.MustParse(DefaultPrivateNetworkNodeCPURequest),
-		corev1.ResourceMemory: resource.MustParse(DefaultPrivateNetworkNodeMemoryRequest),
-	}
-
-	return req
-}
-
-// getNodeStorageRequirements get node resource requirements
-func (r *NetworkReconciler) getNodeStorageRequirements(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) corev1.ResourceRequirements {
-
-	req := corev1.ResourceRequirements{}
-
-	// public network
-	if network.Spec.Genesis == nil {
-		if network.Spec.Join == ethereumv1alpha1.MainNetwork {
-			//mainnet full node
-			if node.SyncMode == ethereumv1alpha1.FullSynchronization {
-				req.Requests = corev1.ResourceList{
-					corev1.ResourceStorage: resource.MustParse(DefaultMainNetworkFullNodeStorageRequest),
-				}
-			}
-			//mainnet fast node
-			if node.SyncMode == ethereumv1alpha1.FastSynchronization {
-				req.Requests = corev1.ResourceList{
-					corev1.ResourceStorage: resource.MustParse(DefaultMainNetworkFastNodeStorageRequest),
-				}
-			}
-		} else {
-			// testnet node
-			req.Requests = corev1.ResourceList{
-				corev1.ResourceStorage: resource.MustParse(DefaultTestNetworkStorageRequest),
-			}
-		}
-		return req
-	}
-
-	// private network
-	req.Requests = corev1.ResourceList{
-		corev1.ResourceStorage: resource.MustParse(DefaultPrivateNetworkNodeStorageRequest),
-	}
-	return req
-}
-
 // reconcileNodeDeployment creates creates node deployment if it doesn't exist, update it if it does exist
-func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, resources corev1.ResourceRequirements, affinity *corev1.Affinity) error {
+func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) error {
 
 	dep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -729,7 +679,7 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 		if err := ctrl.SetControllerReference(network, dep, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeDeployment(dep, node, network, args, volumes, volumeMounts, resources, affinity)
+		r.specNodeDeployment(dep, node, network, args, volumes, volumeMounts, affinity)
 		return nil
 	})
 
@@ -868,10 +818,9 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 	args := r.createArgsForClient(node, network, bootnodes)
 	volumes := r.createNodeVolumes(node, network)
 	mounts := r.createNodeVolumeMounts(node, network)
-	resources := r.getNodeComputeRequirements(network)
 	affinity := r.getNodeAffinity(network)
 
-	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts, resources, affinity); err != nil {
+	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts, affinity); err != nil {
 		return
 	}
 
