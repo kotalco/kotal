@@ -7,6 +7,7 @@ import (
 
 	"github.com/mfarghaly/kotal/helpers"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -75,6 +76,24 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 	// validate nodekey is provided if node is bootnode
 	if node.IsBootnode() && node.Nodekey == "" {
 		err := field.Invalid(nodePath.Child("nodekey"), node.Nodekey, "must provide nodekey if bootnode is true")
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	cpu := resource.MustParse(node.Resources.CPU)
+	cpuLimit := resource.MustParse(node.Resources.CPULimit)
+
+	// validate cpuLimit can't be less than cpu request
+	if cpuLimit.Cmp(cpu) == -1 {
+		err := field.Invalid(nodePath.Child("resources").Child("cpuLimit"), node.Resources.CPULimit, fmt.Sprintf("must be greater than or equal to cpu %s", string(node.Resources.CPU)))
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	memory := resource.MustParse(node.Resources.Memory)
+	memoryLimit := resource.MustParse(node.Resources.MemoryLimit)
+
+	// validate memoryLimit can't be less than memory request
+	if memoryLimit.Cmp(memory) == -1 {
+		err := field.Invalid(nodePath.Child("resources").Child("memoryLimit"), node.Resources.MemoryLimit, fmt.Sprintf("must be greater than or equal to memory %s", string(node.Resources.Memory)))
 		nodeErrors = append(nodeErrors, err)
 	}
 

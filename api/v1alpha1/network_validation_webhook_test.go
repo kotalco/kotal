@@ -666,6 +666,60 @@ var _ = Describe("Ethereum network validation", func() {
 				},
 			},
 		},
+		{
+			Title: "network #26",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Join: RinkebyNetwork,
+					Nodes: []Node{
+						{
+							Name:   "node-1",
+							Client: BesuClient,
+							Resources: &NodeResources{
+								CPU:      "2",
+								CPULimit: "1",
+							},
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].resources.cpuLimit",
+					BadValue: "1",
+					Detail:   "must be greater than or equal to cpu 2",
+				},
+			},
+		},
+		{
+			Title: "network #27",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Join: RinkebyNetwork,
+					Nodes: []Node{
+						{
+							Name:   "node-1",
+							Client: BesuClient,
+							Resources: &NodeResources{
+								CPU:         "1",
+								CPULimit:    "2",
+								Memory:      "2Gi",
+								MemoryLimit: "1Gi",
+							},
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].resources.memoryLimit",
+					BadValue: "1Gi",
+					Detail:   "must be greater than or equal to memory 2Gi",
+				},
+			},
+		},
 	}
 
 	// errorsToCauses converts field error list into array of status cause
