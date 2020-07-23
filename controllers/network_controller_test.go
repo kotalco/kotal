@@ -141,7 +141,19 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments and resources", func() {
+		It("Should create bootnode deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				BesuNetwork,
+				"mainnet",
+				BesuDataPath,
+				BesuNodePrivateKey,
+			}))
+		})
+
+		It("Should allocate correct resources to bootnode deployment", func() {
 			nodeDep := &appsv1.Deployment{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
@@ -154,15 +166,7 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuNetwork,
-				"mainnet",
-				BesuDataPath,
-				BesuNodePrivateKey,
-			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
-
 		})
 
 		It("Should create bootnode data persistent volume with correct resources", func() {
@@ -217,16 +221,6 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should create node-2 deployment with correct arguments", func() {
 			nodeDep := &appsv1.Deployment{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
-				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
-				},
-			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
@@ -238,10 +232,25 @@ var _ = Describe("Ethereum network controller", func() {
 				GethSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).ToNot(ContainElements([]string{
 				ethereumv1alpha1.MainNetwork,
 			}))
+		})
+
+		It("Should allocate correct resources to node-2 deployment", func() {
+			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpu),
+					v1.ResourceMemory: resource.MustParse(memory),
+				},
+				Limits: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpuLimit),
+					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-2 data persistent volume", func() {
@@ -426,7 +435,20 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments and resources", func() {
+		It("Should create bootnode deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				BesuNetwork,
+				"rinkeby",
+				BesuDataPath,
+				BesuNodePrivateKey,
+			}))
+		})
+
+		It("Should allocate correct resources to bootnode deployment", func() {
 			nodeDep := &appsv1.Deployment{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
@@ -439,14 +461,6 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuNetwork,
-				"rinkeby",
-				BesuDataPath,
-				BesuNodePrivateKey,
-			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 
 		})
@@ -503,18 +517,8 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 		}
 
-		It("Should create node-2 deployment with correct arguments and resources", func() {
+		It("Should create node-2 deployment with correct arguments", func() {
 			nodeDep := &appsv1.Deployment{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
-				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
-				},
-			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage))
@@ -537,6 +541,21 @@ var _ = Describe("Ethereum network controller", func() {
 				GethUnlock,
 				GethPassword,
 			}))
+		})
+
+		It("Should allocate correct resources to node-2 deployment", func() {
+			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpu),
+					v1.ResourceMemory: resource.MustParse(memory),
+				},
+				Limits: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpuLimit),
+					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
@@ -745,7 +764,18 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments and resources", func() {
+		It("Should create bootnode deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				BesuDataPath,
+				BesuNodePrivateKey,
+			}))
+		})
+
+		It("Should allocate correct resources to bootnode deployment", func() {
 			nodeDep := &appsv1.Deployment{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
@@ -758,16 +788,10 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuDataPath,
-				BesuNodePrivateKey,
-			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
-		It("Should create bootnode data persistent volume with correct arguments", func() {
+		It("Should create bootnode data persistent volume with correct resources", func() {
 			nodePVC := &v1.PersistentVolumeClaim{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
@@ -810,18 +834,8 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
-		It("Should create node-2 deployment with correct arguments and resources", func() {
+		It("Should create node-2 deployment with correct arguments", func() {
 			nodeDep := &appsv1.Deployment{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
-				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
-				},
-			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage))
@@ -843,6 +857,21 @@ var _ = Describe("Ethereum network controller", func() {
 				GethDataDir,
 				GethBootnodes,
 			}))
+		})
+
+		It("Should allocate correct resources to node-2 deployment", func() {
+			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpu),
+					v1.ResourceMemory: resource.MustParse(memory),
+				},
+				Limits: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpuLimit),
+					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
@@ -1052,7 +1081,18 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments and resources", func() {
+		It("Should create bootnode deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				BesuDataPath,
+				BesuNodePrivateKey,
+			}))
+		})
+
+		It("Should allocate correct resources to bootnode deployment", func() {
 			nodeDep := &appsv1.Deployment{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
@@ -1065,12 +1105,6 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuDataPath,
-				BesuNodePrivateKey,
-			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
@@ -1116,18 +1150,8 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
-		It("Should create node-2 deployment with correct arguments and resources", func() {
+		It("Should create node-2 deployment with correct arguments", func() {
 			nodeDep := &appsv1.Deployment{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
-				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
-				},
-			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage))
@@ -1149,6 +1173,21 @@ var _ = Describe("Ethereum network controller", func() {
 				GethDataDir,
 				GethBootnodes,
 			}))
+		})
+
+		It("Should allocate correct resources to node-2 deployment", func() {
+			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpu),
+					v1.ResourceMemory: resource.MustParse(memory),
+				},
+				Limits: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpuLimit),
+					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
@@ -1365,7 +1404,18 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments and resources", func() {
+		It("Should create bootnode deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				BesuDataPath,
+				BesuNodePrivateKey,
+			}))
+		})
+
+		It("Should allocate correct resources to bootnode deployment", func() {
 			nodeDep := &appsv1.Deployment{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
@@ -1378,12 +1428,6 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuDataPath,
-				BesuNodePrivateKey,
-			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
@@ -1422,7 +1466,20 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
-		It("Should create node-2 deployment with correct arguments and resources", func() {
+		It("Should create node-2 deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				BesuDataPath,
+				BesuBootnodes,
+				BesuRPCHTTPEnabled,
+				"8547",
+			}))
+		})
+
+		It("Should allocate correct resources to node-2 deployment", func() {
 			nodeDep := &appsv1.Deployment{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
@@ -1435,14 +1492,6 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuDataPath,
-				BesuBootnodes,
-				BesuRPCHTTPEnabled,
-				"8547",
-			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
