@@ -22,7 +22,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(network.Spec.TopologyKey).To(Equal(DefaultTopologyKey))
 		node := network.Spec.Nodes[0]
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
-		Expect(node.SyncMode).To(Equal(DefaultSyncMode))
+		Expect(node.SyncMode).To(Equal(DefaultPublicNetworkSyncMode))
 		Expect(node.Client).To(Equal(DefaultClient))
 	})
 
@@ -45,7 +45,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		node := network.Spec.Nodes[0]
 		var block0 uint = 0
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
-		Expect(node.SyncMode).To(Equal(DefaultSyncMode))
+		Expect(node.SyncMode).To(Equal(DefaultPrivateNetworkSyncMode))
 		Expect(node.Client).To(Equal(DefaultClient))
 		// genesis defaulting
 		Expect(network.Spec.Genesis.Coinbase).To(Equal(DefaultCoinbase))
@@ -89,7 +89,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		var block0 uint = 0
 		Expect(node.Client).To(Equal(DefaultClient))
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
-		Expect(node.SyncMode).To(Equal(DefaultSyncMode))
+		Expect(node.SyncMode).To(Equal(DefaultPrivateNetworkSyncMode))
 		Expect(node.Hosts).To(Equal(DefaultOrigins))
 		Expect(node.CORSDomains).To(Equal(DefaultOrigins))
 		Expect(node.RPCHost).To(Equal(DefaultHost))
@@ -141,7 +141,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		var block0 uint = 0
 		Expect(node.Client).To(Equal(DefaultClient))
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
-		Expect(node.SyncMode).To(Equal(DefaultSyncMode))
+		Expect(node.SyncMode).To(Equal(DefaultPrivateNetworkSyncMode))
 		Expect(node.Hosts).To(Equal(DefaultOrigins))
 		Expect(node.CORSDomains).To(Equal(DefaultOrigins))
 		Expect(node.WSHost).To(Equal(DefaultHost))

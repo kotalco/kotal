@@ -66,6 +66,7 @@ var _ = Describe("Ethereum network controller", func() {
 					Name:     "node-1",
 					Bootnode: true,
 					Nodekey:  privatekey,
+					SyncMode: ethereumv1alpha1.FullSynchronization,
 				},
 			},
 		}
@@ -150,6 +151,8 @@ var _ = Describe("Ethereum network controller", func() {
 				"mainnet",
 				BesuDataPath,
 				BesuNodePrivateKey,
+				BesuSyncMode,
+				string(ethereumv1alpha1.FullSynchronization),
 			}))
 		})
 
@@ -185,12 +188,10 @@ var _ = Describe("Ethereum network controller", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			newNode := ethereumv1alpha1.Node{
-				Name:   "node-2",
-				RPC:    true,
-				Client: ethereumv1alpha1.GethClient,
-				// to test pvc storage resources
-				SyncMode: ethereumv1alpha1.FastSynchronization,
-				RPCPort:  8547,
+				Name:    "node-2",
+				RPC:     true,
+				Client:  ethereumv1alpha1.GethClient,
+				RPCPort: 8547,
 				Resources: &ethereumv1alpha1.NodeResources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
@@ -445,6 +446,8 @@ var _ = Describe("Ethereum network controller", func() {
 				"rinkeby",
 				BesuDataPath,
 				BesuNodePrivateKey,
+				BesuSyncMode,
+				string(ethereumv1alpha1.FastSynchronization),
 			}))
 		})
 
@@ -485,6 +488,7 @@ var _ = Describe("Ethereum network controller", func() {
 				Client:   ethereumv1alpha1.GethClient,
 				Miner:    true,
 				Coinbase: accountAddress,
+				SyncMode: ethereumv1alpha1.FullSynchronization,
 				Import: &ethereumv1alpha1.ImportedAccount{
 					PrivateKey: accountKey,
 					Password:   accountPassword,
@@ -540,6 +544,8 @@ var _ = Describe("Ethereum network controller", func() {
 				GethMinerCoinbase,
 				GethUnlock,
 				GethPassword,
+				GethSyncMode,
+				string(ethereumv1alpha1.FullSynchronization),
 			}))
 		})
 
@@ -772,6 +778,8 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
+				BesuSyncMode,
+				string(ethereumv1alpha1.FullSynchronization),
 			}))
 		})
 
@@ -815,6 +823,7 @@ var _ = Describe("Ethereum network controller", func() {
 					PrivateKey: accountKey,
 					Password:   accountPassword,
 				},
+				SyncMode: ethereumv1alpha1.FastSynchronization,
 				Resources: &ethereumv1alpha1.NodeResources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
@@ -856,6 +865,8 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 				GethBootnodes,
+				GethSyncMode,
+				string(ethereumv1alpha1.FastSynchronization),
 			}))
 		})
 
@@ -1089,6 +1100,8 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
+				BesuSyncMode,
+				string(ethereumv1alpha1.FullSynchronization),
 			}))
 		})
 
@@ -1132,6 +1145,7 @@ var _ = Describe("Ethereum network controller", func() {
 					PrivateKey: accountKey,
 					Password:   accountPassword,
 				},
+				SyncMode: ethereumv1alpha1.FastSynchronization,
 				Resources: &ethereumv1alpha1.NodeResources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
@@ -1172,6 +1186,8 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 				GethBootnodes,
+				GethSyncMode,
+				string(ethereumv1alpha1.FastSynchronization),
 			}))
 		})
 
@@ -1412,6 +1428,8 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
+				BesuSyncMode,
+				string(ethereumv1alpha1.FullSynchronization),
 			}))
 		})
 
@@ -1454,6 +1472,7 @@ var _ = Describe("Ethereum network controller", func() {
 					CPU:    cpu,
 					Memory: memory,
 				},
+				SyncMode: ethereumv1alpha1.FastSynchronization,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -1476,6 +1495,8 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuBootnodes,
 				BesuRPCHTTPEnabled,
 				"8547",
+				BesuSyncMode,
+				string(ethereumv1alpha1.FastSynchronization),
 			}))
 		})
 

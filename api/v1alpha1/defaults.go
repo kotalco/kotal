@@ -20,8 +20,10 @@ const (
 	DefaultHost = "0.0.0.0"
 	// DefaultP2PPort is the default p2p port
 	DefaultP2PPort uint = 30303
-	// DefaultSyncMode is the default sync mode
-	DefaultSyncMode = FullSynchronization
+	// DefaultPublicNetworkSyncMode is the default sync mode for public networks
+	DefaultPublicNetworkSyncMode = FastSynchronization
+	// DefaultPrivateNetworkSyncMode is the default sync mode for private networks
+	DefaultPrivateNetworkSyncMode = FullSynchronization
 	// DefaultRPCPort is the default rpc port
 	DefaultRPCPort uint = 8545
 	// DefaultWSPort is the default ws port

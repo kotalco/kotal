@@ -107,7 +107,12 @@ func (r *Network) DefaultNode(node *Node) {
 	}
 
 	if node.SyncMode == "" {
-		node.SyncMode = FullSynchronization
+		// public network
+		if r.Spec.Genesis == nil {
+			node.SyncMode = FastSynchronization
+		} else {
+			node.SyncMode = FullSynchronization
+		}
 	}
 
 	// must be called after defaulting sync mode because it's depending on its value
