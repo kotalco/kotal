@@ -16,7 +16,6 @@ spec:
         - "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
     forks:
       homestead: 0
-      dao: 0
       eip150: 0
       eip155: 0
       eip158: 0

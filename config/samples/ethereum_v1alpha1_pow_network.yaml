@@ -8,11 +8,8 @@ spec:
   ########### Genesis block spec ###########
   genesis:
     chainId: 20189
-    ethash:
-      fixedDifficulty: 100
     forks:
       homestead: 0
-      dao: 0
       eip150: 0
       eip155: 0
       eip158: 0
