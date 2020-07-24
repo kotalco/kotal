@@ -13,12 +13,13 @@ import (
 var _ = Describe("Ethereum network validation", func() {
 
 	var (
-		networkID       uint = 77777
-		newNetworkID    uint = 8888
-		fixedDifficulty uint = 1500
-		coinbase             = EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706")
-		privatekey           = PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
-		wrongPrivatekey      = PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4f")
+		networkID         uint = 77777
+		newNetworkID      uint = 8888
+		fixedDifficulty   uint = 1500
+		coinbase               = EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706")
+		privatekey             = PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
+		wrongPrivatekey        = PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4f")
+		invalidPrivatekey      = PrivateKey("0x0000000000000000000000000000000000000000000000000000000000000000")
 	)
 
 	createCases := []struct {
@@ -717,6 +718,42 @@ var _ = Describe("Ethereum network validation", func() {
 					Field:    "spec.nodes[0].resources.memoryLimit",
 					BadValue: "1Gi",
 					Detail:   "must be greater than or equal to memory 2Gi",
+				},
+			},
+		},
+		{
+			Title: "network #28",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: ProofOfWork,
+					ID:        networkID,
+					Genesis:   &Genesis{},
+					Nodes: []Node{
+						{
+							Name:     "node-1",
+							Client:   GethClient,
+							Miner:    true,
+							Coinbase: coinbase,
+							Import: &ImportedAccount{
+								PrivateKey: invalidPrivatekey,
+								Password:   "secret",
+							},
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].import.privatekey",
+					BadValue: "<private key>",
+					Detail:   "private key doesn't correspond to the coinbase address",
+				},
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].import.privatekey",
+					BadValue: "<private key>",
+					Detail:   "invalid private key",
 				},
 			},
 		},
