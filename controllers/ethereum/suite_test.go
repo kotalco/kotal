@@ -15,7 +15,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	ethereumv1alpha1 "github.com/mfarghaly/kotal/api/v1alpha1"
+	ethereumv1alpha1 "github.com/mfarghaly/kotal/apis/ethereum/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -40,7 +40,7 @@ var _ = BeforeSuite(func(done Done) {
 
 	By("bootstrapping test environment")
 	testEnv = &envtest.Environment{
-		CRDDirectoryPaths: []string{filepath.Join("..", "config", "crd", "bases")},
+		CRDDirectoryPaths: []string{filepath.Join("..", "..", "config", "crd", "bases")},
 	}
 
 	var err error

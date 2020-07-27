@@ -10,8 +10,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	ethereumv1alpha1 "github.com/mfarghaly/kotal/api/v1alpha1"
-	"github.com/mfarghaly/kotal/controllers"
+	ethereumv1alpha1 "github.com/mfarghaly/kotal/apis/ethereum/v1alpha1"
+	"github.com/mfarghaly/kotal/controllers/ethereum"
 	// +kubebuilder:scaffold:imports
 )
 
