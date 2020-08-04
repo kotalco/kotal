@@ -54,88 +54,95 @@ func (r *SwarmReconciler) reconcileNodes(ctx context.Context, swarm *ipfsv1alpha
 	return nil
 }
 
-// reconcileNodes reconcile a single ipfs node
-func (r *SwarmReconciler) reconcileNode(ctx context.Context, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm) error {
-	dep := &appsv1.Deployment{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: swarm.Namespace,
-			Labels: map[string]string{
+func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv1alpha1.Node) {
+
+	dep.ObjectMeta.Labels = map[string]string{
+		"name":     "node",
+		"instance": node.Name,
+	}
+
+	dep.Spec = appsv1.DeploymentSpec{
+		Selector: &metav1.LabelSelector{
+			MatchLabels: map[string]string{
 				"name":     "node",
 				"instance": node.Name,
 			},
 		},
-		Spec: appsv1.DeploymentSpec{
-			Selector: &metav1.LabelSelector{
-				MatchLabels: map[string]string{
+		Template: corev1.PodTemplateSpec{
+			ObjectMeta: metav1.ObjectMeta{
+				Labels: map[string]string{
 					"name":     "node",
 					"instance": node.Name,
 				},
 			},
-			Template: corev1.PodTemplateSpec{
-				ObjectMeta: metav1.ObjectMeta{
-					Labels: map[string]string{
-						"name":     "node",
-						"instance": node.Name,
+			Spec: corev1.PodSpec{
+				InitContainers: []corev1.Container{
+					{
+						Name:  "init",
+						Image: "kotalco/go-ipfs:v0.6.0",
+						Env: []corev1.EnvVar{
+							{
+								Name:  "IPFS_PEER_ID",
+								Value: node.ID,
+							},
+							{
+								Name:  "IPFS_PRIVATE_KEY",
+								Value: node.PrivateKey,
+							},
+						},
+						Command: []string{"ipfs"},
+						Args:    []string{"init"},
+						VolumeMounts: []corev1.VolumeMount{
+							{
+								Name:      "data",
+								MountPath: "/data/ipfs",
+							},
+						},
 					},
 				},
-				Spec: corev1.PodSpec{
-					InitContainers: []corev1.Container{
-						{
-							Name:  "init",
-							Image: "kotalco/go-ipfs:v0.6.0",
-							Env: []corev1.EnvVar{
-								{
-									Name:  "IPFS_PEER_ID",
-									Value: node.ID,
-								},
-								{
-									Name:  "IPFS_PRIVATE_KEY",
-									Value: node.PrivateKey,
-								},
-							},
-							Command: []string{"ipfs"},
-							Args:    []string{"init"},
-							VolumeMounts: []corev1.VolumeMount{
-								{
-									Name:      "data",
-									MountPath: "/data/ipfs",
-								},
+				Containers: []corev1.Container{
+					{
+						Name:    "node",
+						Image:   "kotalco/go-ipfs:v0.6.0",
+						Command: []string{"ipfs"},
+						Args:    []string{"daemon"},
+						VolumeMounts: []corev1.VolumeMount{
+							{
+								Name:      "data",
+								MountPath: "/data/ipfs",
 							},
 						},
 					},
-					Containers: []corev1.Container{
-						{
-							Name:    "node",
-							Image:   "kotalco/go-ipfs:v0.6.0",
-							Command: []string{"ipfs"},
-							Args:    []string{"daemon"},
-							VolumeMounts: []corev1.VolumeMount{
-								{
-									Name:      "data",
-									MountPath: "/data/ipfs",
-								},
-							},
-						},
-					},
-					Volumes: []corev1.Volume{
-						{
-							Name: "data",
-							VolumeSource: corev1.VolumeSource{
-								EmptyDir: &corev1.EmptyDirVolumeSource{},
-							},
+				},
+				Volumes: []corev1.Volume{
+					{
+						Name: "data",
+						VolumeSource: corev1.VolumeSource{
+							EmptyDir: &corev1.EmptyDirVolumeSource{},
 						},
 					},
 				},
 			},
 		},
 	}
+}
 
-	if err := r.Client.Create(ctx, dep); err != nil {
-		return err
+// reconcileNodes reconcile a single ipfs node
+func (r *SwarmReconciler) reconcileNode(ctx context.Context, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm) error {
+
+	dep := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: swarm.Namespace,
+		},
 	}
 
-	return nil
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, dep, func() error {
+		r.specNodeDeployment(dep, node)
+		return nil
+	})
+
+	return err
 }
 
 // SetupWithManager registers the controller to be started with the given manager
