@@ -51,3 +51,23 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - ipfs.kotal.io
+  resources:
+  - swarms
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ipfs.kotal.io
+  resources:
+  - swarms/status
+  verbs:
+  - get
+  - patch
+  - update

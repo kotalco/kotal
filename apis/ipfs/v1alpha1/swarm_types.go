@@ -9,11 +9,19 @@ import (
 
 // SwarmSpec defines the desired state of Swarm
 type SwarmSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Nodes is swarm nodes
+	// +kubebuilder:validation:MinItems=1
+	Nodes []Node `json:"nodes"`
+}
 
-	// Foo is an example field of Swarm. Edit Swarm_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+// Node is ipfs node
+type Node struct {
+	// Name is node name
+	Name string `json:"name"`
+	// ID is node peer ID
+	ID string `json:"id"`
+	// PrivateKey is node private key
+	PrivateKey string `json:"privateKey"`
 }
 
 // SwarmStatus defines the observed state of Swarm
