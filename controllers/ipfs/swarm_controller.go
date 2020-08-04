@@ -138,6 +138,9 @@ func (r *SwarmReconciler) reconcileNode(ctx context.Context, node *ipfsv1alpha1.
 	}
 
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, dep, func() error {
+		if err := ctrl.SetControllerReference(swarm, dep, r.Scheme); err != nil {
+			return err
+		}
 		r.specNodeDeployment(dep, node)
 		return nil
 	})
@@ -149,5 +152,6 @@ func (r *SwarmReconciler) reconcileNode(ctx context.Context, node *ipfsv1alpha1.
 func (r *SwarmReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ipfsv1alpha1.Swarm{}).
+		Owns(&appsv1.Deployment{}).
 		Complete(r)
 }
