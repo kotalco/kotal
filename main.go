@@ -11,7 +11,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	ethereumv1alpha1 "github.com/mfarghaly/kotal/apis/ethereum/v1alpha1"
-	"github.com/mfarghaly/kotal/controllers/ethereum"
+	ipfsv1alpha1 "github.com/mfarghaly/kotal/apis/ipfs/v1alpha1"
+	controllers "github.com/mfarghaly/kotal/controllers/ethereum"
+	ipfscontroller "github.com/mfarghaly/kotal/controllers/ipfs"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -24,6 +26,7 @@ func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
 
 	_ = ethereumv1alpha1.AddToScheme(scheme)
+	_ = ipfsv1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -60,6 +63,14 @@ func main() {
 	}
 	if err = (&ethereumv1alpha1.Network{}).SetupWebhookWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Network")
+		os.Exit(1)
+	}
+	if err = (&ipfscontroller.SwarmReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("Swarm"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Swarm")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

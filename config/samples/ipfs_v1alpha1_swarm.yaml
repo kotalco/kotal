@@ -1,0 +1,7 @@
+apiVersion: ipfs.kotal.io/v1alpha1
+kind: Swarm
+metadata:
+  name: swarm-sample
+spec:
+  # Add fields here
+  foo: bar
