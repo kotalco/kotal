@@ -49,6 +49,22 @@ spec:
                   privateKey:
                     description: PrivateKey is node private key
                     type: string
+                  profiles:
+                    description: Profiles is a list of profiles to apply
+                    items:
+                      description: Profile is ipfs configuration
+                      enum:
+                      - server
+                      - randomports
+                      - default-datastore
+                      - local-discovery
+                      - test
+                      - default-networking
+                      - flatfs
+                      - badgerds
+                      - lowpower
+                      type: string
+                    type: array
                 required:
                 - id
                 - name

@@ -23,6 +23,8 @@ type Node struct {
 	ID string `json:"id"`
 	// PrivateKey is node private key
 	PrivateKey string `json:"privateKey"`
+	// Profiles is a list of profiles to apply
+	Profiles []Profile `json:"profiles,omitempty"`
 }
 
 // SwarmAddress returns node swarm address
@@ -30,6 +32,10 @@ func (n *Node) SwarmAddress(ip string) string {
 	// TODO: replace hardcoded 4001 port with node swarm port
 	return fmt.Sprintf("/ip4/%s/tcp/4001/p2p/%s", ip, n.ID)
 }
+
+// Profile is ipfs configuration
+// +kubebuilder:validation:Enum=server;randomports;default-datastore;local-discovery;test;default-networking;flatfs;badgerds;lowpower
+type Profile string
 
 // SwarmStatus defines the observed state of Swarm
 type SwarmStatus struct {

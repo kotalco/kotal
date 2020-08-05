@@ -195,7 +195,7 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 	initContainers = append(initContainers, initNode)
 
 	for i, peer := range peers {
-		initNode := corev1.Container{
+		addBootstrapPeer := corev1.Container{
 			Name:    fmt.Sprintf("add-bootstrap-peer-%d", i),
 			Image:   "ipfs/go-ipfs:v0.6.0",
 			Command: []string{"ipfs"},
@@ -207,7 +207,23 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 				},
 			},
 		}
-		initContainers = append(initContainers, initNode)
+		initContainers = append(initContainers, addBootstrapPeer)
+	}
+
+	for _, profile := range node.Profiles {
+		applyProfile := corev1.Container{
+			Name:    fmt.Sprintf("apply-%s-profile", profile),
+			Image:   "ipfs/go-ipfs:v0.6.0",
+			Command: []string{"ipfs"},
+			Args:    []string{"config", "profile", "apply", string(profile)},
+			VolumeMounts: []corev1.VolumeMount{
+				{
+					Name:      "data",
+					MountPath: "/data/ipfs",
+				},
+			},
+		}
+		initContainers = append(initContainers, applyProfile)
 	}
 
 	dep.Spec = appsv1.DeploymentSpec{
