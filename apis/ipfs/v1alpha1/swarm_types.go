@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"fmt"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -22,6 +23,12 @@ type Node struct {
 	ID string `json:"id"`
 	// PrivateKey is node private key
 	PrivateKey string `json:"privateKey"`
+}
+
+// SwarmAddress returns node swarm address
+func (n *Node) SwarmAddress(ip string) string {
+	// TODO: replace hardcoded 4001 port with node swarm port
+	return fmt.Sprintf("/ip4/%s/tcp/4001/p2p/%s", ip, n.ID)
 }
 
 // SwarmStatus defines the observed state of Swarm
