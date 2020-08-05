@@ -7,6 +7,7 @@ import (
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -26,7 +27,7 @@ type SwarmReconciler struct {
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=swarms,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=swarms/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=watch;get;list;create;update;delete
-// +kubebuilder:rbac:groups=core,resources=services,verbs=watch;get;create;update;list;delete
+// +kubebuilder:rbac:groups=core,resources=services;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 // Reconcile reconciles ipfs swarm
 func (r *SwarmReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err error) {
@@ -65,6 +66,10 @@ func (r *SwarmReconciler) reconcileNodes(ctx context.Context, swarm *ipfsv1alpha
 func (r *SwarmReconciler) reconcileNode(ctx context.Context, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) (addr string, err error) {
 	var ip string
 
+	if err = r.reconcileNodePVC(ctx, node, swarm); err != nil {
+		return
+	}
+
 	if ip, err = r.reconcileNodeService(ctx, node, swarm); err != nil {
 		return
 	}
@@ -76,6 +81,49 @@ func (r *SwarmReconciler) reconcileNode(ctx context.Context, node *ipfsv1alpha1.
 	addr = node.SwarmAddress(ip)
 
 	return
+}
+
+// reconcileNodePVC reconciles ipfs node data persistent volume claim
+func (r *SwarmReconciler) reconcileNodePVC(ctx context.Context, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm) error {
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: swarm.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
+		if err := ctrl.SetControllerReference(swarm, pvc, r.Scheme); err != nil {
+			return err
+		}
+		if pvc.CreationTimestamp.IsZero() {
+			r.specNodePVC(pvc, node)
+		}
+		return nil
+	})
+
+	return err
+}
+
+// specNodePVC updates node persistent volume spec
+func (r *SwarmReconciler) specNodePVC(pvc *corev1.PersistentVolumeClaim, node *ipfsv1alpha1.Node) {
+
+	pvc.ObjectMeta.Labels = map[string]string{
+		"name":     "node",
+		"instance": node.Name,
+	}
+
+	pvc.Spec = corev1.PersistentVolumeClaimSpec{
+		AccessModes: []corev1.PersistentVolumeAccessMode{
+			corev1.ReadWriteOnce,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: corev1.ResourceList{
+				corev1.ResourceStorage: resource.MustParse("10Gi"),
+			},
+		},
+	}
+
 }
 
 // reconcileNodeService reconciles node service
@@ -260,7 +308,9 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 					{
 						Name: "data",
 						VolumeSource: corev1.VolumeSource{
-							EmptyDir: &corev1.EmptyDirVolumeSource{},
+							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+								ClaimName: node.Name,
+							},
 						},
 					},
 				},
@@ -275,5 +325,6 @@ func (r *SwarmReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&ipfsv1alpha1.Swarm{}).
 		Owns(&appsv1.Deployment{}).
 		Owns(&corev1.Service{}).
+		Owns(&corev1.PersistentVolumeClaim{}).
 		Complete(r)
 }
