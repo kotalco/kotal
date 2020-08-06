@@ -25,12 +25,33 @@ type Node struct {
 	PrivateKey string `json:"privateKey"`
 	// Profiles is a list of profiles to apply
 	Profiles []Profile `json:"profiles,omitempty"`
+	// Resources is node compute and storage resources
+	Resources *NodeResources `json:"resources,omitempty"`
 }
 
 // SwarmAddress returns node swarm address
 func (n *Node) SwarmAddress(ip string) string {
 	// TODO: replace hardcoded 4001 port with node swarm port
 	return fmt.Sprintf("/ip4/%s/tcp/4001/p2p/%s", ip, n.ID)
+}
+
+// NodeResources is node compute and storage resources
+type NodeResources struct {
+	// CPU is cpu cores the node requires
+	// +kubebuilder:validation:Pattern="^[1-9][0-9]*m?$"
+	CPU string `json:"cpu,omitempty"`
+	// CPULimit is cpu cores the node is limited to
+	// +kubebuilder:validation:Pattern="^[1-9][0-9]*m?$"
+	CPULimit string `json:"cpuLimit,omitempty"`
+	// Memory is memmory requirements
+	// +kubebuilder:validation:Pattern="^[1-9][0-9]*[KMGTPE]i$"
+	Memory string `json:"memory,omitempty"`
+	// MemoryLimit is cpu cores the node is limited to
+	// +kubebuilder:validation:Pattern="^[1-9][0-9]*[KMGTPE]i$"
+	MemoryLimit string `json:"memoryLimit,omitempty"`
+	// Storage is disk space storage requirements
+	// +kubebuilder:validation:Pattern="^[1-9][0-9]*[KMGTPE]i$"
+	Storage string `json:"storage,omitempty"`
 }
 
 // Profile is ipfs configuration
