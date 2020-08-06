@@ -73,6 +73,10 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Swarm")
 		os.Exit(1)
 	}
+	if err = (&ipfsv1alpha1.Swarm{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "Swarm")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 
 	setupLog.Info("starting manager")
