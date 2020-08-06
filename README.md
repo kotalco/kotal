@@ -62,6 +62,14 @@ after the cluster is up and running, [install](https://cert-manager.io/docs/inst
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.16.0/cert-manager.yaml
 ```
 
+Install kotal to the kind cluster.
+
+```
+make kind IMG=kotal/operator:0.1
+```
+
+This command will run the tests, build the docker image, load it into kind and deploy the operator.
+
 Apply any of the examples in `config/samples` directory and watch magic happens :tophat:
 
 ```
