@@ -119,7 +119,7 @@ func (r *SwarmReconciler) specNodePVC(pvc *corev1.PersistentVolumeClaim, node *i
 		},
 		Resources: corev1.ResourceRequirements{
 			Requests: corev1.ResourceList{
-				corev1.ResourceStorage: resource.MustParse("10Gi"),
+				corev1.ResourceStorage: resource.MustParse(node.Resources.Storage),
 			},
 		},
 	}
@@ -300,6 +300,16 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 							{
 								Name:      "data",
 								MountPath: "/data/ipfs",
+							},
+						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Resources.CPU),
+								corev1.ResourceMemory: resource.MustParse(node.Resources.Memory),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Resources.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(node.Resources.MemoryLimit),
 							},
 						},
 					},

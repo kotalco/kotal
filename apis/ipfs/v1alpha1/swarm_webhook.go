@@ -51,6 +51,10 @@ func (r *Swarm) DefaultNode(node *Node) {
 	if node.Resources.MemoryLimit == "" {
 		node.Resources.MemoryLimit = DefaultNodeMemoryLimit
 	}
+
+	if node.Resources.Storage == "" {
+		node.Resources.Storage = DefaultNodeStorageRequest
+	}
 }
 
 // +kubebuilder:webhook:verbs=create;update,path=/validate-ipfs-kotal-io-v1alpha1-swarm,mutating=false,failurePolicy=fail,groups=ipfs.kotal.io,resources=swarms,versions=v1alpha1,name=vswarm.kb.io
