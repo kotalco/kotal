@@ -24,6 +24,24 @@ webhooks:
     - UPDATE
     resources:
     - networks
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-ipfs-kotal-io-v1alpha1-swarm
+  failurePolicy: Fail
+  name: mswarm.kb.io
+  rules:
+  - apiGroups:
+    - ipfs.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - swarms
 
 ---
 apiVersion: admissionregistration.k8s.io/v1beta1
@@ -50,3 +68,21 @@ webhooks:
     - UPDATE
     resources:
     - networks
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-ipfs-kotal-io-v1alpha1-swarm
+  failurePolicy: Fail
+  name: vswarm.kb.io
+  rules:
+  - apiGroups:
+    - ipfs.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - swarms

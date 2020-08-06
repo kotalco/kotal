@@ -25,6 +25,32 @@ var _ webhook.Defaulter = &Swarm{}
 func (r *Swarm) Default() {
 	swarmlog.Info("default", "name", r.Name)
 
+	for i := range r.Spec.Nodes {
+		r.DefaultNode(&r.Spec.Nodes[i])
+	}
+}
+
+// DefaultNode defaults a single ipfs node spec
+func (r *Swarm) DefaultNode(node *Node) {
+	if node.Resources == nil {
+		node.Resources = &NodeResources{}
+	}
+
+	if node.Resources.CPU == "" {
+		node.Resources.CPU = DefaultNodeCPURequest
+	}
+
+	if node.Resources.CPULimit == "" {
+		node.Resources.CPULimit = DefaultNodeCPULimit
+	}
+
+	if node.Resources.Memory == "" {
+		node.Resources.Memory = DefaultNodeMemoryRequest
+	}
+
+	if node.Resources.MemoryLimit == "" {
+		node.Resources.MemoryLimit = DefaultNodeMemoryLimit
+	}
 }
 
 // +kubebuilder:webhook:verbs=create;update,path=/validate-ipfs-kotal-io-v1alpha1-swarm,mutating=false,failurePolicy=fail,groups=ipfs.kotal.io,resources=swarms,versions=v1alpha1,name=vswarm.kb.io
