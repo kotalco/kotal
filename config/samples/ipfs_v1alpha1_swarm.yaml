@@ -1,7 +1,31 @@
 apiVersion: ipfs.kotal.io/v1alpha1
 kind: Swarm
 metadata:
-  name: swarm-sample
+  name: sample-swarm
 spec:
-  # Add fields here
-  foo: bar
+  nodes:
+    - name: node-1
+      id: "12D3KooWN16bUqeedKUQHXtHJjUT1oEyFBr6YnKQ7B4LSTAnbTye"
+      privateKey: "CAESQMbyIcsxBsn8kIk9sbL2NdVwSBf/Uj9BOA5KbXnrgmNHtQwF4rgzxd2XXpmdhIBxnlghaYVNBLzcRj2f6PCKnD0="
+      profiles:
+        - server
+        - flatfs
+
+    - name: node-2
+      id: "12D3KooWCHgCddSVSLigTSyUATtq2SicYSSVPTn9xMRFv49D4Gwd"
+      privateKey: "CAESQF+tQn8qXgNR9ssoBV7xjPrgGB3dAgp5/M8VNNQjr7B5JLZx9nOY/4bllbCbc2Cq6xB9vVC43LuF8nIcitLVDvQ="
+      profiles:
+        - lowpower
+        - flatfs
+      resources:
+        cpu: "2"
+        cpuLimit: "3"
+        memory: "4Gi"
+        memoryLimit: "8Gi"
+        storage: "20Gi"
+      
+    - name: node-3
+      id: "12D3KooWEZaH7qSsNSEWZTSQVowskNsFzdCoKxQiAa8Mg9x2CX49"
+      privateKey: "CAESQHHjnBa8tMTAcNcEgLBR6TtB8VPcW05GXhre6NGAIwV0RoBqSseKBSwq37ccd4XRbMWzPBn0DTHPyQ53JhgmzpY="
+      resources:
+        storage: "30Gi"
