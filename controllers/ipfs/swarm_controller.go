@@ -87,7 +87,7 @@ func (r *SwarmReconciler) reconcileNode(ctx context.Context, node *ipfsv1alpha1.
 func (r *SwarmReconciler) reconcileNodePVC(ctx context.Context, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm) error {
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
+			Name:      node.PVCName(swarm.Name),
 			Namespace: swarm.Namespace,
 		},
 	}
@@ -108,10 +108,7 @@ func (r *SwarmReconciler) reconcileNodePVC(ctx context.Context, node *ipfsv1alph
 // specNodePVC updates node persistent volume spec
 func (r *SwarmReconciler) specNodePVC(pvc *corev1.PersistentVolumeClaim, node *ipfsv1alpha1.Node) {
 
-	pvc.ObjectMeta.Labels = map[string]string{
-		"name":     "node",
-		"instance": node.Name,
-	}
+	pvc.ObjectMeta.Labels = node.Labels()
 
 	pvc.Spec = corev1.PersistentVolumeClaimSpec{
 		AccessModes: []corev1.PersistentVolumeAccessMode{
@@ -131,7 +128,7 @@ func (r *SwarmReconciler) reconcileNodeService(ctx context.Context, node *ipfsv1
 
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
+			Name:      node.ServiceName(swarm.Name),
 			Namespace: swarm.Namespace,
 		},
 	}
@@ -150,10 +147,7 @@ func (r *SwarmReconciler) reconcileNodeService(ctx context.Context, node *ipfsv1
 // specNodeService updates node service spec
 func (r *SwarmReconciler) specNodeService(svc *corev1.Service, node *ipfsv1alpha1.Node) {
 
-	labels := map[string]string{
-		"name":     "node",
-		"instance": node.Name,
-	}
+	labels := node.Labels()
 	svc.ObjectMeta.Labels = labels
 
 	svc.Spec.Ports = []corev1.ServicePort{
@@ -192,7 +186,7 @@ func (r *SwarmReconciler) reconcileNodeDeployment(ctx context.Context, node *ipf
 
 	dep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
+			Name:      node.DeploymentName(swarm.Name),
 			Namespace: swarm.Namespace,
 		},
 	}
@@ -201,7 +195,7 @@ func (r *SwarmReconciler) reconcileNodeDeployment(ctx context.Context, node *ipf
 		if err := ctrl.SetControllerReference(swarm, dep, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeDeployment(dep, node, peers)
+		r.specNodeDeployment(dep, node, swarm, peers)
 		return nil
 	})
 
@@ -209,12 +203,9 @@ func (r *SwarmReconciler) reconcileNodeDeployment(ctx context.Context, node *ipf
 }
 
 // specNodeDeployment updates node deployment spec
-func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv1alpha1.Node, peers []string) {
+func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) {
 
-	dep.ObjectMeta.Labels = map[string]string{
-		"name":     "node",
-		"instance": node.Name,
-	}
+	dep.ObjectMeta.Labels = node.Labels()
 
 	initContainers := []corev1.Container{}
 
@@ -276,17 +267,11 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 
 	dep.Spec = appsv1.DeploymentSpec{
 		Selector: &metav1.LabelSelector{
-			MatchLabels: map[string]string{
-				"name":     "node",
-				"instance": node.Name,
-			},
+			MatchLabels: node.Labels(),
 		},
 		Template: corev1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
-				Labels: map[string]string{
-					"name":     "node",
-					"instance": node.Name,
-				},
+				Labels: node.Labels(),
 			},
 			Spec: corev1.PodSpec{
 				InitContainers: initContainers,
@@ -319,7 +304,7 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 						Name: "data",
 						VolumeSource: corev1.VolumeSource{
 							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-								ClaimName: node.Name,
+								ClaimName: node.PVCName(swarm.Name),
 							},
 						},
 					},

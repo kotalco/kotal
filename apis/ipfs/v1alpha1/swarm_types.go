@@ -35,6 +35,29 @@ func (n *Node) SwarmAddress(ip string) string {
 	return fmt.Sprintf("/ip4/%s/tcp/4001/p2p/%s", ip, n.ID)
 }
 
+// DeploymentName returns name to be used by node deployment
+func (n *Node) DeploymentName(swarm string) string {
+	return fmt.Sprintf("%s-%s", swarm, n.Name)
+}
+
+// PVCName returns name to be used by node pvc
+func (n *Node) PVCName(swarm string) string {
+	return n.DeploymentName(swarm) // same as deployment name
+}
+
+// ServiceName returns name to be used by node service
+func (n *Node) ServiceName(swarm string) string {
+	return n.DeploymentName(swarm) // same as deployment name
+}
+
+// Labels to be used by node resources
+func (n *Node) Labels() map[string]string {
+	return map[string]string{
+		"name":     "node",
+		"instance": n.Name,
+	}
+}
+
 // NodeResources is node compute and storage resources
 type NodeResources struct {
 	// CPU is cpu cores the node requires
