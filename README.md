@@ -86,7 +86,7 @@ kind delete cluster
 
 ## Documentation
 
-TODO
+Kotal documentation is available [here](https://github.com/mFarghaly/kotal-documentation)
 
 ## Contact
 
