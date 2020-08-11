@@ -335,7 +335,10 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 
 	nodes := network.Spec.Nodes
 	names := map[string]bool{}
-	matchingLabels := client.MatchingLabels{"name": "node"}
+	matchingLabels := client.MatchingLabels{
+		"name":    "node",
+		"network": network.Name,
+	}
 	inNamespace := client.InNamespace(network.Namespace)
 
 	for _, node := range nodes {
@@ -419,8 +422,8 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 }
 
 // specNodeDataPVC update node data pvc spec
-func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereumv1alpha1.Node) {
-	pvc.ObjectMeta.Labels = node.Labels()
+func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) {
+	pvc.ObjectMeta.Labels = node.Labels(network.Name)
 	pvc.Spec = corev1.PersistentVolumeClaimSpec{
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
@@ -448,7 +451,7 @@ func (r *NetworkReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethe
 			return err
 		}
 		if pvc.CreationTimestamp.IsZero() {
-			r.specNodeDataPVC(pvc, node)
+			r.specNodeDataPVC(pvc, node, network)
 		}
 		return nil
 	})
@@ -575,7 +578,7 @@ func (r *NetworkReconciler) getNodeAffinity(network *ethereumv1alpha1.Network) *
 
 // specNodeDeployment updates node deployment spec
 func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
-	labels := node.Labels()
+	labels := node.Labels(network.Name)
 	// used by geth to init genesis and import account(s)
 	initContainers := []corev1.Container{}
 	// node client container
@@ -686,8 +689,8 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 	return err
 }
 
-func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node, nodekey string) {
-	secret.ObjectMeta.Labels = node.Labels()
+func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, nodekey string) {
+	secret.ObjectMeta.Labels = node.Labels(network.Name)
 	secret.StringData = map[string]string{
 		"nodekey": nodekey,
 	}
@@ -715,7 +718,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 			return err
 		}
 
-		r.specNodeSecret(secret, node, privateKey)
+		r.specNodeSecret(secret, node, network, privateKey)
 
 		return nil
 	})
@@ -728,8 +731,8 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 }
 
 // specNodeService updates node service spec
-func (r *NetworkReconciler) specNodeService(svc *corev1.Service, node *ethereumv1alpha1.Node) {
-	labels := node.Labels()
+func (r *NetworkReconciler) specNodeService(svc *corev1.Service, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) {
+	labels := node.Labels(network.Name)
 	svc.ObjectMeta.Labels = labels
 	svc.Spec.Ports = []corev1.ServicePort{
 		{
@@ -764,7 +767,7 @@ func (r *NetworkReconciler) reconcileNodeService(ctx context.Context, node *ethe
 			return err
 		}
 
-		r.specNodeService(svc, node)
+		r.specNodeService(svc, node, network)
 
 		return nil
 	})

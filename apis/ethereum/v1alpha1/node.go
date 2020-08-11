@@ -110,10 +110,11 @@ func (n *Node) ImportedAccountName(network string) string {
 }
 
 // Labels to be used by node resources
-func (n *Node) Labels() map[string]string {
+func (n *Node) Labels(network string) map[string]string {
 	return map[string]string{
 		"name":     "node",
 		"instance": n.Name,
+		"network":  network,
 	}
 }
 

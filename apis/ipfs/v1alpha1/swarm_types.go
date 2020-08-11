@@ -51,10 +51,11 @@ func (n *Node) ServiceName(swarm string) string {
 }
 
 // Labels to be used by node resources
-func (n *Node) Labels() map[string]string {
+func (n *Node) Labels(swarm string) map[string]string {
 	return map[string]string{
 		"name":     "node",
 		"instance": n.Name,
+		"swarm":    swarm,
 	}
 }
 

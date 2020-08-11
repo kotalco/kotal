@@ -97,8 +97,9 @@ func TestLabels(t *testing.T) {
 	expected := map[string]string{
 		"name":     "node",
 		"instance": "node-1",
+		"network":  "test-network",
 	}
-	got := node.Labels()
+	got := node.Labels(network.Name)
 
 	if !reflect.DeepEqual(got, expected) {
 		t.Errorf("Expecting node labels to be %s got %s", expected, got)
