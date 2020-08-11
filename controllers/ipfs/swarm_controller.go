@@ -59,6 +59,93 @@ func (r *SwarmReconciler) reconcileNodes(ctx context.Context, swarm *ipfsv1alpha
 		}
 		peers = append(peers, addr)
 	}
+
+	if err := r.deleteRedundantNodes(ctx, swarm); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// deleteRedundantNodes deletes redundant ipfs node that has been removed from spec
+// swarm is the owner of the redundant resources (node deployment, svc, secret and pvc)
+// removing nodes from spec won't remove these resources by grabage collection
+// that's why we're deleting them manually
+func (r *SwarmReconciler) deleteRedundantNodes(ctx context.Context, swarm *ipfsv1alpha1.Swarm) error {
+	log := r.Log.WithName("delete redundant nodes")
+
+	var deps appsv1.DeploymentList
+	var pvcs corev1.PersistentVolumeClaimList
+	var secrets corev1.SecretList
+	var services corev1.ServiceList
+
+	nodes := swarm.Spec.Nodes
+	names := map[string]bool{}
+	matchingLabels := client.MatchingLabels{
+		"name":  "node",
+		"swarm": swarm.Name,
+	}
+	inNamespace := client.InNamespace(swarm.Namespace)
+
+	for _, node := range nodes {
+		depName := node.DeploymentName(swarm.Name)
+		names[depName] = true
+	}
+
+	// Node deployments
+	if err := r.Client.List(ctx, &deps, matchingLabels, inNamespace); err != nil {
+		log.Error(err, "unable to list all node deployments")
+		return err
+	}
+
+	for _, dep := range deps.Items {
+		name := dep.GetName()
+		if exist := names[name]; !exist {
+			log.Info(fmt.Sprintf("deleting node (%s) deployment", name))
+
+			if err := r.Client.Delete(ctx, &dep); err != nil {
+				log.Error(err, fmt.Sprintf("unable to delete node (%s) deployment", name))
+				return err
+			}
+		}
+	}
+
+	// Node PVCs
+	if err := r.Client.List(ctx, &pvcs, matchingLabels, inNamespace); err != nil {
+		log.Error(err, "unable to list all node pvcs")
+		return err
+	}
+
+	for _, pvc := range pvcs.Items {
+		name := pvc.GetName()
+		if exist := names[name]; !exist {
+			log.Info(fmt.Sprintf("deleting node (%s) pvc", name))
+
+			if err := r.Client.Delete(ctx, &pvc); err != nil {
+				log.Error(err, fmt.Sprintf("unable to delete node (%s) pvc", name))
+				return err
+			}
+		}
+	}
+
+	// Node Services
+	if err := r.Client.List(ctx, &services, matchingLabels, inNamespace); err != nil {
+		log.Error(err, "unable to list all node services")
+		return err
+	}
+
+	for _, service := range services.Items {
+		name := service.GetName()
+		if exist := names[name]; !exist {
+			log.Info(fmt.Sprintf("deleting node (%s) service", name))
+
+			if err := r.Client.Delete(ctx, &service); err != nil {
+				log.Error(err, fmt.Sprintf("unable to delete node (%s) service", name))
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 

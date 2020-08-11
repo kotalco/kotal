@@ -326,7 +326,7 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 // removing nodes from spec won't remove these resources by grabage collection
 // that's why we're deleting them manually
 func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *ethereumv1alpha1.Network) error {
-	log := r.Log.WithName("delete redunudant nodes")
+	log := r.Log.WithName("delete redundant nodes")
 
 	var deps appsv1.DeploymentList
 	var pvcs corev1.PersistentVolumeClaimList
