@@ -76,7 +76,6 @@ func (r *SwarmReconciler) deleteRedundantNodes(ctx context.Context, swarm *ipfsv
 
 	var deps appsv1.DeploymentList
 	var pvcs corev1.PersistentVolumeClaimList
-	var secrets corev1.SecretList
 	var services corev1.ServiceList
 
 	nodes := swarm.Spec.Nodes

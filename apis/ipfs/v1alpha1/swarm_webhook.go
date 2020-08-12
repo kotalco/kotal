@@ -1,7 +1,11 @@
 package v1alpha1
 
 import (
+	"fmt"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/validation/field"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
@@ -11,9 +15,9 @@ import (
 var swarmlog = logf.Log.WithName("swarm-resource")
 
 // SetupWebhookWithManager registers webhook to be started wth the given manager
-func (r *Swarm) SetupWebhookWithManager(mgr ctrl.Manager) error {
+func (s *Swarm) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewWebhookManagedBy(mgr).
-		For(r).
+		For(s).
 		Complete()
 }
 
@@ -22,16 +26,16 @@ func (r *Swarm) SetupWebhookWithManager(mgr ctrl.Manager) error {
 var _ webhook.Defaulter = &Swarm{}
 
 // Default implements webhook.Defaulter so a webhook will be registered for the type
-func (r *Swarm) Default() {
-	swarmlog.Info("default", "name", r.Name)
+func (s *Swarm) Default() {
+	swarmlog.Info("default", "name", s.Name)
 
-	for i := range r.Spec.Nodes {
-		r.DefaultNode(&r.Spec.Nodes[i])
+	for i := range s.Spec.Nodes {
+		s.DefaultNode(&s.Spec.Nodes[i])
 	}
 }
 
 // DefaultNode defaults a single ipfs node spec
-func (r *Swarm) DefaultNode(node *Node) {
+func (s *Swarm) DefaultNode(node *Node) {
 	if node.Resources == nil {
 		node.Resources = &NodeResources{}
 	}
@@ -61,23 +65,60 @@ func (r *Swarm) DefaultNode(node *Node) {
 
 var _ webhook.Validator = &Swarm{}
 
-// ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (r *Swarm) ValidateCreate() error {
-	swarmlog.Info("validate create", "name", r.Name)
+// ValidateNodeNameUniqeness validates that all node names are unique
+func (s *Swarm) ValidateNodeNameUniqeness() field.ErrorList {
 
-	return nil
+	var uniquenessErrors field.ErrorList
+	names := map[string]int{}
+	msg := "already used by spec.nodes[%d].name"
+	nodesPath := field.NewPath("spec").Child("nodes")
+
+	for i, node := range s.Spec.Nodes {
+		if j, exists := names[node.Name]; exists {
+			path := nodesPath.Index(i).Child("name")
+			err := field.Invalid(path, node.Name, fmt.Sprintf(msg, j))
+			uniquenessErrors = append(uniquenessErrors, err)
+		} else {
+			names[node.Name] = i
+		}
+	}
+	return uniquenessErrors
+}
+
+// Validate is the shared validation between create and update
+func (s *Swarm) Validate() field.ErrorList {
+	var allErrors field.ErrorList
+
+	allErrors = append(allErrors, s.ValidateNodeNameUniqeness()...)
+
+	return allErrors
+}
+
+// ValidateCreate implements webhook.Validator so a webhook will be registered for the type
+func (s *Swarm) ValidateCreate() error {
+	var allErrors field.ErrorList
+
+	swarmlog.Info("validate create", "name", s.Name)
+
+	allErrors = append(allErrors, s.Validate()...)
+
+	return apierrors.NewInvalid(schema.GroupKind{}, s.Name, allErrors)
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (r *Swarm) ValidateUpdate(old runtime.Object) error {
-	swarmlog.Info("validate update", "name", r.Name)
+func (s *Swarm) ValidateUpdate(old runtime.Object) error {
+	var allErrors field.ErrorList
 
-	return nil
+	swarmlog.Info("validate update", "name", s.Name)
+
+	allErrors = append(allErrors, s.Validate()...)
+
+	return apierrors.NewInvalid(schema.GroupKind{}, s.Name, allErrors)
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (r *Swarm) ValidateDelete() error {
-	swarmlog.Info("validate delete", "name", r.Name)
+func (s *Swarm) ValidateDelete() error {
+	swarmlog.Info("validate delete", "name", s.Name)
 
 	return nil
 }
