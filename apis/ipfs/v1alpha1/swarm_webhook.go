@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	"fmt"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -85,9 +86,42 @@ func (s *Swarm) ValidateNodeNameUniqeness() field.ErrorList {
 	return uniquenessErrors
 }
 
+// ValidateNode validates a single ipfs node
+func (s *Swarm) ValidateNode(i int) field.ErrorList {
+	var nodeErrors field.ErrorList
+	node := s.Spec.Nodes[i]
+	nodePath := field.NewPath("spec").Child("nodes").Index(i)
+
+	cpu := resource.MustParse(node.Resources.CPU)
+	cpuLimit := resource.MustParse(node.Resources.CPULimit)
+
+	// validate cpuLimit can't be less than cpu request
+	if cpuLimit.Cmp(cpu) == -1 {
+		msg := fmt.Sprintf("must be greater than or equal to cpu %s", string(node.Resources.CPU))
+		err := field.Invalid(nodePath.Child("resources").Child("cpuLimit"), node.Resources.CPULimit, msg)
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	memory := resource.MustParse(node.Resources.Memory)
+	memoryLimit := resource.MustParse(node.Resources.MemoryLimit)
+
+	// validate memoryLimit can't be less than memory request
+	if memoryLimit.Cmp(memory) == -1 {
+		msg := fmt.Sprintf("must be greater than or equal to memory %s", string(node.Resources.Memory))
+		err := field.Invalid(nodePath.Child("resources").Child("memoryLimit"), node.Resources.MemoryLimit, msg)
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	return nodeErrors
+}
+
 // Validate is the shared validation between create and update
 func (s *Swarm) Validate() field.ErrorList {
 	var allErrors field.ErrorList
+
+	for i := range s.Spec.Nodes {
+		allErrors = append(allErrors, s.ValidateNode(i)...)
+	}
 
 	allErrors = append(allErrors, s.ValidateNodeNameUniqeness()...)
 
@@ -102,6 +136,10 @@ func (s *Swarm) ValidateCreate() error {
 
 	allErrors = append(allErrors, s.Validate()...)
 
+	if len(allErrors) == 0 {
+		return nil
+	}
+
 	return apierrors.NewInvalid(schema.GroupKind{}, s.Name, allErrors)
 }
 
@@ -112,6 +150,10 @@ func (s *Swarm) ValidateUpdate(old runtime.Object) error {
 	swarmlog.Info("validate update", "name", s.Name)
 
 	allErrors = append(allErrors, s.Validate()...)
+
+	if len(allErrors) == 0 {
+		return nil
+	}
 
 	return apierrors.NewInvalid(schema.GroupKind{}, s.Name, allErrors)
 }
