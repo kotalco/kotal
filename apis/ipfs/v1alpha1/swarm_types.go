@@ -42,6 +42,11 @@ func (n *Node) PVCName(swarm string) string {
 	return n.DeploymentName(swarm) // same as deployment name
 }
 
+// ConfigName returns name to be used by node config map
+func (n *Node) ConfigName(swarm string) string {
+	return n.DeploymentName(swarm) // same as deployment name
+}
+
 // ServiceName returns name to be used by node service
 func (n *Node) ServiceName(swarm string) string {
 	return n.DeploymentName(swarm) // same as deployment name

@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"bytes"
 	"context"
 	"fmt"
-
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -13,6 +13,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"text/template"
 
 	ipfsv1alpha1 "github.com/mfarghaly/kotal/apis/ipfs/v1alpha1"
 )
@@ -27,7 +28,7 @@ type SwarmReconciler struct {
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=swarms,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=swarms/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=watch;get;list;create;update;delete
-// +kubebuilder:rbac:groups=core,resources=services;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
+// +kubebuilder:rbac:groups=core,resources=services;configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 // Reconcile reconciles ipfs swarm
 func (r *SwarmReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err error) {
@@ -173,6 +174,10 @@ func (r *SwarmReconciler) reconcileNode(ctx context.Context, node *ipfsv1alpha1.
 		return
 	}
 
+	if err = r.reconcileNodeConfig(ctx, node, swarm, peers); err != nil {
+		return
+	}
+
 	if ip, err = r.reconcileNodeService(ctx, node, swarm); err != nil {
 		return
 	}
@@ -184,6 +189,69 @@ func (r *SwarmReconciler) reconcileNode(ctx context.Context, node *ipfsv1alpha1.
 	addr = node.SwarmAddress(ip)
 
 	return
+}
+
+// reconcileNodeConfig reconciles ipfs node config map
+func (r *SwarmReconciler) reconcileNodeConfig(ctx context.Context, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) error {
+	config := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.ConfigName(swarm.Name),
+			Namespace: swarm.Namespace,
+		},
+	}
+
+	script, err := generateInitScript(node, peers)
+	if err != nil {
+		return err
+	}
+
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, config, func() error {
+		if err := ctrl.SetControllerReference(swarm, config, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specNodeConfig(config, node, swarm, script)
+		return nil
+	})
+
+	return err
+}
+
+// generateInitScript generates init script from node spec
+func generateInitScript(node *ipfsv1alpha1.Node, peers []string) (script string, err error) {
+
+	type Input struct {
+		Profiles []ipfsv1alpha1.Profile
+		Peers    []string
+	}
+
+	input := &Input{
+		Profiles: node.Profiles,
+		Peers:    peers,
+	}
+
+	tmpl, err := template.New("master").Parse(initScriptTemplate)
+	if err != nil {
+		return
+	}
+
+	buff := new(bytes.Buffer)
+	if err = tmpl.Execute(buff, input); err != nil {
+		return
+	}
+
+	script = buff.String()
+
+	return
+}
+
+// specNodeConfig updates node config map
+func (r *SwarmReconciler) specNodeConfig(config *corev1.ConfigMap, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, script string) {
+
+	config.ObjectMeta.Labels = node.Labels(swarm.Name)
+	config.Data = make(map[string]string)
+	config.Data["init.sh"] = script
+
 }
 
 // reconcileNodePVC reconciles ipfs node data persistent volume claim
@@ -311,8 +379,6 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 
 	dep.ObjectMeta.Labels = labels
 
-	initContainers := []corev1.Container{}
-
 	initNode := corev1.Container{
 		Name:  "init-node",
 		Image: "kotalco/go-ipfs:v0.6.0",
@@ -326,47 +392,18 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 				Value: node.PrivateKey,
 			},
 		},
-		Command: []string{"ipfs"},
-		Args:    []string{"init"},
+		Command: []string{"/bin/sh"},
+		Args:    []string{"/script/init.sh"},
 		VolumeMounts: []corev1.VolumeMount{
 			{
 				Name:      "data",
 				MountPath: "/data/ipfs",
 			},
+			{
+				Name:      "script",
+				MountPath: "/script",
+			},
 		},
-	}
-	initContainers = append(initContainers, initNode)
-
-	for i, peer := range peers {
-		addBootstrapPeer := corev1.Container{
-			Name:    fmt.Sprintf("add-bootstrap-peer-%d", i),
-			Image:   "ipfs/go-ipfs:v0.6.0",
-			Command: []string{"ipfs"},
-			Args:    []string{"bootstrap", "add", peer},
-			VolumeMounts: []corev1.VolumeMount{
-				{
-					Name:      "data",
-					MountPath: "/data/ipfs",
-				},
-			},
-		}
-		initContainers = append(initContainers, addBootstrapPeer)
-	}
-
-	for _, profile := range node.Profiles {
-		applyProfile := corev1.Container{
-			Name:    fmt.Sprintf("apply-%s-profile", profile),
-			Image:   "ipfs/go-ipfs:v0.6.0",
-			Command: []string{"ipfs"},
-			Args:    []string{"config", "profile", "apply", string(profile)},
-			VolumeMounts: []corev1.VolumeMount{
-				{
-					Name:      "data",
-					MountPath: "/data/ipfs",
-				},
-			},
-		}
-		initContainers = append(initContainers, applyProfile)
 	}
 
 	dep.Spec = appsv1.DeploymentSpec{
@@ -378,7 +415,9 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 				Labels: labels,
 			},
 			Spec: corev1.PodSpec{
-				InitContainers: initContainers,
+				InitContainers: []corev1.Container{
+					initNode,
+				},
 				Containers: []corev1.Container{
 					{
 						Name:    "node",
@@ -409,6 +448,16 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 						VolumeSource: corev1.VolumeSource{
 							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
 								ClaimName: node.PVCName(swarm.Name),
+							},
+						},
+					},
+					{
+						Name: "script",
+						VolumeSource: corev1.VolumeSource{
+							ConfigMap: &corev1.ConfigMapVolumeSource{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: node.ConfigName(swarm.Name),
+								},
 							},
 						},
 					},
