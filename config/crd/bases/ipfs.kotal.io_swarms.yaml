@@ -8,6 +8,10 @@ metadata:
   creationTimestamp: null
   name: swarms.ipfs.kotal.io
 spec:
+  additionalPrinterColumns:
+  - JSONPath: .status.nodesCount
+    name: Nodes
+    type: integer
   group: ipfs.kotal.io
   names:
     kind: Swarm
@@ -16,6 +20,8 @@ spec:
     singular: swarm
   preserveUnknownFields: false
   scope: Namespaced
+  subresources:
+    status: {}
   validation:
     openAPIV3Schema:
       description: Swarm is the Schema for the swarms API
@@ -102,6 +108,10 @@ spec:
           type: object
         status:
           description: SwarmStatus defines the observed state of Swarm
+          properties:
+            nodesCount:
+              description: NodesCount is number of nodes in this swarm
+              type: integer
           type: object
       type: object
   version: v1alpha1

@@ -41,11 +41,27 @@ func (r *SwarmReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err e
 		return
 	}
 
+	if err = r.updateStatus(ctx, &swarm); err != nil {
+		return
+	}
+
 	if err = r.reconcileNodes(ctx, &swarm); err != nil {
 		return
 	}
 
 	return
+}
+
+// updateStatus updates swarm status
+func (r *SwarmReconciler) updateStatus(ctx context.Context, swarm *ipfsv1alpha1.Swarm) error {
+	swarm.Status.NodesCount = len(swarm.Spec.Nodes)
+
+	if err := r.Status().Update(ctx, swarm); err != nil {
+		r.Log.Error(err, "unable to update swarm status")
+		return err
+	}
+
+	return nil
 }
 
 // reconcileNodes reconcile ipfs swarm nodes

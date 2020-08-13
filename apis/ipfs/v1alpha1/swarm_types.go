@@ -5,9 +5,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // SwarmSpec defines the desired state of Swarm
 type SwarmSpec struct {
 	// Nodes is swarm nodes
@@ -84,13 +81,15 @@ type Profile string
 
 // SwarmStatus defines the observed state of Swarm
 type SwarmStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// NodesCount is number of nodes in this swarm
+	NodesCount int `json:"nodesCount,omitempty"`
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // Swarm is the Schema for the swarms API
+// +kubebuilder:printcolumn:name="Nodes",type=integer,JSONPath=".status.nodesCount"
 type Swarm struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
