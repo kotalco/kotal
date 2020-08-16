@@ -15,7 +15,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	ethereumv1alpha1 "github.com/mfarghaly/kotal/apis/ethereum/v1alpha1"
+	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 

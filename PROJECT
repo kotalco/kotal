@@ -1,6 +1,6 @@
 domain: kotal.io
 multigroup: true
-repo: github.com/mfarghaly/kotal
+repo: github.com/kotalco/kotal
 resources:
 - group: ethereum
   kind: Network

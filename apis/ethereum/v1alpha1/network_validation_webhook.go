@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/mfarghaly/kotal/helpers"
+	"github.com/kotalco/kotal/helpers"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/runtime"

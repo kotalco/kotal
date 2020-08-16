@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	ethereumv1alpha1 "github.com/mfarghaly/kotal/apis/ethereum/v1alpha1"
+	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	appsv1 "k8s.io/api/apps/v1"

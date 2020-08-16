@@ -10,10 +10,10 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	ethereumv1alpha1 "github.com/mfarghaly/kotal/apis/ethereum/v1alpha1"
-	ipfsv1alpha1 "github.com/mfarghaly/kotal/apis/ipfs/v1alpha1"
-	controllers "github.com/mfarghaly/kotal/controllers/ethereum"
-	ipfscontroller "github.com/mfarghaly/kotal/controllers/ipfs"
+	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	controllers "github.com/kotalco/kotal/controllers/ethereum"
+	ipfscontroller "github.com/kotalco/kotal/controllers/ipfs"
 	// +kubebuilder:scaffold:imports
 )
 

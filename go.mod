@@ -1,4 +1,4 @@
-module github.com/mfarghaly/kotal
+module github.com/kotalco/kotal
 
 go 1.14
 

@@ -15,7 +15,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"text/template"
 
-	ipfsv1alpha1 "github.com/mfarghaly/kotal/apis/ipfs/v1alpha1"
+	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 )
 
 // SwarmReconciler reconciles a Swarm object

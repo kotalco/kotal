@@ -3,7 +3,7 @@ package controllers
 import (
 	"fmt"
 
-	ethereumv1alpha1 "github.com/mfarghaly/kotal/apis/ethereum/v1alpha1"
+	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

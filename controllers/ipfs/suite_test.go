@@ -14,7 +14,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	ipfsv1alpha1 "github.com/mfarghaly/kotal/apis/ipfs/v1alpha1"
+	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 
