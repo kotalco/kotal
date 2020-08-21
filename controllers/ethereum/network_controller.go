@@ -62,7 +62,7 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err
 	}
 
 	// reconcile network nodes
-	if err = r.reconcileNodes(ctx, &network, req.Namespace); err != nil {
+	if err = r.reconcileNodes(ctx, &network); err != nil {
 		return
 	}
 
@@ -71,6 +71,7 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err
 }
 
 // updateStatus updates network status
+// TODO: don't update statuse on network deletion
 func (r *NetworkReconciler) updateStatus(ctx context.Context, network *ethereumv1alpha1.Network) error {
 	network.Status.NodesCount = len(network.Spec.Nodes)
 
@@ -84,7 +85,7 @@ func (r *NetworkReconciler) updateStatus(ctx context.Context, network *ethereumv
 
 // reconcileNodes creates or updates nodes according to nodes spec
 // deletes nodes missing from nodes spec
-func (r *NetworkReconciler) reconcileNodes(ctx context.Context, network *ethereumv1alpha1.Network, ns string) error {
+func (r *NetworkReconciler) reconcileNodes(ctx context.Context, network *ethereumv1alpha1.Network) error {
 	bootnodes := []string{}
 
 	for _, node := range network.Spec.Nodes {
@@ -565,6 +566,7 @@ func (r *NetworkReconciler) getNodeAffinity(network *ethereumv1alpha1.Network) *
 						LabelSelector: &metav1.LabelSelector{
 							MatchLabels: map[string]string{
 								"name": "node",
+								// TODO: add network to restrict affinity effect to single network
 							},
 						},
 						TopologyKey: network.Spec.TopologyKey,
@@ -689,15 +691,16 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 	return err
 }
 
-func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, nodekey string) {
+func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) {
+	privateKey := string(node.Nodekey)[2:]
 	secret.ObjectMeta.Labels = node.Labels(network.Name)
 	secret.StringData = map[string]string{
-		"nodekey": nodekey,
+		"nodekey": privateKey,
 	}
 }
 
 // reconcileNodeSecret creates node secret if it doesn't exist, update it if it exists
-func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, nodekey string) (publicKey string, err error) {
+func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) (publicKey string, err error) {
 
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
@@ -707,7 +710,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 	}
 
 	// hex private key without the leading 0x
-	privateKey := nodekey[2:]
+	privateKey := string(node.Nodekey)[2:]
 	publicKey, err = helpers.DerivePublicKey(privateKey)
 	if err != nil {
 		return
@@ -718,7 +721,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 			return err
 		}
 
-		r.specNodeSecret(secret, node, network, privateKey)
+		r.specNodeSecret(secret, node, network)
 
 		return nil
 	})
@@ -839,7 +842,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 
 	var publicKey string
 
-	if publicKey, err = r.reconcileNodeSecret(ctx, node, network, string(node.Nodekey)); err != nil {
+	if publicKey, err = r.reconcileNodeSecret(ctx, node, network); err != nil {
 		return
 	}
 
