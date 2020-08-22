@@ -493,6 +493,7 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, 
 	return volumeMounts
 }
 
+// getNodeAffinity returns affinity settings to be use by the node pod
 func (r *NetworkReconciler) getNodeAffinity(network *ethereumv1alpha1.Network) *corev1.Affinity {
 	if network.Spec.HighlyAvailable {
 		return &corev1.Affinity{
@@ -501,8 +502,8 @@ func (r *NetworkReconciler) getNodeAffinity(network *ethereumv1alpha1.Network) *
 					{
 						LabelSelector: &metav1.LabelSelector{
 							MatchLabels: map[string]string{
-								"name": "node",
-								// TODO: add network to restrict affinity effect to single network
+								"name":    "node",
+								"network": network.Name,
 							},
 						},
 						TopologyKey: network.Spec.TopologyKey,
