@@ -1,15 +1,10 @@
 package controllers
 
 import (
-	"bytes"
 	"context"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"strings"
-
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/rlp"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -146,65 +141,6 @@ func (r *NetworkReconciler) reconcileGenesis(ctx context.Context, network *ether
 	return nil
 }
 
-// createExtraDataFromSigners creates extraDta genesis field value from initial signers
-func (r *NetworkReconciler) createExtraDataFromSigners(signers []ethereumv1alpha1.EthereumAddress) string {
-	extraData := "0x"
-	// vanity data
-	extraData += strings.Repeat("00", 32)
-	// signers
-	for _, signer := range signers {
-		// append address without the 0x
-		extraData += string(signer)[2:]
-	}
-	// proposer signature
-	extraData += strings.Repeat("00", 65)
-	return extraData
-}
-
-// createExtraDataFromValidators creates extraDta genesis field value from initial validators
-func (r *NetworkReconciler) createExtraDataFromValidators(validators []ethereumv1alpha1.EthereumAddress) (string, error) {
-	data := []interface{}{}
-	extraData := "0x"
-
-	// empty vanity bytes
-	vanity := bytes.Repeat([]byte{0x00}, 32)
-
-	// validator addresses bytes
-	decodedValidators := []interface{}{}
-	for _, validator := range validators {
-		validatorBytes, err := hex.DecodeString(string(validator)[2:])
-		if err != nil {
-			return extraData, err
-		}
-		decodedValidators = append(decodedValidators, validatorBytes)
-	}
-
-	// no vote
-	var vote []byte
-
-	// round 0, must be 4 bytes
-	round := bytes.Repeat([]byte{0x00}, 4)
-
-	// no committer seals
-	committers := []interface{}{}
-
-	// pack all required info into data
-	data = append(data, vanity)
-	data = append(data, decodedValidators)
-	data = append(data, vote)
-	data = append(data, round)
-	data = append(data, committers)
-
-	// rlp encode data
-	payload, err := rlp.EncodeToBytes(data)
-	if err != nil {
-		return extraData, err
-	}
-
-	return extraData + common.Bytes2Hex(payload), nil
-
-}
-
 // createGenesisFile creates genesis config file
 func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network) (content string, err error) {
 	genesis := network.Spec.Genesis
@@ -238,7 +174,7 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 			"epoch":  genesis.Clique.EpochLength,
 		}
 		engine = "clique"
-		extraData = r.createExtraDataFromSigners(network.Spec.Genesis.Clique.Signers)
+		extraData = createExtraDataFromSigners(network.Spec.Genesis.Clique.Signers)
 	}
 
 	// clique ibft2 settings
@@ -257,7 +193,7 @@ func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network)
 		mixHash = "0x63746963616c2062797a616e74696e65206661756c7420746f6c6572616e6365"
 		nonce = "0x0"
 		difficulty = "0x1"
-		extraData, err = r.createExtraDataFromValidators(network.Spec.Genesis.IBFT2.Validators)
+		extraData, err = createExtraDataFromValidators(network.Spec.Genesis.IBFT2.Validators)
 		if err != nil {
 			return
 		}
