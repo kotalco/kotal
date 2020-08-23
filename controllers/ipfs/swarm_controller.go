@@ -32,21 +32,21 @@ type SwarmReconciler struct {
 
 // Reconcile reconciles ipfs swarm
 func (r *SwarmReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err error) {
-	ctx := context.Background()
+	var _ = context.Background()
 	_ = r.Log.WithValues("swarm", req.NamespacedName)
 
 	var swarm ipfsv1alpha1.Swarm
 
-	if err = r.Client.Get(ctx, req.NamespacedName, &swarm); err != nil {
+	if err = r.Client.Get(context.Background(), req.NamespacedName, &swarm); err != nil {
 		err = client.IgnoreNotFound(err)
 		return
 	}
 
-	if err = r.updateStatus(ctx, &swarm); err != nil {
+	if err = r.updateStatus(&swarm); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodes(ctx, &swarm); err != nil {
+	if err = r.reconcileNodes(&swarm); err != nil {
 		return
 	}
 
@@ -54,10 +54,10 @@ func (r *SwarmReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err e
 }
 
 // updateStatus updates swarm status
-func (r *SwarmReconciler) updateStatus(ctx context.Context, swarm *ipfsv1alpha1.Swarm) error {
+func (r *SwarmReconciler) updateStatus(swarm *ipfsv1alpha1.Swarm) error {
 	swarm.Status.NodesCount = len(swarm.Spec.Nodes)
 
-	if err := r.Status().Update(ctx, swarm); err != nil {
+	if err := r.Status().Update(context.Background(), swarm); err != nil {
 		r.Log.Error(err, "unable to update swarm status")
 		return err
 	}
@@ -66,18 +66,18 @@ func (r *SwarmReconciler) updateStatus(ctx context.Context, swarm *ipfsv1alpha1.
 }
 
 // reconcileNodes reconcile ipfs swarm nodes
-func (r *SwarmReconciler) reconcileNodes(ctx context.Context, swarm *ipfsv1alpha1.Swarm) error {
+func (r *SwarmReconciler) reconcileNodes(swarm *ipfsv1alpha1.Swarm) error {
 	peers := []string{}
 
 	for _, node := range swarm.Spec.Nodes {
-		addr, err := r.reconcileNode(ctx, &node, swarm, peers)
+		addr, err := r.reconcileNode(&node, swarm, peers)
 		if err != nil {
 			return err
 		}
 		peers = append(peers, addr)
 	}
 
-	if err := r.deleteRedundantNodes(ctx, swarm); err != nil {
+	if err := r.deleteRedundantNodes(swarm); err != nil {
 		return err
 	}
 
@@ -88,7 +88,7 @@ func (r *SwarmReconciler) reconcileNodes(ctx context.Context, swarm *ipfsv1alpha
 // swarm is the owner of the redundant resources (node deployment, svc, secret and pvc)
 // removing nodes from spec won't remove these resources by grabage collection
 // that's why we're deleting them manually
-func (r *SwarmReconciler) deleteRedundantNodes(ctx context.Context, swarm *ipfsv1alpha1.Swarm) error {
+func (r *SwarmReconciler) deleteRedundantNodes(swarm *ipfsv1alpha1.Swarm) error {
 	log := r.Log.WithName("delete redundant nodes")
 
 	var deps appsv1.DeploymentList
@@ -109,7 +109,7 @@ func (r *SwarmReconciler) deleteRedundantNodes(ctx context.Context, swarm *ipfsv
 	}
 
 	// Node deployments
-	if err := r.Client.List(ctx, &deps, matchingLabels, inNamespace); err != nil {
+	if err := r.Client.List(context.Background(), &deps, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node deployments")
 		return err
 	}
@@ -119,7 +119,7 @@ func (r *SwarmReconciler) deleteRedundantNodes(ctx context.Context, swarm *ipfsv
 		if exist := names[name]; !exist {
 			log.Info(fmt.Sprintf("deleting node (%s) deployment", name))
 
-			if err := r.Client.Delete(ctx, &dep); err != nil {
+			if err := r.Client.Delete(context.Background(), &dep); err != nil {
 				log.Error(err, fmt.Sprintf("unable to delete node (%s) deployment", name))
 				return err
 			}
@@ -127,7 +127,7 @@ func (r *SwarmReconciler) deleteRedundantNodes(ctx context.Context, swarm *ipfsv
 	}
 
 	// Node PVCs
-	if err := r.Client.List(ctx, &pvcs, matchingLabels, inNamespace); err != nil {
+	if err := r.Client.List(context.Background(), &pvcs, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node pvcs")
 		return err
 	}
@@ -137,7 +137,7 @@ func (r *SwarmReconciler) deleteRedundantNodes(ctx context.Context, swarm *ipfsv
 		if exist := names[name]; !exist {
 			log.Info(fmt.Sprintf("deleting node (%s) pvc", name))
 
-			if err := r.Client.Delete(ctx, &pvc); err != nil {
+			if err := r.Client.Delete(context.Background(), &pvc); err != nil {
 				log.Error(err, fmt.Sprintf("unable to delete node (%s) pvc", name))
 				return err
 			}
@@ -145,7 +145,7 @@ func (r *SwarmReconciler) deleteRedundantNodes(ctx context.Context, swarm *ipfsv
 	}
 
 	// Node Services
-	if err := r.Client.List(ctx, &services, matchingLabels, inNamespace); err != nil {
+	if err := r.Client.List(context.Background(), &services, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node services")
 		return err
 	}
@@ -155,7 +155,7 @@ func (r *SwarmReconciler) deleteRedundantNodes(ctx context.Context, swarm *ipfsv
 		if exist := names[name]; !exist {
 			log.Info(fmt.Sprintf("deleting node (%s) service", name))
 
-			if err := r.Client.Delete(ctx, &service); err != nil {
+			if err := r.Client.Delete(context.Background(), &service); err != nil {
 				log.Error(err, fmt.Sprintf("unable to delete node (%s) service", name))
 				return err
 			}
@@ -167,22 +167,22 @@ func (r *SwarmReconciler) deleteRedundantNodes(ctx context.Context, swarm *ipfsv
 
 // reconcileNode reconciles a single ipfs node
 // it creates node deployment, service and data pvc if it doesn't exist
-func (r *SwarmReconciler) reconcileNode(ctx context.Context, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) (addr string, err error) {
+func (r *SwarmReconciler) reconcileNode(node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) (addr string, err error) {
 	var ip string
 
-	if err = r.reconcileNodePVC(ctx, node, swarm); err != nil {
+	if err = r.reconcileNodePVC(node, swarm); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeConfig(ctx, node, swarm, peers); err != nil {
+	if err = r.reconcileNodeConfig(node, swarm, peers); err != nil {
 		return
 	}
 
-	if ip, err = r.reconcileNodeService(ctx, node, swarm); err != nil {
+	if ip, err = r.reconcileNodeService(node, swarm); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeDeployment(ctx, node, swarm, peers); err != nil {
+	if err = r.reconcileNodeDeployment(node, swarm, peers); err != nil {
 		return
 	}
 
@@ -192,7 +192,7 @@ func (r *SwarmReconciler) reconcileNode(ctx context.Context, node *ipfsv1alpha1.
 }
 
 // reconcileNodeConfig reconciles ipfs node config map
-func (r *SwarmReconciler) reconcileNodeConfig(ctx context.Context, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) error {
+func (r *SwarmReconciler) reconcileNodeConfig(node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) error {
 	config := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.ConfigName(swarm.Name),
@@ -205,7 +205,7 @@ func (r *SwarmReconciler) reconcileNodeConfig(ctx context.Context, node *ipfsv1a
 		return err
 	}
 
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, config, func() error {
+	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, config, func() error {
 		if err := ctrl.SetControllerReference(swarm, config, r.Scheme); err != nil {
 			return err
 		}
@@ -255,7 +255,7 @@ func (r *SwarmReconciler) specNodeConfig(config *corev1.ConfigMap, node *ipfsv1a
 }
 
 // reconcileNodePVC reconciles ipfs node data persistent volume claim
-func (r *SwarmReconciler) reconcileNodePVC(ctx context.Context, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm) error {
+func (r *SwarmReconciler) reconcileNodePVC(node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm) error {
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.PVCName(swarm.Name),
@@ -263,7 +263,7 @@ func (r *SwarmReconciler) reconcileNodePVC(ctx context.Context, node *ipfsv1alph
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, pvc, func() error {
 		if err := ctrl.SetControllerReference(swarm, pvc, r.Scheme); err != nil {
 			return err
 		}
@@ -295,7 +295,7 @@ func (r *SwarmReconciler) specNodePVC(pvc *corev1.PersistentVolumeClaim, node *i
 }
 
 // reconcileNodeService reconciles node service
-func (r *SwarmReconciler) reconcileNodeService(ctx context.Context, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm) (string, error) {
+func (r *SwarmReconciler) reconcileNodeService(node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm) (string, error) {
 
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
@@ -304,7 +304,7 @@ func (r *SwarmReconciler) reconcileNodeService(ctx context.Context, node *ipfsv1
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, svc, func() error {
 		if err := ctrl.SetControllerReference(swarm, svc, r.Scheme); err != nil {
 			return err
 		}
@@ -353,7 +353,7 @@ func (r *SwarmReconciler) specNodeService(svc *corev1.Service, node *ipfsv1alpha
 }
 
 // reconcileNodeDeployment reconciles node deployment
-func (r *SwarmReconciler) reconcileNodeDeployment(ctx context.Context, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) error {
+func (r *SwarmReconciler) reconcileNodeDeployment(node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) error {
 
 	dep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -362,7 +362,7 @@ func (r *SwarmReconciler) reconcileNodeDeployment(ctx context.Context, node *ipf
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, dep, func() error {
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, dep, func() error {
 		if err := ctrl.SetControllerReference(swarm, dep, r.Scheme); err != nil {
 			return err
 		}

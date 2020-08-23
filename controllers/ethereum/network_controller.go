@@ -32,23 +32,23 @@ type NetworkReconciler struct {
 
 // Reconcile reconciles ethereum networks
 func (r *NetworkReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err error) {
-	ctx := context.Background()
+	var _ = context.Background()
 
 	var network ethereumv1alpha1.Network
 
 	// Get desired ethereum network
-	if err = r.Client.Get(ctx, req.NamespacedName, &network); err != nil {
+	if err = r.Client.Get(context.Background(), req.NamespacedName, &network); err != nil {
 		err = client.IgnoreNotFound(err)
 		return
 	}
 
 	// update network status
-	if err = r.updateStatus(ctx, &network); err != nil {
+	if err = r.updateStatus(&network); err != nil {
 		return
 	}
 
 	// reconcile network nodes
-	if err = r.reconcileNodes(ctx, &network); err != nil {
+	if err = r.reconcileNodes(&network); err != nil {
 		return
 	}
 
@@ -58,10 +58,10 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err
 
 // updateStatus updates network status
 // TODO: don't update statuse on network deletion
-func (r *NetworkReconciler) updateStatus(ctx context.Context, network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) updateStatus(network *ethereumv1alpha1.Network) error {
 	network.Status.NodesCount = len(network.Spec.Nodes)
 
-	if err := r.Status().Update(ctx, network); err != nil {
+	if err := r.Status().Update(context.Background(), network); err != nil {
 		r.Log.Error(err, "unable to update network status")
 		return err
 	}
@@ -71,12 +71,12 @@ func (r *NetworkReconciler) updateStatus(ctx context.Context, network *ethereumv
 
 // reconcileNodes creates or updates nodes according to nodes spec
 // deletes nodes missing from nodes spec
-func (r *NetworkReconciler) reconcileNodes(ctx context.Context, network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) reconcileNodes(network *ethereumv1alpha1.Network) error {
 	bootnodes := []string{}
 
 	for _, node := range network.Spec.Nodes {
 
-		bootnode, err := r.reconcileNode(ctx, &node, network, bootnodes)
+		bootnode, err := r.reconcileNode(&node, network, bootnodes)
 		if err != nil {
 			return err
 		}
@@ -87,7 +87,7 @@ func (r *NetworkReconciler) reconcileNodes(ctx context.Context, network *ethereu
 
 	}
 
-	if err := r.deleteRedundantNodes(ctx, network); err != nil {
+	if err := r.deleteRedundantNodes(network); err != nil {
 		return err
 	}
 
@@ -101,7 +101,7 @@ func (r *NetworkReconciler) specNodeConfigmap(configmap *corev1.ConfigMap, data 
 }
 
 // reconcileNodeConfigmap creates genesis config map if it doesn't exist or update it
-func (r *NetworkReconciler) reconcileNodeConfigmap(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, data string) error {
+func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, data string) error {
 
 	configmap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
@@ -110,7 +110,7 @@ func (r *NetworkReconciler) reconcileNodeConfigmap(ctx context.Context, node *et
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, configmap, func() error {
 		if err := ctrl.SetControllerReference(network, configmap, r.Scheme); err != nil {
 			r.Log.Error(err, "Unable to set controller reference on genesis configmap")
 			return err
@@ -131,7 +131,7 @@ func (r *NetworkReconciler) reconcileNodeConfigmap(ctx context.Context, node *et
 // network is the owner of the redundant resources (node deployment, svc, secret and pvc)
 // removing nodes from spec won't remove these resources by grabage collection
 // that's why we're deleting them manually
-func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) deleteRedundantNodes(network *ethereumv1alpha1.Network) error {
 	log := r.Log.WithName("delete redundant nodes")
 
 	var deps appsv1.DeploymentList
@@ -153,7 +153,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 	}
 
 	// Node deployments
-	if err := r.Client.List(ctx, &deps, matchingLabels, inNamespace); err != nil {
+	if err := r.Client.List(context.Background(), &deps, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node deployments")
 		return err
 	}
@@ -163,7 +163,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 		if exist := names[name]; !exist {
 			log.Info(fmt.Sprintf("deleting node (%s) deployment", name))
 
-			if err := r.Client.Delete(ctx, &dep); err != nil {
+			if err := r.Client.Delete(context.Background(), &dep); err != nil {
 				log.Error(err, fmt.Sprintf("unable to delete node (%s) deployment", name))
 				return err
 			}
@@ -171,7 +171,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 	}
 
 	// Node PVCs
-	if err := r.Client.List(ctx, &pvcs, matchingLabels, inNamespace); err != nil {
+	if err := r.Client.List(context.Background(), &pvcs, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node pvcs")
 		return err
 	}
@@ -181,7 +181,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 		if exist := names[name]; !exist {
 			log.Info(fmt.Sprintf("deleting node (%s) pvc", name))
 
-			if err := r.Client.Delete(ctx, &pvc); err != nil {
+			if err := r.Client.Delete(context.Background(), &pvc); err != nil {
 				log.Error(err, fmt.Sprintf("unable to delete node (%s) pvc", name))
 				return err
 			}
@@ -189,7 +189,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 	}
 
 	// Node Secrets
-	if err := r.Client.List(ctx, &secrets, matchingLabels, inNamespace); err != nil {
+	if err := r.Client.List(context.Background(), &secrets, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node secrets")
 		return err
 	}
@@ -199,7 +199,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 		if exist := names[name]; !exist {
 			log.Info(fmt.Sprintf("deleting node (%s) secret", name))
 
-			if err := r.Client.Delete(ctx, &secret); err != nil {
+			if err := r.Client.Delete(context.Background(), &secret); err != nil {
 				log.Error(err, fmt.Sprintf("unable to delete node (%s) secret", name))
 				return err
 			}
@@ -207,7 +207,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 	}
 
 	// Node Services
-	if err := r.Client.List(ctx, &services, matchingLabels, inNamespace); err != nil {
+	if err := r.Client.List(context.Background(), &services, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node services")
 		return err
 	}
@@ -217,7 +217,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *e
 		if exist := names[name]; !exist {
 			log.Info(fmt.Sprintf("deleting node (%s) service", name))
 
-			if err := r.Client.Delete(ctx, &service); err != nil {
+			if err := r.Client.Delete(context.Background(), &service); err != nil {
 				log.Error(err, fmt.Sprintf("unable to delete node (%s) service", name))
 				return err
 			}
@@ -243,7 +243,7 @@ func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, n
 }
 
 // reconcileNodeDataPVC creates node data pvc if it doesn't exist
-func (r *NetworkReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) reconcileNodeDataPVC(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
 
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
@@ -252,7 +252,7 @@ func (r *NetworkReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethe
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, pvc, func() error {
 		if err := ctrl.SetControllerReference(network, pvc, r.Scheme); err != nil {
 			return err
 		}
@@ -477,7 +477,7 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 }
 
 // reconcileNodeDeployment creates creates node deployment if it doesn't exist, update it if it does exist
-func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) error {
+func (r *NetworkReconciler) reconcileNodeDeployment(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) error {
 
 	dep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -486,7 +486,7 @@ func (r *NetworkReconciler) reconcileNodeDeployment(ctx context.Context, node *e
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, dep, func() error {
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, dep, func() error {
 		if err := ctrl.SetControllerReference(network, dep, r.Scheme); err != nil {
 			return err
 		}
@@ -506,7 +506,7 @@ func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereum
 }
 
 // reconcileNodeSecret creates node secret if it doesn't exist, update it if it exists
-func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) (publicKey string, err error) {
+func (r *NetworkReconciler) reconcileNodeSecret(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) (publicKey string, err error) {
 
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
@@ -522,7 +522,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(ctx context.Context, node *ether
 		return
 	}
 
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, secret, func() error {
+	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, secret, func() error {
 		if err := ctrl.SetControllerReference(network, secret, r.Scheme); err != nil {
 			return err
 		}
@@ -562,7 +562,7 @@ func (r *NetworkReconciler) specNodeService(svc *corev1.Service, node *ethereumv
 }
 
 // reconcileNodeService reconciles node service
-func (r *NetworkReconciler) reconcileNodeService(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) (ip string, err error) {
+func (r *NetworkReconciler) reconcileNodeService(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) (ip string, err error) {
 
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
@@ -571,7 +571,7 @@ func (r *NetworkReconciler) reconcileNodeService(ctx context.Context, node *ethe
 		},
 	}
 
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
+	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, svc, func() error {
 		if err = ctrl.SetControllerReference(network, svc, r.Scheme); err != nil {
 			return err
 		}
@@ -598,7 +598,7 @@ func (r *NetworkReconciler) specImportedAccountSecret(secret *corev1.Secret, nod
 	}
 }
 
-func (r *NetworkReconciler) reconcileImportedAccountSecret(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) reconcileImportedAccountSecret(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.ImportedAccountName(network.Name),
@@ -606,7 +606,7 @@ func (r *NetworkReconciler) reconcileImportedAccountSecret(ctx context.Context, 
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, secret, func() error {
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, secret, func() error {
 		if err := ctrl.SetControllerReference(network, secret, r.Scheme); err != nil {
 			return err
 		}
@@ -621,9 +621,9 @@ func (r *NetworkReconciler) reconcileImportedAccountSecret(ctx context.Context, 
 
 // reconcileNode create a new node deployment if it doesn't exist
 // updates existing deployments if node spec changed
-func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (enodeURL string, err error) {
+func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (enodeURL string, err error) {
 
-	if err = r.reconcileNodeDataPVC(ctx, node, network); err != nil {
+	if err = r.reconcileNodeDataPVC(node, network); err != nil {
 		return
 	}
 
@@ -640,17 +640,17 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		var genesis string
 		if genesis, err = client.GetGenesisFile(network.Spec.Genesis, network.Spec.Consensus); err != nil {
 			return
-		} else if err = r.reconcileNodeConfigmap(ctx, node, network, genesis); err != nil {
+		} else if err = r.reconcileNodeConfigmap(node, network, genesis); err != nil {
 			return
 		}
 	}
 
-	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts, affinity); err != nil {
+	if err = r.reconcileNodeDeployment(node, network, bootnodes, args, volumes, mounts, affinity); err != nil {
 		return
 	}
 
 	if node.Import != nil {
-		if err = r.reconcileImportedAccountSecret(ctx, node, network); err != nil {
+		if err = r.reconcileImportedAccountSecret(node, network); err != nil {
 			return
 		}
 	}
@@ -661,7 +661,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 
 	var publicKey string
 
-	if publicKey, err = r.reconcileNodeSecret(ctx, node, network); err != nil {
+	if publicKey, err = r.reconcileNodeSecret(node, network); err != nil {
 		return
 	}
 
@@ -669,7 +669,7 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		return
 	}
 
-	ip, err := r.reconcileNodeService(ctx, node, network)
+	ip, err := r.reconcileNodeService(node, network)
 	if err != nil {
 		return
 	}
