@@ -1,7 +1,5 @@
 package v1alpha1
 
-import "fmt"
-
 // Genesis is genesis block sepcficition
 type Genesis struct {
 	// Accounts is array of accounts to fund or associate with code and storage
@@ -40,11 +38,6 @@ type Genesis struct {
 
 	// Timestamp is block creation date
 	Timestamp HexString `json:"timestamp,omitempty"`
-}
-
-// ConfigmapName returns name to be used by genesis configmap
-func (g *Genesis) ConfigmapName(network string) string {
-	return fmt.Sprintf("%s-genesis", network)
 }
 
 // PoA is Shared PoA engine config

@@ -16,6 +16,7 @@ var network = &Network{
 		Nodes: []Node{
 			{
 				Name:    "node-1",
+				Client:  BesuClient,
 				Nodekey: PrivateKey("0xd42baddc4e6072f670da327e2ebc835d695bb9b911642dd70b81d522f0afe90c"),
 			},
 		},
@@ -84,8 +85,9 @@ func TestServiceName(t *testing.T) {
 }
 
 func TestConfigmapName(t *testing.T) {
-	expected := "test-network-genesis"
-	got := network.Spec.Genesis.ConfigmapName(network.Name)
+	node := network.Spec.Nodes[0]
+	expected := "test-network-besu-genesis"
+	got := node.ConfigmapName(network.Name, node.Client)
 
 	if got != expected {
 		t.Errorf("Expecting bootnode to be %s got %s", expected, got)

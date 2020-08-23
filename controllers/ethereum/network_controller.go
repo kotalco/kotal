@@ -2,9 +2,7 @@ package controllers
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -47,13 +45,6 @@ func (r *NetworkReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err
 	// update network status
 	if err = r.updateStatus(ctx, &network); err != nil {
 		return
-	}
-
-	// reconcile genesis for private network with custom genesis
-	if network.Spec.Genesis != nil {
-		if err = r.reconcileGenesis(ctx, &network); err != nil {
-			return
-		}
 	}
 
 	// reconcile network nodes
@@ -103,18 +94,18 @@ func (r *NetworkReconciler) reconcileNodes(ctx context.Context, network *ethereu
 	return nil
 }
 
-// specGenesisConfigmap updates genesis config map spec
-func (r *NetworkReconciler) specGenesisConfigmap(configmap *corev1.ConfigMap, data string) {
+// specNodeConfigmap updates genesis config map spec
+func (r *NetworkReconciler) specNodeConfigmap(configmap *corev1.ConfigMap, data string) {
 	configmap.Data = make(map[string]string)
 	configmap.Data["genesis.json"] = data
 }
 
-// reconcileGenesis creates genesis config map if it doesn't exist or update it
-func (r *NetworkReconciler) reconcileGenesis(ctx context.Context, network *ethereumv1alpha1.Network) error {
+// reconcileNodeConfigmap creates genesis config map if it doesn't exist or update it
+func (r *NetworkReconciler) reconcileNodeConfigmap(ctx context.Context, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, data string) error {
 
 	configmap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      network.Spec.Genesis.ConfigmapName(network.Name),
+			Name:      node.ConfigmapName(network.Name, node.Client),
 			Namespace: network.Namespace,
 		},
 	}
@@ -125,12 +116,7 @@ func (r *NetworkReconciler) reconcileGenesis(ctx context.Context, network *ether
 			return err
 		}
 
-		data, err := r.createGenesisFile(network)
-		if err != nil {
-			return err
-		}
-
-		r.specGenesisConfigmap(configmap, data)
+		r.specNodeConfigmap(configmap, data)
 
 		return nil
 	})
@@ -139,123 +125,6 @@ func (r *NetworkReconciler) reconcileGenesis(ctx context.Context, network *ether
 	}
 
 	return nil
-}
-
-// createGenesisFile creates genesis config file
-func (r *NetworkReconciler) createGenesisFile(network *ethereumv1alpha1.Network) (content string, err error) {
-	genesis := network.Spec.Genesis
-	mixHash := genesis.MixHash
-	nonce := genesis.Nonce
-	difficulty := genesis.Difficulty
-	result := map[string]interface{}{}
-
-	var consensusConfig map[string]uint
-	var extraData string
-	var engine string
-
-	if network.Spec.Consensus == ethereumv1alpha1.ProofOfWork {
-		consensusConfig = map[string]uint{}
-
-		if genesis.Ethash.FixedDifficulty != nil {
-			consensusConfig["fixeddifficulty"] = *genesis.Ethash.FixedDifficulty
-		}
-
-		engine = "ethash"
-	}
-
-	// clique PoA settings
-	if network.Spec.Consensus == ethereumv1alpha1.ProofOfAuthority {
-		consensusConfig = map[string]uint{
-			// besu
-			"blockperiodseconds": genesis.Clique.BlockPeriod,
-			"epochlength":        genesis.Clique.EpochLength,
-			// geth
-			"period": genesis.Clique.BlockPeriod,
-			"epoch":  genesis.Clique.EpochLength,
-		}
-		engine = "clique"
-		extraData = createExtraDataFromSigners(network.Spec.Genesis.Clique.Signers)
-	}
-
-	// clique ibft2 settings
-	if network.Spec.Consensus == ethereumv1alpha1.IstanbulBFT {
-
-		consensusConfig = map[string]uint{
-			"blockperiodseconds":        genesis.IBFT2.BlockPeriod,
-			"epochlength":               genesis.IBFT2.EpochLength,
-			"requesttimeoutseconds":     genesis.IBFT2.RequestTimeout,
-			"messageQueueLimit":         genesis.IBFT2.MessageQueueLimit,
-			"duplicateMessageLimit":     genesis.IBFT2.DuplicateMessageLimit,
-			"futureMessagesLimit":       genesis.IBFT2.FutureMessagesLimit,
-			"futureMessagesMaxDistance": genesis.IBFT2.FutureMessagesMaxDistance,
-		}
-		engine = "ibft2"
-		mixHash = "0x63746963616c2062797a616e74696e65206661756c7420746f6c6572616e6365"
-		nonce = "0x0"
-		difficulty = "0x1"
-		extraData, err = createExtraDataFromValidators(network.Spec.Genesis.IBFT2.Validators)
-		if err != nil {
-			return
-		}
-	}
-
-	config := map[string]interface{}{
-		"chainId":             genesis.ChainID,
-		"homesteadBlock":      genesis.Forks.Homestead,
-		"eip150Block":         genesis.Forks.EIP150,
-		"eip150Hash":          genesis.Forks.EIP150Hash,
-		"eip155Block":         genesis.Forks.EIP155,
-		"eip158Block":         genesis.Forks.EIP158,
-		"byzantiumBlock":      genesis.Forks.Byzantium,
-		"constantinopleBlock": genesis.Forks.Constantinople,
-		"petersburgBlock":     genesis.Forks.Petersburg,
-		"istanbulBlock":       genesis.Forks.Istanbul,
-		"muirGlacierBlock":    genesis.Forks.MuirGlacier,
-		engine:                consensusConfig,
-	}
-
-	if genesis.Forks.DAO != nil {
-		config["daoForkBlock"] = genesis.Forks.DAO
-		config["daoForkSupport"] = true //geth
-	}
-
-	result["config"] = config
-
-	result["nonce"] = nonce
-	result["timestamp"] = genesis.Timestamp
-	result["gasLimit"] = genesis.GasLimit
-	result["difficulty"] = difficulty
-	result["coinbase"] = genesis.Coinbase
-	result["mixHash"] = mixHash
-	result["extraData"] = extraData
-
-	alloc := map[ethereumv1alpha1.EthereumAddress]interface{}{}
-	for _, account := range genesis.Accounts {
-		m := map[string]interface{}{
-			"balance": account.Balance,
-		}
-
-		if account.Code != "" {
-			m["code"] = account.Code
-		}
-
-		if account.Storage != nil {
-			m["storage"] = account.Storage
-		}
-
-		alloc[account.Address] = m
-	}
-
-	result["alloc"] = alloc
-
-	data, err := json.Marshal(result)
-	if err != nil {
-		return
-	}
-
-	content = string(data)
-
-	return
 }
 
 // deleteRedundantNode deletes all nodes that has been removed from spec
@@ -419,7 +288,7 @@ func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.Node, netwo
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: network.Spec.Genesis.ConfigmapName(network.Name),
+						Name: node.ConfigmapName(network.Name, node.Client),
 					},
 				},
 			},
@@ -758,10 +627,23 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 		return
 	}
 
-	args := r.createArgsForClient(node, network, bootnodes)
+	client, err := NewClient(node.Client)
+	if err != nil {
+		return
+	}
+	args := client.GetArgs(node, network, bootnodes)
 	volumes := r.createNodeVolumes(node, network)
 	mounts := r.createNodeVolumeMounts(node, network)
 	affinity := r.getNodeAffinity(network)
+
+	if network.Spec.Genesis != nil {
+		var genesis string
+		if genesis, err = client.GetGenesisFile(network.Spec.Genesis, network.Spec.Consensus); err != nil {
+			return
+		} else if err = r.reconcileNodeConfigmap(ctx, node, network, genesis); err != nil {
+			return
+		}
+	}
 
 	if err = r.reconcileNodeDeployment(ctx, node, network, bootnodes, args, volumes, mounts, affinity); err != nil {
 		return
@@ -795,263 +677,6 @@ func (r *NetworkReconciler) reconcileNode(ctx context.Context, node *ethereumv1a
 	enodeURL = fmt.Sprintf("enode://%s@%s:%d", publicKey, ip, node.P2PPort)
 
 	return
-}
-
-// createArgsForClient create arguments to be passed to the node client from node specs
-func (r *NetworkReconciler) createArgsForClient(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) []string {
-	switch node.Client {
-	case ethereumv1alpha1.BesuClient:
-		return r.createArgsForBesu(node, network, bootnodes)
-	case ethereumv1alpha1.GethClient:
-		return r.createArgsForGeth(node, network, bootnodes)
-	}
-	return []string{}
-}
-
-// createArgsForGeth create arguments to be passed to the node client from node specs
-func (r *NetworkReconciler) createArgsForGeth(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) []string {
-	args := []string{"--nousb"}
-
-	// appendArg appends argument with optional value to the arguments array
-	appendArg := func(arg ...string) {
-		args = append(args, arg...)
-	}
-
-	if network.Spec.ID != 0 {
-		appendArg(GethNetworkID, fmt.Sprintf("%d", network.Spec.ID))
-	}
-
-	if node.WithNodekey() {
-		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", PathNodekey))
-	}
-
-	appendArg(GethDataDir, PathBlockchainData)
-
-	// TODO: restrict networks to be rinkeby, ropsten, and goerli if client is geth
-	if network.Spec.Join != "" && network.Spec.Join != ethereumv1alpha1.MainNetwork {
-		appendArg(fmt.Sprintf("--%s", network.Spec.Join))
-	}
-
-	if node.P2PPort != 0 {
-		appendArg(GethP2PPort, fmt.Sprintf("%d", node.P2PPort))
-	}
-
-	if len(bootnodes) != 0 {
-		commaSeperatedBootnodes := strings.Join(bootnodes, ",")
-		appendArg(GethBootnodes, commaSeperatedBootnodes)
-	}
-
-	if node.SyncMode != "" {
-		appendArg(GethSyncMode, string(node.SyncMode))
-	}
-
-	if node.Miner {
-		appendArg(GethMinerEnabled)
-	}
-
-	if node.Coinbase != "" {
-		appendArg(GethMinerCoinbase, string(node.Coinbase))
-		appendArg(GethUnlock, string(node.Coinbase))
-		appendArg(GethPassword, fmt.Sprintf("%s/account.password", PathImportedAccount))
-	}
-
-	if node.RPC {
-		appendArg(GethRPCHTTPEnabled)
-	}
-
-	if node.RPCPort != 0 {
-		appendArg(GethRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
-	}
-
-	if node.RPCHost != "" {
-		appendArg(GethRPCHTTPHost, node.RPCHost)
-	}
-
-	if len(node.RPCAPI) != 0 {
-		apis := []string{}
-		for _, api := range node.RPCAPI {
-			apis = append(apis, string(api))
-		}
-		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg(GethRPCHTTPAPI, commaSeperatedAPIs)
-	}
-
-	if node.WS {
-		appendArg(GethRPCWSEnabled)
-	}
-
-	if node.WSPort != 0 {
-		appendArg(GethRPCWSPort, fmt.Sprintf("%d", node.WSPort))
-	}
-
-	if node.WSHost != "" {
-		appendArg(GethRPCWSHost, node.WSHost)
-	}
-
-	if len(node.WSAPI) != 0 {
-		apis := []string{}
-		for _, api := range node.WSAPI {
-			apis = append(apis, string(api))
-		}
-		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg(GethRPCWSAPI, commaSeperatedAPIs)
-	}
-
-	if node.GraphQL {
-		appendArg(GethGraphQLHTTPEnabled)
-	}
-
-	if node.GraphQLPort != 0 {
-		appendArg(GethGraphQLHTTPPort, fmt.Sprintf("%d", node.GraphQLPort))
-	}
-
-	if node.GraphQLHost != "" {
-		appendArg(GethGraphQLHTTPHost, node.GraphQLHost)
-	}
-
-	if len(node.Hosts) != 0 {
-		commaSeperatedHosts := strings.Join(node.Hosts, ",")
-		if node.RPC {
-			appendArg(GethRPCHostWhitelist, commaSeperatedHosts)
-		}
-		if node.GraphQL {
-			appendArg(GethGraphQLHostWhitelist, commaSeperatedHosts)
-		}
-	}
-
-	if len(node.CORSDomains) != 0 {
-		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
-		if node.RPC {
-			appendArg(GethRPCHTTPCorsOrigins, commaSeperatedDomains)
-		}
-		if node.GraphQL {
-			appendArg(GethGraphQLHTTPCorsOrigins, commaSeperatedDomains)
-		}
-	}
-
-	return args
-}
-
-// createArgsForBesu create arguments to be passed to the node client from node specs
-func (r *NetworkReconciler) createArgsForBesu(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) []string {
-	args := []string{BesuNatMethod, "KUBERNETES"}
-	// TODO: update after admissionmutating webhook
-	// because it will default all args
-
-	// appendArg appends argument with optional value to the arguments array
-	appendArg := func(arg ...string) {
-		args = append(args, arg...)
-	}
-
-	if network.Spec.ID != 0 {
-		appendArg(BesuNetworkID, fmt.Sprintf("%d", network.Spec.ID))
-	}
-
-	if node.WithNodekey() {
-		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", PathNodekey))
-	}
-
-	if network.Spec.Genesis != nil {
-		appendArg(BesuGenesisFile, fmt.Sprintf("%s/genesis.json", PathGenesisFile))
-	}
-
-	appendArg(BesuDataPath, PathBlockchainData)
-
-	if network.Spec.Join != "" {
-		appendArg(BesuNetwork, network.Spec.Join)
-	}
-
-	if node.P2PPort != 0 {
-		appendArg(BesuP2PPort, fmt.Sprintf("%d", node.P2PPort))
-	}
-
-	if len(bootnodes) != 0 {
-		commaSeperatedBootnodes := strings.Join(bootnodes, ",")
-		appendArg(BesuBootnodes, commaSeperatedBootnodes)
-	}
-
-	if node.SyncMode != "" {
-		appendArg(BesuSyncMode, string(node.SyncMode))
-	}
-
-	if node.Miner {
-		appendArg(BesuMinerEnabled)
-	}
-
-	if node.Coinbase != "" {
-		appendArg(BesuMinerCoinbase, string(node.Coinbase))
-	}
-
-	if node.RPC {
-		appendArg(BesuRPCHTTPEnabled)
-	}
-
-	if node.RPCPort != 0 {
-		appendArg(BesuRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
-	}
-
-	if node.RPCHost != "" {
-		appendArg(BesuRPCHTTPHost, node.RPCHost)
-	}
-
-	if len(node.RPCAPI) != 0 {
-		apis := []string{}
-		for _, api := range node.RPCAPI {
-			apis = append(apis, string(api))
-		}
-		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg(BesuRPCHTTPAPI, commaSeperatedAPIs)
-	}
-
-	if node.WS {
-		appendArg(BesuRPCWSEnabled)
-	}
-
-	if node.WSPort != 0 {
-		appendArg(BesuRPCWSPort, fmt.Sprintf("%d", node.WSPort))
-	}
-
-	if node.WSHost != "" {
-		appendArg(BesuRPCWSHost, node.WSHost)
-	}
-
-	if len(node.WSAPI) != 0 {
-		apis := []string{}
-		for _, api := range node.WSAPI {
-			apis = append(apis, string(api))
-		}
-		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg(BesuRPCWSAPI, commaSeperatedAPIs)
-	}
-
-	if node.GraphQL {
-		appendArg(BesuGraphQLHTTPEnabled)
-	}
-
-	if node.GraphQLPort != 0 {
-		appendArg(BesuGraphQLHTTPPort, fmt.Sprintf("%d", node.GraphQLPort))
-	}
-
-	if node.GraphQLHost != "" {
-		appendArg(BesuGraphQLHTTPHost, node.GraphQLHost)
-	}
-
-	if len(node.Hosts) != 0 {
-		commaSeperatedHosts := strings.Join(node.Hosts, ",")
-		appendArg(BesuHostWhitelist, commaSeperatedHosts)
-	}
-
-	if len(node.CORSDomains) != 0 {
-		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
-		if node.RPC {
-			appendArg(BesuRPCHTTPCorsOrigins, commaSeperatedDomains)
-		}
-		if node.GraphQL {
-			appendArg(BesuGraphQLHTTPCorsOrigins, commaSeperatedDomains)
-		}
-	}
-
-	return args
 }
 
 // SetupWithManager adds reconciler to the manager

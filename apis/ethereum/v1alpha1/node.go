@@ -89,6 +89,11 @@ func (n *Node) DeploymentName(network string) string {
 	return fmt.Sprintf("%s-%s", network, n.Name)
 }
 
+// ConfigmapName returns name to be used by genesis configmap
+func (n *Node) ConfigmapName(network string, client EthereumClient) string {
+	return fmt.Sprintf("%s-%s-genesis", network, client)
+}
+
 // PVCName returns name to be used by node pvc
 func (n *Node) PVCName(network string) string {
 	return n.DeploymentName(network) // same as deployment name
