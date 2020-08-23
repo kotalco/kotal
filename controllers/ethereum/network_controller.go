@@ -546,14 +546,14 @@ func (r *NetworkReconciler) specNodeService(svc *corev1.Service, node *ethereumv
 	svc.Spec.Ports = []corev1.ServicePort{
 		{
 			Name:       "discovery",
-			Port:       30303,
-			TargetPort: intstr.FromInt(30303),
+			Port:       int32(node.P2PPort),
+			TargetPort: intstr.FromInt(int(node.P2PPort)),
 			Protocol:   corev1.ProtocolUDP,
 		},
 		{
 			Name:       "p2p",
-			Port:       30303,
-			TargetPort: intstr.FromInt(30303),
+			Port:       int32(node.P2PPort),
+			TargetPort: intstr.FromInt(int(node.P2PPort)),
 			Protocol:   corev1.ProtocolTCP,
 		},
 	}
