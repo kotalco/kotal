@@ -301,7 +301,7 @@ func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.Node, netwo
 			Name: "imported-account",
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
-					SecretName: node.ImportedAccountName(network.Name),
+					SecretName: node.SecretName(network.Name),
 				},
 			},
 		}
@@ -498,11 +498,19 @@ func (r *NetworkReconciler) reconcileNodeDeployment(node *ethereumv1alpha1.Node,
 }
 
 func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) {
-	privateKey := string(node.Nodekey)[2:]
 	secret.ObjectMeta.Labels = node.Labels(network.Name)
-	secret.StringData = map[string]string{
-		"nodekey": privateKey,
+	data := map[string]string{}
+
+	if node.WithNodekey() {
+		data["nodekey"] = string(node.Nodekey)[2:]
 	}
+
+	if node.Import != nil {
+		data["account.key"] = string(node.Import.PrivateKey)[2:]
+		data["account.password"] = node.Import.Password
+	}
+
+	secret.StringData = data
 }
 
 // reconcileNodeSecret creates node secret if it doesn't exist, update it if it exists
@@ -515,11 +523,13 @@ func (r *NetworkReconciler) reconcileNodeSecret(node *ethereumv1alpha1.Node, net
 		},
 	}
 
-	// hex private key without the leading 0x
-	privateKey := string(node.Nodekey)[2:]
-	publicKey, err = helpers.DerivePublicKey(privateKey)
-	if err != nil {
-		return
+	if node.WithNodekey() {
+		// hex private key without the leading 0x
+		privateKey := string(node.Nodekey)[2:]
+		publicKey, err = helpers.DerivePublicKey(privateKey)
+		if err != nil {
+			return
+		}
 	}
 
 	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, secret, func() error {
@@ -590,35 +600,6 @@ func (r *NetworkReconciler) reconcileNodeService(node *ethereumv1alpha1.Node, ne
 	return
 }
 
-func (r *NetworkReconciler) specImportedAccountSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node) {
-	// TODO: update labels for delete redundant nodes resources
-	secret.StringData = map[string]string{
-		"account.key":      string(node.Import.PrivateKey)[2:],
-		"account.password": node.Import.Password,
-	}
-}
-
-func (r *NetworkReconciler) reconcileImportedAccountSecret(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
-	secret := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.ImportedAccountName(network.Name),
-			Namespace: network.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, secret, func() error {
-		if err := ctrl.SetControllerReference(network, secret, r.Scheme); err != nil {
-			return err
-		}
-
-		r.specImportedAccountSecret(secret, node)
-
-		return nil
-	})
-
-	return err
-}
-
 // reconcileNode create a new node deployment if it doesn't exist
 // updates existing deployments if node spec changed
 func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (enodeURL string, err error) {
@@ -649,13 +630,7 @@ func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.Node, network *
 		return
 	}
 
-	if node.Import != nil {
-		if err = r.reconcileImportedAccountSecret(node, network); err != nil {
-			return
-		}
-	}
-
-	if !node.WithNodekey() {
+	if !node.WithNodekey() && node.Import == nil {
 		return
 	}
 

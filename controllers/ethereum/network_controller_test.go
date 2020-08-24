@@ -266,7 +266,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should not create privatekey secret for node-2 (without nodekey)", func() {
+		It("Should not create privatekey secret for node-2 (without nodekey and not importing account)", func() {
 			nodeSecret := &v1.Secret{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSecret)).ToNot(Succeed())
 		})
@@ -567,11 +567,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should create node-2 imported account secret", func() {
 			secret := &v1.Secret{}
-			secretKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-%s-imported-account", toCreate.Name, "node-2"),
-				Namespace: key.Namespace,
-			}
-			Expect(k8sClient.Get(context.Background(), secretKey, secret)).To(Succeed())
+			Expect(k8sClient.Get(context.Background(), node2Key, secret)).To(Succeed())
 			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
 			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
@@ -588,9 +584,11 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should not create privatekey secret for node-2 (without nodekey)", func() {
-			nodeSecret := &v1.Secret{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeSecret)).ToNot(Succeed())
+		It("Should create node-2 imported account secret", func() {
+			secret := &v1.Secret{}
+			Expect(k8sClient.Get(context.Background(), node2Key, secret)).To(Succeed())
+			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
+			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should not create bootnode service (not a bootnode)", func() {
@@ -899,11 +897,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should create node-2 imported account secret", func() {
 			secret := &v1.Secret{}
-			secretKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-%s-imported-account", toCreate.Name, "node-2"),
-				Namespace: key.Namespace,
-			}
-			Expect(k8sClient.Get(context.Background(), secretKey, secret)).To(Succeed())
+			Expect(k8sClient.Get(context.Background(), node2Key, secret)).To(Succeed())
 			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
 			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
@@ -918,11 +912,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
 			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
-		})
-
-		It("Should not create privatekey secret for node-2 (without nodekey)", func() {
-			nodeSecret := &v1.Secret{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeSecret)).ToNot(Succeed())
 		})
 
 		It("Should not create bootnode service (not a bootnode)", func() {
@@ -1229,11 +1218,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should create node-2 imported account secret", func() {
 			secret := &v1.Secret{}
-			secretKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-%s-imported-account", toCreate.Name, "node-2"),
-				Namespace: key.Namespace,
-			}
-			Expect(k8sClient.Get(context.Background(), secretKey, secret)).To(Succeed())
+			Expect(k8sClient.Get(context.Background(), node2Key, secret)).To(Succeed())
 			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
 			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
@@ -1248,11 +1233,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
 			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
-		})
-
-		It("Should not create privatekey secret for node-2 (without nodekey)", func() {
-			nodeSecret := &v1.Secret{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeSecret)).ToNot(Succeed())
 		})
 
 		It("Should not create bootnode service (not a bootnode)", func() {

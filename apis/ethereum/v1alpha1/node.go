@@ -109,11 +109,6 @@ func (n *Node) ServiceName(network string) string {
 	return n.DeploymentName(network) // same as deployment name
 }
 
-// ImportedAccountName returns the imported account secret name
-func (n *Node) ImportedAccountName(network string) string {
-	return fmt.Sprintf("%s-%s-imported-account", network, n.Name)
-}
-
 // Labels to be used by node resources
 func (n *Node) Labels(network string) map[string]string {
 	return map[string]string{
