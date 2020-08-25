@@ -534,7 +534,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.network.Default()
-				client, err := NewClient(cc.network.Spec.Nodes[0].Client)
+				client, err := NewEthereumClient(cc.network.Spec.Nodes[0].Client)
 				Expect(err).To(BeNil())
 				args := client.GetArgs(&cc.network.Spec.Nodes[0], cc.network, cc.bootnodes)
 				Expect(args).To(ContainElements(cc.result))

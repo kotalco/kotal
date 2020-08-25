@@ -95,13 +95,13 @@ func (r *NetworkReconciler) reconcileNodes(network *ethereumv1alpha1.Network) er
 }
 
 // specNodeConfigmap updates genesis config map spec
-func (r *NetworkReconciler) specNodeConfigmap(configmap *corev1.ConfigMap, data string) {
+func (r *NetworkReconciler) specNodeConfigmap(configmap *corev1.ConfigMap, genesis string) {
 	configmap.Data = make(map[string]string)
-	configmap.Data["genesis.json"] = data
+	configmap.Data["genesis.json"] = genesis
 }
 
 // reconcileNodeConfigmap creates genesis config map if it doesn't exist or update it
-func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, data string) error {
+func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
 
 	configmap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
@@ -110,21 +110,29 @@ func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, 
 		},
 	}
 
+	var genesis string
+	if network.Spec.Genesis != nil {
+		client, err := NewEthereumClient(node.Client)
+		if err != nil {
+			return err
+		}
+		if genesis, err = client.GetGenesisFile(network.Spec.Genesis, network.Spec.Consensus); err != nil {
+			return err
+		}
+	}
+
 	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, configmap, func() error {
 		if err := ctrl.SetControllerReference(network, configmap, r.Scheme); err != nil {
 			r.Log.Error(err, "Unable to set controller reference on genesis configmap")
 			return err
 		}
 
-		r.specNodeConfigmap(configmap, data)
+		r.specNodeConfigmap(configmap, genesis)
 
 		return nil
 	})
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 // deleteRedundantNode deletes all nodes that has been removed from spec
@@ -477,7 +485,7 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 }
 
 // reconcileNodeDeployment creates creates node deployment if it doesn't exist, update it if it does exist
-func (r *NetworkReconciler) reconcileNodeDeployment(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) error {
+func (r *NetworkReconciler) reconcileNodeDeployment(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) error {
 
 	dep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -486,11 +494,20 @@ func (r *NetworkReconciler) reconcileNodeDeployment(node *ethereumv1alpha1.Node,
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, dep, func() error {
+	client, err := NewEthereumClient(node.Client)
+	if err != nil {
+		return err
+	}
+	args := client.GetArgs(node, network, bootnodes)
+	volumes := r.createNodeVolumes(node, network)
+	mounts := r.createNodeVolumeMounts(node, network)
+	affinity := r.getNodeAffinity(network)
+
+	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, dep, func() error {
 		if err := ctrl.SetControllerReference(network, dep, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeDeployment(dep, node, network, args, volumes, volumeMounts, affinity)
+		r.specNodeDeployment(dep, node, network, args, volumes, mounts, affinity)
 		return nil
 	})
 
@@ -608,25 +625,11 @@ func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.Node, network *
 		return
 	}
 
-	client, err := NewClient(node.Client)
-	if err != nil {
+	if err = r.reconcileNodeConfigmap(node, network); err != nil {
 		return
 	}
-	args := client.GetArgs(node, network, bootnodes)
-	volumes := r.createNodeVolumes(node, network)
-	mounts := r.createNodeVolumeMounts(node, network)
-	affinity := r.getNodeAffinity(network)
 
-	if network.Spec.Genesis != nil {
-		var genesis string
-		if genesis, err = client.GetGenesisFile(network.Spec.Genesis, network.Spec.Consensus); err != nil {
-			return
-		} else if err = r.reconcileNodeConfigmap(node, network, genesis); err != nil {
-			return
-		}
-	}
-
-	if err = r.reconcileNodeDeployment(node, network, bootnodes, args, volumes, mounts, affinity); err != nil {
+	if err = r.reconcileNodeDeployment(node, network, bootnodes); err != nil {
 		return
 	}
 

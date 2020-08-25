@@ -11,8 +11,8 @@ type EthereumClient interface {
 	GetGenesisFile(*ethereumv1alpha1.Genesis, ethereumv1alpha1.ConsensusAlgorithm) (string, error)
 }
 
-// NewClient returns an Ethereum client instance
-func NewClient(name ethereumv1alpha1.EthereumClient) (EthereumClient, error) {
+// NewEthereumClient returns an Ethereum client instance
+func NewEthereumClient(name ethereumv1alpha1.EthereumClient) (EthereumClient, error) {
 	switch name {
 	case "besu":
 		return &BesuClient{}, nil
