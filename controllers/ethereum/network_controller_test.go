@@ -533,8 +533,8 @@ var _ = Describe("Ethereum network controller", func() {
 				GethDataDir,
 				PathBlockchainData,
 				GethPassword,
-				fmt.Sprintf("%s/account.password", PathImportedAccount),
-				fmt.Sprintf("%s/account.key", PathImportedAccount),
+				fmt.Sprintf("%s/account.password", PathSecrets),
+				fmt.Sprintf("%s/account.key", PathSecrets),
 			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				"--rinkeby",
@@ -868,8 +868,8 @@ var _ = Describe("Ethereum network controller", func() {
 				GethDataDir,
 				PathBlockchainData,
 				GethPassword,
-				fmt.Sprintf("%s/account.password", PathImportedAccount),
-				fmt.Sprintf("%s/account.key", PathImportedAccount),
+				fmt.Sprintf("%s/account.password", PathSecrets),
+				fmt.Sprintf("%s/account.key", PathSecrets),
 			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
@@ -1189,8 +1189,8 @@ var _ = Describe("Ethereum network controller", func() {
 				GethDataDir,
 				PathBlockchainData,
 				GethPassword,
-				fmt.Sprintf("%s/account.password", PathImportedAccount),
-				fmt.Sprintf("%s/account.key", PathImportedAccount),
+				fmt.Sprintf("%s/account.password", PathSecrets),
+				fmt.Sprintf("%s/account.key", PathSecrets),
 			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,

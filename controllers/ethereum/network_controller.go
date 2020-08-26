@@ -300,9 +300,9 @@ func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.Node, netwo
 
 	volumes := []corev1.Volume{}
 
-	if node.WithNodekey() {
+	if node.WithNodekey() || node.Import != nil {
 		nodekeyVolume := corev1.Volume{
-			Name: "nodekey",
+			Name: "secrets",
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
 					SecretName: node.SecretName(network.Name),
@@ -326,18 +326,6 @@ func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.Node, netwo
 		volumes = append(volumes, genesisVolume)
 	}
 
-	if node.Import != nil {
-		importedAccount := corev1.Volume{
-			Name: "imported-account",
-			VolumeSource: corev1.VolumeSource{
-				Secret: &corev1.SecretVolumeSource{
-					SecretName: node.SecretName(network.Name),
-				},
-			},
-		}
-		volumes = append(volumes, importedAccount)
-	}
-
 	dataVolume := corev1.Volume{
 		Name: "data",
 		VolumeSource: corev1.VolumeSource{
@@ -356,10 +344,10 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, 
 
 	volumeMounts := []corev1.VolumeMount{}
 
-	if node.WithNodekey() {
+	if node.WithNodekey() || node.Import != nil {
 		nodekeyMount := corev1.VolumeMount{
-			Name:      "nodekey",
-			MountPath: PathNodekey,
+			Name:      "secrets",
+			MountPath: PathSecrets,
 			ReadOnly:  true,
 		}
 		volumeMounts = append(volumeMounts, nodekeyMount)
@@ -372,15 +360,6 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, 
 			ReadOnly:  true,
 		}
 		volumeMounts = append(volumeMounts, genesisMount)
-	}
-
-	if node.Import != nil {
-		importedAccountMount := corev1.VolumeMount{
-			Name:      "imported-account",
-			MountPath: PathImportedAccount,
-			ReadOnly:  true,
-		}
-		volumeMounts = append(volumeMounts, importedAccountMount)
 	}
 
 	dataMount := corev1.VolumeMount{
@@ -474,8 +453,8 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 						GethDataDir,
 						PathBlockchainData,
 						GethPassword,
-						fmt.Sprintf("%s/account.password", PathImportedAccount),
-						fmt.Sprintf("%s/account.key", PathImportedAccount),
+						fmt.Sprintf("%s/account.password", PathSecrets),
+						fmt.Sprintf("%s/account.key", PathSecrets),
 						"Account has been imported before!",
 					),
 				},

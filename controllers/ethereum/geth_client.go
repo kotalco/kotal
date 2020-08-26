@@ -24,7 +24,7 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 	}
 
 	if node.WithNodekey() {
-		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", PathNodekey))
+		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", PathSecrets))
 	}
 
 	appendArg(GethDataDir, PathBlockchainData)
@@ -53,7 +53,7 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 	if node.Coinbase != "" {
 		appendArg(GethMinerCoinbase, string(node.Coinbase))
 		appendArg(GethUnlock, string(node.Coinbase))
-		appendArg(GethPassword, fmt.Sprintf("%s/account.password", PathImportedAccount))
+		appendArg(GethPassword, fmt.Sprintf("%s/account.password", PathSecrets))
 	}
 
 	if node.RPC {

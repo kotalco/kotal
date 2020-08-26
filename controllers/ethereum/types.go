@@ -9,6 +9,8 @@ const (
 	PathBlockchainData = "/mnt/data"
 	// PathImportedAccount is the imported account path
 	PathImportedAccount = "/mnt/import"
+	// PathSecrets is the secrets (private keys, password ... etc) path
+	PathSecrets = "/mnt/secrets"
 )
 
 // Images

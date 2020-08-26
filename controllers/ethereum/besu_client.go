@@ -25,7 +25,7 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 	}
 
 	if node.WithNodekey() {
-		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", PathNodekey))
+		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", PathSecrets))
 	}
 
 	if network.Spec.Genesis != nil {
