@@ -94,10 +94,12 @@ func (r *NetworkReconciler) reconcileNodes(network *ethereumv1alpha1.Network) er
 	return nil
 }
 
-// specNodeConfigmap updates genesis config map spec
-func (r *NetworkReconciler) specNodeConfigmap(configmap *corev1.ConfigMap, genesis string) {
+// specNodeConfigmap updates genesis configmap spec
+func (r *NetworkReconciler) specNodeConfigmap(configmap *corev1.ConfigMap, genesis, initGenesisScript, importAccountScript string) {
 	configmap.Data = make(map[string]string)
 	configmap.Data["genesis.json"] = genesis
+	configmap.Data["init-genesis.sh"] = initGenesisScript
+	configmap.Data["import-account.sh"] = importAccountScript
 }
 
 // reconcileNodeConfigmap creates genesis config map if it doesn't exist or update it
@@ -110,13 +112,33 @@ func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, 
 		},
 	}
 
-	var genesis string
+	var genesis, initGenesisScript, importAccountScript string
+
+	// private network with custom genesis
 	if network.Spec.Genesis != nil {
 		client, err := NewEthereumClient(node.Client)
 		if err != nil {
 			return err
 		}
+		// create client specific genesis configuration
 		if genesis, err = client.GetGenesisFile(network.Spec.Genesis, network.Spec.Consensus); err != nil {
+			return err
+		}
+		// create init genesis script if client is geth
+		if node.Client == ethereumv1alpha1.GethClient {
+			initGenesisScript, err = generateInitGenesisScript()
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	// geth only
+	// create import account script
+	if node.Import != nil {
+		var err error
+		importAccountScript, err = generateImportAccountScript()
+		if err != nil {
 			return err
 		}
 	}
@@ -127,7 +149,7 @@ func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, 
 			return err
 		}
 
-		r.specNodeConfigmap(configmap, genesis)
+		r.specNodeConfigmap(configmap, genesis, initGenesisScript, importAccountScript)
 
 		return nil
 	})
