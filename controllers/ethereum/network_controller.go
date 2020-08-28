@@ -314,7 +314,7 @@ func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.Node, netwo
 
 	if network.Spec.Genesis != nil {
 		genesisVolume := corev1.Volume{
-			Name: "genesis",
+			Name: "config",
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
 					LocalObjectReference: corev1.LocalObjectReference{
@@ -355,8 +355,8 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, 
 
 	if network.Spec.Genesis != nil {
 		genesisMount := corev1.VolumeMount{
-			Name:      "genesis",
-			MountPath: PathGenesisFile,
+			Name:      "config",
+			MountPath: PathConfig,
 			ReadOnly:  true,
 		}
 		volumeMounts = append(volumeMounts, genesisMount)
@@ -416,48 +416,22 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 	}
 
 	if node.Client == ethereumv1alpha1.GethClient {
-		if network.Spec.Join == "" {
+		if network.Spec.Genesis != nil {
 			initGenesis := corev1.Container{
-				Name:  "init-genesis",
-				Image: GethImage,
-				Command: []string{
-					"/bin/sh",
-				},
-				Args: []string{
-					"-c",
-					fmt.Sprintf(
-						"if [ ! -d %s/geth ]; then geth init %s %s %s ;else echo \"%s\" ;fi",
-						PathBlockchainData,
-						GethDataDir,
-						PathBlockchainData,
-						fmt.Sprintf("%s/genesis.json", PathGenesisFile),
-						"Genesis block has been initialized before!",
-					),
-				},
+				Name:         "init-genesis",
+				Image:        GethImage,
+				Command:      []string{"/bin/sh"},
+				Args:         []string{fmt.Sprintf("%s/init-genesis.sh", PathConfig)},
 				VolumeMounts: volumeMounts,
 			}
 			initContainers = append(initContainers, initGenesis)
 		}
 		if node.Import != nil {
 			importAccount := corev1.Container{
-				Name:  "import-account",
-				Image: GethImage,
-				Command: []string{
-					"/bin/sh",
-				},
-				Args: []string{
-					"-c",
-					fmt.Sprintf(
-						"if [ -z \"$(ls -A %s/keystore)\" ]; then geth account import %s %s %s %s %s ;else echo \"%s\" ;fi",
-						PathBlockchainData,
-						GethDataDir,
-						PathBlockchainData,
-						GethPassword,
-						fmt.Sprintf("%s/account.password", PathSecrets),
-						fmt.Sprintf("%s/account.key", PathSecrets),
-						"Account has been imported before!",
-					),
-				},
+				Name:         "import-account",
+				Image:        GethImage,
+				Command:      []string{"/bin/sh"},
+				Args:         []string{fmt.Sprintf("%s/import-account.sh", PathConfig)},
 				VolumeMounts: volumeMounts,
 			}
 			initContainers = append(initContainers, importAccount)

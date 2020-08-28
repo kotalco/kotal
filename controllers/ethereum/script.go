@@ -30,7 +30,7 @@ func generateInitGenesisScript() (script string, err error) {
 
 	input := &InitGenesisInput{
 		DataDir:    PathBlockchainData,
-		GenesisDir: PathGenesisFile,
+		GenesisDir: PathConfig,
 	}
 
 	tmpl, err := template.New("master").Parse(initGenesisScriptTemplate)
@@ -73,7 +73,7 @@ func generateImportAccountScript() (script string, err error) {
 
 	input := &ImportAccountInput{
 		DataDir:   PathBlockchainData,
-		ImportDir: PathGenesisFile,
+		ImportDir: PathSecrets,
 	}
 
 	tmpl, err := template.New("master").Parse(importAccountScriptTemplate)

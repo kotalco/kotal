@@ -29,7 +29,7 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 	}
 
 	if network.Spec.Genesis != nil {
-		appendArg(BesuGenesisFile, fmt.Sprintf("%s/genesis.json", PathGenesisFile))
+		appendArg(BesuGenesisFile, fmt.Sprintf("%s/genesis.json", PathConfig))
 	}
 
 	appendArg(BesuDataPath, PathBlockchainData)
