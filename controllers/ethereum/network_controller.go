@@ -114,6 +114,11 @@ func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, 
 
 	var genesis, initGenesisScript, importAccountScript string
 
+	// no genesis or init scripts are required for besu clients in public networks
+	if network.Spec.Genesis == nil && node.Client == ethereumv1alpha1.BesuClient {
+		return nil
+	}
+
 	// private network with custom genesis
 	if network.Spec.Genesis != nil {
 		client, err := NewEthereumClient(node.Client)

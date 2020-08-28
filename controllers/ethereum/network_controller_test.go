@@ -132,10 +132,10 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should not create genesis block configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
 			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-genesis", key.Name),
+				Name:      fmt.Sprintf("%s-besu", key.Name),
 				Namespace: key.Namespace,
 			}
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(Succeed())
+			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(BeNil())
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
@@ -426,10 +426,10 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should not create genesis block configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
 			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-genesis", key.Name),
+				Name:      fmt.Sprintf("%s-besu", key.Name),
 				Namespace: key.Namespace,
 			}
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(Succeed())
+			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(BeNil())
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
@@ -776,7 +776,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create bootnode genesis block configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
 			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-besu-genesis", key.Name),
+				Name:      fmt.Sprintf("%s-besu", key.Name),
 				Namespace: key.Namespace,
 			}
 			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
@@ -847,7 +847,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-2 genesis block and scripts configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
 			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-geth-genesis", key.Name),
+				Name:      fmt.Sprintf("%s-geth", key.Name),
 				Namespace: key.Namespace,
 			}
 			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
@@ -981,7 +981,7 @@ var _ = Describe("Ethereum network controller", func() {
 			It("Should delete genesis block configmap", func() {
 				genesisConfig := &v1.ConfigMap{}
 				genesisKey := types.NamespacedName{
-					Name:      fmt.Sprintf("%s-genesis", key.Name),
+					Name:      fmt.Sprintf("%s-geth", key.Name),
 					Namespace: key.Namespace,
 				}
 				Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(Succeed())
@@ -1072,7 +1072,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create bootnode genesis block configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
 			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-besu-genesis", key.Name),
+				Name:      fmt.Sprintf("%s-besu", key.Name),
 				Namespace: key.Namespace,
 			}
 			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
@@ -1166,7 +1166,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-2 genesis and scripts block configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
 			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-geth-genesis", key.Name),
+				Name:      fmt.Sprintf("%s-geth", key.Name),
 				Namespace: key.Namespace,
 			}
 			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
@@ -1298,7 +1298,7 @@ var _ = Describe("Ethereum network controller", func() {
 			It("Should delete genesis block configmap", func() {
 				genesisConfig := &v1.ConfigMap{}
 				genesisKey := types.NamespacedName{
-					Name:      fmt.Sprintf("%s-genesis", key.Name),
+					Name:      fmt.Sprintf("%s-geth", key.Name),
 					Namespace: key.Namespace,
 				}
 				Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(Succeed())
@@ -1394,7 +1394,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create bootnode genesis block configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
 			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-besu-genesis", key.Name),
+				Name:      fmt.Sprintf("%s-besu", key.Name),
 				Namespace: key.Namespace,
 			}
 			expectedExtraData := "0xf869a00000000000000000000000000000000000000000000000000000000000000000f83f94427e2c7cecd72bc4cdd4f7ebb8bb6e49789c804494d2c21213027cbf4d46c16b55fa98e5252b048706948e1f6c7c76a1d7f74eda342d330ca9749f31cc2b808400000000c0"
@@ -1596,7 +1596,7 @@ var _ = Describe("Ethereum network controller", func() {
 			It("Should delete genesis block configmap", func() {
 				genesisConfig := &v1.ConfigMap{}
 				genesisKey := types.NamespacedName{
-					Name:      fmt.Sprintf("%s-genesis", key.Name),
+					Name:      fmt.Sprintf("%s-besu", key.Name),
 					Namespace: key.Namespace,
 				}
 				Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(Succeed())

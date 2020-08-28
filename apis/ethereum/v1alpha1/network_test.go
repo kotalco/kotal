@@ -86,7 +86,7 @@ func TestServiceName(t *testing.T) {
 
 func TestConfigmapName(t *testing.T) {
 	node := network.Spec.Nodes[0]
-	expected := "test-network-besu-genesis"
+	expected := "test-network-besu"
 	got := node.ConfigmapName(network.Name, node.Client)
 
 	if got != expected {
