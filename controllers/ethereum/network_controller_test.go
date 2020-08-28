@@ -616,6 +616,11 @@ var _ = Describe("Ethereum network controller", func() {
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).ToNot(Succeed())
 			})
 
+			It("Should delete node-2 imported account secret", func() {
+				secret := &v1.Secret{}
+				Expect(k8sClient.Get(context.Background(), node2Key, secret)).ToNot(Succeed())
+			})
+
 			It("Should delete node-2 data persistent volume", func() {
 				Eventually(func() error {
 					nodePVC := &v1.PersistentVolumeClaim{}
@@ -935,6 +940,11 @@ var _ = Describe("Ethereum network controller", func() {
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).ToNot(Succeed())
 			})
 
+			It("Should delete node-2 imported account secret", func() {
+				secret := &v1.Secret{}
+				Expect(k8sClient.Get(context.Background(), node2Key, secret)).ToNot(Succeed())
+			})
+
 			It("Should delete node-2 data persistent volume", func() {
 				Eventually(func() error {
 					nodePVC := &v1.PersistentVolumeClaim{}
@@ -978,7 +988,16 @@ var _ = Describe("Ethereum network controller", func() {
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).ToNot(Succeed())
 			})
 
-			It("Should delete genesis block configmap", func() {
+			It("Should delete besu genesis block configmap", func() {
+				genesisConfig := &v1.ConfigMap{}
+				genesisKey := types.NamespacedName{
+					Name:      fmt.Sprintf("%s-besu", key.Name),
+					Namespace: key.Namespace,
+				}
+				Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(Succeed())
+			})
+
+			It("Should delete geth genesis block configmap", func() {
 				genesisConfig := &v1.ConfigMap{}
 				genesisKey := types.NamespacedName{
 					Name:      fmt.Sprintf("%s-geth", key.Name),
@@ -1252,6 +1271,11 @@ var _ = Describe("Ethereum network controller", func() {
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).ToNot(Succeed())
 			})
 
+			It("Should delete node-2 imported account secret", func() {
+				secret := &v1.Secret{}
+				Expect(k8sClient.Get(context.Background(), node2Key, secret)).ToNot(Succeed())
+			})
+
 			It("Should delete node-2 data persistent volume", func() {
 				Eventually(func() error {
 					nodePVC := &v1.PersistentVolumeClaim{}
@@ -1295,7 +1319,16 @@ var _ = Describe("Ethereum network controller", func() {
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).ToNot(Succeed())
 			})
 
-			It("Should delete genesis block configmap", func() {
+			It("Should delete besu genesis block configmap", func() {
+				genesisConfig := &v1.ConfigMap{}
+				genesisKey := types.NamespacedName{
+					Name:      fmt.Sprintf("%s-besu", key.Name),
+					Namespace: key.Namespace,
+				}
+				Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(Succeed())
+			})
+
+			It("Should delete geth genesis block configmap", func() {
 				genesisConfig := &v1.ConfigMap{}
 				genesisKey := types.NamespacedName{
 					Name:      fmt.Sprintf("%s-geth", key.Name),
