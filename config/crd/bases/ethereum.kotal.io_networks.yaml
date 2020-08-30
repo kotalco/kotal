@@ -332,6 +332,9 @@ spec:
                         description: Storage is disk space storage requirements
                         pattern: ^[1-9][0-9]*[KMGTPE]i$
                         type: string
+                      storageClass:
+                        description: StorageClass is the volume storage class
+                        type: string
                     type: object
                   rpc:
                     description: RPC is whether HTTP-RPC server is enabled or not

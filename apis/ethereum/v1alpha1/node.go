@@ -135,6 +135,8 @@ type NodeResources struct {
 	// Storage is disk space storage requirements
 	// +kubebuilder:validation:Pattern="^[1-9][0-9]*[KMGTPE]i$"
 	Storage string `json:"storage,omitempty"`
+	// StorageClass is the volume storage class
+	StorageClass *string `json:"storageClass,omitempty"`
 }
 
 // SynchronizationMode is the node synchronization mode

@@ -274,6 +274,7 @@ func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, n
 				corev1.ResourceStorage: resource.MustParse(node.Resources.Storage),
 			},
 		},
+		StorageClassName: node.Resources.StorageClass,
 	}
 }
 
