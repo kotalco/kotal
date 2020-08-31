@@ -16,9 +16,9 @@ const (
 // Images
 const (
 	// BesuImage is hyperledger besu image
-	BesuImage = "hyperledger/besu:1.5"
+	BesuImage = "hyperledger/besu:1.5.3"
 	// GethImage is go-ethereum image
-	GethImage = "ethereum/client-go:v1.9.15"
+	GethImage = "ethereum/client-go:v1.9.20"
 )
 
 // Hyperledger Besu client arguments
