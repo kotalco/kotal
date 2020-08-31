@@ -3,12 +3,29 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	"strings"
+
+	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 )
 
 // GethClient is Go-Ethereum client
 type GethClient struct{}
+
+// LoggingArgFromVerbosity returns logging argument from node verbosity level
+func (g *GethClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
+	levels := map[ethereumv1alpha1.VerbosityLevel]string{
+		ethereumv1alpha1.NoLogs:    "0",
+		ethereumv1alpha1.FatalLogs: "1",
+		ethereumv1alpha1.ErrorLogs: "1",
+		ethereumv1alpha1.WarnLogs:  "2",
+		ethereumv1alpha1.InfoLogs:  "3",
+		ethereumv1alpha1.DebugLogs: "4",
+		ethereumv1alpha1.TraceLogs: "5",
+		ethereumv1alpha1.AllLogs:   "5",
+	}
+
+	return levels[level]
+}
 
 // GetArgs returns command line arguments required for client run
 func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (args []string) {
@@ -18,6 +35,8 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 	}
 
 	appendArg("--nousb")
+
+	appendArg(GethLogging, g.LoggingArgFromVerbosity(node.Logging))
 
 	if network.Spec.ID != 0 {
 		appendArg(GethNetworkID, fmt.Sprintf("%d", network.Spec.ID))

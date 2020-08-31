@@ -166,6 +166,10 @@ func (r *Network) DefaultNode(node *Node) {
 		}
 	}
 
+	if node.Logging == "" {
+		node.Logging = DefaultLogging
+	}
+
 }
 
 // DefaultGenesis defaults genesis block parameters

@@ -33,6 +33,8 @@ var _ = Describe("Ethereum network controller", func() {
 
 	var (
 		useExistingCluster = os.Getenv("USE_EXISTING_CLUSTER") == "true"
+		besuClient, _      = NewEthereumClient(ethereumv1alpha1.BesuClient)
+		gethClient, _      = NewEthereumClient(ethereumv1alpha1.GethClient)
 		initGenesis        string
 		importAccount      string
 	)
@@ -76,6 +78,7 @@ var _ = Describe("Ethereum network controller", func() {
 					Bootnode: true,
 					Nodekey:  privatekey,
 					SyncMode: ethereumv1alpha1.FullSynchronization,
+					Logging:  ethereumv1alpha1.NoLogs,
 				},
 			},
 		}
@@ -162,6 +165,8 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuNodePrivateKey,
 				BesuSyncMode,
 				string(ethereumv1alpha1.FullSynchronization),
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.NoLogs),
 			}))
 		})
 
@@ -201,6 +206,7 @@ var _ = Describe("Ethereum network controller", func() {
 				RPC:     true,
 				Client:  ethereumv1alpha1.GethClient,
 				RPCPort: 8547,
+				Logging: ethereumv1alpha1.ErrorLogs,
 				Resources: &ethereumv1alpha1.NodeResources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
@@ -241,6 +247,8 @@ var _ = Describe("Ethereum network controller", func() {
 				"8547",
 				GethSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
+				GethLogging,
+				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 			}))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).ToNot(ContainElements([]string{
 				ethereumv1alpha1.MainNetwork,
@@ -370,6 +378,7 @@ var _ = Describe("Ethereum network controller", func() {
 					Name:     "node-1",
 					Bootnode: true,
 					Nodekey:  privatekey,
+					Logging:  ethereumv1alpha1.FatalLogs,
 				},
 			},
 		}
@@ -457,6 +466,7 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuNodePrivateKey,
 				BesuSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.FatalLogs),
 			}))
 		})
 
@@ -508,6 +518,7 @@ var _ = Describe("Ethereum network controller", func() {
 					Memory:      memory,
 					MemoryLimit: memoryLimit,
 				},
+				Logging: ethereumv1alpha1.WarnLogs,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -549,6 +560,8 @@ var _ = Describe("Ethereum network controller", func() {
 				GethPassword,
 				GethSyncMode,
 				string(ethereumv1alpha1.FullSynchronization),
+				GethLogging,
+				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 			}))
 		})
 
@@ -775,6 +788,8 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuNodePrivateKey,
 				BesuSyncMode,
 				string(ethereumv1alpha1.FullSynchronization),
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
 			}))
 		})
 
@@ -837,6 +852,7 @@ var _ = Describe("Ethereum network controller", func() {
 					MemoryLimit: memoryLimit,
 					Storage:     storage,
 				},
+				Logging: ethereumv1alpha1.DebugLogs,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -880,6 +896,8 @@ var _ = Describe("Ethereum network controller", func() {
 				GethBootnodes,
 				GethSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
+				GethLogging,
+				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 			}))
 		})
 
@@ -1035,6 +1053,7 @@ var _ = Describe("Ethereum network controller", func() {
 					Name:     "node-1",
 					Bootnode: true,
 					Nodekey:  privatekey,
+					Logging:  ethereumv1alpha1.TraceLogs,
 				},
 			},
 		}
@@ -1120,6 +1139,8 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuNodePrivateKey,
 				BesuSyncMode,
 				string(ethereumv1alpha1.FullSynchronization),
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.TraceLogs),
 			}))
 		})
 
@@ -1170,6 +1191,7 @@ var _ = Describe("Ethereum network controller", func() {
 					Memory:      memory,
 					MemoryLimit: memoryLimit,
 				},
+				Logging: ethereumv1alpha1.AllLogs,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -1211,6 +1233,8 @@ var _ = Describe("Ethereum network controller", func() {
 				GethBootnodes,
 				GethSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
+				GethLogging,
+				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.AllLogs),
 			}))
 		})
 
@@ -1372,6 +1396,7 @@ var _ = Describe("Ethereum network controller", func() {
 					Name:     "node-1",
 					Bootnode: true,
 					Nodekey:  privatekey,
+					Logging:  ethereumv1alpha1.WarnLogs,
 				},
 			},
 		}
@@ -1458,6 +1483,8 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuNodePrivateKey,
 				BesuSyncMode,
 				string(ethereumv1alpha1.FullSynchronization),
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 			}))
 		})
 
@@ -1501,6 +1528,7 @@ var _ = Describe("Ethereum network controller", func() {
 					Memory: memory,
 				},
 				SyncMode: ethereumv1alpha1.FastSynchronization,
+				Logging:  ethereumv1alpha1.DebugLogs,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -1525,6 +1553,8 @@ var _ = Describe("Ethereum network controller", func() {
 				"8547",
 				BesuSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 			}))
 		})
 

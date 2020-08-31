@@ -3,12 +3,18 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	"strings"
+
+	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 )
 
 // BesuClient is Hyperledger Besu client
 type BesuClient struct{}
+
+// LoggingArgFromVerbosity returns logging argument from node verbosity level
+func (b *BesuClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
+	return strings.ToUpper(string(level))
+}
 
 // GetArgs returns command line arguments required for client run
 func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (args []string) {
@@ -19,6 +25,8 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 	}
 
 	appendArg(BesuNatMethod, "KUBERNETES")
+
+	appendArg(BesuLogging, b.LoggingArgFromVerbosity(node.Logging))
 
 	if network.Spec.ID != 0 {
 		appendArg(BesuNetworkID, fmt.Sprintf("%d", network.Spec.ID))

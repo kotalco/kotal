@@ -294,6 +294,18 @@ spec:
                     - password
                     - privatekey
                     type: object
+                  logging:
+                    description: Logging is logging verboisty level
+                    enum:
+                    - "off"
+                    - fatal
+                    - error
+                    - warn
+                    - info
+                    - debug
+                    - trace
+                    - all
+                    type: string
                   miner:
                     description: Miner is whether node is mining/validating blocks
                       or no

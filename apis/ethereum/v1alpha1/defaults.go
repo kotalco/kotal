@@ -14,6 +14,8 @@ const (
 
 // Node defaults
 const (
+	// DefaultLogging is the default logging verbosity level
+	DefaultLogging = InfoLogs
 	// DefaultClient is the default ethereum client
 	DefaultClient = BesuClient
 	// DefaultHost is the default host

@@ -23,6 +23,8 @@ const (
 
 // Hyperledger Besu client arguments
 const (
+	// BesuLogging is the argument used for logging verbosity level
+	BesuLogging = "--logging"
 	// BesuNetworkID is the argument used for network id
 	BesuNetworkID = "--network-id"
 	// BesuNatMethod is the argument used for nat method
@@ -77,6 +79,8 @@ const (
 
 // Go ethereum client arguments
 const (
+	// GethLogging is the argument used for logging verbosity level
+	GethLogging = "--verbosity"
 	// GethNetworkID is the argument used for network id
 	GethNetworkID = "--networkid"
 	// GethNodeKey is the argument used for node private key

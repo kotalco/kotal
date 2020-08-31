@@ -35,6 +35,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node1.Resources.Memory).To(Equal(DefaultPublicNetworkNodeMemoryRequest))
 		Expect(node1.Resources.MemoryLimit).To(Equal(DefaultPublicNetworkNodeMemoryLimit))
 		Expect(node1.Resources.Storage).To(Equal(DefaultMainNetworkFastNodeStorageRequest))
+		Expect(node1.Logging).To(Equal(DefaultLogging))
 		// node2 defaulting
 		Expect(node2.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node2.SyncMode).To(Equal(FullSynchronization))
@@ -44,6 +45,8 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node2.Resources.Memory).To(Equal(DefaultPublicNetworkNodeMemoryRequest))
 		Expect(node2.Resources.MemoryLimit).To(Equal(DefaultPublicNetworkNodeMemoryLimit))
 		Expect(node2.Resources.Storage).To(Equal(DefaultMainNetworkFullNodeStorageRequest))
+		Expect(node2.Logging).To(Equal(DefaultLogging))
+
 	})
 
 	It("Should default network joining rinkeby", func() {
@@ -69,6 +72,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node.Resources.Memory).To(Equal(DefaultPublicNetworkNodeMemoryRequest))
 		Expect(node.Resources.MemoryLimit).To(Equal(DefaultPublicNetworkNodeMemoryLimit))
 		Expect(node.Resources.Storage).To(Equal(DefaultTestNetworkStorageRequest))
+		Expect(node.Logging).To(Equal(DefaultLogging))
 	})
 
 	It("Should default network with pow consensus", func() {
@@ -97,6 +101,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node.Resources.Memory).To(Equal(DefaultPrivateNetworkNodeMemoryRequest))
 		Expect(node.Resources.MemoryLimit).To(Equal(DefaultPrivateNetworkNodeMemoryLimit))
 		Expect(node.Resources.Storage).To(Equal(DefaultPrivateNetworkNodeStorageRequest))
+		Expect(node.Logging).To(Equal(DefaultLogging))
 		// genesis defaulting
 		Expect(network.Spec.Genesis.Coinbase).To(Equal(DefaultCoinbase))
 		Expect(network.Spec.Genesis.MixHash).To(Equal(DefaultMixHash))
@@ -150,6 +155,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node.Resources.Memory).To(Equal(DefaultPrivateNetworkNodeMemoryRequest))
 		Expect(node.Resources.MemoryLimit).To(Equal(DefaultPrivateNetworkNodeMemoryLimit))
 		Expect(node.Resources.Storage).To(Equal(DefaultPrivateNetworkNodeStorageRequest))
+		Expect(node.Logging).To(Equal(DefaultLogging))
 		// genesis defaulting
 		Expect(network.Spec.Genesis.Coinbase).To(Equal(DefaultCoinbase))
 		Expect(network.Spec.Genesis.MixHash).To(Equal(DefaultMixHash))
@@ -209,6 +215,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node.Resources.Memory).To(Equal(DefaultPrivateNetworkNodeMemoryRequest))
 		Expect(node.Resources.MemoryLimit).To(Equal(DefaultPrivateNetworkNodeMemoryLimit))
 		Expect(node.Resources.Storage).To(Equal(DefaultPrivateNetworkNodeStorageRequest))
+		Expect(node.Logging).To(Equal(DefaultLogging))
 		// genesis defaulting
 		Expect(network.Spec.Genesis.Coinbase).To(Equal(DefaultCoinbase))
 		Expect(network.Spec.Genesis.MixHash).To(Equal(DefaultMixHash))

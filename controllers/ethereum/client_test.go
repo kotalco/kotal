@@ -11,6 +11,8 @@ import (
 var _ = Describe("Ethereum client arguments", func() {
 
 	var bootnodes []string
+	besuClient, _ := NewEthereumClient(ethereumv1alpha1.BesuClient)
+	gethClient, _ := NewEthereumClient(ethereumv1alpha1.GethClient)
 	rinkeby := "rinkeby"
 	bootnode := "enode://publickey@ip:port"
 	coinbase := ethereumv1alpha1.EthereumAddress("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c")
@@ -41,6 +43,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				rinkeby,
 				BesuDataPath,
 				PathBlockchainData,
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
 			},
 		},
 		{
@@ -64,6 +68,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethNodeKey,
 				GethDataDir,
 				PathBlockchainData,
+				GethLogging,
+				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
 			},
 		},
 		{
@@ -77,6 +83,7 @@ var _ = Describe("Ethereum client arguments", func() {
 							Name:     "node-1",
 							Bootnode: true,
 							Nodekey:  nodekey,
+							Logging:  ethereumv1alpha1.NoLogs,
 						},
 					},
 				},
@@ -88,6 +95,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuNodePrivateKey,
 				BesuDataPath,
 				PathBlockchainData,
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.NoLogs),
 			},
 		},
 		{
@@ -102,6 +111,7 @@ var _ = Describe("Ethereum client arguments", func() {
 							Client:   ethereumv1alpha1.GethClient,
 							Bootnode: true,
 							Nodekey:  nodekey,
+							Logging:  ethereumv1alpha1.NoLogs,
 						},
 					},
 				},
@@ -111,6 +121,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethNodeKey,
 				GethDataDir,
 				PathBlockchainData,
+				GethLogging,
+				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.NoLogs),
 			},
 		},
 		{
@@ -125,6 +137,7 @@ var _ = Describe("Ethereum client arguments", func() {
 							Bootnode: true,
 							Nodekey:  nodekey,
 							RPC:      true,
+							Logging:  ethereumv1alpha1.FatalLogs,
 						},
 					},
 				},
@@ -137,6 +150,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuDataPath,
 				PathBlockchainData,
 				BesuRPCHTTPEnabled,
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.FatalLogs),
 			},
 		},
 		{
@@ -152,6 +167,7 @@ var _ = Describe("Ethereum client arguments", func() {
 							Bootnode: true,
 							Nodekey:  nodekey,
 							RPC:      true,
+							Logging:  ethereumv1alpha1.FatalLogs,
 						},
 					},
 				},
@@ -162,6 +178,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethDataDir,
 				PathBlockchainData,
 				GethRPCHTTPEnabled,
+				GethLogging,
+				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.FatalLogs),
 			},
 		},
 		{
@@ -182,6 +200,7 @@ var _ = Describe("Ethereum client arguments", func() {
 								ethereumv1alpha1.Web3API,
 								ethereumv1alpha1.NetworkAPI,
 							},
+							Logging: ethereumv1alpha1.ErrorLogs,
 						},
 					},
 				},
@@ -198,6 +217,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				"8599",
 				BesuRPCHTTPAPI,
 				"eth,web3,net",
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 			},
 		},
 		{
@@ -219,6 +240,7 @@ var _ = Describe("Ethereum client arguments", func() {
 								ethereumv1alpha1.Web3API,
 								ethereumv1alpha1.NetworkAPI,
 							},
+							Logging: ethereumv1alpha1.ErrorLogs,
 						},
 					},
 				},
@@ -233,6 +255,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				"8599",
 				GethRPCHTTPAPI,
 				"eth,web3,net",
+				GethLogging,
+				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 			},
 		},
 		{
@@ -261,6 +285,7 @@ var _ = Describe("Ethereum client arguments", func() {
 								ethereumv1alpha1.Web3API,
 								ethereumv1alpha1.ETHAPI,
 							},
+							Logging: ethereumv1alpha1.WarnLogs,
 						},
 					},
 				},
@@ -286,6 +311,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				"8588",
 				BesuRPCWSAPI,
 				"web3,eth",
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 			},
 		},
 		{
@@ -315,6 +342,7 @@ var _ = Describe("Ethereum client arguments", func() {
 								ethereumv1alpha1.Web3API,
 								ethereumv1alpha1.ETHAPI,
 							},
+							Logging: ethereumv1alpha1.WarnLogs,
 						},
 					},
 				},
@@ -338,6 +366,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				"8588",
 				GethRPCWSAPI,
 				"web3,eth",
+				GethLogging,
+				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 			},
 		},
 		{
@@ -370,6 +400,7 @@ var _ = Describe("Ethereum client arguments", func() {
 							GraphQL:     true,
 							GraphQLHost: "127.0.0.2",
 							GraphQLPort: 8511,
+							Logging:     ethereumv1alpha1.InfoLogs,
 						},
 					},
 				},
@@ -403,6 +434,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				"8511",
 				BesuGraphQLHTTPCorsOrigins,
 				"cors.example.com",
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.InfoLogs),
 			},
 		},
 		{
@@ -436,6 +469,7 @@ var _ = Describe("Ethereum client arguments", func() {
 							GraphQL:     true,
 							GraphQLHost: "127.0.0.2",
 							GraphQLPort: 8511,
+							Logging:     ethereumv1alpha1.InfoLogs,
 						},
 					},
 				},
@@ -467,6 +501,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				"8511",
 				GethGraphQLHTTPCorsOrigins,
 				"cors.example.com",
+				GethLogging,
+				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.InfoLogs),
 			},
 		},
 		{
@@ -481,6 +517,7 @@ var _ = Describe("Ethereum client arguments", func() {
 							Name:     "node-1",
 							Miner:    true,
 							Coinbase: coinbase,
+							Logging:  ethereumv1alpha1.DebugLogs,
 						},
 					},
 				},
@@ -496,6 +533,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuMinerEnabled,
 				BesuMinerCoinbase,
 				string(coinbase),
+				BesuLogging,
+				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 			},
 		},
 		{
@@ -511,6 +550,7 @@ var _ = Describe("Ethereum client arguments", func() {
 							Client:   ethereumv1alpha1.GethClient,
 							Miner:    true,
 							Coinbase: coinbase,
+							Logging:  ethereumv1alpha1.DebugLogs,
 						},
 					},
 				},
@@ -525,6 +565,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethMinerEnabled,
 				GethMinerCoinbase,
 				string(coinbase),
+				GethLogging,
+				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 			},
 		},
 	}
