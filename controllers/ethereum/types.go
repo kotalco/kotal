@@ -1,14 +1,10 @@
 package controllers
 
 const (
-	// PathNodekey is the node key path
-	PathNodekey = "/mnt/bootnode"
 	// PathConfig is the genesis file path
 	PathConfig = "/mnt/config"
 	// PathBlockchainData is the blockchain data path
 	PathBlockchainData = "/mnt/data"
-	// PathImportedAccount is the imported account path
-	PathImportedAccount = "/mnt/import"
 	// PathSecrets is the secrets (private keys, password ... etc) path
 	PathSecrets = "/mnt/secrets"
 )
