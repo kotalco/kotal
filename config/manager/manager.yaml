@@ -23,12 +23,18 @@ spec:
         control-plane: controller-manager
     spec:
       containers:
-      - command:
+      - name: manager
+        image: controller:latest
+        # uncomment the following environment variables to use custom images
+        # env:
+        # - name: GETH_IMAGE
+        #   value: ethereum/client-go:latest
+        # - name: BESU_IMAGE
+        #   value: hyperledger/besu:latest
+        command:
         - /manager
         args:
         - --enable-leader-election
-        image: controller:latest
-        name: manager
         resources:
           limits:
             cpu: 100m

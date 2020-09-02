@@ -425,7 +425,7 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 		if network.Spec.Genesis != nil {
 			initGenesis := corev1.Container{
 				Name:         "init-genesis",
-				Image:        GethImage,
+				Image:        GethImage(),
 				Command:      []string{"/bin/sh"},
 				Args:         []string{fmt.Sprintf("%s/init-genesis.sh", PathConfig)},
 				VolumeMounts: volumeMounts,
@@ -435,7 +435,7 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 		if node.Import != nil {
 			importAccount := corev1.Container{
 				Name:         "import-account",
-				Image:        GethImage,
+				Image:        GethImage(),
 				Command:      []string{"/bin/sh"},
 				Args:         []string{fmt.Sprintf("%s/import-account.sh", PathConfig)},
 				VolumeMounts: volumeMounts,
@@ -443,11 +443,11 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 			initContainers = append(initContainers, importAccount)
 		}
 
-		nodeContainer.Image = GethImage
+		nodeContainer.Image = GethImage()
 		nodeContainer.Command = []string{"geth"}
 
 	} else if node.Client == ethereumv1alpha1.BesuClient {
-		nodeContainer.Image = BesuImage
+		nodeContainer.Image = BesuImage()
 		nodeContainer.Command = []string{"besu"}
 	}
 

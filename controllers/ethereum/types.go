@@ -1,5 +1,7 @@
 package controllers
 
+import "os"
+
 const (
 	// PathConfig is the genesis file path
 	PathConfig = "/mnt/config"
@@ -11,11 +13,34 @@ const (
 
 // Images
 const (
-	// BesuImage is hyperledger besu image
-	BesuImage = "hyperledger/besu:1.5.3"
-	// GethImage is go-ethereum image
-	GethImage = "ethereum/client-go:v1.9.20"
+	// DefaultBesuImage is hyperledger besu image
+	DefaultBesuImage = "hyperledger/besu:1.5.3"
+	// DefaultGethImage is go-ethereum image
+	DefaultGethImage = "ethereum/client-go:v1.9.20"
 )
+
+const (
+	// EnvBesuImage is the environment variable used for hyperledger besu image
+	EnvBesuImage = "BESU_IMAGE"
+	// EnvGethImage is the environment variable used for go ethereum image
+	EnvGethImage = "GETH_IMAGE"
+)
+
+// GethImage returns geth docker image
+func GethImage() string {
+	if os.Getenv(EnvGethImage) == "" {
+		return DefaultGethImage
+	}
+	return os.Getenv(EnvGethImage)
+}
+
+// BesuImage returns besu docker image
+func BesuImage() string {
+	if os.Getenv(EnvBesuImage) == "" {
+		return DefaultBesuImage
+	}
+	return os.Getenv(EnvBesuImage)
+}
 
 // Hyperledger Besu client arguments
 const (

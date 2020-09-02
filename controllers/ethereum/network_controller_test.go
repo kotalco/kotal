@@ -458,7 +458,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuNetwork,
 				"rinkeby",
@@ -545,8 +545,8 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
@@ -782,7 +782,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
@@ -882,12 +882,12 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/init-genesis.sh", PathConfig),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage()))
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
@@ -1133,7 +1133,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
@@ -1219,12 +1219,12 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/init-genesis.sh", PathConfig),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage()))
 			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
@@ -1477,7 +1477,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
@@ -1545,7 +1545,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuBootnodes,
