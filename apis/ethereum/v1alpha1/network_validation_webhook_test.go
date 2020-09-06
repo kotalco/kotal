@@ -757,6 +757,121 @@ var _ = Describe("Ethereum network validation", func() {
 				},
 			},
 		},
+		{
+			Title: "network #29",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Join: RinkebyNetwork,
+					Nodes: []Node{
+						{
+							Name:    "node-1",
+							Client:  GethClient,
+							Logging: FatalLogs,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].logging",
+					BadValue: FatalLogs,
+					Detail:   "not supported by client geth",
+				},
+			},
+		},
+		{
+			Title: "network #30",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Join: RinkebyNetwork,
+					Nodes: []Node{
+						{
+							Name:    "node-1",
+							Client:  GethClient,
+							Logging: TraceLogs,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].logging",
+					BadValue: TraceLogs,
+					Detail:   "not supported by client geth",
+				},
+			},
+		},
+		{
+			Title: "network #31",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Join: RinkebyNetwork,
+					Nodes: []Node{
+						{
+							Name:    "node-1",
+							Client:  ParityClient,
+							Logging: NoLogs,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].logging",
+					BadValue: NoLogs,
+					Detail:   "not supported by client parity",
+				},
+			},
+		},
+		{
+			Title: "network #32",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Join: RinkebyNetwork,
+					Nodes: []Node{
+						{
+							Name:    "node-1",
+							Client:  ParityClient,
+							Logging: FatalLogs,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].logging",
+					BadValue: FatalLogs,
+					Detail:   "not supported by client parity",
+				},
+			},
+		},
+		{
+			Title: "network #33",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Join: RinkebyNetwork,
+					Nodes: []Node{
+						{
+							Name:    "node-1",
+							Client:  ParityClient,
+							Logging: AllLogs,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].logging",
+					BadValue: AllLogs,
+					Detail:   "not supported by client parity",
+				},
+			},
+		},
 	}
 
 	// errorsToCauses converts field error list into array of status cause

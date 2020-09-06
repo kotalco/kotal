@@ -79,6 +79,18 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	// validate fatal and trace logging not supported by geth
+	if node.Client == GethClient && (node.Logging == FatalLogs || node.Logging == TraceLogs) {
+		err := field.Invalid(nodePath.Child("logging"), node.Logging, fmt.Sprintf("not supported by client %s", node.Client))
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	// validate off, fatal and all logs not supported by parity
+	if node.Client == ParityClient && (node.Logging == NoLogs || node.Logging == FatalLogs || node.Logging == AllLogs) {
+		err := field.Invalid(nodePath.Child("logging"), node.Logging, fmt.Sprintf("not supported by client %s", node.Client))
+		nodeErrors = append(nodeErrors, err)
+	}
+
 	cpu := resource.MustParse(node.Resources.CPU)
 	cpuLimit := resource.MustParse(node.Resources.CPULimit)
 

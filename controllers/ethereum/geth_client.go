@@ -15,12 +15,10 @@ type GethClient struct{}
 func (g *GethClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
 	levels := map[ethereumv1alpha1.VerbosityLevel]string{
 		ethereumv1alpha1.NoLogs:    "0",
-		ethereumv1alpha1.FatalLogs: "1",
 		ethereumv1alpha1.ErrorLogs: "1",
 		ethereumv1alpha1.WarnLogs:  "2",
 		ethereumv1alpha1.InfoLogs:  "3",
 		ethereumv1alpha1.DebugLogs: "4",
-		ethereumv1alpha1.TraceLogs: "5",
 		ethereumv1alpha1.AllLogs:   "5",
 	}
 
