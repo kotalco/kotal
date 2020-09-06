@@ -252,6 +252,7 @@ spec:
                     enum:
                     - besu
                     - geth
+                    - parity
                     type: string
                   coinbase:
                     description: Coinbase is the account to which mining rewards are
