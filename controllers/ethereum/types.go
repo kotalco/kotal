@@ -17,6 +17,8 @@ const (
 	DefaultBesuImage = "hyperledger/besu:1.5.3"
 	// DefaultGethImage is go-ethereum image
 	DefaultGethImage = "ethereum/client-go:v1.9.20"
+	// DefaultParityImage is parity image
+	DefaultParityImage = "openethereum/openethereum:v3.0.1"
 )
 
 const (
@@ -156,4 +158,47 @@ const (
 	GethUnlock = "--unlock"
 	// GethPassword is the argument used for locking imported ethereum address
 	GethPassword = "--password"
+)
+
+// Parity client arguments
+const (
+	// ParityLogging is the argument used for logging verbosity level
+	ParityLogging = "--logging"
+	// ParityNetworkID is the argument used for network id
+	ParityNetworkID = "--network-id"
+	// ParityDataDir is the argument used for data path
+	ParityDataDir = "--base-path"
+	// ParityNetwork is the argument used for selecting network
+	ParityNetwork = "--chain"
+	// ParityP2PPort is the argument used for p2p port
+	ParityP2PPort = "--port"
+	// ParityBootnodes is the argument used for bootnodes
+	ParityBootnodes = "--bootnodes"
+	// ParitySyncMode is the argument used for sync mode
+	ParitySyncMode = "--pruning"
+	// ParityMinerCoinbase is the argument used for setting coinbase account
+	ParityMinerCoinbase = "--author"
+
+	// ParityRPCHTTPCorsOrigins is the argument used for setting rpc HTTP cors origins
+	ParityRPCHTTPCorsOrigins = "--jsonrpc-cors"
+	// ParityRPCHTTPPort is the argument used for RPC HTTP port
+	ParityRPCHTTPPort = "--jsonrpc-port"
+	// ParityRPCHTTPHost is the argument used for RPC HTTP Host
+	ParityRPCHTTPHost = "--jsonrpc-interface"
+	// ParityRPCHTTPAPI is the argument used for RPC HTTP APIs
+	ParityRPCHTTPAPI = "--jsonrpc-apis"
+	// ParityRPCHostWhitelist is the argument used for whitelisting hosts
+	ParityRPCHostWhitelist = "--jsonrpc-hosts"
+
+	// ParityRPCWSPort is the argument used for RPC WS port
+	ParityRPCWSPort = "--ws-port"
+	// ParityRPCWSHost is the argument used for RPC WS host
+	ParityRPCWSHost = "--ws-interface"
+	// ParityRPCWSAPI is the argument used for RPC WS APIs
+	ParityRPCWSAPI = "--ws-apis"
+
+	// ParityUnlock is the argument used for unlocking imported ethereum account
+	ParityUnlock = "--unlock"
+	// ParityPassword is the argument used for locking imported ethereum address
+	ParityPassword = "--password"
 )

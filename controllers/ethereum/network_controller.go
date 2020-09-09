@@ -444,11 +444,10 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 		}
 
 		nodeContainer.Image = GethImage()
-		nodeContainer.Command = []string{"geth"}
-
 	} else if node.Client == ethereumv1alpha1.BesuClient {
 		nodeContainer.Image = BesuImage()
-		nodeContainer.Command = []string{"besu"}
+	} else if node.Client == ethereumv1alpha1.ParityClient {
+		nodeContainer.Image = DefaultParityImage
 	}
 
 	dep.ObjectMeta.Labels = labels
