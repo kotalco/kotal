@@ -151,7 +151,9 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 }
 
 // GetGenesisFile returns genesis config parameter
-func (g *GethClient) GetGenesisFile(genesis *ethereumv1alpha1.Genesis, consensus ethereumv1alpha1.ConsensusAlgorithm) (content string, err error) {
+func (g *GethClient) GetGenesisFile(network *ethereumv1alpha1.Network) (content string, err error) {
+	genesis := network.Spec.Genesis
+	consensus := network.Spec.Consensus
 	mixHash := genesis.MixHash
 	nonce := genesis.Nonce
 	difficulty := genesis.Difficulty
@@ -233,7 +235,7 @@ func (g *GethClient) GetGenesisFile(genesis *ethereumv1alpha1.Genesis, consensus
 	result["mixHash"] = mixHash
 	result["extraData"] = extraData
 
-	alloc := map[ethereumv1alpha1.EthereumAddress]interface{}{}
+	alloc := genesisAccounts(false)
 	for _, account := range genesis.Accounts {
 		m := map[string]interface{}{
 			"balance": account.Balance,
@@ -247,7 +249,7 @@ func (g *GethClient) GetGenesisFile(genesis *ethereumv1alpha1.Genesis, consensus
 			m["storage"] = account.Storage
 		}
 
-		alloc[account.Address] = m
+		alloc[string(account.Address)] = m
 	}
 
 	result["alloc"] = alloc

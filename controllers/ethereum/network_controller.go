@@ -126,7 +126,7 @@ func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, 
 			return err
 		}
 		// create client specific genesis configuration
-		if genesis, err = client.GetGenesisFile(network.Spec.Genesis, network.Spec.Consensus); err != nil {
+		if genesis, err = client.GetGenesisFile(network); err != nil {
 			return err
 		}
 		// create init genesis script if client is geth
