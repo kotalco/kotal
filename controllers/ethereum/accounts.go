@@ -63,6 +63,7 @@ func ecRecover() map[string]interface{} {
 	}
 }
 
+// sha256 is sha256 function
 func sha256() map[string]interface{} {
 	return map[string]interface{}{
 		"name": "sha256",
@@ -75,6 +76,7 @@ func sha256() map[string]interface{} {
 	}
 }
 
+// ripemd160 is ripemd160 hash function
 func ripemd160() map[string]interface{} {
 	return map[string]interface{}{
 		"name": "ripemd160",
@@ -87,6 +89,7 @@ func ripemd160() map[string]interface{} {
 	}
 }
 
+// identity function
 func identity() map[string]interface{} {
 	return map[string]interface{}{
 		"name": "identity",
@@ -99,6 +102,7 @@ func identity() map[string]interface{} {
 	}
 }
 
+// modexp is modular exponentiaiton function
 func modexp() map[string]interface{} {
 	return map[string]interface{}{
 		"name":        "modexp",
@@ -111,6 +115,7 @@ func modexp() map[string]interface{} {
 	}
 }
 
+// altBn128Add is elliptic curve add function
 func altBn128Add() map[string]interface{} {
 	return map[string]interface{}{
 		"name": "alt_bn128_add",
@@ -134,6 +139,7 @@ func altBn128Add() map[string]interface{} {
 	}
 }
 
+// altBn128Mul is elliptic function Multiplication funciton
 func altBn128Mul() map[string]interface{} {
 	return map[string]interface{}{
 		"name": "alt_bn128_mul",
@@ -157,6 +163,7 @@ func altBn128Mul() map[string]interface{} {
 	}
 }
 
+// altBn128Pairing is elliptic curve pairing function
 func altBn128Pairing() map[string]interface{} {
 	return map[string]interface{}{
 		"name": "alt_bn128_pairing",
@@ -182,6 +189,7 @@ func altBn128Pairing() map[string]interface{} {
 	}
 }
 
+// blake2 is blake hash function
 func blake2() map[string]interface{} {
 	return map[string]interface{}{
 		"name":        "blake2_f",
