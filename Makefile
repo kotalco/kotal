@@ -61,11 +61,20 @@ generate: controller-gen
 docker-build: test
 	docker build . -t ${IMG}
 
+# load image into kind
 load:
 	kind load docker-image ${IMG}
 
 # Build the docker image
 kind: docker-build load deploy
+
+# load image into minikube registry
+minikube-load:
+	minikube cache add ${IMG}
+	minikube cache reload
+
+# Build the docker image
+minikube: docker-build minikube-load deploy
 
 
 # Push the docker image
