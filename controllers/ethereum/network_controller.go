@@ -138,11 +138,11 @@ func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, 
 		}
 	}
 
-	// geth only
+	// geth and parity
 	// create import account script
 	if node.Import != nil {
 		var err error
-		importAccountScript, err = generateImportAccountScript()
+		importAccountScript, err = generateImportAccountScript(node.Client)
 		if err != nil {
 			return err
 		}
@@ -447,6 +447,14 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 	} else if node.Client == ethereumv1alpha1.BesuClient {
 		nodeContainer.Image = BesuImage()
 	} else if node.Client == ethereumv1alpha1.ParityClient {
+		importAccount := corev1.Container{
+			Name:         "import-account",
+			Image:        DefaultParityImage,
+			Command:      []string{"/bin/sh"},
+			Args:         []string{fmt.Sprintf("%s/import-account.sh", PathConfig)},
+			VolumeMounts: volumeMounts,
+		}
+		initContainers = append(initContainers, importAccount)
 		nodeContainer.Image = DefaultParityImage
 	}
 
@@ -494,7 +502,7 @@ func (r *NetworkReconciler) reconcileNodeDeployment(node *ethereumv1alpha1.Node,
 	return err
 }
 
-func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) {
+func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
 	secret.ObjectMeta.Labels = node.Labels(network.Name)
 	data := map[string]string{}
 
@@ -503,11 +511,23 @@ func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereum
 	}
 
 	if node.Import != nil {
+		if node.Client == ethereumv1alpha1.ParityClient {
+			account, err := KeyStoreFromPrivatekey(string(node.Import.PrivateKey)[2:], node.Import.Password)
+			if err != nil {
+				return err
+			}
+			secret.Data = map[string][]byte{
+				"account": account,
+			}
+		}
+
 		data["account.key"] = string(node.Import.PrivateKey)[2:]
 		data["account.password"] = node.Import.Password
 	}
 
 	secret.StringData = data
+
+	return nil
 }
 
 // reconcileNodeSecret creates node secret if it doesn't exist, update it if it exists
@@ -534,14 +554,8 @@ func (r *NetworkReconciler) reconcileNodeSecret(node *ethereumv1alpha1.Node, net
 			return err
 		}
 
-		r.specNodeSecret(secret, node, network)
-
-		return nil
+		return r.specNodeSecret(secret, node, network)
 	})
-
-	if err != nil {
-		return
-	}
 
 	return
 }

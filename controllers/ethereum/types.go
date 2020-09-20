@@ -178,6 +178,8 @@ const (
 	ParitySyncMode = "--pruning"
 	// ParityMinerCoinbase is the argument used for setting coinbase account
 	ParityMinerCoinbase = "--author"
+	// ParityEngineSigner is the argument used for engine singer
+	ParityEngineSigner = "--engine-signer"
 
 	// ParityRPCHTTPCorsOrigins is the argument used for setting rpc HTTP cors origins
 	ParityRPCHTTPCorsOrigins = "--jsonrpc-cors"

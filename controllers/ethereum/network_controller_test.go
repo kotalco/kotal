@@ -43,7 +43,7 @@ var _ = Describe("Ethereum network controller", func() {
 		var err error
 		initGenesis, err = generateInitGenesisScript()
 		Expect(err).To(BeNil())
-		importAccount, err = generateImportAccountScript()
+		importAccount, err = generateImportAccountScript(ethereumv1alpha1.GethClient)
 		Expect(err).To(BeNil())
 	})
 

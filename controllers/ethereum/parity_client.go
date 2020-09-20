@@ -3,9 +3,13 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/big"
+	"os"
 	"strings"
 
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/crypto"
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 )
 
@@ -68,6 +72,9 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1a
 		appendArg(ParityMinerCoinbase, string(node.Coinbase))
 		appendArg(ParityUnlock, string(node.Coinbase))
 		appendArg(ParityPassword, fmt.Sprintf("%s/account.password", PathSecrets))
+		if network.Spec.Consensus == ethereumv1alpha1.ProofOfAuthority {
+			appendArg(ParityEngineSigner, string(node.Coinbase))
+		}
 	}
 
 	if node.RPCPort != 0 {
@@ -240,6 +247,30 @@ func (p *ParityClient) GetGenesisFile(network *ethereumv1alpha1.Network) (conten
 	}
 
 	content = string(data)
+
+	return
+}
+
+// KeyStoreFromPrivatekey generates key store from private key (hex without 0x)
+func KeyStoreFromPrivatekey(key, password string) (content []byte, err error) {
+	dir, err := ioutil.TempDir(os.TempDir(), "tmp")
+	if err != nil {
+		return
+	}
+	defer os.RemoveAll(dir)
+
+	ks := keystore.NewKeyStore(dir, keystore.StandardScryptN, keystore.StandardScryptP)
+	privateKey, err := crypto.HexToECDSA(key)
+	if err != nil {
+		return
+	}
+
+	acc, err := ks.ImportECDSA(privateKey, password)
+	if err != nil {
+		return
+	}
+
+	content, err = ks.Export(acc, password, password)
 
 	return
 }
