@@ -499,7 +499,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.nodes[0].client",
 					BadValue: "besu",
-					Detail:   "must be geth if import is provided",
+					Detail:   "must be geth or parity if import is provided",
 				},
 			},
 		},

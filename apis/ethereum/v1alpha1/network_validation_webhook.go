@@ -122,8 +122,8 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 	}
 
 	// validate only geth client can import accounts
-	if node.Client != GethClient && node.Import != nil {
-		err := field.Invalid(nodePath.Child("client"), node.Client, "must be geth if import is provided")
+	if node.Client == BesuClient && node.Import != nil {
+		err := field.Invalid(nodePath.Child("client"), node.Client, "must be geth or parity if import is provided")
 		nodeErrors = append(nodeErrors, err)
 	}
 
