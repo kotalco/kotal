@@ -166,6 +166,8 @@ const (
 	ParityLogging = "--logging"
 	// ParityNetworkID is the argument used for network id
 	ParityNetworkID = "--network-id"
+	// ParityNodeKey is the argument used for node key
+	ParityNodeKey = "--node-key"
 	// ParityDataDir is the argument used for data path
 	ParityDataDir = "--base-path"
 	// ParityNetwork is the argument used for selecting network

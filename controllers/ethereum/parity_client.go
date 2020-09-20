@@ -45,6 +45,10 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1a
 		appendArg(ParityNetworkID, fmt.Sprintf("%d", network.Spec.ID))
 	}
 
+	if node.WithNodekey() {
+		appendArg(ParityNodeKey, fmt.Sprintf("%s/nodekey", PathSecrets))
+	}
+
 	appendArg(ParityDataDir, PathBlockchainData)
 
 	if network.Spec.Genesis == nil {
