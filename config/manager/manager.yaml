@@ -27,6 +27,8 @@ spec:
         image: controller:latest
         # uncomment the following environment variables to use custom images
         # env:
+        # - name: PARITY_IMAGE
+        #   value: openethereum/openethereum:latest
         # - name: GETH_IMAGE
         #   value: ethereum/client-go:latest
         # - name: BESU_IMAGE

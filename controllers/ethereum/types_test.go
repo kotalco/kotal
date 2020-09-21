@@ -36,3 +36,19 @@ func TestGethImage(t *testing.T) {
 		t.Errorf("Expecting besu image to be %s got %s", expected, got)
 	}
 }
+
+func TestParityImage(t *testing.T) {
+	// without environment variables
+	expected := DefaultParityImage
+	got := ParityImage()
+	if got != expected {
+		t.Errorf("Expecting besu image to be %s got %s", expected, got)
+	}
+	// with environment variables
+	expected = "kotalco/parity:v2.0"
+	os.Setenv(EnvParityImage, expected)
+	got = ParityImage()
+	if got != expected {
+		t.Errorf("Expecting besu image to be %s got %s", expected, got)
+	}
+}

@@ -449,13 +449,13 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 	} else if node.Client == ethereumv1alpha1.ParityClient {
 		importAccount := corev1.Container{
 			Name:         "import-account",
-			Image:        DefaultParityImage,
+			Image:        ParityImage(),
 			Command:      []string{"/bin/sh"},
 			Args:         []string{fmt.Sprintf("%s/import-account.sh", PathConfig)},
 			VolumeMounts: volumeMounts,
 		}
 		initContainers = append(initContainers, importAccount)
-		nodeContainer.Image = DefaultParityImage
+		nodeContainer.Image = ParityImage()
 	}
 
 	dep.ObjectMeta.Labels = labels

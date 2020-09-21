@@ -26,6 +26,8 @@ const (
 	EnvBesuImage = "BESU_IMAGE"
 	// EnvGethImage is the environment variable used for go ethereum image
 	EnvGethImage = "GETH_IMAGE"
+	// EnvParityImage is the environment variable used for parity (OpenEthereum)
+	EnvParityImage = "PARITY_IMAGE"
 )
 
 // GethImage returns geth docker image
@@ -42,6 +44,14 @@ func BesuImage() string {
 		return DefaultBesuImage
 	}
 	return os.Getenv(EnvBesuImage)
+}
+
+// ParityImage returns parity docker image
+func ParityImage() string {
+	if os.Getenv(EnvParityImage) == "" {
+		return DefaultParityImage
+	}
+	return os.Getenv(EnvParityImage)
 }
 
 // Hyperledger Besu client arguments
