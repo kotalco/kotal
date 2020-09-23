@@ -143,7 +143,7 @@ func (p *ParityClient) NormalizeNonce(data string) string {
 func (p *ParityClient) GetGenesisFile(network *ethereumv1alpha1.Network) (content string, err error) {
 	genesis := network.Spec.Genesis
 	consensus := network.Spec.Consensus
-	extraData := "0x0"
+	extraData := "0x00"
 	var engineConfig map[string]interface{}
 
 	// clique PoA settings
@@ -159,8 +159,47 @@ func (p *ParityClient) GetGenesisFile(network *ethereumv1alpha1.Network) (conten
 		}
 	}
 
+	hex := func(n uint) string {
+		return fmt.Sprintf("%#x", n)
+	}
+
+	tingerineWhistleBlock := hex(genesis.Forks.EIP150)
+	spuriousDragonBlock := hex(genesis.Forks.EIP155)
+	homesteadBlock := hex(genesis.Forks.Homestead)
+	byzantiumBlock := hex(genesis.Forks.Byzantium)
+	constantinopleBlock := hex(genesis.Forks.Constantinople)
+	istanbulBlock := hex(genesis.Forks.Istanbul)
+	muirGlacierBlock := hex(genesis.Forks.MuirGlacier)
+
 	// ethash PoW settings
 	if consensus == ethereumv1alpha1.ProofOfWork {
+		params := map[string]interface{}{
+			"minimumDifficulty":      "0x020000",
+			"difficultyBoundDivisor": "0x0800",
+			"durationLimit":          "0x0d",
+			"blockReward": map[string]string{
+				tingerineWhistleBlock: "0x4563918244f40000",
+				byzantiumBlock:        "0x29a2241af62c0000",
+				constantinopleBlock:   "0x1bc16d674ec80000",
+			},
+			"homesteadTransition": homesteadBlock,
+			"eip100bTransition":   byzantiumBlock,
+			"difficultyBombDelays": map[string]string{
+				byzantiumBlock:      "0x2dc6c0",
+				constantinopleBlock: "0x1e8480",
+				muirGlacierBlock:    "0x3d0900",
+			},
+		}
+
+		if genesis.Forks.DAO != nil {
+			params["daoHardforkTransition"] = hex(*genesis.Forks.DAO)
+		}
+
+		engineConfig = map[string]interface{}{
+			"Ethash": map[string]interface{}{
+				"params": params,
+			},
+		}
 	}
 
 	genesisConfig := map[string]interface{}{
@@ -178,21 +217,16 @@ func (p *ParityClient) GetGenesisFile(network *ethereumv1alpha1.Network) (conten
 		"extraData":  extraData,
 	}
 
-	spuriousDragonBlock := fmt.Sprintf("%#x", genesis.Forks.EIP155)
-	byzantiumBlock := fmt.Sprintf("%#x", genesis.Forks.Byzantium)
-	constantinopleBlock := fmt.Sprintf("%#x", genesis.Forks.Constantinople)
-	istanbulBlock := fmt.Sprintf("%#x", genesis.Forks.Istanbul)
-
 	paramsConfig := map[string]interface{}{
 		// other non fork parameters
-		"chainID":              fmt.Sprintf("%#x", genesis.ChainID),
-		"accountStartNonce":    "0x0",
-		"gasLimitBoundDivisor": "0x400",
+		"chainID":              hex(genesis.ChainID),
+		"accountStartNonce":    "0x00",
+		"gasLimitBoundDivisor": "0x0400",
 		"maximumExtraDataSize": "0xffff",
 		"minGasLimit":          "0x1388",
-		"networkID":            fmt.Sprintf("%#x", network.Spec.ID),
+		"networkID":            hex(network.Spec.ID),
 		// Tingerine Whistle
-		"eip150Transition": fmt.Sprintf("%#x", genesis.Forks.EIP150),
+		"eip150Transition": tingerineWhistleBlock,
 		// Spurious Dragon
 		"eip155Transition":      spuriousDragonBlock,
 		"eip160Transition":      spuriousDragonBlock,

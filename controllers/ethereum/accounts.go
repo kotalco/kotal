@@ -10,8 +10,10 @@ func genesisAccounts(withBuiltins bool) map[string]interface{} {
 	for i := 0; i < 256; i++ {
 		address := fmt.Sprintf("%#040x", i)
 		var fn map[string]interface{}
-		if withBuiltins && i >= 0 && i <= 9 {
-			fn = builtinFunction(i)
+		if i >= 1 && i <= 9 {
+			if withBuiltins {
+				fn = builtinFunction(i)
+			}
 			accounts[address] = map[string]interface{}{
 				"balance": "0x1",
 				"builtin": fn,

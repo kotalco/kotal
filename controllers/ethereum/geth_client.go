@@ -156,11 +156,11 @@ func (g *GethClient) GetGenesisFile(network *ethereumv1alpha1.Network) (content 
 	consensus := network.Spec.Consensus
 	mixHash := genesis.MixHash
 	nonce := genesis.Nonce
+	extraData := "0x00"
 	difficulty := genesis.Difficulty
 	result := map[string]interface{}{}
 
 	var consensusConfig map[string]uint
-	var extraData string
 	var engine string
 
 	if consensus == ethereumv1alpha1.ProofOfWork {
