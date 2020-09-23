@@ -183,28 +183,6 @@ func (g *GethClient) GetGenesisFile(network *ethereumv1alpha1.Network) (content 
 		extraData = createExtraDataFromSigners(genesis.Clique.Signers)
 	}
 
-	// clique ibft2 settings
-	if consensus == ethereumv1alpha1.IstanbulBFT {
-
-		consensusConfig = map[string]uint{
-			"blockperiodseconds":        genesis.IBFT2.BlockPeriod,
-			"epochlength":               genesis.IBFT2.EpochLength,
-			"requesttimeoutseconds":     genesis.IBFT2.RequestTimeout,
-			"messageQueueLimit":         genesis.IBFT2.MessageQueueLimit,
-			"duplicateMessageLimit":     genesis.IBFT2.DuplicateMessageLimit,
-			"futureMessagesLimit":       genesis.IBFT2.FutureMessagesLimit,
-			"futureMessagesMaxDistance": genesis.IBFT2.FutureMessagesMaxDistance,
-		}
-		engine = "ibft2"
-		mixHash = "0x63746963616c2062797a616e74696e65206661756c7420746f6c6572616e6365"
-		nonce = "0x0"
-		difficulty = "0x1"
-		extraData, err = createExtraDataFromValidators(genesis.IBFT2.Validators)
-		if err != nil {
-			return
-		}
-	}
-
 	config := map[string]interface{}{
 		"chainId":             genesis.ChainID,
 		"homesteadBlock":      genesis.Forks.Homestead,
