@@ -447,14 +447,16 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 	} else if node.Client == ethereumv1alpha1.BesuClient {
 		nodeContainer.Image = BesuImage()
 	} else if node.Client == ethereumv1alpha1.ParityClient {
-		importAccount := corev1.Container{
-			Name:         "import-account",
-			Image:        ParityImage(),
-			Command:      []string{"/bin/sh"},
-			Args:         []string{fmt.Sprintf("%s/import-account.sh", PathConfig)},
-			VolumeMounts: volumeMounts,
+		if node.Import != nil {
+			importAccount := corev1.Container{
+				Name:         "import-account",
+				Image:        ParityImage(),
+				Command:      []string{"/bin/sh"},
+				Args:         []string{fmt.Sprintf("%s/import-account.sh", PathConfig)},
+				VolumeMounts: volumeMounts,
+			}
+			initContainers = append(initContainers, importAccount)
 		}
-		initContainers = append(initContainers, importAccount)
 		nodeContainer.Image = ParityImage()
 	}
 
