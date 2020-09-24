@@ -968,6 +968,34 @@ var _ = Describe("Ethereum network validation", func() {
 				},
 			},
 		},
+		{
+			Title: "network #37",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: ProofOfWork,
+					ID:        networkID,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
+					Nodes: []Node{
+						{
+							Name:     "node-1",
+							Client:   ParityClient,
+							Miner:    true,
+							Coinbase: coinbase,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].client",
+					BadValue: ParityClient,
+					Detail:   "client doesn't support mining",
+				},
+			},
+		},
 	}
 
 	// errorsToCauses converts field error list into array of status cause

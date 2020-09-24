@@ -158,6 +158,12 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	// validate parity doesn't support PoW mining
+	if node.Client == ParityClient && r.Spec.Consensus == ProofOfWork && node.Miner {
+		err := field.Invalid(nodePath.Child("client"), node.Client, "client doesn't support mining")
+		nodeErrors = append(nodeErrors, err)
+	}
+
 	// validate imported account private key is valid and coinbase account is derived from it
 	// TODO: cache private address -> address results
 	if node.Client != BesuClient && node.Coinbase != "" && node.Import != nil {
