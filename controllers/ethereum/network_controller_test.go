@@ -32,18 +32,22 @@ var _ = Describe("Ethereum network controller", func() {
 	)
 
 	var (
-		useExistingCluster = os.Getenv("USE_EXISTING_CLUSTER") == "true"
-		besuClient, _      = NewEthereumClient(ethereumv1alpha1.BesuClient)
-		gethClient, _      = NewEthereumClient(ethereumv1alpha1.GethClient)
-		initGenesis        string
-		importAccount      string
+		useExistingCluster  = os.Getenv("USE_EXISTING_CLUSTER") == "true"
+		besuClient, _       = NewEthereumClient(ethereumv1alpha1.BesuClient)
+		gethClient, _       = NewEthereumClient(ethereumv1alpha1.GethClient)
+		parityClient, _     = NewEthereumClient(ethereumv1alpha1.ParityClient)
+		initGenesis         string
+		importGethAccount   string
+		importParityAccount string
 	)
 
 	It("Should generate init container scripts", func() {
 		var err error
 		initGenesis, err = generateInitGenesisScript()
 		Expect(err).To(BeNil())
-		importAccount, err = generateImportAccountScript(ethereumv1alpha1.GethClient)
+		importGethAccount, err = generateImportAccountScript(ethereumv1alpha1.GethClient)
+		Expect(err).To(BeNil())
+		importParityAccount, err = generateImportAccountScript(ethereumv1alpha1.ParityClient)
 		Expect(err).To(BeNil())
 	})
 
@@ -107,6 +111,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-2"),
 			Namespace: key.Namespace,
 		}
+		node3Key := types.NamespacedName{
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-3"),
+			Namespace: key.Namespace,
+		}
 		cpu := "250m"
 		cpuLimit := "500m"
 		memory := "1Gi"
@@ -158,6 +166,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuNetwork,
 				"mainnet",
@@ -198,7 +207,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should update the network", func() {
+		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			newNode := ethereumv1alpha1.Node{
@@ -239,6 +248,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeDep := &appsv1.Deployment{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
 			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
 			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 				GethBootnodes,
@@ -314,6 +324,126 @@ var _ = Describe("Ethereum network controller", func() {
 				Eventually(func() error {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
+				}, timeout, interval).ShouldNot(Succeed())
+			})
+		}
+
+		It("Should update the network by adding node-3", func() {
+			fetched := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+			newNode := ethereumv1alpha1.Node{
+				Name:    "node-3",
+				RPC:     true,
+				Client:  ethereumv1alpha1.ParityClient,
+				RPCPort: 8547,
+				Logging: ethereumv1alpha1.ErrorLogs,
+				Resources: &ethereumv1alpha1.NodeResources{
+					CPU:         cpu,
+					CPULimit:    cpuLimit,
+					Memory:      memory,
+					MemoryLimit: memoryLimit,
+				},
+			}
+			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
+			if !useExistingCluster {
+				fetched.Default()
+			}
+			Expect(k8sClient.Update(context.Background(), fetched)).To(Succeed())
+			fetchedUpdated := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetchedUpdated)).To(Succeed())
+			Expect(fetchedUpdated.Spec).To(Equal(fetched.Spec))
+			time.Sleep(sleepTime)
+		})
+
+		if useExistingCluster {
+			It("Should schedule node-1 and node-3 on different nodes", func() {
+				pods := &v1.PodList{}
+				matchingLabels := client.MatchingLabels{"name": "node"}
+				inNamespace := client.InNamespace(ns.Name)
+				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
+				Expect(pods.Items[0].Spec.NodeName).NotTo(Equal(pods.Items[1].Spec.NodeName))
+			})
+		}
+
+		It("Should create node-3 deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				ParityDataDir,
+				ParityBootnodes,
+				ParityRPCHTTPPort,
+				"8547",
+				ParitySyncMode,
+				string(ethereumv1alpha1.FastSynchronization),
+				ParityLogging,
+				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
+			}))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).ToNot(ContainElements([]string{
+				ethereumv1alpha1.MainNetwork,
+			}))
+		})
+
+		It("Should allocate correct resources to node-3 deployment", func() {
+			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpu),
+					v1.ResourceMemory: resource.MustParse(memory),
+				},
+				Limits: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpuLimit),
+					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+		})
+
+		It("Should create node-3 data persistent volume", func() {
+			nodePVC := &v1.PersistentVolumeClaim{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultMainNetworkFastNodeStorageRequest),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
+		})
+
+		It("Should not create privatekey secret for node-3 (without nodekey and not importing account)", func() {
+			nodeSecret := &v1.Secret{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSecret)).ToNot(Succeed())
+		})
+
+		It("Should not create bootnode service (not a bootnode)", func() {
+			nodeSvc := &v1.Service{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
+		})
+
+		It("Should update the network by removing node-3", func() {
+			fetched := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+			fetched.Spec.Nodes = fetched.Spec.Nodes[:1]
+			Expect(k8sClient.Update(context.Background(), fetched)).To(Succeed())
+			fetchedUpdated := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetchedUpdated)).To(Succeed())
+			Expect(fetchedUpdated.Spec).To(Equal(fetched.Spec))
+			time.Sleep(sleepTime)
+		})
+
+		if useExistingCluster {
+			It("Should delete node-3 deployment", func() {
+				nodeDep := &appsv1.Deployment{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).ToNot(Succeed())
+			})
+
+			It("Should delete node-2 data persistent volume", func() {
+				Eventually(func() error {
+					nodePVC := &v1.PersistentVolumeClaim{}
+					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 		}
@@ -405,6 +535,10 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 		node2Key := types.NamespacedName{
 			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-2"),
+			Namespace: key.Namespace,
+		}
+		node3Key := types.NamespacedName{
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-3"),
 			Namespace: key.Namespace,
 		}
 		cpu := "1"
@@ -499,7 +633,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should update the network", func() {
+		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			newNode := ethereumv1alpha1.Node{
@@ -600,13 +734,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should create node-2 imported account secret", func() {
-			secret := &v1.Secret{}
-			Expect(k8sClient.Get(context.Background(), node2Key, secret)).To(Succeed())
-			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
-			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
-		})
-
 		It("Should not create bootnode service (not a bootnode)", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
@@ -638,6 +765,141 @@ var _ = Describe("Ethereum network controller", func() {
 				Eventually(func() error {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
+				}, timeout, interval).ShouldNot(Succeed())
+			})
+		}
+
+		It("Should update the network by adding node-3", func() {
+			fetched := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+			newNode := ethereumv1alpha1.Node{
+				Name:     "node-3",
+				Client:   ethereumv1alpha1.ParityClient,
+				Miner:    true,
+				Coinbase: accountAddress,
+				SyncMode: ethereumv1alpha1.FullSynchronization,
+				Import: &ethereumv1alpha1.ImportedAccount{
+					PrivateKey: accountKey,
+					Password:   accountPassword,
+				},
+				Resources: &ethereumv1alpha1.NodeResources{
+					CPU:         cpu,
+					CPULimit:    cpuLimit,
+					Memory:      memory,
+					MemoryLimit: memoryLimit,
+				},
+				Logging: ethereumv1alpha1.WarnLogs,
+			}
+			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
+			if !useExistingCluster {
+				fetched.Default()
+			}
+			Expect(k8sClient.Update(context.Background(), fetched)).To(Succeed())
+			fetchedUpdated := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetchedUpdated)).To(Succeed())
+			Expect(fetchedUpdated.Spec).To(Equal(fetched.Spec))
+			time.Sleep(sleepTime)
+		})
+
+		if useExistingCluster {
+			It("Should schedule node-1 and node-3 on different nodes", func() {
+				pods := &v1.PodList{}
+				matchingLabels := client.MatchingLabels{"name": "node"}
+				inNamespace := client.InNamespace(ns.Name)
+				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
+				Expect(pods.Items[0].Spec.NodeName).NotTo(Equal(pods.Items[1].Spec.NodeName))
+			})
+		}
+
+		It("Should create node-3 deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+				fmt.Sprintf("%s/import-account.sh", PathConfig),
+			}))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				"rinkeby",
+				ParityDataDir,
+				ParityBootnodes,
+				ParityMinerCoinbase,
+				ParityUnlock,
+				ParityPassword,
+				ParitySyncMode,
+				"archive",
+				ParityLogging,
+				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+			}))
+		})
+
+		It("Should allocate correct resources to node-3 deployment", func() {
+			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpu),
+					v1.ResourceMemory: resource.MustParse(memory),
+				},
+				Limits: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpuLimit),
+					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+		})
+
+		It("Should create node-3 imported account secret", func() {
+			secret := &v1.Secret{}
+			Expect(k8sClient.Get(context.Background(), node3Key, secret)).To(Succeed())
+			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
+			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
+		})
+
+		It("Should create node-3 data persistent volume", func() {
+			nodePVC := &v1.PersistentVolumeClaim{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultTestNetworkStorageRequest),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
+		})
+
+		It("Should not create bootnode service (not a bootnode)", func() {
+			nodeSvc := &v1.Service{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
+		})
+
+		It("Should update the network by removing node-3", func() {
+			fetched := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+			fetched.Spec.Nodes = fetched.Spec.Nodes[:1]
+			Expect(k8sClient.Update(context.Background(), fetched)).To(Succeed())
+			fetchedUpdated := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetchedUpdated)).To(Succeed())
+			Expect(fetchedUpdated.Spec).To(Equal(fetched.Spec))
+			time.Sleep(sleepTime)
+		})
+
+		if useExistingCluster {
+			It("Should delete node-3 deployment", func() {
+				nodeDep := &appsv1.Deployment{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).ToNot(Succeed())
+			})
+
+			It("Should delete node-3 imported account secret", func() {
+				secret := &v1.Secret{}
+				Expect(k8sClient.Get(context.Background(), node3Key, secret)).ToNot(Succeed())
+			})
+
+			It("Should delete node-3 data persistent volume", func() {
+				Eventually(func() error {
+					nodePVC := &v1.PersistentVolumeClaim{}
+					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 		}
@@ -738,6 +1000,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-2"),
 			Namespace: key.Namespace,
 		}
+		node3Key := types.NamespacedName{
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-3"),
+			Namespace: key.Namespace,
+		}
 
 		cpu := "500m"
 		cpuLimit := "750m"
@@ -832,7 +1098,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should update the network", func() {
+		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			newNode := ethereumv1alpha1.Node{
@@ -875,7 +1141,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
 			Expect(genesisConfig.Data["init-genesis.sh"]).To(Equal(initGenesis))
-			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importAccount))
+			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importGethAccount))
 		})
 
 		It("Should create node-2 deployment with correct arguments", func() {
@@ -967,6 +1233,143 @@ var _ = Describe("Ethereum network controller", func() {
 				Eventually(func() error {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
+				}, timeout, interval).ShouldNot(Succeed())
+			})
+		}
+
+		It("Should update the network by adding node-3", func() {
+			fetched := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+			newNode := ethereumv1alpha1.Node{
+				Name:     "node-3",
+				Client:   ethereumv1alpha1.ParityClient,
+				Miner:    true,
+				Coinbase: accountAddress,
+				Import: &ethereumv1alpha1.ImportedAccount{
+					PrivateKey: accountKey,
+					Password:   accountPassword,
+				},
+				SyncMode: ethereumv1alpha1.FastSynchronization,
+				Resources: &ethereumv1alpha1.NodeResources{
+					CPU:         cpu,
+					CPULimit:    cpuLimit,
+					Memory:      memory,
+					MemoryLimit: memoryLimit,
+					Storage:     storage,
+				},
+				Logging: ethereumv1alpha1.DebugLogs,
+			}
+			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
+			if !useExistingCluster {
+				fetched.Default()
+			}
+			Expect(k8sClient.Update(context.Background(), fetched)).To(Succeed())
+			fetchedUpdated := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetchedUpdated)).To(Succeed())
+			Expect(fetchedUpdated.Spec).To(Equal(fetched.Spec))
+			time.Sleep(sleepTime)
+		})
+
+		It("Should create node-3 genesis block and scripts configmap", func() {
+			genesisConfig := &v1.ConfigMap{}
+			genesisKey := types.NamespacedName{
+				Name:      fmt.Sprintf("%s-parity", key.Name),
+				Namespace: key.Namespace,
+			}
+			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
+			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
+			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importParityAccount))
+		})
+
+		It("Should create node-3 deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+				fmt.Sprintf("%s/import-account.sh", PathConfig),
+			}))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				ParityDataDir,
+				ParityBootnodes,
+				ParitySyncMode,
+				string(ethereumv1alpha1.FastSynchronization),
+				ParityLogging,
+				ParityPassword,
+				ParityUnlock,
+				ParityEngineSigner,
+				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
+			}))
+		})
+
+		It("Should allocate correct resources to node-3 deployment", func() {
+			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpu),
+					v1.ResourceMemory: resource.MustParse(memory),
+				},
+				Limits: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpuLimit),
+					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+		})
+
+		It("Should create node-3 imported account secret", func() {
+			secret := &v1.Secret{}
+			Expect(k8sClient.Get(context.Background(), node3Key, secret)).To(Succeed())
+			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
+			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
+		})
+
+		It("Should create node-3 data persistent volume with correct resources", func() {
+			nodePVC := &v1.PersistentVolumeClaim{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceStorage: resource.MustParse(storage),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
+		})
+
+		It("Should not create node-3 service (not a bootnode)", func() {
+			nodeSvc := &v1.Service{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
+		})
+
+		It("Should update the network by removing node-3", func() {
+			fetched := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+			fetched.Spec.Nodes = fetched.Spec.Nodes[:1]
+			Expect(k8sClient.Update(context.Background(), fetched)).To(Succeed())
+			fetchedUpdated := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetchedUpdated)).To(Succeed())
+			Expect(fetchedUpdated.Spec).To(Equal(fetched.Spec))
+			time.Sleep(sleepTime)
+		})
+
+		if useExistingCluster {
+			It("Should delete node-3 deployment", func() {
+				nodeDep := &appsv1.Deployment{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).ToNot(Succeed())
+			})
+
+			It("Should delete node-3 imported account secret", func() {
+				secret := &v1.Secret{}
+				Expect(k8sClient.Get(context.Background(), node3Key, secret)).ToNot(Succeed())
+			})
+
+			It("Should delete node-3 data persistent volume", func() {
+				Eventually(func() error {
+					nodePVC := &v1.PersistentVolumeClaim{}
+					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 		}
@@ -1082,6 +1485,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-2"),
 			Namespace: key.Namespace,
 		}
+		node3Key := types.NamespacedName{
+			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-3"),
+			Namespace: key.Namespace,
+		}
 		cpu := "1"
 		cpuLimit := "1500m"
 		memory := "1500Mi"
@@ -1172,7 +1579,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should update the network", func() {
+		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			newNode := ethereumv1alpha1.Node{
@@ -1212,7 +1619,7 @@ var _ = Describe("Ethereum network controller", func() {
 			}
 			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["init-genesis.sh"]).To(Equal(initGenesis))
-			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importAccount))
+			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importGethAccount))
 		})
 
 		It("Should create node-2 deployment with correct arguments", func() {
@@ -1304,6 +1711,119 @@ var _ = Describe("Ethereum network controller", func() {
 				Eventually(func() error {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
+				}, timeout, interval).ShouldNot(Succeed())
+			})
+		}
+
+		It("Should update the network by adding node-3", func() {
+			fetched := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+			newNode := ethereumv1alpha1.Node{
+				Name:     "node-3",
+				Client:   ethereumv1alpha1.ParityClient,
+				SyncMode: ethereumv1alpha1.FastSynchronization,
+				Resources: &ethereumv1alpha1.NodeResources{
+					CPU:         cpu,
+					CPULimit:    cpuLimit,
+					Memory:      memory,
+					MemoryLimit: memoryLimit,
+				},
+				Logging: ethereumv1alpha1.TraceLogs,
+			}
+			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
+			if !useExistingCluster {
+				fetched.Default()
+			}
+			Expect(k8sClient.Update(context.Background(), fetched)).To(Succeed())
+			fetchedUpdated := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetchedUpdated)).To(Succeed())
+			Expect(fetchedUpdated.Spec).To(Equal(fetched.Spec))
+			time.Sleep(sleepTime)
+		})
+
+		It("Should create node-3 genesis and scripts block configmap", func() {
+			genesisConfig := &v1.ConfigMap{}
+			genesisKey := types.NamespacedName{
+				Name:      fmt.Sprintf("%s-parity", key.Name),
+				Namespace: key.Namespace,
+			}
+			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
+		})
+
+		It("Should create node-3 deployment with correct arguments", func() {
+			nodeDep := &appsv1.Deployment{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
+			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				ParityDataDir,
+				ParityBootnodes,
+				ParitySyncMode,
+				string(ethereumv1alpha1.FastSynchronization),
+				ParityLogging,
+				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.TraceLogs),
+			}))
+		})
+
+		It("Should allocate correct resources to node-3 deployment", func() {
+			nodeDep := &appsv1.Deployment{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpu),
+					v1.ResourceMemory: resource.MustParse(memory),
+				},
+				Limits: v1.ResourceList{
+					v1.ResourceCPU:    resource.MustParse(cpuLimit),
+					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
+			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+		})
+
+		It("Should not create node-2 secret (neither imported account nor node key)", func() {
+			secret := &v1.Secret{}
+			Expect(k8sClient.Get(context.Background(), node3Key, secret)).ToNot(Succeed())
+		})
+
+		It("Should create node-2 data persistent volume with correct resources", func() {
+			nodePVC := &v1.PersistentVolumeClaim{}
+			expectedResources := v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
+		})
+
+		It("Should not create node-3 service (not a bootnode)", func() {
+			nodeSvc := &v1.Service{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
+		})
+
+		It("Should update the network by removing node-3", func() {
+			fetched := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+			fetched.Spec.Nodes = fetched.Spec.Nodes[:1]
+			Expect(k8sClient.Update(context.Background(), fetched)).To(Succeed())
+			fetchedUpdated := &ethereumv1alpha1.Network{}
+			Expect(k8sClient.Get(context.Background(), key, fetchedUpdated)).To(Succeed())
+			Expect(fetchedUpdated.Spec).To(Equal(fetched.Spec))
+			time.Sleep(sleepTime)
+		})
+
+		if useExistingCluster {
+			It("Should delete node-3 deployment", func() {
+				nodeDep := &appsv1.Deployment{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).ToNot(Succeed())
+			})
+
+			It("Should delete node-3 data persistent volume", func() {
+				Eventually(func() error {
+					nodePVC := &v1.PersistentVolumeClaim{}
+					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 		}
