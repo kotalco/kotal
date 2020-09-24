@@ -13,9 +13,12 @@ var _ = Describe("Ethereum client arguments", func() {
 	var bootnodes []string
 	besuClient, _ := NewEthereumClient(ethereumv1alpha1.BesuClient)
 	gethClient, _ := NewEthereumClient(ethereumv1alpha1.GethClient)
+	parityClient, _ := NewEthereumClient(ethereumv1alpha1.ParityClient)
+	coinbase := ethereumv1alpha1.EthereumAddress("0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d")
+	accountKey := ethereumv1alpha1.PrivateKey("0x5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd")
+	accountPassword := "secret"
 	rinkeby := "rinkeby"
 	bootnode := "enode://publickey@ip:port"
-	coinbase := ethereumv1alpha1.EthereumAddress("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c")
 	nodekey := ethereumv1alpha1.PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
 
 	cases := []struct {
@@ -73,6 +76,31 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
+			"parity bootnode joining rinkeby",
+			bootnodes,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.ParityClient,
+							Bootnode: true,
+							Nodekey:  nodekey,
+						},
+					},
+				},
+			},
+			[]string{
+				rinkeby,
+				ParityNodeKey,
+				ParityDataDir,
+				PathBlockchainData,
+				ParityLogging,
+				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
+			},
+		},
+		{
 			"bootnode joining rinkeby",
 			bootnodes,
 			&ethereumv1alpha1.Network{
@@ -123,6 +151,33 @@ var _ = Describe("Ethereum client arguments", func() {
 				PathBlockchainData,
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.AllLogs),
+			},
+		},
+		{
+			"parity bootnode joining rinkeby",
+			bootnodes,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.ParityClient,
+							Bootnode: true,
+							Nodekey:  nodekey,
+							Logging:  ethereumv1alpha1.ErrorLogs,
+						},
+					},
+				},
+			},
+			[]string{
+				ParityNetwork,
+				rinkeby,
+				ParityDataDir,
+				PathBlockchainData,
+				ParityNodeKey,
+				ParityLogging,
+				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 			},
 		},
 		{
@@ -180,6 +235,34 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethRPCHTTPEnabled,
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+			},
+		},
+		{
+			"parity bootnode joining rinkeby with rpc",
+			bootnodes,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.ParityClient,
+							Bootnode: true,
+							Nodekey:  nodekey,
+							RPC:      true,
+							Logging:  ethereumv1alpha1.WarnLogs,
+						},
+					},
+				},
+			},
+			[]string{
+				ParityNetwork,
+				rinkeby,
+				ParityDataDir,
+				PathBlockchainData,
+				ParityNodeKey,
+				ParityLogging,
+				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 			},
 		},
 		{
@@ -257,6 +340,44 @@ var _ = Describe("Ethereum client arguments", func() {
 				"eth,web3,net",
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
+			},
+		},
+		{
+			"parity bootnode joining rinkeby with rpc settings",
+			bootnodes,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.ParityClient,
+							Bootnode: true,
+							Nodekey:  nodekey,
+							RPC:      true,
+							RPCPort:  8599,
+							RPCAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.ETHAPI,
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.NetworkAPI,
+							},
+							Logging: ethereumv1alpha1.DebugLogs,
+						},
+					},
+				},
+			},
+			[]string{
+				ParityNetwork,
+				rinkeby,
+				ParityNodeKey,
+				ParityDataDir,
+				PathBlockchainData,
+				ParityRPCHTTPPort,
+				"8599",
+				ParityRPCHTTPAPI,
+				"eth,web3,net",
+				ParityLogging,
+				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 			},
 		},
 		{
@@ -368,6 +489,60 @@ var _ = Describe("Ethereum client arguments", func() {
 				"web3,eth",
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+			},
+		},
+		{
+			"parity bootnode joining rinkeby with rpc, ws settings",
+			bootnodes,
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					Join: rinkeby,
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.ParityClient,
+							Bootnode: true,
+							Nodekey:  nodekey,
+							RPC:      true,
+							RPCHost:  "0.0.0.0",
+							RPCPort:  8599,
+							RPCAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.ETHAPI,
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.NetworkAPI,
+							},
+							WS:     true,
+							WSHost: "127.0.0.1",
+							WSPort: 8588,
+							WSAPI: []ethereumv1alpha1.API{
+								ethereumv1alpha1.Web3API,
+								ethereumv1alpha1.ETHAPI,
+							},
+							Logging: ethereumv1alpha1.TraceLogs,
+						},
+					},
+				},
+			},
+			[]string{
+				ParityNetwork,
+				rinkeby,
+				ParityNodeKey,
+				ParityDataDir,
+				PathBlockchainData,
+				ParityRPCHTTPPort,
+				"8599",
+				ParityRPCHTTPHost,
+				"0.0.0.0",
+				ParityRPCHTTPAPI,
+				"eth,web3,net",
+				ParityRPCWSHost,
+				"127.0.0.1",
+				ParityRPCWSPort,
+				"8588",
+				ParityRPCWSAPI,
+				"web3,eth",
+				ParityLogging,
+				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.TraceLogs),
 			},
 		},
 		{
@@ -510,8 +685,11 @@ var _ = Describe("Ethereum client arguments", func() {
 			[]string{bootnode},
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
-					ID:      8888,
-					Genesis: &ethereumv1alpha1.Genesis{},
+					ID:        8888,
+					Consensus: ethereumv1alpha1.ProofOfAuthority,
+					Genesis: &ethereumv1alpha1.Genesis{
+						ChainID: 5555,
+					},
 					Nodes: []ethereumv1alpha1.Node{
 						{
 							Name:     "node-1",
@@ -542,15 +720,22 @@ var _ = Describe("Ethereum client arguments", func() {
 			[]string{bootnode},
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
-					ID:      7777,
-					Genesis: &ethereumv1alpha1.Genesis{},
+					ID:        7777,
+					Consensus: ethereumv1alpha1.ProofOfAuthority,
+					Genesis: &ethereumv1alpha1.Genesis{
+						ChainID: 5555,
+					},
 					Nodes: []ethereumv1alpha1.Node{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.GethClient,
 							Miner:    true,
 							Coinbase: coinbase,
-							Logging:  ethereumv1alpha1.DebugLogs,
+							Import: &ethereumv1alpha1.ImportedAccount{
+								PrivateKey: accountKey,
+								Password:   accountPassword,
+							},
+							Logging: ethereumv1alpha1.DebugLogs,
 						},
 					},
 				},
@@ -564,9 +749,48 @@ var _ = Describe("Ethereum client arguments", func() {
 				bootnode,
 				GethMinerEnabled,
 				GethMinerCoinbase,
+				GethUnlock,
+				GethPassword,
 				string(coinbase),
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
+			},
+		},
+		{
+			"parity node of private network that connects to bootnode",
+			[]string{bootnode},
+			&ethereumv1alpha1.Network{
+				Spec: ethereumv1alpha1.NetworkSpec{
+					ID:        8888,
+					Consensus: ethereumv1alpha1.ProofOfAuthority,
+					Genesis: &ethereumv1alpha1.Genesis{
+						ChainID: 5555,
+					},
+					Nodes: []ethereumv1alpha1.Node{
+						{
+							Name:     "node-1",
+							Client:   ethereumv1alpha1.ParityClient,
+							Miner:    true,
+							Coinbase: coinbase,
+							Logging:  ethereumv1alpha1.InfoLogs,
+						},
+					},
+				},
+			},
+			[]string{
+				ParityNetworkID,
+				"8888",
+				ParityDataDir,
+				PathBlockchainData,
+				ParityBootnodes,
+				bootnode,
+				ParityMinerCoinbase,
+				string(coinbase),
+				ParityLogging,
+				ParityUnlock,
+				ParityPassword,
+				ParityEngineSigner,
+				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.InfoLogs),
 			},
 		},
 	}
