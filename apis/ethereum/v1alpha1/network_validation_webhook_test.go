@@ -896,6 +896,78 @@ var _ = Describe("Ethereum network validation", func() {
 				},
 			},
 		},
+		{
+			Title: "network #34",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Join: RinkebyNetwork,
+					Nodes: []Node{
+						{
+							Name:    "node-1",
+							Client:  ParityClient,
+							GraphQL: true,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].client",
+					BadValue: ParityClient,
+					Detail:   "client doesn't support graphQL",
+				},
+			},
+		},
+		{
+			Title: "network #35",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Consensus: IstanbulBFT,
+					ID:        networkID,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
+					Nodes: []Node{
+						{
+							Name:   "node-1",
+							Client: ParityClient,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].client",
+					BadValue: "parity",
+					Detail:   "client doesn't support ibft2 consensus",
+				},
+			},
+		},
+		{
+			Title: "network #36",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Join: RinkebyNetwork,
+					Nodes: []Node{
+						{
+							Name:     "node-1",
+							Client:   ParityClient,
+							SyncMode: LightSynchronization,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].client",
+					BadValue: "parity",
+					Detail:   "must be geth if syncMode is light",
+				},
+			},
+		},
 	}
 
 	// errorsToCauses converts field error list into array of status cause

@@ -69,6 +69,7 @@ func (r *Network) ValidateNodeNameUniqeness() field.ErrorList {
 
 // ValidateNode validates a single node
 func (r *Network) ValidateNode(i int) field.ErrorList {
+	privateNetwork := r.Spec.Genesis != nil
 	node := r.Spec.Nodes[i]
 	nodePath := field.NewPath("spec").Child("nodes").Index(i)
 	var nodeErrors field.ErrorList
@@ -127,77 +128,71 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	// validate parity doesn't support graphql
+	if node.Client == ParityClient && node.GraphQL {
+		err := field.Invalid(nodePath.Child("client"), node.Client, "client doesn't support graphQL")
+		nodeErrors = append(nodeErrors, err)
+	}
+
 	// validate only geth client supports light sync mode
 	if node.Client != GethClient && node.SyncMode == LightSynchronization {
 		err := field.Invalid(nodePath.Child("client"), node.Client, "must be geth if syncMode is light")
 		nodeErrors = append(nodeErrors, err)
 	}
 
-	// Validate geth node
-	if node.Client == GethClient {
-		nodeErrors = append(nodeErrors, r.ValidateGethNode(&node, i)...)
-	}
-
-	return nodeErrors
-}
-
-// ValidateGethNode validates a node with client geth
-func (r *Network) ValidateGethNode(node *Node, i int) field.ErrorList {
-	var gethErrors field.ErrorList
-	nodePath := field.NewPath("spec").Child("nodes").Index(i)
-
 	// validate geth supports only pow and poa
-	if r.Spec.Join == "" && r.Spec.Consensus != ProofOfWork && r.Spec.Consensus != ProofOfAuthority {
+	if privateNetwork && r.Spec.Consensus == IstanbulBFT && node.Client != BesuClient {
 		err := field.Invalid(nodePath.Child("client"), node.Client, fmt.Sprintf("client doesn't support %s consensus", r.Spec.Consensus))
-		gethErrors = append(gethErrors, err)
+		nodeErrors = append(nodeErrors, err)
 	}
 
-	// validate geth doesn't support fixed difficulty ethash networks
-	if r.Spec.Join == "" && r.Spec.Consensus == ProofOfWork && r.Spec.Genesis.Ethash.FixedDifficulty != nil {
+	// validate besu only support fixed difficulty ethash networks
+	if privateNetwork && r.Spec.Consensus == ProofOfWork && r.Spec.Genesis.Ethash.FixedDifficulty != nil && node.Client != BesuClient {
 		err := field.Invalid(nodePath.Child("client"), node.Client, "client doesn't support fixed difficulty pow networks")
-		gethErrors = append(gethErrors, err)
+		nodeErrors = append(nodeErrors, err)
 	}
 
 	// validate account must be imported if coinbase is provided
-	if node.Coinbase != "" && node.Import == nil {
+	if node.Client != BesuClient && node.Coinbase != "" && node.Import == nil {
 		err := field.Invalid(nodePath.Child("import"), "", "must import coinbase account")
-		gethErrors = append(gethErrors, err)
+		nodeErrors = append(nodeErrors, err)
 	}
 
 	// validate imported account private key is valid and coinbase account is derived from it
-	if node.Coinbase != "" && node.Import != nil {
+	// TODO: cache private address -> address results
+	if node.Client != BesuClient && node.Coinbase != "" && node.Import != nil {
 		privateKey := node.Import.PrivateKey[2:]
 		address, err := helpers.DeriveAddress(string(privateKey))
 		if err != nil {
 			err := field.Invalid(nodePath.Child("import").Child("privatekey"), "<private key>", "invalid private key")
-			gethErrors = append(gethErrors, err)
+			nodeErrors = append(nodeErrors, err)
 		}
 
 		if strings.ToLower(string(node.Coinbase)) != strings.ToLower(address) {
 			err := field.Invalid(nodePath.Child("import").Child("privatekey"), "<private key>", "private key doesn't correspond to the coinbase address")
-			gethErrors = append(gethErrors, err)
+			nodeErrors = append(nodeErrors, err)
 		}
 	}
 
 	// validate rpc can't be enabled for node with imported account
-	if node.Import != nil && node.RPC {
+	if node.Client != BesuClient && node.Import != nil && node.RPC {
 		err := field.Invalid(nodePath.Child("rpc"), node.RPC, "must be false if import is provided")
-		gethErrors = append(gethErrors, err)
+		nodeErrors = append(nodeErrors, err)
 	}
 
 	// validate ws can't be enabled for node with imported account
-	if node.Import != nil && node.WS {
+	if node.Client != BesuClient && node.Import != nil && node.WS {
 		err := field.Invalid(nodePath.Child("ws"), node.WS, "must be false if import is provided")
-		gethErrors = append(gethErrors, err)
+		nodeErrors = append(nodeErrors, err)
 	}
 
 	// validate graphql can't be enabled for node with imported account
-	if node.Import != nil && node.GraphQL {
+	if node.Client != BesuClient && node.Import != nil && node.GraphQL {
 		err := field.Invalid(nodePath.Child("graphql"), node.GraphQL, "must be false if import is provided")
-		gethErrors = append(gethErrors, err)
+		nodeErrors = append(nodeErrors, err)
 	}
 
-	return gethErrors
+	return nodeErrors
 }
 
 // ValidateNodes validate network nodes spec
