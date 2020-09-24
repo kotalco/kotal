@@ -165,11 +165,6 @@ func (g *GethClient) GetGenesisFile(network *ethereumv1alpha1.Network) (content 
 
 	if consensus == ethereumv1alpha1.ProofOfWork {
 		consensusConfig = map[string]uint{}
-
-		if genesis.Ethash.FixedDifficulty != nil {
-			consensusConfig["fixeddifficulty"] = *genesis.Ethash.FixedDifficulty
-		}
-
 		engine = "ethash"
 	}
 
