@@ -402,7 +402,9 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Consensus: ProofOfWork,
-					Genesis:   &Genesis{},
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 					Nodes: []Node{
 						{
 							Name: "node-1",
@@ -425,7 +427,9 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					Consensus: ProofOfWork,
 					ID:        networkID,
-					Genesis:   &Genesis{},
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 					Nodes: []Node{
 						{
 							Name:     "node-1",
@@ -451,7 +455,9 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					Consensus: ProofOfWork,
 					ID:        networkID,
-					Genesis:   &Genesis{},
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 					Nodes: []Node{
 						{
 							Name:     "node-1",
@@ -481,6 +487,9 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					Consensus: ProofOfWork,
 					ID:        networkID,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 					Nodes: []Node{
 						{
 							Name:     "node-1",
@@ -509,6 +518,9 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					Consensus: IstanbulBFT,
 					ID:        networkID,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 					Nodes: []Node{
 						{
 							Name:   "node-1",
@@ -532,6 +544,9 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					Consensus: ProofOfAuthority,
 					ID:        networkID,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 					Nodes: []Node{
 						{
 							Name:     "node-1",
@@ -562,6 +577,9 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					Consensus: ProofOfAuthority,
 					ID:        networkID,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 					Nodes: []Node{
 						{
 							Name:     "node-1",
@@ -592,6 +610,9 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					Consensus: ProofOfAuthority,
 					ID:        networkID,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 					Nodes: []Node{
 						{
 							Name:     "node-1",
@@ -623,6 +644,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Consensus: ProofOfWork,
 					ID:        networkID,
 					Genesis: &Genesis{
+						ChainID: 55555,
 						Ethash: &Ethash{
 							FixedDifficulty: &fixedDifficulty,
 						},
@@ -727,7 +749,9 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					Consensus: ProofOfWork,
 					ID:        networkID,
-					Genesis:   &Genesis{},
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 					Nodes: []Node{
 						{
 							Name:     "node-1",
