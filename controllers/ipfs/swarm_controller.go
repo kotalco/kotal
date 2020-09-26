@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"text/template"
+
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -13,7 +15,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"text/template"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 )
@@ -27,7 +28,7 @@ type SwarmReconciler struct {
 
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=swarms,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=swarms/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=apps,resources=deployments,verbs=watch;get;list;create;update;delete
+// +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
 // +kubebuilder:rbac:groups=core,resources=services;configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 // Reconcile reconciles ipfs swarm
@@ -85,13 +86,13 @@ func (r *SwarmReconciler) reconcileNodes(swarm *ipfsv1alpha1.Swarm) error {
 }
 
 // deleteRedundantNodes deletes redundant ipfs node that has been removed from spec
-// swarm is the owner of the redundant resources (node deployment, svc, secret and pvc)
+// swarm is the owner of the redundant resources (node statefulset, svc, secret and pvc)
 // removing nodes from spec won't remove these resources by grabage collection
 // that's why we're deleting them manually
 func (r *SwarmReconciler) deleteRedundantNodes(swarm *ipfsv1alpha1.Swarm) error {
 	log := r.Log.WithName("delete redundant nodes")
 
-	var deps appsv1.DeploymentList
+	var sts appsv1.StatefulSetList
 	var pvcs corev1.PersistentVolumeClaimList
 	var services corev1.ServiceList
 
@@ -104,23 +105,23 @@ func (r *SwarmReconciler) deleteRedundantNodes(swarm *ipfsv1alpha1.Swarm) error 
 	inNamespace := client.InNamespace(swarm.Namespace)
 
 	for _, node := range nodes {
-		depName := node.DeploymentName(swarm.Name)
-		names[depName] = true
+		stsName := node.StatefulSetName(swarm.Name)
+		names[stsName] = true
 	}
 
-	// Node deployments
-	if err := r.Client.List(context.Background(), &deps, matchingLabels, inNamespace); err != nil {
-		log.Error(err, "unable to list all node deployments")
+	// Node statefulsets
+	if err := r.Client.List(context.Background(), &sts, matchingLabels, inNamespace); err != nil {
+		log.Error(err, "unable to list all node statefulsets")
 		return err
 	}
 
-	for _, dep := range deps.Items {
-		name := dep.GetName()
+	for _, st := range sts.Items {
+		name := st.GetName()
 		if exist := names[name]; !exist {
-			log.Info(fmt.Sprintf("deleting node (%s) deployment", name))
+			log.Info(fmt.Sprintf("deleting node (%s) statefulset", name))
 
-			if err := r.Client.Delete(context.Background(), &dep); err != nil {
-				log.Error(err, fmt.Sprintf("unable to delete node (%s) deployment", name))
+			if err := r.Client.Delete(context.Background(), &st); err != nil {
+				log.Error(err, fmt.Sprintf("unable to delete node (%s) statefulset", name))
 				return err
 			}
 		}
@@ -166,7 +167,7 @@ func (r *SwarmReconciler) deleteRedundantNodes(swarm *ipfsv1alpha1.Swarm) error 
 }
 
 // reconcileNode reconciles a single ipfs node
-// it creates node deployment, service and data pvc if it doesn't exist
+// it creates node statefulset, service and data pvc if it doesn't exist
 func (r *SwarmReconciler) reconcileNode(node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) (addr string, err error) {
 	var ip string
 
@@ -182,7 +183,7 @@ func (r *SwarmReconciler) reconcileNode(node *ipfsv1alpha1.Node, swarm *ipfsv1al
 		return
 	}
 
-	if err = r.reconcileNodeDeployment(node, swarm, peers); err != nil {
+	if err = r.reconcileNodeStatefulSet(node, swarm, peers); err != nil {
 		return
 	}
 
@@ -352,32 +353,32 @@ func (r *SwarmReconciler) specNodeService(svc *corev1.Service, node *ipfsv1alpha
 
 }
 
-// reconcileNodeDeployment reconciles node deployment
-func (r *SwarmReconciler) reconcileNodeDeployment(node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) error {
+// reconcileNodeStatefulSet reconciles node statefulset
+func (r *SwarmReconciler) reconcileNodeStatefulSet(node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) error {
 
-	dep := &appsv1.Deployment{
+	sts := &appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.DeploymentName(swarm.Name),
+			Name:      node.StatefulSetName(swarm.Name),
 			Namespace: swarm.Namespace,
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, dep, func() error {
-		if err := ctrl.SetControllerReference(swarm, dep, r.Scheme); err != nil {
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, sts, func() error {
+		if err := ctrl.SetControllerReference(swarm, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeDeployment(dep, node, swarm, peers)
+		r.specNodeStatefulSet(sts, node, swarm, peers)
 		return nil
 	})
 
 	return err
 }
 
-// specNodeDeployment updates node deployment spec
-func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) {
+// specNodeStatefulSet updates node statefulset spec
+func (r *SwarmReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *ipfsv1alpha1.Node, swarm *ipfsv1alpha1.Swarm, peers []string) {
 	labels := node.Labels(swarm.Name)
 
-	dep.ObjectMeta.Labels = labels
+	sts.ObjectMeta.Labels = labels
 
 	initNode := corev1.Container{
 		Name:  "init-node",
@@ -406,7 +407,7 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 		},
 	}
 
-	dep.Spec = appsv1.DeploymentSpec{
+	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: labels,
 		},
@@ -471,7 +472,7 @@ func (r *SwarmReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ipfsv
 func (r *SwarmReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ipfsv1alpha1.Swarm{}).
-		Owns(&appsv1.Deployment{}).
+		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.Service{}).
 		Owns(&corev1.PersistentVolumeClaim{}).
 		Complete(r)

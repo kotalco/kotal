@@ -2,6 +2,7 @@ package v1alpha1
 
 import (
 	"fmt"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -32,24 +33,24 @@ func (n *Node) SwarmAddress(ip string) string {
 	return fmt.Sprintf("/ip4/%s/tcp/4001/p2p/%s", ip, n.ID)
 }
 
-// DeploymentName returns name to be used by node deployment
-func (n *Node) DeploymentName(swarm string) string {
+// StatefulSetName returns name to be used by node stateful
+func (n *Node) StatefulSetName(swarm string) string {
 	return fmt.Sprintf("%s-%s", swarm, n.Name)
 }
 
 // PVCName returns name to be used by node pvc
 func (n *Node) PVCName(swarm string) string {
-	return n.DeploymentName(swarm) // same as deployment name
+	return n.StatefulSetName(swarm) // same as stateful name
 }
 
 // ConfigName returns name to be used by node config map
 func (n *Node) ConfigName(swarm string) string {
-	return n.DeploymentName(swarm) // same as deployment name
+	return n.StatefulSetName(swarm) // same as stateful name
 }
 
 // ServiceName returns name to be used by node service
 func (n *Node) ServiceName(swarm string) string {
-	return n.DeploymentName(swarm) // same as deployment name
+	return n.StatefulSetName(swarm) // same as stateful name
 }
 
 // Labels to be used by node resources
