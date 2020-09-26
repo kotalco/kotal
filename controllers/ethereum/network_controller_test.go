@@ -162,12 +162,12 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+		It("Should create bootnode statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuNetwork,
 				"mainnet",
 				BesuDataPath,
@@ -179,8 +179,8 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 		})
 
-		It("Should allocate correct resources to bootnode deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to bootnode statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeCPURequest),
@@ -191,8 +191,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeMemoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create bootnode data persistent volume with correct resources", func() {
@@ -244,12 +244,12 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 		}
 
-		It("Should create node-2 deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+		It("Should create node-2 statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 				GethBootnodes,
 				GethRPCHTTPEnabled,
@@ -260,13 +260,13 @@ var _ = Describe("Ethereum network controller", func() {
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).ToNot(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).ToNot(ContainElements([]string{
 				ethereumv1alpha1.MainNetwork,
 			}))
 		})
 
-		It("Should allocate correct resources to node-2 deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to node-2 statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(cpu),
@@ -277,8 +277,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-2 data persistent volume", func() {
@@ -315,9 +315,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete node-2 deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).ToNot(Succeed())
+			It("Should delete node-2 statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete node-2 data persistent volume", func() {
@@ -365,12 +365,12 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 		}
 
-		It("Should create node-3 deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+		It("Should create node-3 statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
 				ParityBootnodes,
 				ParityRPCHTTPPort,
@@ -380,13 +380,13 @@ var _ = Describe("Ethereum network controller", func() {
 				ParityLogging,
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).ToNot(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).ToNot(ContainElements([]string{
 				ethereumv1alpha1.MainNetwork,
 			}))
 		})
 
-		It("Should allocate correct resources to node-3 deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to node-3 statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(cpu),
@@ -397,8 +397,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-3 data persistent volume", func() {
@@ -435,9 +435,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete node-3 deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).ToNot(Succeed())
+			It("Should delete node-3 statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete node-2 data persistent volume", func() {
@@ -461,9 +461,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete bootnode deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).ToNot(Succeed())
+			It("Should delete bootnode statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete bootnode data persistent volume", func() {
@@ -588,12 +588,12 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+		It("Should create bootnode statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuNetwork,
 				"rinkeby",
 				BesuDataPath,
@@ -604,8 +604,8 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 		})
 
-		It("Should allocate correct resources to bootnode deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to bootnode statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeCPURequest),
@@ -616,8 +616,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeMemoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 
 		})
 
@@ -675,16 +675,16 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 		}
 
-		It("Should create node-2 deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+		It("Should create node-2 statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				"--rinkeby",
 				GethDataDir,
 				GethBootnodes,
@@ -699,8 +699,8 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 		})
 
-		It("Should allocate correct resources to node-2 deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to node-2 statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(cpu),
@@ -711,8 +711,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-2 imported account secret", func() {
@@ -751,9 +751,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete node-2 deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).ToNot(Succeed())
+			It("Should delete node-2 statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete node-2 imported account secret", func() {
@@ -811,16 +811,16 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 		}
 
-		It("Should create node-3 deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ParityImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+		It("Should create node-3 statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				"rinkeby",
 				ParityDataDir,
 				ParityBootnodes,
@@ -834,8 +834,8 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 		})
 
-		It("Should allocate correct resources to node-3 deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to node-3 statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(cpu),
@@ -846,8 +846,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-3 imported account secret", func() {
@@ -886,9 +886,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete node-3 deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).ToNot(Succeed())
+			It("Should delete node-3 statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete node-3 imported account secret", func() {
@@ -917,9 +917,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete bootnode deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).ToNot(Succeed())
+			It("Should delete bootnode statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete bootnode data persistent volume", func() {
@@ -1044,12 +1044,12 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+		It("Should create bootnode statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
 				BesuSyncMode,
@@ -1070,8 +1070,8 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
 		})
 
-		It("Should allocate correct resources to bootnode deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to bootnode statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPURequest),
@@ -1082,8 +1082,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create bootnode data persistent volume with correct resources", func() {
@@ -1144,20 +1144,20 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importGethAccount))
 		})
 
-		It("Should create node-2 deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+		It("Should create node-2 statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/init-genesis.sh", PathConfig),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 				GethBootnodes,
 				GethSyncMode,
@@ -1167,8 +1167,8 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 		})
 
-		It("Should allocate correct resources to node-2 deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to node-2 statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(cpu),
@@ -1179,8 +1179,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-2 imported account secret", func() {
@@ -1219,9 +1219,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete node-2 deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).ToNot(Succeed())
+			It("Should delete node-2 statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete node-2 imported account secret", func() {
@@ -1282,16 +1282,16 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importParityAccount))
 		})
 
-		It("Should create node-3 deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ParityImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+		It("Should create node-3 statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
 				ParityBootnodes,
 				ParitySyncMode,
@@ -1304,8 +1304,8 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 		})
 
-		It("Should allocate correct resources to node-3 deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to node-3 statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(cpu),
@@ -1316,8 +1316,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-3 imported account secret", func() {
@@ -1356,9 +1356,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete node-3 deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).ToNot(Succeed())
+			It("Should delete node-3 statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete node-3 imported account secret", func() {
@@ -1387,9 +1387,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete bootnode deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).ToNot(Succeed())
+			It("Should delete bootnode statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete bootnode data persistent volume", func() {
@@ -1536,12 +1536,12 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+		It("Should create bootnode statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
 				BesuSyncMode,
@@ -1551,8 +1551,8 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 		})
 
-		It("Should allocate correct resources to bootnode deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to bootnode statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPURequest),
@@ -1563,8 +1563,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create bootnode data persistent volume with correct resources", func() {
@@ -1622,20 +1622,20 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importGethAccount))
 		})
 
-		It("Should create node-2 deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+		It("Should create node-2 statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/init-genesis.sh", PathConfig),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage()))
-			Expect(nodeDep.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
 				GethBootnodes,
 				GethSyncMode,
@@ -1645,8 +1645,8 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 		})
 
-		It("Should allocate correct resources to node-2 deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to node-2 statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(cpu),
@@ -1657,8 +1657,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-2 imported account secret", func() {
@@ -1697,9 +1697,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete node-2 deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).ToNot(Succeed())
+			It("Should delete node-2 statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete node-2 imported account secret", func() {
@@ -1750,12 +1750,12 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
 		})
 
-		It("Should create node-3 deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+		It("Should create node-3 statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
 				ParityBootnodes,
 				ParitySyncMode,
@@ -1765,8 +1765,8 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 		})
 
-		It("Should allocate correct resources to node-3 deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to node-3 statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(cpu),
@@ -1777,8 +1777,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should not create node-2 secret (neither imported account nor node key)", func() {
@@ -1815,9 +1815,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete node-3 deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), node3Key, nodeDep)).ToNot(Succeed())
+			It("Should delete node-3 statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete node-3 data persistent volume", func() {
@@ -1841,9 +1841,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete bootnode deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).ToNot(Succeed())
+			It("Should delete bootnode statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete bootnode data persistent volume", func() {
@@ -1993,12 +1993,12 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
-		It("Should create bootnode deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+		It("Should create bootnode statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
 				BesuSyncMode,
@@ -2008,8 +2008,8 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 		})
 
-		It("Should allocate correct resources to bootnode deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to bootnode statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPURequest),
@@ -2020,8 +2020,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create bootnode data persistent volume with correct resouces", func() {
@@ -2061,12 +2061,12 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
-		It("Should create node-2 deployment with correct arguments", func() {
-			nodeDep := &appsv1.Deployment{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+		It("Should create node-2 statefulset with correct arguments", func() {
+			nodeSts := &appsv1.StatefulSet{}
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuBootnodes,
 				BesuRPCHTTPEnabled,
@@ -2078,8 +2078,8 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 		})
 
-		It("Should allocate correct resources to node-2 deployment", func() {
-			nodeDep := &appsv1.Deployment{}
+		It("Should allocate correct resources to node-2 statefulset", func() {
+			nodeSts := &appsv1.StatefulSet{}
 			expectedResources := v1.ResourceRequirements{
 				Requests: v1.ResourceList{
 					v1.ResourceCPU:    resource.MustParse(cpu),
@@ -2090,8 +2090,8 @@ var _ = Describe("Ethereum network controller", func() {
 					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
 				},
 			}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).To(Succeed())
-			Expect(nodeDep.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-2 data persistent volume with correct resources", func() {
@@ -2128,9 +2128,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete node-2 deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), node2Key, nodeDep)).ToNot(Succeed())
+			It("Should delete node-2 statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete node-2 data persistent volume", func() {
@@ -2154,9 +2154,9 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
-			It("Should delete bootnode deployment", func() {
-				nodeDep := &appsv1.Deployment{}
-				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeDep)).ToNot(Succeed())
+			It("Should delete bootnode statefulset", func() {
+				nodeSts := &appsv1.StatefulSet{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).ToNot(Succeed())
 			})
 
 			It("Should delete bootnode data persistent volume", func() {

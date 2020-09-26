@@ -27,7 +27,7 @@ type NetworkReconciler struct {
 
 // +kubebuilder:rbac:groups=ethereum.kotal.io,resources=networks,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ethereum.kotal.io,resources=networks/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=apps,resources=deployments,verbs=watch;get;list;create;update;delete
+// +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
 // +kubebuilder:rbac:groups=core,resources=secrets;services;configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 // Reconcile reconciles ethereum networks
@@ -163,13 +163,13 @@ func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, 
 }
 
 // deleteRedundantNode deletes all nodes that has been removed from spec
-// network is the owner of the redundant resources (node deployment, svc, secret and pvc)
+// network is the owner of the redundant resources (node statefulset, svc, secret and pvc)
 // removing nodes from spec won't remove these resources by grabage collection
 // that's why we're deleting them manually
 func (r *NetworkReconciler) deleteRedundantNodes(network *ethereumv1alpha1.Network) error {
 	log := r.Log.WithName("delete redundant nodes")
 
-	var deps appsv1.DeploymentList
+	var sts appsv1.StatefulSetList
 	var pvcs corev1.PersistentVolumeClaimList
 	var secrets corev1.SecretList
 	var services corev1.ServiceList
@@ -183,23 +183,23 @@ func (r *NetworkReconciler) deleteRedundantNodes(network *ethereumv1alpha1.Netwo
 	inNamespace := client.InNamespace(network.Namespace)
 
 	for _, node := range nodes {
-		depName := node.DeploymentName(network.Name)
-		names[depName] = true
+		stsName := node.StatefulSetName(network.Name)
+		names[stsName] = true
 	}
 
-	// Node deployments
-	if err := r.Client.List(context.Background(), &deps, matchingLabels, inNamespace); err != nil {
-		log.Error(err, "unable to list all node deployments")
+	// Node statefulsets
+	if err := r.Client.List(context.Background(), &sts, matchingLabels, inNamespace); err != nil {
+		log.Error(err, "unable to list all node statefulsets")
 		return err
 	}
 
-	for _, dep := range deps.Items {
-		name := dep.GetName()
+	for _, st := range sts.Items {
+		name := st.GetName()
 		if exist := names[name]; !exist {
-			log.Info(fmt.Sprintf("deleting node (%s) deployment", name))
+			log.Info(fmt.Sprintf("deleting node (%s) statefulset", name))
 
-			if err := r.Client.Delete(context.Background(), &dep); err != nil {
-				log.Error(err, fmt.Sprintf("unable to delete node (%s) deployment", name))
+			if err := r.Client.Delete(context.Background(), &st); err != nil {
+				log.Error(err, fmt.Sprintf("unable to delete node (%s) statefulset", name))
 				return err
 			}
 		}
@@ -399,8 +399,8 @@ func (r *NetworkReconciler) getNodeAffinity(network *ethereumv1alpha1.Network) *
 	return nil
 }
 
-// specNodeDeployment updates node deployment spec
-func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
+// specNodeStatefulSet updates node statefulset spec
+func (r *NetworkReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
 	labels := node.Labels(network.Name)
 	// used by geth to init genesis and import account(s)
 	initContainers := []corev1.Container{}
@@ -460,13 +460,13 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 		nodeContainer.Image = ParityImage()
 	}
 
-	dep.ObjectMeta.Labels = labels
-	if dep.Spec.Selector == nil {
-		dep.Spec.Selector = &metav1.LabelSelector{}
+	sts.ObjectMeta.Labels = labels
+	if sts.Spec.Selector == nil {
+		sts.Spec.Selector = &metav1.LabelSelector{}
 	}
-	dep.Spec.Selector.MatchLabels = labels
-	dep.Spec.Template.ObjectMeta.Labels = labels
-	dep.Spec.Template.Spec = corev1.PodSpec{
+	sts.Spec.Selector.MatchLabels = labels
+	sts.Spec.Template.ObjectMeta.Labels = labels
+	sts.Spec.Template.Spec = corev1.PodSpec{
 		Volumes:        volumes,
 		InitContainers: initContainers,
 		Containers:     []corev1.Container{nodeContainer},
@@ -474,12 +474,12 @@ func (r *NetworkReconciler) specNodeDeployment(dep *appsv1.Deployment, node *eth
 	}
 }
 
-// reconcileNodeDeployment creates creates node deployment if it doesn't exist, update it if it does exist
-func (r *NetworkReconciler) reconcileNodeDeployment(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) error {
+// reconcileNodeStatefulSet creates node statefulset if it doesn't exist, update it if it does exist
+func (r *NetworkReconciler) reconcileNodeStatefulSet(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) error {
 
-	dep := &appsv1.Deployment{
+	sts := &appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.DeploymentName(network.Name),
+			Name:      node.StatefulSetName(network.Name),
 			Namespace: network.Namespace,
 		},
 	}
@@ -493,11 +493,11 @@ func (r *NetworkReconciler) reconcileNodeDeployment(node *ethereumv1alpha1.Node,
 	mounts := r.createNodeVolumeMounts(node, network)
 	affinity := r.getNodeAffinity(network)
 
-	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, dep, func() error {
-		if err := ctrl.SetControllerReference(network, dep, r.Scheme); err != nil {
+	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, sts, func() error {
+		if err := ctrl.SetControllerReference(network, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeDeployment(dep, node, network, args, volumes, mounts, affinity)
+		r.specNodeStatefulSet(sts, node, network, args, volumes, mounts, affinity)
 		return nil
 	})
 
@@ -613,8 +613,8 @@ func (r *NetworkReconciler) reconcileNodeService(node *ethereumv1alpha1.Node, ne
 	return
 }
 
-// reconcileNode create a new node deployment if it doesn't exist
-// updates existing deployments if node spec changed
+// reconcileNode create a new node statefulset if it doesn't exist
+// updates existing statefulset and depending resources if node spec changed
 func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (enodeURL string, err error) {
 
 	if err = r.reconcileNodeDataPVC(node, network); err != nil {
@@ -625,7 +625,7 @@ func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.Node, network *
 		return
 	}
 
-	if err = r.reconcileNodeDeployment(node, network, bootnodes); err != nil {
+	if err = r.reconcileNodeStatefulSet(node, network, bootnodes); err != nil {
 		return
 	}
 
@@ -657,7 +657,7 @@ func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.Node, network *
 func (r *NetworkReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ethereumv1alpha1.Network{}).
-		Owns(&appsv1.Deployment{}).
+		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.Service{}).
 		Owns(&corev1.Secret{}).
 		Owns(&corev1.PersistentVolumeClaim{}).

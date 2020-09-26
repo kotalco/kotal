@@ -87,8 +87,8 @@ func (n *Node) WithNodekey() bool {
 	return n.Nodekey != ""
 }
 
-// DeploymentName returns name to be used by node deployment
-func (n *Node) DeploymentName(network string) string {
+// StatefulSetName returns name to be used by node statefulset
+func (n *Node) StatefulSetName(network string) string {
 	return fmt.Sprintf("%s-%s", network, n.Name)
 }
 
@@ -99,17 +99,17 @@ func (n *Node) ConfigmapName(network string, client EthereumClient) string {
 
 // PVCName returns name to be used by node pvc
 func (n *Node) PVCName(network string) string {
-	return n.DeploymentName(network) // same as deployment name
+	return n.StatefulSetName(network) // same as statefulset name
 }
 
 // SecretName returns name to be used by node secret
 func (n *Node) SecretName(network string) string {
-	return n.DeploymentName(network) // same as deployment name
+	return n.StatefulSetName(network) // same as statefulset name
 }
 
 // ServiceName returns name to be used by node service
 func (n *Node) ServiceName(network string) string {
-	return n.DeploymentName(network) // same as deployment name
+	return n.StatefulSetName(network) // same as statefulset name
 }
 
 // Labels to be used by node resources

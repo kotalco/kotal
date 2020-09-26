@@ -47,7 +47,7 @@ func TestWithNodekey(t *testing.T) {
 func TestDeploymentName(t *testing.T) {
 	node := network.Spec.Nodes[0]
 	expected := "test-network-node-1"
-	got := node.DeploymentName(network.Name)
+	got := node.StatefulSetName(network.Name)
 
 	if got != expected {
 		t.Errorf("Expecting bootnode to be %s got %s", expected, got)
