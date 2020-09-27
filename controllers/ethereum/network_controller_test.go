@@ -10,10 +10,12 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -160,6 +162,20 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should create bootnode statefulset with correct arguments", func() {
@@ -302,6 +318,26 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+				{
+					Name:       "json-rpc",
+					Port:       int32(8547),
+					TargetPort: intstr.FromInt(int(8547)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should update the network by removing node-2", func() {
@@ -428,6 +464,26 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+				{
+					Name:       "json-rpc",
+					Port:       int32(8547),
+					TargetPort: intstr.FromInt(int(8547)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should update the network by removing node-3", func() {
@@ -598,6 +654,20 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should create bootnode statefulset with correct arguments", func() {
@@ -750,6 +820,20 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should update the network by removing node-2", func() {
@@ -891,6 +975,20 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should update the network by removing node-3", func() {
@@ -1066,6 +1164,20 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should create bootnode statefulset with correct arguments", func() {
@@ -1230,6 +1342,20 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should update the network by removing node-2", func() {
@@ -1373,6 +1499,20 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should update the network by removing node-3", func() {
@@ -1570,6 +1710,20 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should create bootnode statefulset with correct arguments", func() {
@@ -1720,6 +1874,20 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should update the network by removing node-2", func() {
@@ -1844,6 +2012,20 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should update the network by removing node-3", func() {
@@ -2039,6 +2221,20 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should create bootnode statefulset with correct arguments", func() {
@@ -2163,6 +2359,26 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
+				{
+					Name:       "discovery",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolUDP,
+				},
+				{
+					Name:       "p2p",
+					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+				{
+					Name:       "json-rpc",
+					Port:       int32(8547),
+					TargetPort: intstr.FromInt(int(8547)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			}))
 		})
 
 		It("Should update the network by removing node-2", func() {

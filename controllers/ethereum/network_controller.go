@@ -566,6 +566,8 @@ func (r *NetworkReconciler) reconcileNodeSecret(node *ethereumv1alpha1.Node, net
 // specNodeService updates node service spec
 func (r *NetworkReconciler) specNodeService(svc *corev1.Service, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) {
 	labels := node.Labels(network.Name)
+	client := node.Client
+
 	svc.ObjectMeta.Labels = labels
 	svc.Spec.Ports = []corev1.ServicePort{
 		{
@@ -580,6 +582,37 @@ func (r *NetworkReconciler) specNodeService(svc *corev1.Service, node *ethereumv
 			TargetPort: intstr.FromInt(int(node.P2PPort)),
 			Protocol:   corev1.ProtocolTCP,
 		},
+	}
+
+	if node.RPCPort != 0 {
+		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
+			Name:       "json-rpc",
+			Port:       int32(node.RPCPort),
+			TargetPort: intstr.FromInt(int(node.RPCPort)),
+			Protocol:   corev1.ProtocolTCP,
+		})
+	}
+
+	if node.WSPort != 0 {
+		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
+			Name:       "ws",
+			Port:       int32(node.WSPort),
+			TargetPort: intstr.FromInt(int(node.WSPort)),
+			Protocol:   corev1.ProtocolTCP,
+		})
+	}
+
+	if node.GraphQLPort != 0 {
+		targetPort := node.GraphQLPort
+		if client == ethereumv1alpha1.GethClient {
+			targetPort = node.RPCPort
+		}
+		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
+			Name:       "graphql",
+			Port:       int32(node.GraphQLPort),
+			TargetPort: intstr.FromInt(int(targetPort)),
+			Protocol:   corev1.ProtocolTCP,
+		})
 	}
 
 	svc.Spec.Selector = labels
