@@ -75,9 +75,7 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 		appendArg(BesuRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
 	}
 
-	if node.RPCHost != "" {
-		appendArg(BesuRPCHTTPHost, node.RPCHost)
-	}
+	appendArg(BesuRPCHTTPHost, DefaultHost)
 
 	if len(node.RPCAPI) != 0 {
 		apis := []string{}
@@ -96,9 +94,7 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 		appendArg(BesuRPCWSPort, fmt.Sprintf("%d", node.WSPort))
 	}
 
-	if node.WSHost != "" {
-		appendArg(BesuRPCWSHost, node.WSHost)
-	}
+	appendArg(BesuRPCWSHost, DefaultHost)
 
 	if len(node.WSAPI) != 0 {
 		apis := []string{}
@@ -117,9 +113,7 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 		appendArg(BesuGraphQLHTTPPort, fmt.Sprintf("%d", node.GraphQLPort))
 	}
 
-	if node.GraphQLHost != "" {
-		appendArg(BesuGraphQLHTTPHost, node.GraphQLHost)
-	}
+	appendArg(BesuGraphQLHTTPHost, DefaultHost)
 
 	if len(node.Hosts) != 0 {
 		commaSeperatedHosts := strings.Join(node.Hosts, ",")

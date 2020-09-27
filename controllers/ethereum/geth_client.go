@@ -81,9 +81,7 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 		appendArg(GethRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
 	}
 
-	if node.RPCHost != "" {
-		appendArg(GethRPCHTTPHost, node.RPCHost)
-	}
+	appendArg(GethRPCHTTPHost, DefaultHost)
 
 	if len(node.RPCAPI) != 0 {
 		apis := []string{}
@@ -102,9 +100,7 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 		appendArg(GethRPCWSPort, fmt.Sprintf("%d", node.WSPort))
 	}
 
-	if node.WSHost != "" {
-		appendArg(GethRPCWSHost, node.WSHost)
-	}
+	appendArg(GethRPCWSHost, DefaultHost)
 
 	if len(node.WSAPI) != 0 {
 		apis := []string{}
@@ -121,10 +117,6 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 
 	if node.GraphQLPort != 0 {
 		appendArg(GethGraphQLHTTPPort, fmt.Sprintf("%d", node.GraphQLPort))
-	}
-
-	if node.GraphQLHost != "" {
-		appendArg(GethGraphQLHTTPHost, node.GraphQLHost)
 	}
 
 	if len(node.Hosts) != 0 {

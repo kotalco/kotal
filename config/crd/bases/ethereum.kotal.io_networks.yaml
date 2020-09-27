@@ -268,9 +268,6 @@ spec:
                   graphql:
                     description: GraphQL is whether GraphQL server is enabled or not
                     type: boolean
-                  graphqlHost:
-                    description: GraphQLHost is GraphQL server host address
-                    type: string
                   graphqlPort:
                     description: GraphQLPort is the GraphQL server listening port
                     type: integer
@@ -373,9 +370,6 @@ spec:
                       - web3
                       type: string
                     type: array
-                  rpcHost:
-                    description: RPCHost is HTTP-RPC server host address
-                    type: string
                   rpcPort:
                     description: RPCPort is HTTP-RPC server listening port
                     type: integer
@@ -410,9 +404,6 @@ spec:
                       - web3
                       type: string
                     type: array
-                  wsHost:
-                    description: WSHost is HTTP-WS server host address
-                    type: string
                   wsPort:
                     description: WSPort is the web socket server listening port
                     type: integer

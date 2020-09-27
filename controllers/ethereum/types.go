@@ -21,6 +21,16 @@ const (
 	DefaultParityImage = "openethereum/openethereum:v3.0.1"
 )
 
+// Node settings
+const (
+	// DefaultHost is the host address used by rpc, ws and graphql server
+	// rpcHost, wsHost, graphqlHost has been removed from node spec because
+	// in geth v1.9.19 it has been removed along with graphqlPort
+	// https://github.com/ethereum/go-ethereum/releases/tag/v1.9.19
+	// in most use cases the value 0.0.0.0 makes most sense.
+	DefaultHost = "0.0.0.0"
+)
+
 const (
 	// EnvBesuImage is the environment variable used for hyperledger besu image
 	EnvBesuImage = "BESU_IMAGE"

@@ -129,10 +129,6 @@ func (r *Network) DefaultNode(node *Node) {
 	}
 
 	if node.RPC {
-		if node.RPCHost == "" {
-			node.RPCHost = DefaultHost
-		}
-
 		if node.RPCPort == 0 {
 			node.RPCPort = 8545
 		}
@@ -143,10 +139,6 @@ func (r *Network) DefaultNode(node *Node) {
 	}
 
 	if node.WS {
-		if node.WSHost == "" {
-			node.WSHost = DefaultHost
-		}
-
 		if node.WSPort == 0 {
 			node.WSPort = DefaultWSPort
 		}
@@ -157,10 +149,6 @@ func (r *Network) DefaultNode(node *Node) {
 	}
 
 	if node.GraphQL {
-		if node.GraphQLHost == "" {
-			node.GraphQLHost = DefaultHost
-		}
-
 		if node.GraphQLPort == 0 {
 			node.GraphQLPort = DefaultGraphQLPort
 		}

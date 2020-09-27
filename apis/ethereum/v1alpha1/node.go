@@ -43,9 +43,6 @@ type Node struct {
 	// RPC is whether HTTP-RPC server is enabled or not
 	RPC bool `json:"rpc,omitempty"`
 
-	// RPCHost is HTTP-RPC server host address
-	RPCHost string `json:"rpcHost,omitempty"`
-
 	// RPCPort is HTTP-RPC server listening port
 	RPCPort uint `json:"rpcPort,omitempty"`
 
@@ -55,9 +52,6 @@ type Node struct {
 	// WS is whether web socket server is enabled or not
 	WS bool `json:"ws,omitempty"`
 
-	// WSHost is HTTP-WS server host address
-	WSHost string `json:"wsHost,omitempty"`
-
 	// WSPort is the web socket server listening port
 	WSPort uint `json:"wsPort,omitempty"`
 
@@ -66,9 +60,6 @@ type Node struct {
 
 	// GraphQL is whether GraphQL server is enabled or not
 	GraphQL bool `json:"graphql,omitempty"`
-
-	// GraphQLHost is GraphQL server host address
-	GraphQLHost string `json:"graphqlHost,omitempty"`
 
 	// GraphQLPort is the GraphQL server listening port
 	GraphQLPort uint `json:"graphqlPort,omitempty"`

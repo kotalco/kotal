@@ -85,9 +85,7 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1a
 		appendArg(ParityRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
 	}
 
-	if node.RPCHost != "" {
-		appendArg(ParityRPCHTTPHost, node.RPCHost)
-	}
+	appendArg(ParityRPCHTTPHost, DefaultHost)
 
 	if len(node.RPCAPI) != 0 {
 		apis := []string{}
@@ -102,9 +100,7 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1a
 		appendArg(ParityRPCWSPort, fmt.Sprintf("%d", node.WSPort))
 	}
 
-	if node.WSHost != "" {
-		appendArg(ParityRPCWSHost, node.WSHost)
-	}
+	appendArg(ParityRPCWSHost, DefaultHost)
 
 	if len(node.WSAPI) != 0 {
 		apis := []string{}

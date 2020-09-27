@@ -11,7 +11,6 @@ spec:
       nodekey: "0x5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd"
       rpc: true
       rpcPort: 8599
-      rpcHost: 0.0.0.0
       corsDomains:
         - example.kotal.io
       rpcAPI:
@@ -20,6 +19,5 @@ spec:
         - eth
       graphql: true
       graphqlPort: 8777
-      graphqlHost: 0.0.0.0
     - name: node-2
       client: geth
