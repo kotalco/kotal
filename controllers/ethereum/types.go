@@ -166,10 +166,6 @@ const (
 
 	// GethGraphQLHTTPEnabled is the argument used to enable QraphQL HTTP server
 	GethGraphQLHTTPEnabled = "--graphql"
-	// GethGraphQLHTTPPort is the argument used for GraphQL HTTP port
-	GethGraphQLHTTPPort = "--graphql.port"
-	// GethGraphQLHTTPHost is the argument used for GraphQL HTTP host
-	GethGraphQLHTTPHost = "--graphql.addr"
 	// GethGraphQLHTTPCorsOrigins is the argument used for GraphQL HTTP Cors origins
 	GethGraphQLHTTPCorsOrigins = "--graphql.corsdomain"
 	// GethGraphQLHostWhitelist is the argument used for whitelisting hosts

@@ -115,9 +115,8 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 		appendArg(GethGraphQLHTTPEnabled)
 	}
 
-	if node.GraphQLPort != 0 {
-		appendArg(GethGraphQLHTTPPort, fmt.Sprintf("%d", node.GraphQLPort))
-	}
+	//NOTE: .GraphQLPort is ignored because rpc port will be used by graphql server
+	// .GraphQLPort will be used in the service that point to the pod
 
 	if len(node.Hosts) != 0 {
 		commaSeperatedHosts := strings.Join(node.Hosts, ",")

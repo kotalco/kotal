@@ -621,8 +621,7 @@ var _ = Describe("Ethereum client arguments", func() {
 							Bootnode: true,
 							Nodekey:  nodekey,
 							RPC:      true,
-
-							RPCPort: 8599,
+							RPCPort:  8599,
 							RPCAPI: []ethereumv1alpha1.API{
 								ethereumv1alpha1.ETHAPI,
 								ethereumv1alpha1.Web3API,
@@ -663,8 +662,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethRPCWSAPI,
 				"web3,eth",
 				GethGraphQLHTTPEnabled,
-				GethGraphQLHTTPPort,
-				"8511",
 				GethGraphQLHTTPCorsOrigins,
 				"cors.example.com",
 				GethLogging,
