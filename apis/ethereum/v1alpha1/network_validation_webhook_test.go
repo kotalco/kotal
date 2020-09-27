@@ -996,6 +996,29 @@ var _ = Describe("Ethereum network validation", func() {
 				},
 			},
 		},
+		{
+			Title: "network #38",
+			Network: &Network{
+				Spec: NetworkSpec{
+					Join: RinkebyNetwork,
+					Nodes: []Node{
+						{
+							Name:    "node-1",
+							Client:  GethClient,
+							GraphQL: true,
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.nodes[0].rpc",
+					BadValue: false,
+					Detail:   "must enable rpc if client is geth and graphql is enabled",
+				},
+			},
+		},
 	}
 
 	// errorsToCauses converts field error list into array of status cause

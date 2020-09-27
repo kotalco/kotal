@@ -92,6 +92,7 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	// TODO: if they're string equal no need to compare quantity
 	cpu := resource.MustParse(node.Resources.CPU)
 	cpuLimit := resource.MustParse(node.Resources.CPULimit)
 
@@ -101,6 +102,7 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	// TODO: if they're string equal no need to compare quantity
 	memory := resource.MustParse(node.Resources.Memory)
 	memoryLimit := resource.MustParse(node.Resources.MemoryLimit)
 
@@ -125,6 +127,12 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 	// validate only geth client can import accounts
 	if node.Client == BesuClient && node.Import != nil {
 		err := field.Invalid(nodePath.Child("client"), node.Client, "must be geth or parity if import is provided")
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	// validate rpc must be enabled if grapql is enabled and geth is used
+	if node.Client == GethClient && node.GraphQL && !node.RPC {
+		err := field.Invalid(nodePath.Child("rpc"), node.RPC, "must enable rpc if client is geth and graphql is enabled")
 		nodeErrors = append(nodeErrors, err)
 	}
 
