@@ -464,6 +464,7 @@ func (r *NetworkReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *e
 	if sts.Spec.Selector == nil {
 		sts.Spec.Selector = &metav1.LabelSelector{}
 	}
+	sts.Spec.ServiceName = node.ServiceName(network.Name)
 	sts.Spec.Selector.MatchLabels = labels
 	sts.Spec.Template.ObjectMeta.Labels = labels
 	sts.Spec.Template.Spec = corev1.PodSpec{
@@ -625,6 +626,11 @@ func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.Node, network *
 		return
 	}
 
+	ip, err := r.reconcileNodeService(node, network)
+	if err != nil {
+		return
+	}
+
 	if err = r.reconcileNodeStatefulSet(node, network, bootnodes); err != nil {
 		return
 	}
@@ -634,17 +640,11 @@ func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.Node, network *
 	}
 
 	var publicKey string
-
 	if publicKey, err = r.reconcileNodeSecret(node, network); err != nil {
 		return
 	}
 
 	if !node.IsBootnode() {
-		return
-	}
-
-	ip, err := r.reconcileNodeService(node, network)
-	if err != nil {
 		return
 	}
 

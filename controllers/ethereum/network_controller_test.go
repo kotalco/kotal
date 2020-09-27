@@ -298,9 +298,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSecret)).ToNot(Succeed())
 		})
 
-		It("Should not create bootnode service (not a bootnode)", func() {
+		It("Should create node-2 service", func() {
 			nodeSvc := &v1.Service{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
 		It("Should update the network by removing node-2", func() {
@@ -325,6 +326,11 @@ var _ = Describe("Ethereum network controller", func() {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
+			})
+
+			It("Should delete node-2 service", func() {
+				nodeSvc := &v1.Service{}
+				Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
 
@@ -418,9 +424,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSecret)).ToNot(Succeed())
 		})
 
-		It("Should not create bootnode service (not a bootnode)", func() {
+		It("Should create node-3 service", func() {
 			nodeSvc := &v1.Service{}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
 		It("Should update the network by removing node-3", func() {
@@ -445,6 +452,11 @@ var _ = Describe("Ethereum network controller", func() {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
+			})
+
+			It("Should delete node-3 service", func() {
+				nodeSvc := &v1.Service{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
 
@@ -734,9 +746,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should not create bootnode service (not a bootnode)", func() {
+		It("Should create node-2 service", func() {
 			nodeSvc := &v1.Service{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
 		It("Should update the network by removing node-2", func() {
@@ -759,6 +772,11 @@ var _ = Describe("Ethereum network controller", func() {
 			It("Should delete node-2 imported account secret", func() {
 				secret := &v1.Secret{}
 				Expect(k8sClient.Get(context.Background(), node2Key, secret)).ToNot(Succeed())
+			})
+
+			It("Should delete node-2 service", func() {
+				nodeSvc := &v1.Service{}
+				Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
 			})
 
 			It("Should delete node-2 data persistent volume", func() {
@@ -869,9 +887,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should not create bootnode service (not a bootnode)", func() {
+		It("Should create node-3 service", func() {
 			nodeSvc := &v1.Service{}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
 		It("Should update the network by removing node-3", func() {
@@ -901,6 +920,11 @@ var _ = Describe("Ethereum network controller", func() {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
+			})
+
+			It("Should delete node-3 service", func() {
+				nodeSvc := &v1.Service{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
 
@@ -1202,9 +1226,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should not create bootnode service (not a bootnode)", func() {
+		It("Should create node-2 service", func() {
 			nodeSvc := &v1.Service{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
 		It("Should update the network by removing node-2", func() {
@@ -1234,6 +1259,11 @@ var _ = Describe("Ethereum network controller", func() {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
+			})
+
+			It("Should delete node-2 service", func() {
+				nodeSvc := &v1.Service{}
+				Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
 
@@ -1339,9 +1369,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should not create node-3 service (not a bootnode)", func() {
+		It("Should create node-3 service", func() {
 			nodeSvc := &v1.Service{}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
 		It("Should update the network by removing node-3", func() {
@@ -1371,6 +1402,11 @@ var _ = Describe("Ethereum network controller", func() {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
+			})
+
+			It("Should delete node-3 service", func() {
+				nodeSvc := &v1.Service{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
 
@@ -1680,9 +1716,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should not create bootnode service (not a bootnode)", func() {
+		It("Should create node-2 service", func() {
 			nodeSvc := &v1.Service{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
 		It("Should update the network by removing node-2", func() {
@@ -1712,6 +1749,11 @@ var _ = Describe("Ethereum network controller", func() {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
+			})
+
+			It("Should delete node-2 service", func() {
+				nodeSvc := &v1.Service{}
+				Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
 
@@ -1798,9 +1840,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
-		It("Should not create node-3 service (not a bootnode)", func() {
+		It("Should create node-3 service", func() {
 			nodeSvc := &v1.Service{}
-			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
+			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
 		It("Should update the network by removing node-3", func() {
@@ -1825,6 +1868,11 @@ var _ = Describe("Ethereum network controller", func() {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
+			})
+
+			It("Should delete node-3 service", func() {
+				nodeSvc := &v1.Service{}
+				Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
 
@@ -2111,9 +2159,10 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSecret)).ToNot(Succeed())
 		})
 
-		It("Should not create bootnode service (not a bootnode)", func() {
+		It("Should create node-2 service", func() {
 			nodeSvc := &v1.Service{}
-			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
+			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
 		})
 
 		It("Should update the network by removing node-2", func() {
@@ -2138,6 +2187,11 @@ var _ = Describe("Ethereum network controller", func() {
 					nodePVC := &v1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
+			})
+
+			It("Should delete node-2 service", func() {
+				nodeSvc := &v1.Service{}
+				Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
 
