@@ -199,6 +199,8 @@ const (
 	// ParityEngineSigner is the argument used for engine singer
 	ParityEngineSigner = "--engine-signer"
 
+	// ParityDisableRPC is the argument used to disable JSON RPC HTTP server
+	ParityDisableRPC = "--no-jsonrpc"
 	// ParityRPCHTTPCorsOrigins is the argument used for setting rpc HTTP cors origins
 	ParityRPCHTTPCorsOrigins = "--jsonrpc-cors"
 	// ParityRPCHTTPPort is the argument used for RPC HTTP port
@@ -210,6 +212,8 @@ const (
 	// ParityRPCHostWhitelist is the argument used for whitelisting hosts
 	ParityRPCHostWhitelist = "--jsonrpc-hosts"
 
+	// ParityDisableWS is the argument used for RPC WS port
+	ParityDisableWS = "--no-ws"
 	// ParityRPCWSPort is the argument used for RPC WS port
 	ParityRPCWSPort = "--ws-port"
 	// ParityRPCWSHost is the argument used for RPC WS host

@@ -81,6 +81,10 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1a
 		}
 	}
 
+	if !node.RPC {
+		appendArg(ParityDisableRPC)
+	}
+
 	if node.RPCPort != 0 {
 		appendArg(ParityRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
 	}
@@ -94,6 +98,10 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1a
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		appendArg(ParityRPCHTTPAPI, commaSeperatedAPIs)
+	}
+
+	if !node.WS {
+		appendArg(ParityDisableWS)
 	}
 
 	if node.WSPort != 0 {

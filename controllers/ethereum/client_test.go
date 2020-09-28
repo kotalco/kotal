@@ -98,6 +98,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				PathBlockchainData,
 				ParityLogging,
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
+				ParityDisableRPC,
+				ParityDisableWS,
 			},
 		},
 		{
@@ -178,6 +180,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				ParityNodeKey,
 				ParityLogging,
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
+				ParityDisableRPC,
+				ParityDisableWS,
 			},
 		},
 		{
@@ -263,6 +267,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				ParityNodeKey,
 				ParityLogging,
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+				ParityDisableWS,
 			},
 		},
 		{
@@ -378,6 +383,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				"eth,web3,net",
 				ParityLogging,
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
+				ParityDisableWS,
 			},
 		},
 		{
@@ -502,8 +508,7 @@ var _ = Describe("Ethereum client arguments", func() {
 							Bootnode: true,
 							Nodekey:  nodekey,
 							RPC:      true,
-
-							RPCPort: 8599,
+							RPCPort:  8599,
 							RPCAPI: []ethereumv1alpha1.API{
 								ethereumv1alpha1.ETHAPI,
 								ethereumv1alpha1.Web3API,
@@ -779,6 +784,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				ParityPassword,
 				ParityEngineSigner,
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.InfoLogs),
+				ParityDisableRPC,
+				ParityDisableWS,
 			},
 		},
 	}
