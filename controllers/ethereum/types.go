@@ -116,8 +116,8 @@ const (
 	BesuGraphQLHTTPHost = "--graphql-http-host"
 	// BesuGraphQLHTTPCorsOrigins is the argument used for GraphQL HTTP Cors origins
 	BesuGraphQLHTTPCorsOrigins = "--graphql-http-cors-origins"
-	// BesuHostWhitelist is the argument used for whitelisting hosts
-	BesuHostWhitelist = "--host-whitelist"
+	// BesuHostAllowlist is the argument used for whitelisting hosts
+	BesuHostAllowlist = "--host-allowlist"
 )
 
 // Go ethereum client arguments

@@ -117,7 +117,7 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 
 	if len(node.Hosts) != 0 {
 		commaSeperatedHosts := strings.Join(node.Hosts, ",")
-		appendArg(BesuHostWhitelist, commaSeperatedHosts)
+		appendArg(BesuHostAllowlist, commaSeperatedHosts)
 	}
 
 	if len(node.CORSDomains) != 0 {
