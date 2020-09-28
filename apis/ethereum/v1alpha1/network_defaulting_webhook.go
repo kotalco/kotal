@@ -175,10 +175,6 @@ func (r *Network) DefaultGenesis() {
 		r.Spec.Genesis.Forks = &Forks{}
 	}
 
-	if r.Spec.Genesis.Forks.EIP150Hash == "" {
-		r.Spec.Genesis.Forks.EIP150Hash = DefaultEIP150Hash
-	}
-
 	if r.Spec.Genesis.MixHash == "" {
 		r.Spec.Genesis.MixHash = DefaultMixHash
 	}

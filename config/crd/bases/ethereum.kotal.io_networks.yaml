@@ -149,10 +149,6 @@ spec:
                     eip150:
                       description: EIP150 (Tangerine Whistle) fork
                       type: integer
-                    eip150Hash:
-                      description: EIP150Hash (Tangerine Whistle) fork hash
-                      pattern: ^0[xX][0-9a-fA-F]{64}$
-                      type: string
                     eip155:
                       description: EIP155 (Spurious Dragon) fork
                       type: integer

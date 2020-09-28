@@ -193,7 +193,6 @@ func (b *BesuClient) GetGenesisFile(network *ethereumv1alpha1.Network) (content 
 		"chainId":             genesis.ChainID,
 		"homesteadBlock":      genesis.Forks.Homestead,
 		"eip150Block":         genesis.Forks.EIP150,
-		"eip150Hash":          genesis.Forks.EIP150Hash,
 		"eip155Block":         genesis.Forks.EIP155,
 		"eip158Block":         genesis.Forks.EIP158,
 		"byzantiumBlock":      genesis.Forks.Byzantium,

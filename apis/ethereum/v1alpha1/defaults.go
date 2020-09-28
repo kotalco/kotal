@@ -46,8 +46,6 @@ const (
 	DefaultNonce = HexString("0x0")
 	// DefaultTimestamp is the default timestamp
 	DefaultTimestamp = HexString("0x0")
-	// DefaultEIP150Hash is the default eip150 hash
-	DefaultEIP150Hash = Hash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0")
 )
 
 // Ethash engine defaults

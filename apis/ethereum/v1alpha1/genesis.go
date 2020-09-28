@@ -99,9 +99,6 @@ type Forks struct {
 	// EIP150 (Tangerine Whistle) fork
 	EIP150 uint `json:"eip150,omitempty"`
 
-	// EIP150Hash (Tangerine Whistle) fork hash
-	EIP150Hash Hash `json:"eip150Hash,omitempty"`
-
 	// EIP155 (Spurious Dragon) fork
 	EIP155 uint `json:"eip155,omitempty"`
 
