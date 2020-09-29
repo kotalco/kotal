@@ -68,6 +68,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				PathBlockchainData,
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
+				GethConfig,
 			},
 		},
 		{
@@ -145,6 +146,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				PathBlockchainData,
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.AllLogs),
+				GethConfig,
 			},
 		},
 		{
@@ -228,6 +230,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethRPCHTTPEnabled,
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+				GethConfig,
 			},
 		},
 		{
@@ -331,6 +334,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				"eth,web3,net",
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
+				GethConfig,
 			},
 		},
 		{
@@ -474,6 +478,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				"web3,eth",
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+				GethConfig,
 			},
 		},
 		{
@@ -648,6 +653,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				"cors.example.com",
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.InfoLogs),
+				GethConfig,
 			},
 		},
 		{
@@ -721,6 +727,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 				GethNoDiscovery,
+				GethConfig,
 			},
 		},
 		{

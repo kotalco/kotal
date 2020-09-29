@@ -274,6 +274,7 @@ var _ = Describe("Ethereum network controller", func() {
 				string(ethereumv1alpha1.FastSynchronization),
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
+				GethConfig,
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).ToNot(ContainElements([]string{
 				ethereumv1alpha1.MainNetwork,
@@ -775,6 +776,7 @@ var _ = Describe("Ethereum network controller", func() {
 				string(ethereumv1alpha1.FullSynchronization),
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+				GethConfig,
 			}))
 		})
 
@@ -1298,6 +1300,7 @@ var _ = Describe("Ethereum network controller", func() {
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 				GethNoDiscovery,
+				GethConfig,
 			}))
 		})
 
@@ -1832,6 +1835,7 @@ var _ = Describe("Ethereum network controller", func() {
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.AllLogs),
 				GethNoDiscovery,
+				GethConfig,
 			}))
 		})
 
