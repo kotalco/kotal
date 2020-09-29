@@ -1188,6 +1188,8 @@ var _ = Describe("Ethereum network controller", func() {
 				string(ethereumv1alpha1.FullSynchronization),
 				BesuLogging,
 				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
+				BesuDiscoveryEnabled,
+				"false",
 			}))
 		})
 
@@ -1295,6 +1297,7 @@ var _ = Describe("Ethereum network controller", func() {
 				string(ethereumv1alpha1.FastSynchronization),
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
+				GethNoDiscovery,
 			}))
 		})
 
@@ -1451,6 +1454,7 @@ var _ = Describe("Ethereum network controller", func() {
 				ParityUnlock,
 				ParityEngineSigner,
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
+				ParityNoDiscovery,
 			}))
 		})
 
@@ -1732,6 +1736,8 @@ var _ = Describe("Ethereum network controller", func() {
 				string(ethereumv1alpha1.FullSynchronization),
 				BesuLogging,
 				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.TraceLogs),
+				BesuDiscoveryEnabled,
+				"false",
 			}))
 		})
 
@@ -1825,6 +1831,7 @@ var _ = Describe("Ethereum network controller", func() {
 				string(ethereumv1alpha1.FastSynchronization),
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.AllLogs),
+				GethNoDiscovery,
 			}))
 		})
 
@@ -1964,6 +1971,7 @@ var _ = Describe("Ethereum network controller", func() {
 				string(ethereumv1alpha1.FastSynchronization),
 				ParityLogging,
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.TraceLogs),
+				ParityNoDiscovery,
 			}))
 		})
 
@@ -2241,6 +2249,8 @@ var _ = Describe("Ethereum network controller", func() {
 				string(ethereumv1alpha1.FullSynchronization),
 				BesuLogging,
 				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+				BesuDiscoveryEnabled,
+				"false",
 			}))
 		})
 

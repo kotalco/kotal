@@ -680,6 +680,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				string(coinbase),
 				BesuLogging,
 				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
+				BesuDiscoveryEnabled,
+				"false",
 			},
 		},
 		{
@@ -718,6 +720,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				string(coinbase),
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
+				GethNoDiscovery,
 			},
 		},
 		{
@@ -754,6 +757,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.InfoLogs),
 				ParityDisableRPC,
 				ParityDisableWS,
+				ParityNoDiscovery,
 			},
 		},
 	}
