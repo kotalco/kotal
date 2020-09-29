@@ -26,7 +26,7 @@ func (g *GethClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLev
 }
 
 // GetArgs returns command line arguments required for client run
-func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (args []string) {
+func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) (args []string) {
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
 		args = append(args, arg...)
@@ -35,6 +35,8 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 	appendArg("--nousb")
 
 	appendArg(GethLogging, g.LoggingArgFromVerbosity(node.Logging))
+
+	appendArg(GethConfig, fmt.Sprintf("%s/config.toml", PathConfig))
 
 	if network.Spec.ID != 0 {
 		appendArg(GethNetworkID, fmt.Sprintf("%d", network.Spec.ID))
@@ -52,11 +54,6 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 
 	if node.P2PPort != 0 {
 		appendArg(GethP2PPort, fmt.Sprintf("%d", node.P2PPort))
-	}
-
-	if len(bootnodes) != 0 {
-		commaSeperatedBootnodes := strings.Join(bootnodes, ",")
-		appendArg(GethBootnodes, commaSeperatedBootnodes)
 	}
 
 	if node.SyncMode != "" {

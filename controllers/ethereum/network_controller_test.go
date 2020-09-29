@@ -142,13 +142,13 @@ var _ = Describe("Ethereum network controller", func() {
 			ownerReference.UID = fetched.GetUID()
 		})
 
-		It("Should not create genesis block configmap", func() {
+		It("Should create configs (genesis, init scripts, static nodes ...) configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
 			genesisKey := types.NamespacedName{
 				Name:      fmt.Sprintf("%s-besu", key.Name),
 				Namespace: key.Namespace,
 			}
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(BeNil())
+			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).Should(Succeed())
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
@@ -267,7 +267,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
-				GethBootnodes,
 				GethRPCHTTPEnabled,
 				GethRPCHTTPPort,
 				"8547",
@@ -414,7 +413,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
-				ParityBootnodes,
 				ParityRPCHTTPPort,
 				"8547",
 				ParitySyncMode,
@@ -634,13 +632,13 @@ var _ = Describe("Ethereum network controller", func() {
 			ownerReference.UID = fetched.GetUID()
 		})
 
-		It("Should not create genesis block configmap", func() {
+		It("Should create configs (genesis, init scripts, static nodes ...) configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
 			genesisKey := types.NamespacedName{
 				Name:      fmt.Sprintf("%s-besu", key.Name),
 				Namespace: key.Namespace,
 			}
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).ToNot(BeNil())
+			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).Should(Succeed())
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
@@ -769,7 +767,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				"--rinkeby",
 				GethDataDir,
-				GethBootnodes,
 				GethMinerEnabled,
 				GethMinerCoinbase,
 				GethUnlock,
@@ -925,7 +922,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				"rinkeby",
 				ParityDataDir,
-				ParityBootnodes,
 				ParityMinerCoinbase,
 				ParityUnlock,
 				ParityPassword,
@@ -1295,7 +1291,6 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
-				GethBootnodes,
 				GethSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 				GethLogging,
@@ -1449,7 +1444,6 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
-				ParityBootnodes,
 				ParitySyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 				ParityLogging,
@@ -1827,7 +1821,6 @@ var _ = Describe("Ethereum network controller", func() {
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
-				GethBootnodes,
 				GethSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 				GethLogging,
@@ -1967,7 +1960,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
-				ParityBootnodes,
 				ParitySyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 				ParityLogging,
@@ -2312,7 +2304,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
-				BesuBootnodes,
 				BesuRPCHTTPEnabled,
 				"8547",
 				BesuSyncMode,

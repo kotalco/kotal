@@ -33,7 +33,7 @@ func (p *ParityClient) PrunningArgFromSyncMode(mode ethereumv1alpha1.Synchroniza
 }
 
 // GetArgs returns command line arguments required for client run
-func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (args []string) {
+func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) (args []string) {
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
 		args = append(args, arg...)
@@ -51,6 +51,8 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1a
 
 	appendArg(ParityDataDir, PathBlockchainData)
 
+	appendArg(ParityReservedPeers, fmt.Sprintf("%s/static-nodes", PathConfig))
+
 	if network.Spec.Genesis == nil {
 		if network.Spec.Join != ethereumv1alpha1.MainNetwork {
 			appendArg(ParityNetwork, network.Spec.Join)
@@ -61,11 +63,6 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1a
 
 	if node.P2PPort != 0 {
 		appendArg(ParityP2PPort, fmt.Sprintf("%d", node.P2PPort))
-	}
-
-	if len(bootnodes) != 0 {
-		commaSeperatedBootnodes := strings.Join(bootnodes, ",")
-		appendArg(ParityBootnodes, commaSeperatedBootnodes)
 	}
 
 	if node.SyncMode != "" {

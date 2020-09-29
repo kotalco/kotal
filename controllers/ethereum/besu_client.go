@@ -17,7 +17,7 @@ func (b *BesuClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLev
 }
 
 // GetArgs returns command line arguments required for client run
-func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (args []string) {
+func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) (args []string) {
 
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
@@ -48,11 +48,6 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 
 	if node.P2PPort != 0 {
 		appendArg(BesuP2PPort, fmt.Sprintf("%d", node.P2PPort))
-	}
-
-	if len(bootnodes) != 0 {
-		commaSeperatedBootnodes := strings.Join(bootnodes, ",")
-		appendArg(BesuBootnodes, commaSeperatedBootnodes)
 	}
 
 	if node.SyncMode != "" {

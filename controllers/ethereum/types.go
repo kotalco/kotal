@@ -124,6 +124,8 @@ const (
 const (
 	// GethLogging is the argument used for logging verbosity level
 	GethLogging = "--verbosity"
+	// GethConfig is the argument used for config file
+	GethConfig = "--config"
 	// GethNetworkID is the argument used for network id
 	GethNetworkID = "--networkid"
 	// GethNodeKey is the argument used for node private key
@@ -186,6 +188,8 @@ const (
 	ParityNodeKey = "--node-key"
 	// ParityDataDir is the argument used for data path
 	ParityDataDir = "--base-path"
+	// ParityReservedPeers is the argument used for static nodes (reserved peers)
+	ParityReservedPeers = "--reserved-peers"
 	// ParityNetwork is the argument used for selecting network
 	ParityNetwork = "--chain"
 	// ParityP2PPort is the argument used for p2p port

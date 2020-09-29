@@ -95,15 +95,36 @@ func (r *NetworkReconciler) reconcileNodes(network *ethereumv1alpha1.Network) er
 }
 
 // specNodeConfigmap updates genesis configmap spec
-func (r *NetworkReconciler) specNodeConfigmap(configmap *corev1.ConfigMap, genesis, initGenesisScript, importAccountScript string) {
-	configmap.Data = make(map[string]string)
+func (r *NetworkReconciler) specNodeConfigmap(client ethereumv1alpha1.EthereumClient, configmap *corev1.ConfigMap, genesis, initGenesisScript, importAccountScript, staticNodes string) {
+	if configmap.Data == nil {
+		configmap.Data = map[string]string{}
+	}
+
 	configmap.Data["genesis.json"] = genesis
 	configmap.Data["init-genesis.sh"] = initGenesisScript
 	configmap.Data["import-account.sh"] = importAccountScript
+
+	var key string
+
+	switch client {
+	case ethereumv1alpha1.GethClient:
+		key = "config.toml"
+	case ethereumv1alpha1.BesuClient:
+		key = "static-nodes.json"
+	case ethereumv1alpha1.ParityClient:
+		key = "static-nodes"
+	}
+
+	currentStaticNodes := configmap.Data[key]
+	// update static nodes config if it's empty
+	// update static nodes config if more static nodes has been created
+	if currentStaticNodes == "" || len(currentStaticNodes) < len(staticNodes) {
+		configmap.Data[key] = staticNodes
+	}
 }
 
 // reconcileNodeConfigmap creates genesis config map if it doesn't exist or update it
-func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) error {
 
 	configmap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
@@ -114,10 +135,7 @@ func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, 
 
 	var genesis, initGenesisScript, importAccountScript string
 
-	// no genesis or init scripts are required for besu clients in public networks
-	if network.Spec.Genesis == nil && node.Client == ethereumv1alpha1.BesuClient {
-		return nil
-	}
+	staticNodes := staticNodesFromBootnodes(bootnodes, node.Client)
 
 	// private network with custom genesis
 	if network.Spec.Genesis != nil {
@@ -154,7 +172,7 @@ func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, 
 			return err
 		}
 
-		r.specNodeConfigmap(configmap, genesis, initGenesisScript, importAccountScript)
+		r.specNodeConfigmap(node.Client, configmap, genesis, initGenesisScript, importAccountScript, staticNodes)
 
 		return nil
 	})
@@ -307,7 +325,7 @@ func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.Node, netwo
 	volumes := []corev1.Volume{}
 
 	if node.WithNodekey() || node.Import != nil {
-		nodekeyVolume := corev1.Volume{
+		secretsVolume := corev1.Volume{
 			Name: "secrets",
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
@@ -315,22 +333,20 @@ func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.Node, netwo
 				},
 			},
 		}
-		volumes = append(volumes, nodekeyVolume)
+		volumes = append(volumes, secretsVolume)
 	}
 
-	if network.Spec.Genesis != nil {
-		genesisVolume := corev1.Volume{
-			Name: "config",
-			VolumeSource: corev1.VolumeSource{
-				ConfigMap: &corev1.ConfigMapVolumeSource{
-					LocalObjectReference: corev1.LocalObjectReference{
-						Name: node.ConfigmapName(network.Name, node.Client),
-					},
+	configVolume := corev1.Volume{
+		Name: "config",
+		VolumeSource: corev1.VolumeSource{
+			ConfigMap: &corev1.ConfigMapVolumeSource{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.ConfigmapName(network.Name, node.Client),
 				},
 			},
-		}
-		volumes = append(volumes, genesisVolume)
+		},
 	}
+	volumes = append(volumes, configVolume)
 
 	dataVolume := corev1.Volume{
 		Name: "data",
@@ -359,13 +375,20 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, 
 		volumeMounts = append(volumeMounts, nodekeyMount)
 	}
 
-	if network.Spec.Genesis != nil {
-		genesisMount := corev1.VolumeMount{
+	genesisMount := corev1.VolumeMount{
+		Name:      "config",
+		MountPath: PathConfig,
+		ReadOnly:  true,
+	}
+	volumeMounts = append(volumeMounts, genesisMount)
+
+	if node.Client == ethereumv1alpha1.BesuClient {
+		staticNodesMount := corev1.VolumeMount{
 			Name:      "config",
-			MountPath: PathConfig,
-			ReadOnly:  true,
+			MountPath: fmt.Sprintf("%s/static-nodes.json", PathBlockchainData),
+			SubPath:   "static-nodes.json",
 		}
-		volumeMounts = append(volumeMounts, genesisMount)
+		volumeMounts = append(volumeMounts, staticNodesMount)
 	}
 
 	dataMount := corev1.VolumeMount{
@@ -489,7 +512,7 @@ func (r *NetworkReconciler) reconcileNodeStatefulSet(node *ethereumv1alpha1.Node
 	if err != nil {
 		return err
 	}
-	args := client.GetArgs(node, network, bootnodes)
+	args := client.GetArgs(node, network)
 	volumes := r.createNodeVolumes(node, network)
 	mounts := r.createNodeVolumeMounts(node, network)
 	affinity := r.getNodeAffinity(network)
@@ -655,7 +678,7 @@ func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.Node, network *
 		return
 	}
 
-	if err = r.reconcileNodeConfigmap(node, network); err != nil {
+	if err = r.reconcileNodeConfigmap(node, network, bootnodes); err != nil {
 		return
 	}
 
