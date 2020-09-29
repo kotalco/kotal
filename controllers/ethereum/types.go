@@ -80,6 +80,8 @@ const (
 	BesuDataPath = "--data-path"
 	// BesuNetwork is the argument used for selecting network
 	BesuNetwork = "--network"
+	// BesuDiscoveryEnabled is the argument used to enabled discovery
+	BesuDiscoveryEnabled = "--discovery-enabled"
 	// BesuP2PPort is the argument used for p2p port
 	BesuP2PPort = "--p2p-port"
 	// BesuBootnodes is the argument used for bootnodes
@@ -130,6 +132,8 @@ const (
 	GethNetworkID = "--networkid"
 	// GethNodeKey is the argument used for node private key
 	GethNodeKey = "--nodekey"
+	// GethNoDiscovery is the argument used to disable discovery
+	GethNoDiscovery = "--nodiscover"
 	// GethDataDir is the argument used for data path
 	GethDataDir = "--datadir"
 	// GethP2PPort is the argument used for p2p port
@@ -192,6 +196,8 @@ const (
 	ParityReservedPeers = "--reserved-peers"
 	// ParityNetwork is the argument used for selecting network
 	ParityNetwork = "--chain"
+	// ParityNoDiscovery is the argument used to disable discovery
+	ParityNoDiscovery = "--no-discovery"
 	// ParityP2PPort is the argument used for p2p port
 	ParityP2PPort = "--port"
 	// ParityBootnodes is the argument used for bootnodes

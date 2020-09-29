@@ -59,6 +59,7 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1a
 		}
 	} else {
 		appendArg(ParityNetwork, fmt.Sprintf("%s/genesis.json", PathConfig))
+		appendArg(ParityNoDiscovery)
 	}
 
 	if node.P2PPort != 0 {

@@ -42,8 +42,10 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 
 	appendArg(BesuDataPath, PathBlockchainData)
 
-	if network.Spec.Join != "" {
+	if network.Spec.Genesis == nil {
 		appendArg(BesuNetwork, network.Spec.Join)
+	} else {
+		appendArg(BesuDiscoveryEnabled, "false")
 	}
 
 	if node.P2PPort != 0 {

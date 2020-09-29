@@ -46,6 +46,10 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", PathSecrets))
 	}
 
+	if network.Spec.Genesis != nil {
+		appendArg(GethNoDiscovery)
+	}
+
 	appendArg(GethDataDir, PathBlockchainData)
 
 	if network.Spec.Join != "" && network.Spec.Join != ethereumv1alpha1.MainNetwork {

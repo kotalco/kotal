@@ -19,5 +19,14 @@ spec:
         - eth
       graphql: true
       graphqlPort: 8777
+      resources: &res
+        cpu: "1"
+        cpuLimit: "1"
+        memory: "1Gi"
+        memoryLimit: "2Gi"
     - name: node-2
       client: geth
+      resources: *res
+    - name: node-3
+      client: parity
+      resources: *res
