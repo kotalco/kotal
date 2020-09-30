@@ -36,7 +36,7 @@ spec:
     - name: node-2
       client: geth
     - name: node-3
-      client: besu
+      client: parity
     - name: node-4
       client: geth
     - name: node-5
