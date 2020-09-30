@@ -14,9 +14,9 @@ const (
 // Images
 const (
 	// DefaultBesuImage is hyperledger besu image
-	DefaultBesuImage = "hyperledger/besu:1.5.3"
+	DefaultBesuImage = "hyperledger/besu:1.5.5"
 	// DefaultGethImage is go-ethereum image
-	DefaultGethImage = "ethereum/client-go:v1.9.20"
+	DefaultGethImage = "ethereum/client-go:v1.9.21"
 	// DefaultParityImage is parity image
 	DefaultParityImage = "openethereum/openethereum:v3.0.1"
 )
