@@ -76,13 +76,12 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 
 	if node.RPC {
 		appendArg(GethRPCHTTPEnabled)
+		appendArg(GethRPCHTTPHost, DefaultHost)
 	}
 
 	if node.RPCPort != 0 {
 		appendArg(GethRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
 	}
-
-	appendArg(GethRPCHTTPHost, DefaultHost)
 
 	if len(node.RPCAPI) != 0 {
 		apis := []string{}
@@ -95,13 +94,12 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 
 	if node.WS {
 		appendArg(GethRPCWSEnabled)
+		appendArg(GethRPCWSHost, DefaultHost)
 	}
 
 	if node.WSPort != 0 {
 		appendArg(GethRPCWSPort, fmt.Sprintf("%d", node.WSPort))
 	}
-
-	appendArg(GethRPCWSHost, DefaultHost)
 
 	if len(node.WSAPI) != 0 {
 		apis := []string{}
