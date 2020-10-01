@@ -122,6 +122,7 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 		if node.GraphQL {
 			appendArg(BesuGraphQLHTTPCorsOrigins, commaSeperatedDomains)
 		}
+		// no ws cors setting
 	}
 
 	return args

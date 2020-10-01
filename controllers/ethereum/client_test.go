@@ -201,6 +201,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuDataPath,
 				PathBlockchainData,
 				BesuRPCHTTPEnabled,
+				BesuRPCHTTPCorsOrigins,
+				BesuHostAllowlist,
 				BesuLogging,
 				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.FatalLogs),
 			},
@@ -231,6 +233,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 				GethConfig,
+				GethRPCHostWhitelist,
+				GethRPCHTTPCorsOrigins,
 			},
 		},
 		{
@@ -259,6 +263,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				ParityLogging,
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 				ParityDisableWS,
+				ParityRPCHostWhitelist,
+				ParityRPCHTTPCorsOrigins,
 			},
 		},
 		{
@@ -297,6 +303,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				"eth,web3,net",
 				BesuLogging,
 				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
+				BesuHostAllowlist,
+				BesuRPCHTTPCorsOrigins,
 			},
 		},
 		{
@@ -335,6 +343,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 				GethConfig,
+				GethRPCHostWhitelist,
+				GethRPCHTTPCorsOrigins,
 			},
 		},
 		{
@@ -373,6 +383,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				ParityLogging,
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 				ParityDisableWS,
+				ParityRPCHostWhitelist,
+				ParityRPCHTTPCorsOrigins,
 			},
 		},
 		{
@@ -426,6 +438,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				"web3,eth",
 				BesuLogging,
 				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+				BesuHostAllowlist,
+				BesuRPCHTTPCorsOrigins,
 			},
 		},
 		{
@@ -479,6 +493,9 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 				GethConfig,
+				GethRPCHostWhitelist,
+				GethRPCHTTPCorsOrigins,
+				GethWSOrigins,
 			},
 		},
 		{
@@ -530,6 +547,10 @@ var _ = Describe("Ethereum client arguments", func() {
 				"web3,eth",
 				ParityLogging,
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.TraceLogs),
+				ParityRPCHostWhitelist,
+				ParityRPCHTTPCorsOrigins,
+				ParityRPCWSWhitelist,
+				ParityRPCWSCorsOrigins,
 			},
 		},
 		{
@@ -594,6 +615,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				"cors.example.com",
 				BesuLogging,
 				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.InfoLogs),
+				BesuHostAllowlist,
 			},
 		},
 		{
@@ -654,6 +676,9 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.InfoLogs),
 				GethConfig,
+				GethRPCHostWhitelist,
+				GethGraphQLHostWhitelist,
+				GethWSOrigins,
 			},
 		},
 		{

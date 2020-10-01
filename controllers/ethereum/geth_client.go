@@ -125,6 +125,7 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 		if node.GraphQL {
 			appendArg(GethGraphQLHostWhitelist, commaSeperatedHosts)
 		}
+		// no ws hosts settings
 	}
 
 	if len(node.CORSDomains) != 0 {
@@ -134,6 +135,9 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1alp
 		}
 		if node.GraphQL {
 			appendArg(GethGraphQLHTTPCorsOrigins, commaSeperatedDomains)
+		}
+		if node.WS {
+			appendArg(GethWSOrigins, commaSeperatedDomains)
 		}
 	}
 

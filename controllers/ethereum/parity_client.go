@@ -122,12 +122,18 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node, network *ethereumv1a
 		if node.RPC {
 			appendArg(ParityRPCHostWhitelist, commaSeperatedHosts)
 		}
+		if node.WS {
+			appendArg(ParityRPCWSWhitelist, commaSeperatedHosts)
+		}
 	}
 
 	if len(node.CORSDomains) != 0 {
 		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
 		if node.RPC {
 			appendArg(ParityRPCHTTPCorsOrigins, commaSeperatedDomains)
+		}
+		if node.WS {
+			appendArg(ParityRPCWSCorsOrigins, commaSeperatedDomains)
 		}
 	}
 

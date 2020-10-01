@@ -169,6 +169,8 @@ const (
 	GethRPCWSHost = "--ws.addr"
 	// GethRPCWSAPI is the argument used for RPC WS APIs
 	GethRPCWSAPI = "--ws.api"
+	// GethWSOrigins is the argument used for RPC WS origins
+	GethWSOrigins = "--ws.origins"
 
 	// GethGraphQLHTTPEnabled is the argument used to enable QraphQL HTTP server
 	GethGraphQLHTTPEnabled = "--graphql"
@@ -224,12 +226,16 @@ const (
 
 	// ParityDisableWS is the argument used for RPC WS port
 	ParityDisableWS = "--no-ws"
+	// ParityRPCWSCorsOrigins is the argument used for setting RPC WS cors origins
+	ParityRPCWSCorsOrigins = "--ws-origins"
 	// ParityRPCWSPort is the argument used for RPC WS port
 	ParityRPCWSPort = "--ws-port"
 	// ParityRPCWSHost is the argument used for RPC WS host
 	ParityRPCWSHost = "--ws-interface"
 	// ParityRPCWSAPI is the argument used for RPC WS APIs
 	ParityRPCWSAPI = "--ws-apis"
+	// ParityRPCWSWhitelist is the argument used for whitelisting hosts for WS server
+	ParityRPCWSWhitelist = "--ws-hosts"
 
 	// ParityUnlock is the argument used for unlocking imported ethereum account
 	ParityUnlock = "--unlock"
