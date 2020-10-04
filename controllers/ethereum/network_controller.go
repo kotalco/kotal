@@ -282,15 +282,23 @@ func (r *NetworkReconciler) deleteRedundantNodes(network *ethereumv1alpha1.Netwo
 
 // specNodeDataPVC update node data pvc spec
 func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) {
+	request := corev1.ResourceList{
+		corev1.ResourceStorage: resource.MustParse(node.Resources.Storage),
+	}
+
+	// spec is immutable after creation except resources.requests for bound claims
+	if !pvc.CreationTimestamp.IsZero() {
+		pvc.Spec.Resources.Requests = request
+		return
+	}
+
 	pvc.ObjectMeta.Labels = node.Labels(network.Name)
 	pvc.Spec = corev1.PersistentVolumeClaimSpec{
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
 		},
 		Resources: corev1.ResourceRequirements{
-			Requests: corev1.ResourceList{
-				corev1.ResourceStorage: resource.MustParse(node.Resources.Storage),
-			},
+			Requests: request,
 		},
 		StorageClassName: node.Resources.StorageClass,
 	}
@@ -310,9 +318,7 @@ func (r *NetworkReconciler) reconcileNodeDataPVC(node *ethereumv1alpha1.Node, ne
 		if err := ctrl.SetControllerReference(network, pvc, r.Scheme); err != nil {
 			return err
 		}
-		if pvc.CreationTimestamp.IsZero() {
-			r.specNodeDataPVC(pvc, node, network)
-		}
+		r.specNodeDataPVC(pvc, node, network)
 		return nil
 	})
 
