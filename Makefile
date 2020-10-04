@@ -41,6 +41,11 @@ deploy: manifests
 	cd config/manager && kustomize edit set image controller=${IMG}
 	kustomize build config/default | kubectl apply -f -
 
+# output manifest files for the release
+release: manifests
+	cd config/manager && kustomize edit set image controller=${IMG}
+	kustomize build config/default > kotal.yaml
+
 # Generate manifests e.g. CRD, RBAC etc.
 manifests: controller-gen
 	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
