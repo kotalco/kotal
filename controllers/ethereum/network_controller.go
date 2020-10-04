@@ -382,15 +382,6 @@ func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, 
 	}
 	volumeMounts = append(volumeMounts, genesisMount)
 
-	if node.Client == ethereumv1alpha1.BesuClient {
-		staticNodesMount := corev1.VolumeMount{
-			Name:      "config",
-			MountPath: fmt.Sprintf("%s/static-nodes.json", PathBlockchainData),
-			SubPath:   "static-nodes.json",
-		}
-		volumeMounts = append(volumeMounts, staticNodesMount)
-	}
-
 	dataMount := corev1.VolumeMount{
 		Name:      "data",
 		MountPath: PathBlockchainData,
@@ -444,6 +435,16 @@ func (r *NetworkReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *e
 		VolumeMounts: volumeMounts,
 	}
 
+	// besu starts non root user
+	// digital ocean doesn't support kubernetes securityContext:{runAsUser, fsGroup}
+	dataDirPermissionFix := corev1.Container{
+		Name:         "data-dir-permission-fix",
+		Image:        "busybox",
+		Command:      []string{"/bin/chmod"},
+		Args:         []string{"-R", "777", PathBlockchainData},
+		VolumeMounts: volumeMounts,
+	}
+
 	if node.Client == ethereumv1alpha1.GethClient {
 		if network.Spec.Genesis != nil {
 			initGenesis := corev1.Container{
@@ -468,8 +469,22 @@ func (r *NetworkReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *e
 
 		nodeContainer.Image = GethImage()
 	} else if node.Client == ethereumv1alpha1.BesuClient {
+		linkStaticNodes := corev1.Container{
+			Name:    "link-static-nodes",
+			Image:   "busybox",
+			Command: []string{"/bin/ln"},
+			Args: []string{
+				"-sfn",
+				fmt.Sprintf("%s/static-nodes.json", PathConfig),
+				fmt.Sprintf("%s/static-nodes.json", PathBlockchainData),
+			},
+			VolumeMounts: volumeMounts,
+		}
+		initContainers = append(initContainers, linkStaticNodes)
+		initContainers = append(initContainers, dataDirPermissionFix)
 		nodeContainer.Image = BesuImage()
 	} else if node.Client == ethereumv1alpha1.ParityClient {
+		initContainers = append(initContainers, dataDirPermissionFix)
 		if node.Import != nil {
 			importAccount := corev1.Container{
 				Name:         "import-account",

@@ -916,11 +916,12 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ParityImage()))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal("busybox"))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				"rinkeby",
 				ParityDataDir,
@@ -1443,11 +1444,12 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ParityImage()))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal("busybox"))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
 				ParitySyncMode,
