@@ -92,24 +92,28 @@ func (r *Network) ValidateNode(i int) field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
-	// TODO: if they're string equal no need to compare quantity
-	cpu := resource.MustParse(node.Resources.CPU)
-	cpuLimit := resource.MustParse(node.Resources.CPULimit)
+	// if cpu and cpulimit are string equal, no need to compare quantity
+	if node.Resources.CPU != node.Resources.CPULimit {
+		cpu := resource.MustParse(node.Resources.CPU)
+		cpuLimit := resource.MustParse(node.Resources.CPULimit)
 
-	// validate cpuLimit can't be less than cpu request
-	if cpuLimit.Cmp(cpu) == -1 {
-		err := field.Invalid(nodePath.Child("resources").Child("cpuLimit"), node.Resources.CPULimit, fmt.Sprintf("must be greater than or equal to cpu %s", string(node.Resources.CPU)))
-		nodeErrors = append(nodeErrors, err)
+		// validate cpuLimit can't be less than cpu request
+		if cpuLimit.Cmp(cpu) == -1 {
+			err := field.Invalid(nodePath.Child("resources").Child("cpuLimit"), node.Resources.CPULimit, fmt.Sprintf("must be greater than or equal to cpu %s", string(node.Resources.CPU)))
+			nodeErrors = append(nodeErrors, err)
+		}
 	}
 
-	// TODO: if they're string equal no need to compare quantity
-	memory := resource.MustParse(node.Resources.Memory)
-	memoryLimit := resource.MustParse(node.Resources.MemoryLimit)
+	// if memory and memoryLimit are string equal, no need to compare quantity
+	if node.Resources.Memory != node.Resources.MemoryLimit {
+		memory := resource.MustParse(node.Resources.Memory)
+		memoryLimit := resource.MustParse(node.Resources.MemoryLimit)
 
-	// validate memoryLimit can't be less than memory request
-	if memoryLimit.Cmp(memory) == -1 {
-		err := field.Invalid(nodePath.Child("resources").Child("memoryLimit"), node.Resources.MemoryLimit, fmt.Sprintf("must be greater than or equal to memory %s", string(node.Resources.Memory)))
-		nodeErrors = append(nodeErrors, err)
+		// validate memoryLimit can't be less than memory request
+		if memoryLimit.Cmp(memory) == -1 {
+			err := field.Invalid(nodePath.Child("resources").Child("memoryLimit"), node.Resources.MemoryLimit, fmt.Sprintf("must be greater than or equal to memory %s", string(node.Resources.Memory)))
+			nodeErrors = append(nodeErrors, err)
+		}
 	}
 
 	// validate coinbase is provided if node is miner
