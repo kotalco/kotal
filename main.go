@@ -14,6 +14,7 @@ import (
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	controllers "github.com/kotalco/kotal/controllers/ethereum"
+	filecoincontroller "github.com/kotalco/kotal/controllers/filecoin"
 	ipfscontroller "github.com/kotalco/kotal/controllers/ipfs"
 	// +kubebuilder:scaffold:imports
 )
@@ -77,6 +78,14 @@ func main() {
 	}
 	if err = (&ipfsv1alpha1.Swarm{}).SetupWebhookWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Swarm")
+		os.Exit(1)
+	}
+	if err = (&filecoincontroller.NodeReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("Node"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Node")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
