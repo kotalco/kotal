@@ -8,4 +8,7 @@ resources:
 - group: ipfs
   kind: Swarm
   version: v1alpha1
+- group: filecoin
+  kind: Node
+  version: v1alpha1
 version: "2"
