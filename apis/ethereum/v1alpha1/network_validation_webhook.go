@@ -399,6 +399,7 @@ func (r *Network) ValidateUpdate(old runtime.Object) error {
 	}
 
 	// TODO: move to validate genesis
+	// TODO: genesis forks can change, new forks can be scheduled in the future
 	if !reflect.DeepEqual(r.Spec.Genesis, oldNetwork.Spec.Genesis) {
 		err := field.Invalid(field.NewPath("spec").Child("genesis"), "", "field is immutable")
 		allErrors = append(allErrors, err)

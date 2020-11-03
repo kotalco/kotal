@@ -256,7 +256,13 @@ var _ = Describe("Ethereum network controller", func() {
 				matchingLabels := client.MatchingLabels{"name": "node"}
 				inNamespace := client.InNamespace(ns.Name)
 				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
-				Expect(pods.Items[0].Spec.NodeName).NotTo(Equal(pods.Items[1].Spec.NodeName))
+				pod0 := pods.Items[0]
+				pod1 := pods.Items[1]
+				pending := corev1.PodPending
+				// test pods scheduled on different nodes only if they're not in pending phase
+				if pod0.Status.Phase != pending && pod1.Status.Phase != pending {
+					Expect(pod0.Spec.NodeName).NotTo(Equal(pod1.Spec.NodeName))
+				}
 			})
 		}
 
@@ -403,7 +409,13 @@ var _ = Describe("Ethereum network controller", func() {
 				matchingLabels := client.MatchingLabels{"name": "node"}
 				inNamespace := client.InNamespace(ns.Name)
 				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
-				Expect(pods.Items[0].Spec.NodeName).NotTo(Equal(pods.Items[1].Spec.NodeName))
+				pod0 := pods.Items[0]
+				pod1 := pods.Items[1]
+				pending := corev1.PodPending
+				// test pods scheduled on different nodes only if they're not in pending phase
+				if pod0.Status.Phase != pending && pod1.Status.Phase != pending {
+					Expect(pod0.Spec.NodeName).NotTo(Equal(pod1.Spec.NodeName))
+				}
 			})
 		}
 
@@ -752,7 +764,13 @@ var _ = Describe("Ethereum network controller", func() {
 				matchingLabels := client.MatchingLabels{"name": "node"}
 				inNamespace := client.InNamespace(ns.Name)
 				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
-				Expect(pods.Items[0].Spec.NodeName).NotTo(Equal(pods.Items[1].Spec.NodeName))
+				pod0 := pods.Items[0]
+				pod1 := pods.Items[1]
+				pending := corev1.PodPending
+				// test pods scheduled on different nodes only if they're not in pending phase
+				if pod0.Status.Phase != pending && pod1.Status.Phase != pending {
+					Expect(pod0.Spec.NodeName).NotTo(Equal(pod1.Spec.NodeName))
+				}
 			})
 		}
 
@@ -908,7 +926,13 @@ var _ = Describe("Ethereum network controller", func() {
 				matchingLabels := client.MatchingLabels{"name": "node"}
 				inNamespace := client.InNamespace(ns.Name)
 				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
-				Expect(pods.Items[0].Spec.NodeName).NotTo(Equal(pods.Items[1].Spec.NodeName))
+				pod0 := pods.Items[0]
+				pod1 := pods.Items[1]
+				pending := corev1.PodPending
+				// test pods scheduled on different nodes only if they're not in pending phase
+				if pod0.Status.Phase != pending && pod1.Status.Phase != pending {
+					Expect(pod0.Spec.NodeName).NotTo(Equal(pod1.Spec.NodeName))
+				}
 			})
 		}
 
