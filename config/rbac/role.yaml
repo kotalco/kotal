@@ -65,6 +65,26 @@ rules:
   - patch
   - update
 - apiGroups:
+  - filecoin.kotal.io
+  resources:
+  - nodes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - filecoin.kotal.io
+  resources:
+  - nodes/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - ipfs.kotal.io
   resources:
   - swarms

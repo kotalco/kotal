@@ -3,4 +3,4 @@ kind: Node
 metadata:
   name: my-node
 spec:
-
+  network: nerpa
