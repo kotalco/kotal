@@ -1,0 +1,6 @@
+apiVersion: filecoin.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: my-node
+spec:
+  network: mainnet
