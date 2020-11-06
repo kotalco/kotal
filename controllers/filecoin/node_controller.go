@@ -54,7 +54,9 @@ func (r *NodeReconciler) reconcileNodeStatefulSet(node *filecoinv1alpha1.Node) e
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeStatefulSet(sts, node)
+		if err := r.specNodeStatefulSet(sts, node); err != nil {
+			return err
+		}
 		return nil
 	})
 
@@ -62,10 +64,15 @@ func (r *NodeReconciler) reconcileNodeStatefulSet(node *filecoinv1alpha1.Node) e
 }
 
 // specNodeStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *filecoinv1alpha1.Node) {
+func (r *NodeReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *filecoinv1alpha1.Node) error {
 	labels := map[string]string{
 		"name":     "node",
 		"instance": node.Name,
+	}
+
+	image, err := LotusImage(node.Spec.Network)
+	if err != nil {
+		return err
 	}
 
 	sts.ObjectMeta.Labels = labels
@@ -82,13 +89,15 @@ func (r *NodeReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *file
 				Containers: []v1.Container{
 					{
 						Name:  "node",
-						Image: "kotalco/lotus:mainnet-v1.1.2",
+						Image: image,
 						Args:  []string{"daemon"},
 					},
 				},
 			},
 		},
 	}
+
+	return nil
 }
 
 // SetupWithManager adds reconciler to the manager
