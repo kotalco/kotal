@@ -2,6 +2,7 @@ package v1alpha1
 
 import (
 	"fmt"
+
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -37,9 +38,6 @@ func (s *Swarm) Default() {
 
 // DefaultNode defaults a single ipfs node spec
 func (s *Swarm) DefaultNode(node *Node) {
-	if node.Resources == nil {
-		node.Resources = &NodeResources{}
-	}
 
 	if node.Resources.CPU == "" {
 		node.Resources.CPU = DefaultNodeCPURequest
