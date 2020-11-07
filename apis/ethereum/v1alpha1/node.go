@@ -1,6 +1,10 @@
 package v1alpha1
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/kotalco/kotal/apis/shared"
+)
 
 //Node is the specification of the node
 type Node struct {
@@ -65,7 +69,7 @@ type Node struct {
 	GraphQLPort uint `json:"graphqlPort,omitempty"`
 
 	// Resources is node compute and storage resources
-	Resources *NodeResources `json:"resources,omitempty"`
+	shared.Resources `json:"resources,omitempty"`
 }
 
 // IsBootnode is whether node is bootnode or no

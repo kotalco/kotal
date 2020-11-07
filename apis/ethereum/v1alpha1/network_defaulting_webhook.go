@@ -34,10 +34,6 @@ func (r *Network) DefaultNodeResources(node *Node) {
 	privateNetwork := r.Spec.Genesis != nil
 	join := r.Spec.Join
 
-	if node.Resources == nil {
-		node.Resources = &NodeResources{}
-	}
-
 	if node.Resources.CPU == "" {
 		if privateNetwork {
 			cpu = DefaultPrivateNetworkNodeCPURequest

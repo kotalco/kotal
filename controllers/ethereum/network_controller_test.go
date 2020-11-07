@@ -7,6 +7,7 @@ import (
 	"time"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	"github.com/kotalco/kotal/apis/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	appsv1 "k8s.io/api/apps/v1"
@@ -232,7 +233,7 @@ var _ = Describe("Ethereum network controller", func() {
 				Client:  ethereumv1alpha1.GethClient,
 				RPCPort: 8547,
 				Logging: ethereumv1alpha1.ErrorLogs,
-				Resources: &ethereumv1alpha1.NodeResources{
+				Resources: shared.Resources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
 					Memory:      memory,
@@ -385,7 +386,7 @@ var _ = Describe("Ethereum network controller", func() {
 				Client:  ethereumv1alpha1.ParityClient,
 				RPCPort: 8547,
 				Logging: ethereumv1alpha1.ErrorLogs,
-				Resources: &ethereumv1alpha1.NodeResources{
+				Resources: shared.Resources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
 					Memory:      memory,
@@ -739,7 +740,7 @@ var _ = Describe("Ethereum network controller", func() {
 					PrivateKey: accountKey,
 					Password:   accountPassword,
 				},
-				Resources: &ethereumv1alpha1.NodeResources{
+				Resources: shared.Resources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
 					Memory:      memory,
@@ -901,7 +902,7 @@ var _ = Describe("Ethereum network controller", func() {
 					PrivateKey: accountKey,
 					Password:   accountPassword,
 				},
-				Resources: &ethereumv1alpha1.NodeResources{
+				Resources: shared.Resources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
 					Memory:      memory,
@@ -1272,7 +1273,7 @@ var _ = Describe("Ethereum network controller", func() {
 					Password:   accountPassword,
 				},
 				SyncMode: ethereumv1alpha1.FastSynchronization,
-				Resources: &ethereumv1alpha1.NodeResources{
+				Resources: shared.Resources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
 					Memory:      memory,
@@ -1432,7 +1433,7 @@ var _ = Describe("Ethereum network controller", func() {
 					Password:   accountPassword,
 				},
 				SyncMode: ethereumv1alpha1.FastSynchronization,
-				Resources: &ethereumv1alpha1.NodeResources{
+				Resources: shared.Resources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
 					Memory:      memory,
@@ -1811,7 +1812,7 @@ var _ = Describe("Ethereum network controller", func() {
 					Password:   accountPassword,
 				},
 				SyncMode: ethereumv1alpha1.FastSynchronization,
-				Resources: &ethereumv1alpha1.NodeResources{
+				Resources: shared.Resources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
 					Memory:      memory,
@@ -1962,7 +1963,7 @@ var _ = Describe("Ethereum network controller", func() {
 				Name:     "node-3",
 				Client:   ethereumv1alpha1.ParityClient,
 				SyncMode: ethereumv1alpha1.FastSynchronization,
-				Resources: &ethereumv1alpha1.NodeResources{
+				Resources: shared.Resources{
 					CPU:         cpu,
 					CPULimit:    cpuLimit,
 					Memory:      memory,
@@ -2319,7 +2320,7 @@ var _ = Describe("Ethereum network controller", func() {
 				Name:    "node-2",
 				RPC:     true,
 				RPCPort: 8547,
-				Resources: &ethereumv1alpha1.NodeResources{
+				Resources: shared.Resources{
 					CPU:    cpu,
 					Memory: memory,
 				},

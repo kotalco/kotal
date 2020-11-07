@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	"fmt"
 
+	"github.com/kotalco/kotal/apis/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -698,7 +699,7 @@ var _ = Describe("Ethereum network validation", func() {
 						{
 							Name:   "node-1",
 							Client: BesuClient,
-							Resources: &NodeResources{
+							Resources: shared.Resources{
 								CPU:      "2",
 								CPULimit: "1",
 							},
@@ -724,7 +725,7 @@ var _ = Describe("Ethereum network validation", func() {
 						{
 							Name:   "node-1",
 							Client: BesuClient,
-							Resources: &NodeResources{
+							Resources: shared.Resources{
 								CPU:         "1",
 								CPULimit:    "2",
 								Memory:      "2Gi",
