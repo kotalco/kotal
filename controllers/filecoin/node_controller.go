@@ -6,6 +6,7 @@ import (
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -34,11 +35,63 @@ func (r *NodeReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err er
 		return
 	}
 
+	if err = r.reconcileNodePVC(&node); err != nil {
+		return
+	}
+
 	if err = r.reconcileNodeStatefulSet(&node); err != nil {
 		return
 	}
 
 	return
+}
+
+// reconcileNodePVC reconciles node stateful set
+func (r *NodeReconciler) reconcileNodePVC(node *filecoinv1alpha1.Node) error {
+	pvc := &v1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, pvc, func() error {
+		if err := ctrl.SetControllerReference(node, pvc, r.Scheme); err != nil {
+			return err
+		}
+		r.specNodePVC(pvc, node)
+		return nil
+	})
+
+	return err
+}
+
+// specNodePVC updates node PVC spec
+func (r *NodeReconciler) specNodePVC(pvc *v1.PersistentVolumeClaim, node *filecoinv1alpha1.Node) {
+	request := v1.ResourceList{
+		v1.ResourceStorage: resource.MustParse(node.Spec.Resources.Storage),
+	}
+
+	// spec is immutable after creation except resources.requests for bound claims
+	if !pvc.CreationTimestamp.IsZero() {
+		pvc.Spec.Resources.Requests = request
+		return
+	}
+
+	pvc.ObjectMeta.Labels = map[string]string{
+		"name":     "node",
+		"instance": node.Name,
+	}
+
+	pvc.Spec = v1.PersistentVolumeClaimSpec{
+		AccessModes: []v1.PersistentVolumeAccessMode{
+			v1.ReadWriteOnce,
+		},
+		Resources: v1.ResourceRequirements{
+			Requests: request,
+		},
+		StorageClassName: node.Spec.Resources.StorageClass,
+	}
 }
 
 // reconcileNodeStatefulSet reconciles node stateful set
@@ -91,6 +144,38 @@ func (r *NodeReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *file
 						Name:  "node",
 						Image: image,
 						Args:  []string{"daemon"},
+						Env: []v1.EnvVar{
+							{
+								Name:  "LOTUS_PATH",
+								Value: "/mnt/data",
+							},
+						},
+						VolumeMounts: []v1.VolumeMount{
+							{
+								Name:      node.Name,
+								MountPath: "/mnt/data",
+							},
+						},
+						Resources: v1.ResourceRequirements{
+							Requests: v1.ResourceList{
+								v1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPU),
+								v1.ResourceMemory: resource.MustParse(node.Spec.Resources.Memory),
+							},
+							Limits: v1.ResourceList{
+								v1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPULimit),
+								v1.ResourceMemory: resource.MustParse(node.Spec.Resources.MemoryLimit),
+							},
+						},
+					},
+				},
+				Volumes: []v1.Volume{
+					{
+						Name: node.Name,
+						VolumeSource: v1.VolumeSource{
+							PersistentVolumeClaim: &v1.PersistentVolumeClaimVolumeSource{
+								ClaimName: node.Name,
+							},
+						},
 					},
 				},
 			},

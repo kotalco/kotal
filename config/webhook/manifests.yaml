@@ -29,6 +29,24 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
+      path: /mutate-filecoin-kotal-io-v1alpha1-node
+  failurePolicy: Fail
+  name: mnode.kb.io
+  rules:
+  - apiGroups:
+    - filecoin.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - nodes
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
       path: /mutate-ipfs-kotal-io-v1alpha1-swarm
   failurePolicy: Fail
   name: mswarm.kb.io
@@ -68,6 +86,24 @@ webhooks:
     - UPDATE
     resources:
     - networks
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-filecoin-kotal-io-v1alpha1-node
+  failurePolicy: Fail
+  name: vnode.kb.io
+  rules:
+  - apiGroups:
+    - filecoin.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - nodes
 - clientConfig:
     caBundle: Cg==
     service:
