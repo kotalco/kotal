@@ -9,6 +9,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -35,6 +36,10 @@ func (r *NodeReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err er
 		return
 	}
 
+	if err = r.reconcileNodeService(&node); err != nil {
+		return
+	}
+
 	if err = r.reconcileNodePVC(&node); err != nil {
 		return
 	}
@@ -46,7 +51,7 @@ func (r *NodeReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err er
 	return
 }
 
-// reconcileNodePVC reconciles node stateful set
+// reconcileNodePVC reconciles node pvc
 func (r *NodeReconciler) reconcileNodePVC(node *filecoinv1alpha1.Node) error {
 	pvc := &v1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
@@ -94,6 +99,27 @@ func (r *NodeReconciler) specNodePVC(pvc *v1.PersistentVolumeClaim, node *fileco
 	}
 }
 
+// reconcileNodeService reconciles node service
+func (r *NodeReconciler) reconcileNodeService(node *filecoinv1alpha1.Node) error {
+
+	svc := &v1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, svc, func() error {
+		if err := ctrl.SetControllerReference(node, svc, r.Scheme); err != nil {
+			return err
+		}
+		r.specNodeService(svc, node)
+		return nil
+	})
+
+	return err
+}
+
 // reconcileNodeStatefulSet reconciles node stateful set
 func (r *NodeReconciler) reconcileNodeStatefulSet(node *filecoinv1alpha1.Node) error {
 	sts := &appsv1.StatefulSet{
@@ -116,6 +142,27 @@ func (r *NodeReconciler) reconcileNodeStatefulSet(node *filecoinv1alpha1.Node) e
 	return err
 }
 
+// specNodeService updates node statefulset spec
+func (r *NodeReconciler) specNodeService(svc *v1.Service, node *filecoinv1alpha1.Node) {
+	labels := map[string]string{
+		"name":     "node",
+		"instance": node.Name,
+	}
+
+	svc.ObjectMeta.Labels = labels
+
+	svc.Spec.Ports = []v1.ServicePort{
+		{
+			Name:       "api",
+			Port:       int32(1234),
+			TargetPort: intstr.FromInt(1234),
+			Protocol:   v1.ProtocolTCP,
+		},
+	}
+
+	svc.Spec.Selector = labels
+}
+
 // specNodeStatefulSet updates node statefulset spec
 func (r *NodeReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *filecoinv1alpha1.Node) error {
 	labels := map[string]string{
@@ -134,6 +181,7 @@ func (r *NodeReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *file
 		Selector: &metav1.LabelSelector{
 			MatchLabels: labels,
 		},
+		ServiceName: node.Name,
 		Template: v1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
 				Labels: labels,
