@@ -16,7 +16,7 @@ const (
 	// DefaultLotusMainnetImage is the lotus image used for mainnet
 	DefaultLotusMainnetImage = "kotalco/lotus:mainnet-v1.1.2"
 	// DefaultLotusNerpaImage is the lotus image used for nerpa network
-	DefaultLotusNerpaImage = "kotalco/lotus:nerpa-10.27.0"
+	DefaultLotusNerpaImage = "kotalco/lotus:nerpa-11.04.0"
 )
 
 // LotusImage returns the Filecoin lotus image to be used by the node
