@@ -27,6 +27,7 @@ func (n *Node) Default() {
 
 	nerpa := n.Spec.Network == NerpaNetwork
 	mainnet := n.Spec.Network == MainNetwork
+	calibration := n.Spec.Network == CalibrationNetwork
 
 	if n.Spec.Resources.CPU == "" {
 		if nerpa {
@@ -34,6 +35,9 @@ func (n *Node) Default() {
 		}
 		if mainnet {
 			n.Spec.CPU = DefaultMainnetNodeCPURequest
+		}
+		if calibration {
+			n.Spec.CPU = DefaultCalibrationNodeCPURequest
 		}
 	}
 
@@ -44,6 +48,9 @@ func (n *Node) Default() {
 		if mainnet {
 			n.Spec.CPULimit = DefaultMainnetNodeCPULimit
 		}
+		if calibration {
+			n.Spec.CPULimit = DefaultCalibrationNodeCPULimit
+		}
 	}
 
 	if n.Spec.Memory == "" {
@@ -52,6 +59,9 @@ func (n *Node) Default() {
 		}
 		if mainnet {
 			n.Spec.Memory = DefaultMainnetNodeMemoryRequest
+		}
+		if calibration {
+			n.Spec.Memory = DefaultCalibrationNodeMemoryRequest
 		}
 	}
 
@@ -62,6 +72,9 @@ func (n *Node) Default() {
 		if mainnet {
 			n.Spec.MemoryLimit = DefaultMainnetNodeMemoryLimit
 		}
+		if calibration {
+			n.Spec.MemoryLimit = DefaultCalibrationNodeMemoryLimit
+		}
 	}
 
 	if n.Spec.Storage == "" {
@@ -70,6 +83,9 @@ func (n *Node) Default() {
 		}
 		if mainnet {
 			n.Spec.Storage = DefaultMainnetNodeStorageRequest
+		}
+		if calibration {
+			n.Spec.Storage = DefaultCalibrationNodeStorageRequest
 		}
 	}
 

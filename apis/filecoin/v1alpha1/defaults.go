@@ -22,4 +22,15 @@ const (
 	DefaultMainnetNodeMemoryLimit = "32Gi"
 	// DefaultMainnetNodeStorageRequest is the default mainnet node storage
 	DefaultMainnetNodeStorageRequest = "200Gi"
+
+	// DefaultCalibrationNodeCPURequest is the default calibration node cpu request
+	DefaultCalibrationNodeCPURequest = "8"
+	// DefaultCalibrationNodeCPULimit is the default calibration node cpu limit
+	DefaultCalibrationNodeCPULimit = "16"
+	// DefaultCalibrationNodeMemoryRequest is the default calibration node memory request
+	DefaultCalibrationNodeMemoryRequest = "16Gi"
+	// DefaultCalibrationNodeMemoryLimit is the default calibration node memory limit
+	DefaultCalibrationNodeMemoryLimit = "32Gi"
+	// DefaultCalibrationNodeStorageRequest is the default calibration node storage
+	DefaultCalibrationNodeStorageRequest = "200Gi"
 )
