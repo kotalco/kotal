@@ -19,6 +19,8 @@ const (
 	DefaultLotusNerpaImage = "kotalco/lotus:nerpa-11.04.0"
 	// DefaultLotusCalibrationImage is the lotus image used for calibration network
 	DefaultLotusCalibrationImage = "kotalco/lotus:calibration-10.22.0"
+	// DefaultLotusButterflyImage is the lotus image used for butterfly network
+	DefaultLotusButterflyImage = "kotalco/lotus:butterfly-10.22.0"
 )
 
 // LotusImage returns the Filecoin lotus image to be used by the node
@@ -30,6 +32,8 @@ func LotusImage(network filecoinv1alpha1.FilecoinNetwork) (string, error) {
 		return DefaultLotusNerpaImage, nil
 	case filecoinv1alpha1.CalibrationNetwork:
 		return DefaultLotusCalibrationImage, nil
+	case filecoinv1alpha1.ButterflyNetwork:
+		return DefaultLotusButterflyImage, nil
 	default:
 		return "", errors.New(ErrLotusImageNotAvailable)
 	}

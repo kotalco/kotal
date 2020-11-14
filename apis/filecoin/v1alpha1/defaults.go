@@ -33,4 +33,15 @@ const (
 	DefaultCalibrationNodeMemoryLimit = "32Gi"
 	// DefaultCalibrationNodeStorageRequest is the default calibration node storage
 	DefaultCalibrationNodeStorageRequest = "200Gi"
+
+	// DefaultButterflyNodeCPURequest is the default butterfly node cpu request
+	DefaultButterflyNodeCPURequest = "8"
+	// DefaultButterflyNodeCPULimit is the default butterfly node cpu limit
+	DefaultButterflyNodeCPULimit = "16"
+	// DefaultButterflyNodeMemoryRequest is the default butterfly node memory request
+	DefaultButterflyNodeMemoryRequest = "16Gi"
+	// DefaultButterflyNodeMemoryLimit is the default butterfly node memory limit
+	DefaultButterflyNodeMemoryLimit = "32Gi"
+	// DefaultButterflyNodeStorageRequest is the default butterfly node storage
+	DefaultButterflyNodeStorageRequest = "200Gi"
 )
