@@ -18,8 +18,9 @@ Kotal extended kubernetes with custom resources in different API groups.
 | Resource | Description | API Group | Status |
 | -------- | ------ | ----------- | --- |
 | **Ethereum**| Create and join private and public ethereum networks | ethereum.kotal.io/v1alpha1 | alpha |
+| **IPFS**  | Create IPFS swarms | ipfs.kotal.io/v1alpha1 | alpha  |
+| **Filecoin**  | Create Filecoin nodes | filecoin.kotal.io/v1alpha1 | alpha  |
 | **Ethereum 2.0**  | Create validator and beacon chain nodes | ethereum2.kotal.io/v1alpha1 | coming soon :rocket:  |
-| **IPFS**  | Create and join ipfs storage cluster and swarms | ipfs.kotal.io/v1alpha1 | alpha  |
 
 ## Example
 
