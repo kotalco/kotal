@@ -8,7 +8,7 @@ import (
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Network is the Filecoin network the node will join and sync
-	Network FilecoinNetwork `json:"network,omitempty"`
+	Network FilecoinNetwork `json:"network"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
