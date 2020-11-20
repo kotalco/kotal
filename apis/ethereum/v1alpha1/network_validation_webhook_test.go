@@ -7,7 +7,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
@@ -1022,22 +1021,6 @@ var _ = Describe("Ethereum network validation", func() {
 		},
 	}
 
-	// errorsToCauses converts field error list into array of status cause
-	errorsToCauses := func(errs field.ErrorList) []metav1.StatusCause {
-		causes := make([]metav1.StatusCause, 0, len(errs))
-
-		for i := range errs {
-			err := errs[i]
-			causes = append(causes, metav1.StatusCause{
-				Type:    metav1.CauseType(err.Type),
-				Message: err.ErrorBody(),
-				Field:   err.Field,
-			})
-		}
-
-		return causes
-	}
-
 	updateCases := []struct {
 		Title      string
 		OldNetwork *Network
@@ -1237,7 +1220,7 @@ var _ = Describe("Ethereum network validation", func() {
 
 					errStatus := err.(*errors.StatusError)
 
-					causes := errorsToCauses(cc.Errors)
+					causes := shared.ErrorsToCauses(cc.Errors)
 
 					Expect(errStatus.ErrStatus.Details.Causes).To(ContainElements(causes))
 				})
@@ -1255,7 +1238,7 @@ var _ = Describe("Ethereum network validation", func() {
 
 					errStatus := err.(*errors.StatusError)
 
-					causes := errorsToCauses(cc.Errors)
+					causes := shared.ErrorsToCauses(cc.Errors)
 
 					Expect(errStatus.ErrStatus.Details.Causes).To(ContainElements(causes))
 				})
