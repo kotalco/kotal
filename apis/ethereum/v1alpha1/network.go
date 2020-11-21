@@ -37,7 +37,7 @@ type NetworkSpec struct {
 
 	// Nodes is array of node specifications
 	// +kubebuilder:validation:MinItems=1
-	Nodes []Node `json:"nodes"`
+	Nodes []XNode `json:"nodes"`
 
 	// HighlyAvailable is whether blockchain nodes can land on the same k8s node or no
 	HighlyAvailable bool `json:"highlyAvailable,omitempty"`

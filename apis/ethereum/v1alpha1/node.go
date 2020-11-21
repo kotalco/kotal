@@ -6,8 +6,8 @@ import (
 	"github.com/kotalco/kotal/apis/shared"
 )
 
-//Node is the specification of the node
-type Node struct {
+//XNode is the specification of the node
+type XNode struct {
 	// Client is ethereum client running on the node
 	Client EthereumClient `json:"client,omitempty"`
 
@@ -73,42 +73,42 @@ type Node struct {
 }
 
 // IsBootnode is whether node is bootnode or no
-func (n *Node) IsBootnode() bool {
+func (n *XNode) IsBootnode() bool {
 	return n.Bootnode
 }
 
 // WithNodekey is whether node is configured with private key
-func (n *Node) WithNodekey() bool {
+func (n *XNode) WithNodekey() bool {
 	return n.Nodekey != ""
 }
 
 // StatefulSetName returns name to be used by node statefulset
-func (n *Node) StatefulSetName(network string) string {
+func (n *XNode) StatefulSetName(network string) string {
 	return fmt.Sprintf("%s-%s", network, n.Name)
 }
 
 // ConfigmapName returns name to be used by genesis and scripts configmap
-func (n *Node) ConfigmapName(network string, client EthereumClient) string {
+func (n *XNode) ConfigmapName(network string, client EthereumClient) string {
 	return fmt.Sprintf("%s-%s", network, client)
 }
 
 // PVCName returns name to be used by node pvc
-func (n *Node) PVCName(network string) string {
+func (n *XNode) PVCName(network string) string {
 	return n.StatefulSetName(network) // same as statefulset name
 }
 
 // SecretName returns name to be used by node secret
-func (n *Node) SecretName(network string) string {
+func (n *XNode) SecretName(network string) string {
 	return n.StatefulSetName(network) // same as statefulset name
 }
 
 // ServiceName returns name to be used by node service
-func (n *Node) ServiceName(network string) string {
+func (n *XNode) ServiceName(network string) string {
 	return n.StatefulSetName(network) // same as statefulset name
 }
 
 // Labels to be used by node resources
-func (n *Node) Labels(network string) map[string]string {
+func (n *XNode) Labels(network string) map[string]string {
 	return map[string]string{
 		"name":     "node",
 		"instance": n.Name,

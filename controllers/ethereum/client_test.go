@@ -29,7 +29,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name: "node-1",
 						},
@@ -51,7 +51,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.GethClient,
@@ -76,7 +76,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.ParityClient,
@@ -102,7 +102,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Bootnode: true,
@@ -128,7 +128,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.GethClient,
@@ -154,7 +154,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.ParityClient,
@@ -182,7 +182,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Bootnode: true,
@@ -212,7 +212,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.GethClient,
@@ -242,7 +242,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.ParityClient,
@@ -272,7 +272,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Bootnode: true,
@@ -312,7 +312,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.GethClient,
@@ -352,7 +352,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.ParityClient,
@@ -392,7 +392,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Bootnode: true,
@@ -447,7 +447,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.GethClient,
@@ -503,7 +503,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.ParityClient,
@@ -558,7 +558,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Bootnode: true,
@@ -623,7 +623,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Network{
 				Spec: ethereumv1alpha1.NetworkSpec{
 					Join: rinkeby,
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.GethClient,
@@ -690,7 +690,7 @@ var _ = Describe("Ethereum client arguments", func() {
 					Genesis: &ethereumv1alpha1.Genesis{
 						ChainID: 5555,
 					},
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Miner:    true,
@@ -724,7 +724,7 @@ var _ = Describe("Ethereum client arguments", func() {
 					Genesis: &ethereumv1alpha1.Genesis{
 						ChainID: 5555,
 					},
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.GethClient,
@@ -764,7 +764,7 @@ var _ = Describe("Ethereum client arguments", func() {
 					Genesis: &ethereumv1alpha1.Genesis{
 						ChainID: 5555,
 					},
-					Nodes: []ethereumv1alpha1.Node{
+					Nodes: []ethereumv1alpha1.XNode{
 						{
 							Name:     "node-1",
 							Client:   ethereumv1alpha1.ParityClient,

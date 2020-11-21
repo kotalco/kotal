@@ -33,7 +33,7 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					Join:      RinkebyNetwork,
 					Consensus: ProofOfWork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -57,7 +57,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 444,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -77,7 +77,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #3",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -101,7 +101,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 1,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -126,7 +126,7 @@ var _ = Describe("Ethereum network validation", func() {
 						ChainID: 55555,
 						Clique:  &Clique{},
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -151,7 +151,7 @@ var _ = Describe("Ethereum network validation", func() {
 						ChainID: 55555,
 						IBFT2:   &IBFT2{},
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -176,7 +176,7 @@ var _ = Describe("Ethereum network validation", func() {
 						ChainID: 55555,
 						Ethash:  &Ethash{},
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -200,7 +200,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -227,7 +227,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -254,7 +254,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Bootnode: true,
@@ -282,7 +282,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:  "node-1",
 							Miner: true,
@@ -307,7 +307,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Coinbase: EthereumAddress("0x676aEda2E67D24eb304cFf75A5190824831E3399"),
@@ -331,7 +331,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -359,7 +359,7 @@ var _ = Describe("Ethereum network validation", func() {
 							Homestead: 2,
 						},
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -381,7 +381,7 @@ var _ = Describe("Ethereum network validation", func() {
 				Spec: NetworkSpec{
 					ID:   networkID,
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -405,7 +405,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -430,7 +430,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Client:   GethClient,
@@ -458,7 +458,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Client:   GethClient,
@@ -490,7 +490,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Miner:    true,
@@ -521,7 +521,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:   "node-1",
 							Client: GethClient,
@@ -547,7 +547,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Client:   GethClient,
@@ -580,7 +580,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Client:   GethClient,
@@ -613,7 +613,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Client:   GethClient,
@@ -649,7 +649,7 @@ var _ = Describe("Ethereum network validation", func() {
 							FixedDifficulty: &fixedDifficulty,
 						},
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:   "node-1",
 							Client: GethClient,
@@ -671,7 +671,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Client:   BesuClient,
@@ -694,7 +694,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:   "node-1",
 							Client: BesuClient,
@@ -720,7 +720,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:   "node-1",
 							Client: BesuClient,
@@ -752,7 +752,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Client:   GethClient,
@@ -786,7 +786,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:    "node-1",
 							Client:  GethClient,
@@ -809,7 +809,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:    "node-1",
 							Client:  GethClient,
@@ -832,7 +832,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:    "node-1",
 							Client:  ParityClient,
@@ -855,7 +855,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:    "node-1",
 							Client:  ParityClient,
@@ -878,7 +878,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:    "node-1",
 							Client:  ParityClient,
@@ -901,7 +901,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:    "node-1",
 							Client:  ParityClient,
@@ -928,7 +928,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:   "node-1",
 							Client: ParityClient,
@@ -950,7 +950,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Client:   ParityClient,
@@ -977,7 +977,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:     "node-1",
 							Client:   ParityClient,
@@ -1001,7 +1001,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Network: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name:    "node-1",
 							Client:  GethClient,
@@ -1032,7 +1032,7 @@ var _ = Describe("Ethereum network validation", func() {
 			OldNetwork: &Network{
 				Spec: NetworkSpec{
 					Join: RinkebyNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -1042,7 +1042,7 @@ var _ = Describe("Ethereum network validation", func() {
 			NewNetwork: &Network{
 				Spec: NetworkSpec{
 					Join: RopstenNetwork,
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -1066,7 +1066,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -1079,7 +1079,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -1103,7 +1103,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -1116,7 +1116,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 4444,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -1140,7 +1140,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -1153,7 +1153,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-2",
 						},
@@ -1178,7 +1178,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},
@@ -1192,7 +1192,7 @@ var _ = Describe("Ethereum network validation", func() {
 					Genesis: &Genesis{
 						ChainID: 55555,
 					},
-					Nodes: []Node{
+					Nodes: []XNode{
 						{
 							Name: "node-1",
 						},

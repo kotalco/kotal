@@ -124,7 +124,7 @@ func (r *NetworkReconciler) specNodeConfigmap(client ethereumv1alpha1.EthereumCl
 }
 
 // reconcileNodeConfigmap creates genesis config map if it doesn't exist or update it
-func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) error {
+func (r *NetworkReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network, bootnodes []string) error {
 
 	configmap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
@@ -281,7 +281,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(network *ethereumv1alpha1.Netwo
 }
 
 // specNodeDataPVC update node data pvc spec
-func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) {
+func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network) {
 	request := corev1.ResourceList{
 		corev1.ResourceStorage: resource.MustParse(node.Resources.Storage),
 	}
@@ -305,7 +305,7 @@ func (r *NetworkReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, n
 }
 
 // reconcileNodeDataPVC creates node data pvc if it doesn't exist
-func (r *NetworkReconciler) reconcileNodeDataPVC(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) reconcileNodeDataPVC(node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network) error {
 
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
@@ -326,7 +326,7 @@ func (r *NetworkReconciler) reconcileNodeDataPVC(node *ethereumv1alpha1.Node, ne
 }
 
 // createNodeVolumes creates all the required volumes for the node
-func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) []corev1.Volume {
+func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network) []corev1.Volume {
 
 	volumes := []corev1.Volume{}
 
@@ -368,7 +368,7 @@ func (r *NetworkReconciler) createNodeVolumes(node *ethereumv1alpha1.Node, netwo
 }
 
 // createNodeVolumeMounts creates all required volume mounts for the node
-func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) []corev1.VolumeMount {
+func (r *NetworkReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network) []corev1.VolumeMount {
 
 	volumeMounts := []corev1.VolumeMount{}
 
@@ -420,7 +420,7 @@ func (r *NetworkReconciler) getNodeAffinity(network *ethereumv1alpha1.Network) *
 }
 
 // specNodeStatefulSet updates node statefulset spec
-func (r *NetworkReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
+func (r *NetworkReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
 	labels := node.Labels(network.Name)
 	// used by geth to init genesis and import account(s)
 	initContainers := []corev1.Container{}
@@ -520,7 +520,7 @@ func (r *NetworkReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *e
 }
 
 // reconcileNodeStatefulSet creates node statefulset if it doesn't exist, update it if it does exist
-func (r *NetworkReconciler) reconcileNodeStatefulSet(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) error {
+func (r *NetworkReconciler) reconcileNodeStatefulSet(node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network, bootnodes []string) error {
 
 	sts := &appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
@@ -549,7 +549,7 @@ func (r *NetworkReconciler) reconcileNodeStatefulSet(node *ethereumv1alpha1.Node
 	return err
 }
 
-func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network) error {
 	secret.ObjectMeta.Labels = node.Labels(network.Name)
 	data := map[string]string{}
 
@@ -578,7 +578,7 @@ func (r *NetworkReconciler) specNodeSecret(secret *corev1.Secret, node *ethereum
 }
 
 // reconcileNodeSecret creates node secret if it doesn't exist, update it if it exists
-func (r *NetworkReconciler) reconcileNodeSecret(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) (publicKey string, err error) {
+func (r *NetworkReconciler) reconcileNodeSecret(node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network) (publicKey string, err error) {
 
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
@@ -608,7 +608,7 @@ func (r *NetworkReconciler) reconcileNodeSecret(node *ethereumv1alpha1.Node, net
 }
 
 // specNodeService updates node service spec
-func (r *NetworkReconciler) specNodeService(svc *corev1.Service, node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) {
+func (r *NetworkReconciler) specNodeService(svc *corev1.Service, node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network) {
 	labels := node.Labels(network.Name)
 	client := node.Client
 
@@ -663,7 +663,7 @@ func (r *NetworkReconciler) specNodeService(svc *corev1.Service, node *ethereumv
 }
 
 // reconcileNodeService reconciles node service
-func (r *NetworkReconciler) reconcileNodeService(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network) (ip string, err error) {
+func (r *NetworkReconciler) reconcileNodeService(node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network) (ip string, err error) {
 
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
@@ -693,7 +693,7 @@ func (r *NetworkReconciler) reconcileNodeService(node *ethereumv1alpha1.Node, ne
 
 // reconcileNode create a new node statefulset if it doesn't exist
 // updates existing statefulset and depending resources if node spec changed
-func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.Node, network *ethereumv1alpha1.Network, bootnodes []string) (enodeURL string, err error) {
+func (r *NetworkReconciler) reconcileNode(node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network, bootnodes []string) (enodeURL string, err error) {
 
 	if err = r.reconcileNodeDataPVC(node, network); err != nil {
 		return

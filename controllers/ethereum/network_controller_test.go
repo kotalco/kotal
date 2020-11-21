@@ -79,7 +79,7 @@ var _ = Describe("Ethereum network controller", func() {
 		spec := ethereumv1alpha1.NetworkSpec{
 			Join:            "mainnet",
 			HighlyAvailable: true,
-			Nodes: []ethereumv1alpha1.Node{
+			Nodes: []ethereumv1alpha1.XNode{
 				{
 					Name:     "node-1",
 					Bootnode: true,
@@ -227,7 +227,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.Node{
+			newNode := ethereumv1alpha1.XNode{
 				Name:    "node-2",
 				RPC:     true,
 				Client:  ethereumv1alpha1.GethClient,
@@ -380,7 +380,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-3", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.Node{
+			newNode := ethereumv1alpha1.XNode{
 				Name:    "node-3",
 				RPC:     true,
 				Client:  ethereumv1alpha1.ParityClient,
@@ -583,7 +583,7 @@ var _ = Describe("Ethereum network controller", func() {
 		spec := ethereumv1alpha1.NetworkSpec{
 			Join:            "rinkeby",
 			HighlyAvailable: true,
-			Nodes: []ethereumv1alpha1.Node{
+			Nodes: []ethereumv1alpha1.XNode{
 				{
 					Name:     "node-1",
 					Bootnode: true,
@@ -730,7 +730,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.Node{
+			newNode := ethereumv1alpha1.XNode{
 				Name:     "node-2",
 				Client:   ethereumv1alpha1.GethClient,
 				Miner:    true,
@@ -892,7 +892,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-3", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.Node{
+			newNode := ethereumv1alpha1.XNode{
 				Name:     "node-3",
 				Client:   ethereumv1alpha1.ParityClient,
 				Miner:    true,
@@ -1113,7 +1113,7 @@ var _ = Describe("Ethereum network controller", func() {
 					},
 				},
 			},
-			Nodes: []ethereumv1alpha1.Node{
+			Nodes: []ethereumv1alpha1.XNode{
 				{
 					Name:     "node-1",
 					Bootnode: true,
@@ -1263,7 +1263,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.Node{
+			newNode := ethereumv1alpha1.XNode{
 				Name:     "node-2",
 				Client:   ethereumv1alpha1.GethClient,
 				Miner:    true,
@@ -1423,7 +1423,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-3", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.Node{
+			newNode := ethereumv1alpha1.XNode{
 				Name:     "node-3",
 				Client:   ethereumv1alpha1.ParityClient,
 				Miner:    true,
@@ -1655,7 +1655,7 @@ var _ = Describe("Ethereum network controller", func() {
 				ChainID: 55555,
 				Ethash:  &ethereumv1alpha1.Ethash{},
 			},
-			Nodes: []ethereumv1alpha1.Node{
+			Nodes: []ethereumv1alpha1.XNode{
 				{
 					Name:     "node-1",
 					Bootnode: true,
@@ -1802,7 +1802,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.Node{
+			newNode := ethereumv1alpha1.XNode{
 				Name:     "node-2",
 				Client:   ethereumv1alpha1.GethClient,
 				Miner:    true,
@@ -1959,7 +1959,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-3", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.Node{
+			newNode := ethereumv1alpha1.XNode{
 				Name:     "node-3",
 				Client:   ethereumv1alpha1.ParityClient,
 				SyncMode: ethereumv1alpha1.FastSynchronization,
@@ -2172,7 +2172,7 @@ var _ = Describe("Ethereum network controller", func() {
 					},
 				},
 			},
-			Nodes: []ethereumv1alpha1.Node{
+			Nodes: []ethereumv1alpha1.XNode{
 				{
 					Name:     "node-1",
 					Bootnode: true,
@@ -2316,7 +2316,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.Node{
+			newNode := ethereumv1alpha1.XNode{
 				Name:    "node-2",
 				RPC:     true,
 				RPCPort: 8547,

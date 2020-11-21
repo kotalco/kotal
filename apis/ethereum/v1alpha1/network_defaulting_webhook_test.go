@@ -11,7 +11,7 @@ var _ = Describe("Ethereum defaulting", func() {
 			Spec: NetworkSpec{
 				Join:            MainNetwork,
 				HighlyAvailable: true,
-				Nodes: []Node{
+				Nodes: []XNode{
 					{
 						Name: "node-1",
 					},
@@ -54,7 +54,7 @@ var _ = Describe("Ethereum defaulting", func() {
 			Spec: NetworkSpec{
 				Join:            RinkebyNetwork,
 				HighlyAvailable: true,
-				Nodes: []Node{
+				Nodes: []XNode{
 					{
 						Name: "node-1",
 					},
@@ -82,7 +82,7 @@ var _ = Describe("Ethereum defaulting", func() {
 				Genesis: &Genesis{
 					ChainID: 55555,
 				},
-				Nodes: []Node{
+				Nodes: []XNode{
 					{
 						Name: "node-1",
 					},
@@ -129,7 +129,7 @@ var _ = Describe("Ethereum defaulting", func() {
 				Genesis: &Genesis{
 					ChainID: 55555,
 				},
-				Nodes: []Node{
+				Nodes: []XNode{
 					{
 						Name: "node-1",
 						RPC:  true,
@@ -184,7 +184,7 @@ var _ = Describe("Ethereum defaulting", func() {
 				Genesis: &Genesis{
 					ChainID: 55555,
 				},
-				Nodes: []Node{
+				Nodes: []XNode{
 					{
 						Name:    "node-1",
 						WS:      true,
