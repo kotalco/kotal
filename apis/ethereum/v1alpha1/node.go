@@ -4,10 +4,36 @@ import (
 	"fmt"
 
 	"github.com/kotalco/kotal/apis/shared"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-//XNode is the specification of the node
-type XNode struct {
+// NodeStatus defines the observed state of Node
+type NodeStatus struct {
+}
+
+// +kubebuilder:object:root=true
+
+// Node is the Schema for the nodes API
+type Node struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   NodeSpec   `json:"spec,omitempty"`
+	Status NodeStatus `json:"status,omitempty"`
+}
+
+// +kubebuilder:object:root=true
+
+// NodeList contains a list of Node
+type NodeList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []Node `json:"items"`
+}
+
+//NodeSpec is the specification of the node
+type NodeSpec struct {
 	// Client is ethereum client running on the node
 	Client EthereumClient `json:"client,omitempty"`
 
@@ -73,42 +99,42 @@ type XNode struct {
 }
 
 // IsBootnode is whether node is bootnode or no
-func (n *XNode) IsBootnode() bool {
+func (n *NodeSpec) IsBootnode() bool {
 	return n.Bootnode
 }
 
 // WithNodekey is whether node is configured with private key
-func (n *XNode) WithNodekey() bool {
+func (n *NodeSpec) WithNodekey() bool {
 	return n.Nodekey != ""
 }
 
 // StatefulSetName returns name to be used by node statefulset
-func (n *XNode) StatefulSetName(network string) string {
+func (n *NodeSpec) StatefulSetName(network string) string {
 	return fmt.Sprintf("%s-%s", network, n.Name)
 }
 
 // ConfigmapName returns name to be used by genesis and scripts configmap
-func (n *XNode) ConfigmapName(network string, client EthereumClient) string {
+func (n *NodeSpec) ConfigmapName(network string, client EthereumClient) string {
 	return fmt.Sprintf("%s-%s", network, client)
 }
 
 // PVCName returns name to be used by node pvc
-func (n *XNode) PVCName(network string) string {
+func (n *NodeSpec) PVCName(network string) string {
 	return n.StatefulSetName(network) // same as statefulset name
 }
 
 // SecretName returns name to be used by node secret
-func (n *XNode) SecretName(network string) string {
+func (n *NodeSpec) SecretName(network string) string {
 	return n.StatefulSetName(network) // same as statefulset name
 }
 
 // ServiceName returns name to be used by node service
-func (n *XNode) ServiceName(network string) string {
+func (n *NodeSpec) ServiceName(network string) string {
 	return n.StatefulSetName(network) // same as statefulset name
 }
 
 // Labels to be used by node resources
-func (n *XNode) Labels(network string) map[string]string {
+func (n *NodeSpec) Labels(network string) map[string]string {
 	return map[string]string{
 		"name":     "node",
 		"instance": n.Name,
@@ -239,4 +265,8 @@ type ImportedAccount struct {
 	PrivateKey `json:"privatekey"`
 	// Password is the password used to encrypt account private key
 	Password string `json:"password"`
+}
+
+func init() {
+	SchemeBuilder.Register(&Node{}, &NodeList{})
 }

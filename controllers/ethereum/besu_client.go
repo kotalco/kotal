@@ -17,7 +17,7 @@ func (b *BesuClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLev
 }
 
 // GetArgs returns command line arguments required for client run
-func (b *BesuClient) GetArgs(node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network) (args []string) {
+func (b *BesuClient) GetArgs(node *ethereumv1alpha1.NodeSpec, network *ethereumv1alpha1.Network) (args []string) {
 
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {

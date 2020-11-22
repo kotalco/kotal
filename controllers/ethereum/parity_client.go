@@ -33,7 +33,7 @@ func (p *ParityClient) PrunningArgFromSyncMode(mode ethereumv1alpha1.Synchroniza
 }
 
 // GetArgs returns command line arguments required for client run
-func (p *ParityClient) GetArgs(node *ethereumv1alpha1.XNode, network *ethereumv1alpha1.Network) (args []string) {
+func (p *ParityClient) GetArgs(node *ethereumv1alpha1.NodeSpec, network *ethereumv1alpha1.Network) (args []string) {
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
 		args = append(args, arg...)

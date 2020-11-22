@@ -238,7 +238,7 @@ spec:
             nodes:
               description: Nodes is array of node specifications
               items:
-                description: Node is the specification of the node
+                description: NodeSpec is the specification of the node
                 properties:
                   bootnode:
                     description: Bootnode is whether node is bootnode or no

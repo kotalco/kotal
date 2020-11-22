@@ -13,7 +13,7 @@ var network = &Network{
 	},
 	Spec: NetworkSpec{
 		Join: RinkebyNetwork,
-		Nodes: []XNode{
+		Nodes: []NodeSpec{
 			{
 				Name:    "node-1",
 				Client:  BesuClient,

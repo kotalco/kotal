@@ -1,0 +1,212 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: nodes.ethereum.kotal.io
+spec:
+  group: ethereum.kotal.io
+  names:
+    kind: Node
+    listKind: NodeList
+    plural: nodes
+    singular: node
+  preserveUnknownFields: false
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      description: Node is the Schema for the nodes API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: NodeSpec is the specification of the node
+          properties:
+            bootnode:
+              description: Bootnode is whether node is bootnode or no
+              type: boolean
+            client:
+              description: Client is ethereum client running on the node
+              enum:
+              - besu
+              - geth
+              - parity
+              type: string
+            coinbase:
+              description: Coinbase is the account to which mining rewards are paid
+              pattern: ^0[xX][0-9a-fA-F]{40}$
+              type: string
+            corsDomains:
+              description: CORSDomains is the domains from which to accept cross origin
+                requests
+              items:
+                type: string
+              type: array
+            graphql:
+              description: GraphQL is whether GraphQL server is enabled or not
+              type: boolean
+            graphqlPort:
+              description: GraphQLPort is the GraphQL server listening port
+              type: integer
+            hosts:
+              description: Hosts is a list of hostnames to to whitelist for RPC access
+              items:
+                type: string
+              type: array
+            import:
+              description: import is account to import
+              properties:
+                password:
+                  description: Password is the password used to encrypt account private
+                    key
+                  type: string
+                privatekey:
+                  description: Privatekey is the account private key
+                  pattern: ^0[xX][0-9a-fA-F]{64}$
+                  type: string
+              required:
+              - password
+              - privatekey
+              type: object
+            logging:
+              description: Logging is logging verboisty level
+              enum:
+              - "off"
+              - fatal
+              - error
+              - warn
+              - info
+              - debug
+              - trace
+              - all
+              type: string
+            miner:
+              description: Miner is whether node is mining/validating blocks or no
+              type: boolean
+            name:
+              description: Name is the node name
+              type: string
+            nodekey:
+              description: Nodekey is the node private key
+              pattern: ^0[xX][0-9a-fA-F]{64}$
+              type: string
+            p2pPort:
+              description: P2PPort is port used for peer to peer communication
+              type: integer
+            resources:
+              description: Resources is node compute and storage resources
+              properties:
+                cpu:
+                  description: CPU is cpu cores the node requires
+                  pattern: ^[1-9][0-9]*m?$
+                  type: string
+                cpuLimit:
+                  description: CPULimit is cpu cores the node is limited to
+                  pattern: ^[1-9][0-9]*m?$
+                  type: string
+                memory:
+                  description: Memory is memmory requirements
+                  pattern: ^[1-9][0-9]*[KMGTPE]i$
+                  type: string
+                memoryLimit:
+                  description: MemoryLimit is cpu cores the node is limited to
+                  pattern: ^[1-9][0-9]*[KMGTPE]i$
+                  type: string
+                storage:
+                  description: Storage is disk space storage requirements
+                  pattern: ^[1-9][0-9]*[KMGTPE]i$
+                  type: string
+                storageClass:
+                  description: StorageClass is the volume storage class
+                  type: string
+              type: object
+            rpc:
+              description: RPC is whether HTTP-RPC server is enabled or not
+              type: boolean
+            rpcAPI:
+              description: RPCAPI is a list of rpc services to enable
+              items:
+                description: API is RPC API to be exposed by RPC or web socket server
+                enum:
+                - admin
+                - clique
+                - debug
+                - eea
+                - eth
+                - ibft
+                - miner
+                - net
+                - perm
+                - plugins
+                - priv
+                - txpool
+                - web3
+                type: string
+              type: array
+            rpcPort:
+              description: RPCPort is HTTP-RPC server listening port
+              type: integer
+            syncMode:
+              description: SyncMode is the node synchronization mode
+              enum:
+              - fast
+              - full
+              - light
+              type: string
+            ws:
+              description: WS is whether web socket server is enabled or not
+              type: boolean
+            wsAPI:
+              description: WSAPI is a list of WS services to enable
+              items:
+                description: API is RPC API to be exposed by RPC or web socket server
+                enum:
+                - admin
+                - clique
+                - debug
+                - eea
+                - eth
+                - ibft
+                - miner
+                - net
+                - perm
+                - plugins
+                - priv
+                - txpool
+                - web3
+                type: string
+              type: array
+            wsPort:
+              description: WSPort is the web socket server listening port
+              type: integer
+          required:
+          - name
+          type: object
+        status:
+          description: NodeStatus defines the observed state of Node
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

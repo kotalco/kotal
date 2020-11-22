@@ -29,7 +29,7 @@ func (r *Network) Default() {
 }
 
 // DefaultNodeResources defaults node cpu, memory and storage resources
-func (r *Network) DefaultNodeResources(node *XNode) {
+func (r *Network) DefaultNodeResources(node *NodeSpec) {
 	var cpu, cpuLimit, memory, memoryLimit, storage string
 	privateNetwork := r.Spec.Genesis != nil
 	join := r.Spec.Join
@@ -91,7 +91,7 @@ func (r *Network) DefaultNodeResources(node *XNode) {
 }
 
 // DefaultNode defaults a single node
-func (r *Network) DefaultNode(node *XNode) {
+func (r *Network) DefaultNode(node *NodeSpec) {
 	defaultAPIs := []API{Web3API, ETHAPI, NetworkAPI}
 
 	if node.Client == "" {
