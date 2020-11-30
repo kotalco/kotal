@@ -385,6 +385,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete node-2", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), node2Key, node)).ToNot(Succeed())
+			})
+
 			It("Should delete node-2 statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).ToNot(Succeed())
@@ -546,6 +551,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete node-3", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), node3Key, node)).ToNot(Succeed())
+			})
+
 			It("Should delete node-3 statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).ToNot(Succeed())
@@ -577,6 +587,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete bootnode", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, node)).ToNot(Succeed())
+			})
+
 			It("Should delete bootnode statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).ToNot(Succeed())
@@ -928,6 +943,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete node-2", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), node2Key, node)).ToNot(Succeed())
+			})
+
 			It("Should delete node-2 statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).ToNot(Succeed())
@@ -1099,6 +1119,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete node-3", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), node3Key, node)).ToNot(Succeed())
+			})
+
 			It("Should delete node-3 statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).ToNot(Succeed())
@@ -1135,6 +1160,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete bootnode", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, node)).ToNot(Succeed())
+			})
+
 			It("Should delete bootnode statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).ToNot(Succeed())
@@ -1490,6 +1520,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete node-2", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), node2Key, node)).ToNot(Succeed())
+			})
+
 			It("Should delete node-2 statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).ToNot(Succeed())
@@ -1654,6 +1689,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete node-3", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), node3Key, node)).ToNot(Succeed())
+			})
+
 			It("Should delete node-3 statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).ToNot(Succeed())
@@ -1690,6 +1730,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete bootnode", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, node)).ToNot(Succeed())
+			})
+
 			It("Should delete bootnode statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).ToNot(Succeed())
@@ -2054,6 +2099,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete node-2", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), node2Key, node)).ToNot(Succeed())
+			})
+
 			It("Should delete node-2 statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).ToNot(Succeed())
@@ -2198,6 +2248,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete node-3", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), node3Key, node)).ToNot(Succeed())
+			})
+
 			It("Should delete node-3 statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).ToNot(Succeed())
@@ -2229,6 +2284,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete bootnode", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, node)).ToNot(Succeed())
+			})
+
 			It("Should delete bootnode statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).ToNot(Succeed())
@@ -2577,6 +2637,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete node-2", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), node2Key, node)).ToNot(Succeed())
+			})
+
 			It("Should delete node-2 statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).ToNot(Succeed())
@@ -2608,6 +2673,11 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		if useExistingCluster {
+			It("Should delete bootnode", func() {
+				node := &ethereumv1alpha1.Node{}
+				Expect(k8sClient.Get(context.Background(), bootnodeKey, node)).ToNot(Succeed())
+			})
+
 			It("Should delete bootnode statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).ToNot(Succeed())
