@@ -297,9 +297,6 @@ spec:
             miner:
               description: Miner is whether node is mining/validating blocks or no
               type: boolean
-            name:
-              description: Name is the node name
-              type: string
             nodekey:
               description: Nodekey is the node private key
               pattern: ^0[xX][0-9a-fA-F]{64}$
@@ -400,8 +397,6 @@ spec:
             wsPort:
               description: WSPort is the web socket server listening port
               type: integer
-          required:
-          - name
           type: object
         status:
           description: NodeStatus defines the observed state of Node

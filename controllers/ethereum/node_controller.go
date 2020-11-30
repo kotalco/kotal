@@ -41,6 +41,7 @@ func (r *NodeReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err er
 		return
 	}
 
+	r.updateLabels(&node)
 	r.updateStaticNodes(&node)
 
 	if err = r.reconcileNodeDataPVC(&node); err != nil {
@@ -80,6 +81,22 @@ func (r *NodeReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err er
 	}
 
 	return ctrl.Result{}, nil
+}
+
+// updateLabels adds missing labels to the node
+func (r *NodeReconciler) updateLabels(node *ethereumv1alpha1.Node) {
+
+	if node.Labels == nil {
+		node.Labels = map[string]string{}
+	}
+
+	node.Labels["name"] = "node"
+	node.Labels["protocol"] = "ethereum"
+	node.Labels["client"] = string(node.Spec.Client)
+
+	if node.Labels["instance"] == "" {
+		node.Labels["instance"] = node.Name
+	}
 }
 
 // updateStatus updates network status

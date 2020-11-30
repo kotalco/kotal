@@ -236,9 +236,9 @@ spec:
               description: Join specifies the network to join
               type: string
             nodes:
-              description: Nodes is array of node specifications
+              description: Nodes is array of network node specifications
               items:
-                description: NodeSpec is the specification of the node
+                description: NetworkNodeSpec is a network node spec
                 properties:
                   TopologyKey:
                     description: TopologyKey is the k8s node label used to distribute
@@ -495,7 +495,6 @@ spec:
                       or no
                     type: boolean
                   name:
-                    description: Name is the node name
                     type: string
                   nodekey:
                     description: Nodekey is the node private key

@@ -48,7 +48,7 @@ func (n *Network) ValidateNodes() field.ErrorList {
 	for i := range n.Spec.Nodes {
 		path := field.NewPath("spec").Child("nodes").Index(i)
 		node := Node{
-			Spec: n.Spec.Nodes[i],
+			Spec: n.Spec.Nodes[i].NodeSpec,
 		}
 		// No need to pass network and availability config
 		// it has already been passed during network defaulting phase

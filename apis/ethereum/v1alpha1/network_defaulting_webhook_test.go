@@ -15,13 +15,15 @@ var _ = Describe("Ethereum defaulting", func() {
 				AvailabilityConfig: AvailabilityConfig{
 					HighlyAvailable: true,
 				},
-				Nodes: []NodeSpec{
+				Nodes: []NetworkNodeSpec{
 					{
 						Name: "node-1",
 					},
 					{
-						Name:     "node-2",
-						SyncMode: FullSynchronization,
+						Name: "node-2",
+						NodeSpec: NodeSpec{
+							SyncMode: FullSynchronization,
+						},
 					},
 				},
 			},
@@ -62,7 +64,7 @@ var _ = Describe("Ethereum defaulting", func() {
 				AvailabilityConfig: AvailabilityConfig{
 					HighlyAvailable: true,
 				},
-				Nodes: []NodeSpec{
+				Nodes: []NetworkNodeSpec{
 					{
 						Name: "node-1",
 					},
@@ -92,7 +94,7 @@ var _ = Describe("Ethereum defaulting", func() {
 						ChainID: 55555,
 					},
 				},
-				Nodes: []NodeSpec{
+				Nodes: []NetworkNodeSpec{
 					{
 						Name: "node-1",
 					},
@@ -141,10 +143,12 @@ var _ = Describe("Ethereum defaulting", func() {
 						ChainID: 55555,
 					},
 				},
-				Nodes: []NodeSpec{
+				Nodes: []NetworkNodeSpec{
 					{
 						Name: "node-1",
-						RPC:  true,
+						NodeSpec: NodeSpec{
+							RPC: true,
+						},
 					},
 				},
 			},
@@ -198,11 +202,13 @@ var _ = Describe("Ethereum defaulting", func() {
 						ChainID: 55555,
 					},
 				},
-				Nodes: []NodeSpec{
+				Nodes: []NetworkNodeSpec{
 					{
-						Name:    "node-1",
-						WS:      true,
-						GraphQL: true,
+						Name: "node-1",
+						NodeSpec: NodeSpec{
+							WS:      true,
+							GraphQL: true,
+						},
 					},
 				},
 			},

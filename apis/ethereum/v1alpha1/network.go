@@ -35,9 +35,15 @@ type NetworkSpec struct {
 	NetworkConfig      `json:",inline"`
 	AvailabilityConfig `json:",inline"`
 
-	// Nodes is array of node specifications
+	// Nodes is array of network node specifications
 	// +kubebuilder:validation:MinItems=1
-	Nodes []NodeSpec `json:"nodes"`
+	Nodes []NetworkNodeSpec `json:"nodes"`
+}
+
+// NetworkNodeSpec is a network node spec
+type NetworkNodeSpec struct {
+	NodeSpec `json:",inline"`
+	Name     string `json:"name"`
 }
 
 // HexString is String in hexadecial format

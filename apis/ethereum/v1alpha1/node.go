@@ -44,9 +44,6 @@ type NodeSpec struct {
 	// Client is ethereum client running on the node
 	Client EthereumClient `json:"client,omitempty"`
 
-	// Name is the node name
-	Name string `json:"name"`
-
 	// import is account to import
 	Import *ImportedAccount `json:"import,omitempty"`
 

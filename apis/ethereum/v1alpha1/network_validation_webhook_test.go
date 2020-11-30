@@ -35,7 +35,7 @@ var _ = Describe("Ethereum network validation", func() {
 						Join:      RinkebyNetwork,
 						Consensus: ProofOfWork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -61,7 +61,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 444,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -81,7 +81,7 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #3",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -107,7 +107,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 1,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -134,7 +134,7 @@ var _ = Describe("Ethereum network validation", func() {
 							Clique:  &Clique{},
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -161,7 +161,7 @@ var _ = Describe("Ethereum network validation", func() {
 							IBFT2:   &IBFT2{},
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -188,7 +188,7 @@ var _ = Describe("Ethereum network validation", func() {
 							Ethash:  &Ethash{},
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -214,7 +214,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -243,10 +243,12 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Bootnode: true,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Bootnode: true,
+							},
 						},
 						{
 							Name: "node-2",
@@ -273,10 +275,12 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:  "node-1",
-							Miner: true,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Miner: true,
+							},
 						},
 					},
 				},
@@ -300,10 +304,12 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Coinbase: EthereumAddress("0x676aEda2E67D24eb304cFf75A5190824831E3399"),
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Coinbase: EthereumAddress("0x676aEda2E67D24eb304cFf75A5190824831E3399"),
+							},
 						},
 					},
 				},
@@ -326,7 +332,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -356,7 +362,7 @@ var _ = Describe("Ethereum network validation", func() {
 							},
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -380,7 +386,7 @@ var _ = Describe("Ethereum network validation", func() {
 						ID:   networkID,
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -406,7 +412,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -433,12 +439,14 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Client:   GethClient,
-							Miner:    true,
-							Coinbase: coinbase,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:   GethClient,
+								Miner:    true,
+								Coinbase: coinbase,
+							},
 						},
 					},
 				},
@@ -463,15 +471,17 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Client:   GethClient,
-							Miner:    true,
-							Coinbase: coinbase,
-							Import: &ImportedAccount{
-								PrivateKey: wrongPrivatekey,
-								Password:   "secret",
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:   GethClient,
+								Miner:    true,
+								Coinbase: coinbase,
+								Import: &ImportedAccount{
+									PrivateKey: wrongPrivatekey,
+									Password:   "secret",
+								},
 							},
 						},
 					},
@@ -497,14 +507,16 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Miner:    true,
-							Coinbase: coinbase,
-							Import: &ImportedAccount{
-								PrivateKey: privatekey,
-								Password:   "secret",
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Miner:    true,
+								Coinbase: coinbase,
+								Import: &ImportedAccount{
+									PrivateKey: privatekey,
+									Password:   "secret",
+								},
 							},
 						},
 					},
@@ -530,10 +542,12 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:   "node-1",
-							Client: GethClient,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: GethClient,
+							},
 						},
 					},
 				},
@@ -558,16 +572,18 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Client:   GethClient,
-							RPC:      true,
-							Miner:    true,
-							Coinbase: coinbase,
-							Import: &ImportedAccount{
-								PrivateKey: privatekey,
-								Password:   "secret",
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:   GethClient,
+								RPC:      true,
+								Miner:    true,
+								Coinbase: coinbase,
+								Import: &ImportedAccount{
+									PrivateKey: privatekey,
+									Password:   "secret",
+								},
 							},
 						},
 					},
@@ -593,16 +609,18 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Client:   GethClient,
-							WS:       true,
-							Miner:    true,
-							Coinbase: coinbase,
-							Import: &ImportedAccount{
-								PrivateKey: privatekey,
-								Password:   "secret",
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:   GethClient,
+								WS:       true,
+								Miner:    true,
+								Coinbase: coinbase,
+								Import: &ImportedAccount{
+									PrivateKey: privatekey,
+									Password:   "secret",
+								},
 							},
 						},
 					},
@@ -628,16 +646,18 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Client:   GethClient,
-							GraphQL:  true,
-							Miner:    true,
-							Coinbase: coinbase,
-							Import: &ImportedAccount{
-								PrivateKey: privatekey,
-								Password:   "secret",
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:   GethClient,
+								GraphQL:  true,
+								Miner:    true,
+								Coinbase: coinbase,
+								Import: &ImportedAccount{
+									PrivateKey: privatekey,
+									Password:   "secret",
+								},
 							},
 						},
 					},
@@ -666,10 +686,12 @@ var _ = Describe("Ethereum network validation", func() {
 							},
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:   "node-1",
-							Client: GethClient,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: GethClient,
+							},
 						},
 					},
 				},
@@ -690,11 +712,13 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Client:   BesuClient,
-							SyncMode: LightSynchronization,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:   BesuClient,
+								SyncMode: LightSynchronization,
+							},
 						},
 					},
 				},
@@ -715,13 +739,15 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:   "node-1",
-							Client: BesuClient,
-							Resources: shared.Resources{
-								CPU:      "2",
-								CPULimit: "1",
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+								Resources: shared.Resources{
+									CPU:      "2",
+									CPULimit: "1",
+								},
 							},
 						},
 					},
@@ -743,15 +769,17 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:   "node-1",
-							Client: BesuClient,
-							Resources: shared.Resources{
-								CPU:         "1",
-								CPULimit:    "2",
-								Memory:      "2Gi",
-								MemoryLimit: "1Gi",
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+								Resources: shared.Resources{
+									CPU:         "1",
+									CPULimit:    "2",
+									Memory:      "2Gi",
+									MemoryLimit: "1Gi",
+								},
 							},
 						},
 					},
@@ -777,15 +805,17 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Client:   GethClient,
-							Miner:    true,
-							Coinbase: coinbase,
-							Import: &ImportedAccount{
-								PrivateKey: invalidPrivatekey,
-								Password:   "secret",
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:   GethClient,
+								Miner:    true,
+								Coinbase: coinbase,
+								Import: &ImportedAccount{
+									PrivateKey: invalidPrivatekey,
+									Password:   "secret",
+								},
 							},
 						},
 					},
@@ -813,11 +843,13 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:    "node-1",
-							Client:  GethClient,
-							Logging: FatalLogs,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:  GethClient,
+								Logging: FatalLogs,
+							},
 						},
 					},
 				},
@@ -838,11 +870,13 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:    "node-1",
-							Client:  GethClient,
-							Logging: TraceLogs,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:  GethClient,
+								Logging: TraceLogs,
+							},
 						},
 					},
 				},
@@ -863,11 +897,13 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:    "node-1",
-							Client:  ParityClient,
-							Logging: NoLogs,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:  ParityClient,
+								Logging: NoLogs,
+							},
 						},
 					},
 				},
@@ -888,11 +924,13 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:    "node-1",
-							Client:  ParityClient,
-							Logging: FatalLogs,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:  ParityClient,
+								Logging: FatalLogs,
+							},
 						},
 					},
 				},
@@ -913,11 +951,13 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:    "node-1",
-							Client:  ParityClient,
-							Logging: AllLogs,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:  ParityClient,
+								Logging: AllLogs,
+							},
 						},
 					},
 				},
@@ -938,11 +978,13 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:    "node-1",
-							Client:  ParityClient,
-							GraphQL: true,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:  ParityClient,
+								GraphQL: true,
+							},
 						},
 					},
 				},
@@ -967,10 +1009,12 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:   "node-1",
-							Client: ParityClient,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: ParityClient,
+							},
 						},
 					},
 				},
@@ -991,11 +1035,13 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Client:   ParityClient,
-							SyncMode: LightSynchronization,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:   ParityClient,
+								SyncMode: LightSynchronization,
+							},
 						},
 					},
 				},
@@ -1020,12 +1066,14 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:     "node-1",
-							Client:   ParityClient,
-							Miner:    true,
-							Coinbase: coinbase,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:   ParityClient,
+								Miner:    true,
+								Coinbase: coinbase,
+							},
 						},
 					},
 				},
@@ -1046,11 +1094,13 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
-							Name:    "node-1",
-							Client:  GethClient,
-							GraphQL: true,
+							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client:  GethClient,
+								GraphQL: true,
+							},
 						},
 					},
 				},
@@ -1079,7 +1129,7 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RinkebyNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -1091,7 +1141,7 @@ var _ = Describe("Ethereum network validation", func() {
 					NetworkConfig: NetworkConfig{
 						Join: RopstenNetwork,
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -1117,7 +1167,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -1132,7 +1182,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -1158,7 +1208,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -1173,7 +1223,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 4444,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -1199,7 +1249,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -1214,7 +1264,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-2",
 						},
@@ -1241,7 +1291,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},
@@ -1257,7 +1307,7 @@ var _ = Describe("Ethereum network validation", func() {
 							ChainID: 55555,
 						},
 					},
-					Nodes: []NodeSpec{
+					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
 						},

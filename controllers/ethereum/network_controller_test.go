@@ -83,13 +83,15 @@ var _ = Describe("Ethereum network controller", func() {
 			AvailabilityConfig: ethereumv1alpha1.AvailabilityConfig{
 				HighlyAvailable: true,
 			},
-			Nodes: []ethereumv1alpha1.NodeSpec{
+			Nodes: []ethereumv1alpha1.NetworkNodeSpec{
 				{
-					Name:     "node-1",
-					Bootnode: true,
-					Nodekey:  privatekey,
-					SyncMode: ethereumv1alpha1.FullSynchronization,
-					Logging:  ethereumv1alpha1.NoLogs,
+					Name: "node-1",
+					NodeSpec: ethereumv1alpha1.NodeSpec{
+						Bootnode: true,
+						Nodekey:  privatekey,
+						SyncMode: ethereumv1alpha1.FullSynchronization,
+						Logging:  ethereumv1alpha1.NoLogs,
+					},
 				},
 			},
 		}
@@ -241,17 +243,19 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.NodeSpec{
-				Name:    "node-2",
-				RPC:     true,
-				Client:  ethereumv1alpha1.GethClient,
-				RPCPort: 8547,
-				Logging: ethereumv1alpha1.ErrorLogs,
-				Resources: shared.Resources{
-					CPU:         cpu,
-					CPULimit:    cpuLimit,
-					Memory:      memory,
-					MemoryLimit: memoryLimit,
+			newNode := ethereumv1alpha1.NetworkNodeSpec{
+				Name: "node-2",
+				NodeSpec: ethereumv1alpha1.NodeSpec{
+					RPC:     true,
+					Client:  ethereumv1alpha1.GethClient,
+					RPCPort: 8547,
+					Logging: ethereumv1alpha1.ErrorLogs,
+					Resources: shared.Resources{
+						CPU:         cpu,
+						CPULimit:    cpuLimit,
+						Memory:      memory,
+						MemoryLimit: memoryLimit,
+					},
 				},
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
@@ -402,17 +406,19 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-3", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.NodeSpec{
-				Name:    "node-3",
-				RPC:     true,
-				Client:  ethereumv1alpha1.ParityClient,
-				RPCPort: 8547,
-				Logging: ethereumv1alpha1.ErrorLogs,
-				Resources: shared.Resources{
-					CPU:         cpu,
-					CPULimit:    cpuLimit,
-					Memory:      memory,
-					MemoryLimit: memoryLimit,
+			newNode := ethereumv1alpha1.NetworkNodeSpec{
+				Name: "node-3",
+				NodeSpec: ethereumv1alpha1.NodeSpec{
+					RPC:     true,
+					Client:  ethereumv1alpha1.ParityClient,
+					RPCPort: 8547,
+					Logging: ethereumv1alpha1.ErrorLogs,
+					Resources: shared.Resources{
+						CPU:         cpu,
+						CPULimit:    cpuLimit,
+						Memory:      memory,
+						MemoryLimit: memoryLimit,
+					},
 				},
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
@@ -617,12 +623,14 @@ var _ = Describe("Ethereum network controller", func() {
 			AvailabilityConfig: ethereumv1alpha1.AvailabilityConfig{
 				HighlyAvailable: true,
 			},
-			Nodes: []ethereumv1alpha1.NodeSpec{
+			Nodes: []ethereumv1alpha1.NetworkNodeSpec{
 				{
-					Name:     "node-1",
-					Bootnode: true,
-					Nodekey:  privatekey,
-					Logging:  ethereumv1alpha1.FatalLogs,
+					Name: "node-1",
+					NodeSpec: ethereumv1alpha1.NodeSpec{
+						Bootnode: true,
+						Nodekey:  privatekey,
+						Logging:  ethereumv1alpha1.FatalLogs,
+					},
 				},
 			},
 		}
@@ -774,23 +782,25 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.NodeSpec{
-				Name:     "node-2",
-				Client:   ethereumv1alpha1.GethClient,
-				Miner:    true,
-				Coinbase: accountAddress,
-				SyncMode: ethereumv1alpha1.FullSynchronization,
-				Import: &ethereumv1alpha1.ImportedAccount{
-					PrivateKey: accountKey,
-					Password:   accountPassword,
+			newNode := ethereumv1alpha1.NetworkNodeSpec{
+				Name: "node-2",
+				NodeSpec: ethereumv1alpha1.NodeSpec{
+					Client:   ethereumv1alpha1.GethClient,
+					Miner:    true,
+					Coinbase: accountAddress,
+					SyncMode: ethereumv1alpha1.FullSynchronization,
+					Import: &ethereumv1alpha1.ImportedAccount{
+						PrivateKey: accountKey,
+						Password:   accountPassword,
+					},
+					Resources: shared.Resources{
+						CPU:         cpu,
+						CPULimit:    cpuLimit,
+						Memory:      memory,
+						MemoryLimit: memoryLimit,
+					},
+					Logging: ethereumv1alpha1.WarnLogs,
 				},
-				Resources: shared.Resources{
-					CPU:         cpu,
-					CPULimit:    cpuLimit,
-					Memory:      memory,
-					MemoryLimit: memoryLimit,
-				},
-				Logging: ethereumv1alpha1.WarnLogs,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -944,23 +954,25 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-3", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.NodeSpec{
-				Name:     "node-3",
-				Client:   ethereumv1alpha1.ParityClient,
-				Miner:    true,
-				Coinbase: accountAddress,
-				SyncMode: ethereumv1alpha1.FullSynchronization,
-				Import: &ethereumv1alpha1.ImportedAccount{
-					PrivateKey: accountKey,
-					Password:   accountPassword,
+			newNode := ethereumv1alpha1.NetworkNodeSpec{
+				Name: "node-3",
+				NodeSpec: ethereumv1alpha1.NodeSpec{
+					Client:   ethereumv1alpha1.ParityClient,
+					Miner:    true,
+					Coinbase: accountAddress,
+					SyncMode: ethereumv1alpha1.FullSynchronization,
+					Import: &ethereumv1alpha1.ImportedAccount{
+						PrivateKey: accountKey,
+						Password:   accountPassword,
+					},
+					Resources: shared.Resources{
+						CPU:         cpu,
+						CPULimit:    cpuLimit,
+						Memory:      memory,
+						MemoryLimit: memoryLimit,
+					},
+					Logging: ethereumv1alpha1.WarnLogs,
 				},
-				Resources: shared.Resources{
-					CPU:         cpu,
-					CPULimit:    cpuLimit,
-					Memory:      memory,
-					MemoryLimit: memoryLimit,
-				},
-				Logging: ethereumv1alpha1.WarnLogs,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -1175,11 +1187,13 @@ var _ = Describe("Ethereum network controller", func() {
 					},
 				},
 			},
-			Nodes: []ethereumv1alpha1.NodeSpec{
+			Nodes: []ethereumv1alpha1.NetworkNodeSpec{
 				{
-					Name:     "node-1",
-					Bootnode: true,
-					Nodekey:  privatekey,
+					Name: "node-1",
+					NodeSpec: ethereumv1alpha1.NodeSpec{
+						Bootnode: true,
+						Nodekey:  privatekey,
+					},
 				},
 			},
 		}
@@ -1336,24 +1350,26 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.NodeSpec{
-				Name:     "node-2",
-				Client:   ethereumv1alpha1.GethClient,
-				Miner:    true,
-				Coinbase: accountAddress,
-				Import: &ethereumv1alpha1.ImportedAccount{
-					PrivateKey: accountKey,
-					Password:   accountPassword,
+			newNode := ethereumv1alpha1.NetworkNodeSpec{
+				Name: "node-2",
+				NodeSpec: ethereumv1alpha1.NodeSpec{
+					Client:   ethereumv1alpha1.GethClient,
+					Miner:    true,
+					Coinbase: accountAddress,
+					Import: &ethereumv1alpha1.ImportedAccount{
+						PrivateKey: accountKey,
+						Password:   accountPassword,
+					},
+					SyncMode: ethereumv1alpha1.FastSynchronization,
+					Resources: shared.Resources{
+						CPU:         cpu,
+						CPULimit:    cpuLimit,
+						Memory:      memory,
+						MemoryLimit: memoryLimit,
+						Storage:     storage,
+					},
+					Logging: ethereumv1alpha1.DebugLogs,
 				},
-				SyncMode: ethereumv1alpha1.FastSynchronization,
-				Resources: shared.Resources{
-					CPU:         cpu,
-					CPULimit:    cpuLimit,
-					Memory:      memory,
-					MemoryLimit: memoryLimit,
-					Storage:     storage,
-				},
-				Logging: ethereumv1alpha1.DebugLogs,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -1500,24 +1516,26 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-3", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.NodeSpec{
-				Name:     "node-3",
-				Client:   ethereumv1alpha1.ParityClient,
-				Miner:    true,
-				Coinbase: accountAddress,
-				Import: &ethereumv1alpha1.ImportedAccount{
-					PrivateKey: accountKey,
-					Password:   accountPassword,
+			newNode := ethereumv1alpha1.NetworkNodeSpec{
+				Name: "node-3",
+				NodeSpec: ethereumv1alpha1.NodeSpec{
+					Client:   ethereumv1alpha1.ParityClient,
+					Miner:    true,
+					Coinbase: accountAddress,
+					Import: &ethereumv1alpha1.ImportedAccount{
+						PrivateKey: accountKey,
+						Password:   accountPassword,
+					},
+					SyncMode: ethereumv1alpha1.FastSynchronization,
+					Resources: shared.Resources{
+						CPU:         cpu,
+						CPULimit:    cpuLimit,
+						Memory:      memory,
+						MemoryLimit: memoryLimit,
+						Storage:     storage,
+					},
+					Logging: ethereumv1alpha1.DebugLogs,
 				},
-				SyncMode: ethereumv1alpha1.FastSynchronization,
-				Resources: shared.Resources{
-					CPU:         cpu,
-					CPULimit:    cpuLimit,
-					Memory:      memory,
-					MemoryLimit: memoryLimit,
-					Storage:     storage,
-				},
-				Logging: ethereumv1alpha1.DebugLogs,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -1738,12 +1756,14 @@ var _ = Describe("Ethereum network controller", func() {
 					Ethash:  &ethereumv1alpha1.Ethash{},
 				},
 			},
-			Nodes: []ethereumv1alpha1.NodeSpec{
+			Nodes: []ethereumv1alpha1.NetworkNodeSpec{
 				{
-					Name:     "node-1",
-					Bootnode: true,
-					Nodekey:  privatekey,
-					Logging:  ethereumv1alpha1.TraceLogs,
+					Name: "node-1",
+					NodeSpec: ethereumv1alpha1.NodeSpec{
+						Bootnode: true,
+						Nodekey:  privatekey,
+						Logging:  ethereumv1alpha1.TraceLogs,
+					},
 				},
 			},
 		}
@@ -1897,23 +1917,25 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-2", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.NodeSpec{
-				Name:     "node-2",
-				Client:   ethereumv1alpha1.GethClient,
-				Miner:    true,
-				Coinbase: accountAddress,
-				Import: &ethereumv1alpha1.ImportedAccount{
-					PrivateKey: accountKey,
-					Password:   accountPassword,
+			newNode := ethereumv1alpha1.NetworkNodeSpec{
+				Name: "node-2",
+				NodeSpec: ethereumv1alpha1.NodeSpec{
+					Client:   ethereumv1alpha1.GethClient,
+					Miner:    true,
+					Coinbase: accountAddress,
+					Import: &ethereumv1alpha1.ImportedAccount{
+						PrivateKey: accountKey,
+						Password:   accountPassword,
+					},
+					SyncMode: ethereumv1alpha1.FastSynchronization,
+					Resources: shared.Resources{
+						CPU:         cpu,
+						CPULimit:    cpuLimit,
+						Memory:      memory,
+						MemoryLimit: memoryLimit,
+					},
+					Logging: ethereumv1alpha1.AllLogs,
 				},
-				SyncMode: ethereumv1alpha1.FastSynchronization,
-				Resources: shared.Resources{
-					CPU:         cpu,
-					CPULimit:    cpuLimit,
-					Memory:      memory,
-					MemoryLimit: memoryLimit,
-				},
-				Logging: ethereumv1alpha1.AllLogs,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -2058,17 +2080,19 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network by adding node-3", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.NodeSpec{
-				Name:     "node-3",
-				Client:   ethereumv1alpha1.ParityClient,
-				SyncMode: ethereumv1alpha1.FastSynchronization,
-				Resources: shared.Resources{
-					CPU:         cpu,
-					CPULimit:    cpuLimit,
-					Memory:      memory,
-					MemoryLimit: memoryLimit,
+			newNode := ethereumv1alpha1.NetworkNodeSpec{
+				Name: "node-3",
+				NodeSpec: ethereumv1alpha1.NodeSpec{
+					Client:   ethereumv1alpha1.ParityClient,
+					SyncMode: ethereumv1alpha1.FastSynchronization,
+					Resources: shared.Resources{
+						CPU:         cpu,
+						CPULimit:    cpuLimit,
+						Memory:      memory,
+						MemoryLimit: memoryLimit,
+					},
+					Logging: ethereumv1alpha1.TraceLogs,
 				},
-				Logging: ethereumv1alpha1.TraceLogs,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {
@@ -2277,12 +2301,14 @@ var _ = Describe("Ethereum network controller", func() {
 					},
 				},
 			},
-			Nodes: []ethereumv1alpha1.NodeSpec{
+			Nodes: []ethereumv1alpha1.NetworkNodeSpec{
 				{
-					Name:     "node-1",
-					Bootnode: true,
-					Nodekey:  privatekey,
-					Logging:  ethereumv1alpha1.WarnLogs,
+					Name: "node-1",
+					NodeSpec: ethereumv1alpha1.NodeSpec{
+						Bootnode: true,
+						Nodekey:  privatekey,
+						Logging:  ethereumv1alpha1.WarnLogs,
+					},
 				},
 			},
 		}
@@ -2432,16 +2458,18 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should update the network", func() {
 			fetched := &ethereumv1alpha1.Network{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
-			newNode := ethereumv1alpha1.NodeSpec{
-				Name:    "node-2",
-				RPC:     true,
-				RPCPort: 8547,
-				Resources: shared.Resources{
-					CPU:    cpu,
-					Memory: memory,
+			newNode := ethereumv1alpha1.NetworkNodeSpec{
+				Name: "node-2",
+				NodeSpec: ethereumv1alpha1.NodeSpec{
+					RPC:     true,
+					RPCPort: 8547,
+					Resources: shared.Resources{
+						CPU:    cpu,
+						Memory: memory,
+					},
+					SyncMode: ethereumv1alpha1.FastSynchronization,
+					Logging:  ethereumv1alpha1.DebugLogs,
 				},
-				SyncMode: ethereumv1alpha1.FastSynchronization,
-				Logging:  ethereumv1alpha1.DebugLogs,
 			}
 			fetched.Spec.Nodes = append(fetched.Spec.Nodes, newNode)
 			if !useExistingCluster {

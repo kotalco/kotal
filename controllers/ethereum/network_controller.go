@@ -87,7 +87,7 @@ func (r *NetworkReconciler) reconcileNodes(network *ethereumv1alpha1.Network) er
 }
 
 // reconcileNode reconciles a single etheruem node from within the network.spec.nodes
-func (r *NetworkReconciler) reconcileNode(network *ethereumv1alpha1.Network, spec ethereumv1alpha1.NodeSpec, staticNodes []string) (enodeURL string, err error) {
+func (r *NetworkReconciler) reconcileNode(network *ethereumv1alpha1.Network, spec ethereumv1alpha1.NetworkNodeSpec, staticNodes []string) (enodeURL string, err error) {
 	node := ethereumv1alpha1.Node{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      fmt.Sprintf("%s-%s", network.Name, spec.Name),
@@ -109,7 +109,7 @@ func (r *NetworkReconciler) reconcileNode(network *ethereumv1alpha1.Network, spe
 }
 
 // specNode updates ethereum node spec
-func (r *NetworkReconciler) specNode(network *ethereumv1alpha1.Network, node *ethereumv1alpha1.Node, spec ethereumv1alpha1.NodeSpec, staticNodes []string) {
+func (r *NetworkReconciler) specNode(network *ethereumv1alpha1.Network, node *ethereumv1alpha1.Node, spec ethereumv1alpha1.NetworkNodeSpec, staticNodes []string) {
 	node.Labels = map[string]string{
 		"name":     "node",
 		"instance": spec.Name,
@@ -120,7 +120,7 @@ func (r *NetworkReconciler) specNode(network *ethereumv1alpha1.Network, node *et
 	node.Annotations = map[string]string{
 		"kotal.io/static-nodes": strings.Join(staticNodes, ";"),
 	}
-	node.Spec = spec
+	node.Spec = spec.NodeSpec
 	// override node's network and availability config
 	node.Spec.NetworkConfig = network.Spec.NetworkConfig
 	node.Spec.AvailabilityConfig = network.Spec.AvailabilityConfig

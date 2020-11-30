@@ -709,7 +709,6 @@ var _ = Describe("Ethereum client arguments", func() {
 							ChainID: 5555,
 						},
 					},
-					Name:     "node-1",
 					Client:   ethereumv1alpha1.ParityClient,
 					Miner:    true,
 					Coinbase: coinbase,

@@ -27,13 +27,13 @@ func (n *Network) Default() {
 	for i := range n.Spec.Nodes {
 
 		node := &Node{
-			Spec: n.Spec.Nodes[i],
+			Spec: n.Spec.Nodes[i].NodeSpec,
 		}
 		node.Spec.NetworkConfig = n.Spec.NetworkConfig
 		node.Spec.AvailabilityConfig = n.Spec.AvailabilityConfig
 		node.Default()
 
-		n.Spec.Nodes[i] = node.Spec
+		n.Spec.Nodes[i].NodeSpec = node.Spec
 	}
 
 }
