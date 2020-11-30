@@ -5,8 +5,10 @@ import (
 	"strings"
 
 	"github.com/kotalco/kotal/helpers"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
@@ -17,8 +19,6 @@ var _ webhook.Validator = &Node{}
 
 // Validate validates a node with a given path
 func (n *Node) Validate(path *field.Path) field.ErrorList {
-	// TODO: change path if it's nil
-	// it will be nil in case of node that's not part of a network
 	var nodeErrors field.ErrorList
 
 	privateNetwork := n.Spec.Genesis != nil
@@ -164,16 +164,32 @@ func (n *Node) Validate(path *field.Path) field.ErrorList {
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (n *Node) ValidateCreate() error {
+	var allErrors field.ErrorList
+
 	nodelog.Info("validate create", "name", n.Name)
 
-	return nil
+	allErrors = append(allErrors, n.Validate(field.NewPath("spec"))...)
+
+	if len(allErrors) == 0 {
+		return nil
+	}
+
+	return apierrors.NewInvalid(schema.GroupKind{}, n.Name, allErrors)
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
 func (n *Node) ValidateUpdate(old runtime.Object) error {
+	var allErrors field.ErrorList
+
 	nodelog.Info("validate update", "name", n.Name)
 
-	return nil
+	allErrors = append(allErrors, n.Validate(field.NewPath("spec"))...)
+
+	if len(allErrors) == 0 {
+		return nil
+	}
+
+	return apierrors.NewInvalid(schema.GroupKind{}, n.Name, allErrors)
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
