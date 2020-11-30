@@ -18,10 +18,14 @@ import (
 var _ webhook.Validator = &Node{}
 
 // Validate validates a node with a given path
-func (n *Node) Validate(path *field.Path) field.ErrorList {
+func (n *Node) Validate(path *field.Path, validateNetworkConfig bool) field.ErrorList {
 	var nodeErrors field.ErrorList
 
 	privateNetwork := n.Spec.Genesis != nil
+
+	if validateNetworkConfig {
+		nodeErrors = append(nodeErrors, n.Spec.NetworkConfig.Validate()...)
+	}
 
 	// validate nodekey is provided if node is bootnode
 	if n.Spec.Bootnode == true && n.Spec.Nodekey == "" {
@@ -168,7 +172,7 @@ func (n *Node) ValidateCreate() error {
 
 	nodelog.Info("validate create", "name", n.Name)
 
-	allErrors = append(allErrors, n.Validate(field.NewPath("spec"))...)
+	allErrors = append(allErrors, n.Validate(field.NewPath("spec"), true)...)
 
 	if len(allErrors) == 0 {
 		return nil
@@ -183,7 +187,7 @@ func (n *Node) ValidateUpdate(old runtime.Object) error {
 
 	nodelog.Info("validate update", "name", n.Name)
 
-	allErrors = append(allErrors, n.Validate(field.NewPath("spec"))...)
+	allErrors = append(allErrors, n.Validate(field.NewPath("spec"), true)...)
 
 	if len(allErrors) == 0 {
 		return nil

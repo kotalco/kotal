@@ -52,7 +52,8 @@ func (n *Network) ValidateNodes() field.ErrorList {
 		}
 		// No need to pass network and availability config
 		// it has already been passed during network defaulting phase
-		allErrors = append(allErrors, node.Validate(path)...)
+		// no need to validate network config
+		allErrors = append(allErrors, node.Validate(path, false)...)
 	}
 
 	if err := n.ValidateMissingBootnodes(); err != nil {
