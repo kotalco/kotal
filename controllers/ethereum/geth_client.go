@@ -26,7 +26,7 @@ func (g *GethClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLev
 }
 
 // GetArgs returns command line arguments required for client run
-func (g *GethClient) GetArgs(node *ethereumv1alpha1.NodeSpec, network *ethereumv1alpha1.Network) (args []string) {
+func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node) (args []string) {
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
 		args = append(args, arg...)
@@ -34,109 +34,109 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.NodeSpec, network *ethereumv
 
 	appendArg("--nousb")
 
-	appendArg(GethLogging, g.LoggingArgFromVerbosity(node.Logging))
+	appendArg(GethLogging, g.LoggingArgFromVerbosity(node.Spec.Logging))
 
 	appendArg(GethConfig, fmt.Sprintf("%s/config.toml", PathConfig))
 
-	if network.Spec.ID != 0 {
-		appendArg(GethNetworkID, fmt.Sprintf("%d", network.Spec.ID))
+	if node.Spec.ID != 0 {
+		appendArg(GethNetworkID, fmt.Sprintf("%d", node.Spec.ID))
 	}
 
-	if node.WithNodekey() {
+	if node.Spec.Nodekey != "" {
 		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", PathSecrets))
 	}
 
-	if network.Spec.Genesis != nil {
+	if node.Spec.Genesis != nil {
 		appendArg(GethNoDiscovery)
 	}
 
 	appendArg(GethDataDir, PathBlockchainData)
 
-	if network.Spec.Join != "" && network.Spec.Join != ethereumv1alpha1.MainNetwork {
-		appendArg(fmt.Sprintf("--%s", network.Spec.Join))
+	if node.Spec.Join != "" && node.Spec.Join != ethereumv1alpha1.MainNetwork {
+		appendArg(fmt.Sprintf("--%s", node.Spec.Join))
 	}
 
-	if node.P2PPort != 0 {
-		appendArg(GethP2PPort, fmt.Sprintf("%d", node.P2PPort))
+	if node.Spec.P2PPort != 0 {
+		appendArg(GethP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 	}
 
-	if node.SyncMode != "" {
-		appendArg(GethSyncMode, string(node.SyncMode))
+	if node.Spec.SyncMode != "" {
+		appendArg(GethSyncMode, string(node.Spec.SyncMode))
 	}
 
-	if node.Miner {
+	if node.Spec.Miner {
 		appendArg(GethMinerEnabled)
 	}
 
-	if node.Coinbase != "" {
-		appendArg(GethMinerCoinbase, string(node.Coinbase))
-		appendArg(GethUnlock, string(node.Coinbase))
+	if node.Spec.Coinbase != "" {
+		appendArg(GethMinerCoinbase, string(node.Spec.Coinbase))
+		appendArg(GethUnlock, string(node.Spec.Coinbase))
 		appendArg(GethPassword, fmt.Sprintf("%s/account.password", PathSecrets))
 	}
 
-	if node.RPC {
+	if node.Spec.RPC {
 		appendArg(GethRPCHTTPEnabled)
 		appendArg(GethRPCHTTPHost, DefaultHost)
 	}
 
-	if node.RPCPort != 0 {
-		appendArg(GethRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
+	if node.Spec.RPCPort != 0 {
+		appendArg(GethRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
 	}
 
-	if len(node.RPCAPI) != 0 {
+	if len(node.Spec.RPCAPI) != 0 {
 		apis := []string{}
-		for _, api := range node.RPCAPI {
+		for _, api := range node.Spec.RPCAPI {
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		appendArg(GethRPCHTTPAPI, commaSeperatedAPIs)
 	}
 
-	if node.WS {
+	if node.Spec.WS {
 		appendArg(GethRPCWSEnabled)
 		appendArg(GethRPCWSHost, DefaultHost)
 	}
 
-	if node.WSPort != 0 {
-		appendArg(GethRPCWSPort, fmt.Sprintf("%d", node.WSPort))
+	if node.Spec.WSPort != 0 {
+		appendArg(GethRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
 	}
 
-	if len(node.WSAPI) != 0 {
+	if len(node.Spec.WSAPI) != 0 {
 		apis := []string{}
-		for _, api := range node.WSAPI {
+		for _, api := range node.Spec.WSAPI {
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		appendArg(GethRPCWSAPI, commaSeperatedAPIs)
 	}
 
-	if node.GraphQL {
+	if node.Spec.GraphQL {
 		appendArg(GethGraphQLHTTPEnabled)
 	}
 
 	//NOTE: .GraphQLPort is ignored because rpc port will be used by graphql server
 	// .GraphQLPort will be used in the service that point to the pod
 
-	if len(node.Hosts) != 0 {
-		commaSeperatedHosts := strings.Join(node.Hosts, ",")
-		if node.RPC {
+	if len(node.Spec.Hosts) != 0 {
+		commaSeperatedHosts := strings.Join(node.Spec.Hosts, ",")
+		if node.Spec.RPC {
 			appendArg(GethRPCHostWhitelist, commaSeperatedHosts)
 		}
-		if node.GraphQL {
+		if node.Spec.GraphQL {
 			appendArg(GethGraphQLHostWhitelist, commaSeperatedHosts)
 		}
 		// no ws hosts settings
 	}
 
-	if len(node.CORSDomains) != 0 {
-		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
-		if node.RPC {
+	if len(node.Spec.CORSDomains) != 0 {
+		commaSeperatedDomains := strings.Join(node.Spec.CORSDomains, ",")
+		if node.Spec.RPC {
 			appendArg(GethRPCHTTPCorsOrigins, commaSeperatedDomains)
 		}
-		if node.GraphQL {
+		if node.Spec.GraphQL {
 			appendArg(GethGraphQLHTTPCorsOrigins, commaSeperatedDomains)
 		}
-		if node.WS {
+		if node.Spec.WS {
 			appendArg(GethWSOrigins, commaSeperatedDomains)
 		}
 	}
@@ -145,9 +145,9 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.NodeSpec, network *ethereumv
 }
 
 // GetGenesisFile returns genesis config parameter
-func (g *GethClient) GetGenesisFile(network *ethereumv1alpha1.Network) (content string, err error) {
-	genesis := network.Spec.Genesis
-	consensus := network.Spec.Consensus
+func (g *GethClient) GetGenesisFile(node *ethereumv1alpha1.Node) (content string, err error) {
+	genesis := node.Spec.Genesis
+	consensus := node.Spec.Consensus
 	mixHash := genesis.MixHash
 	nonce := genesis.Nonce
 	extraData := "0x00"

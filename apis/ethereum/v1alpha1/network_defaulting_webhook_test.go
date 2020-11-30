@@ -9,8 +9,12 @@ var _ = Describe("Ethereum defaulting", func() {
 	It("Should default network joining mainnet", func() {
 		network := &Network{
 			Spec: NetworkSpec{
-				Join:            MainNetwork,
-				HighlyAvailable: true,
+				NetworkConfig: NetworkConfig{
+					Join: MainNetwork,
+				},
+				AvailabilityConfig: AvailabilityConfig{
+					HighlyAvailable: true,
+				},
 				Nodes: []NodeSpec{
 					{
 						Name: "node-1",
@@ -52,8 +56,12 @@ var _ = Describe("Ethereum defaulting", func() {
 	It("Should default network joining rinkeby", func() {
 		network := &Network{
 			Spec: NetworkSpec{
-				Join:            RinkebyNetwork,
-				HighlyAvailable: true,
+				NetworkConfig: NetworkConfig{
+					Join: RinkebyNetwork,
+				},
+				AvailabilityConfig: AvailabilityConfig{
+					HighlyAvailable: true,
+				},
 				Nodes: []NodeSpec{
 					{
 						Name: "node-1",
@@ -78,9 +86,11 @@ var _ = Describe("Ethereum defaulting", func() {
 	It("Should default network with pow consensus", func() {
 		network := &Network{
 			Spec: NetworkSpec{
-				Consensus: ProofOfWork,
-				Genesis: &Genesis{
-					ChainID: 55555,
+				NetworkConfig: NetworkConfig{
+					Consensus: ProofOfWork,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 				},
 				Nodes: []NodeSpec{
 					{
@@ -125,9 +135,11 @@ var _ = Describe("Ethereum defaulting", func() {
 	It("Should default network with poa consensus", func() {
 		network := &Network{
 			Spec: NetworkSpec{
-				Consensus: ProofOfAuthority,
-				Genesis: &Genesis{
-					ChainID: 55555,
+				NetworkConfig: NetworkConfig{
+					Consensus: ProofOfAuthority,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 				},
 				Nodes: []NodeSpec{
 					{
@@ -180,9 +192,11 @@ var _ = Describe("Ethereum defaulting", func() {
 	It("Should default network with ibft2 consensus", func() {
 		network := &Network{
 			Spec: NetworkSpec{
-				Consensus: IstanbulBFT,
-				Genesis: &Genesis{
-					ChainID: 55555,
+				NetworkConfig: NetworkConfig{
+					Consensus: IstanbulBFT,
+					Genesis: &Genesis{
+						ChainID: 55555,
+					},
 				},
 				Nodes: []NodeSpec{
 					{

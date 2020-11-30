@@ -1,0 +1,8 @@
+apiVersion: ethereum.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: node-sample
+spec:
+  join: rinkeby
+  client: besu
+  rpc: true

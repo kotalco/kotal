@@ -77,8 +77,12 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
-			Join:            "mainnet",
-			HighlyAvailable: true,
+			NetworkConfig: ethereumv1alpha1.NetworkConfig{
+				Join: "mainnet",
+			},
+			AvailabilityConfig: ethereumv1alpha1.AvailabilityConfig{
+				HighlyAvailable: true,
+			},
 			Nodes: []ethereumv1alpha1.NodeSpec{
 				{
 					Name:     "node-1",
@@ -98,8 +102,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Spec: spec,
 		}
 		t := true
-		ownerReference := metav1.OwnerReference{
-			// TODO: update version
+		networkOwnerReference := metav1.OwnerReference{
 			APIVersion:         "ethereum.kotal.io/v1alpha1",
 			Kind:               "Network",
 			Name:               toCreate.Name,
@@ -117,6 +120,14 @@ var _ = Describe("Ethereum network controller", func() {
 		node3Key := types.NamespacedName{
 			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-3"),
 			Namespace: key.Namespace,
+		}
+		// will be reused by bootnode, node2, and node3
+		nodeOwnerReference := metav1.OwnerReference{
+			APIVersion:         "ethereum.kotal.io/v1alpha1",
+			Kind:               "Node",
+			Name:               bootnodeKey.Name,
+			Controller:         &t,
+			BlockOwnerDeletion: &t,
 		}
 		cpu := "250m"
 		cpuLimit := "500m"
@@ -140,29 +151,32 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			Expect(fetched.Spec).To(Equal(toCreate.Spec))
 			Expect(fetched.Status.NodesCount).To(Equal(len(toCreate.Spec.Nodes)))
-			ownerReference.UID = fetched.GetUID()
+			networkOwnerReference.UID = fetched.GetUID()
+		})
+
+		It("Should create bootnode", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
 		})
 
 		It("Should create configs (genesis, init scripts, static nodes ...) configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
-			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-besu", key.Name),
-				Namespace: key.Namespace,
-			}
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).Should(Succeed())
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).Should(Succeed())
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
 			nodeSecret := &v1.Secret{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
-			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -182,7 +196,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create bootnode statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuNetwork,
@@ -220,7 +234,7 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
@@ -251,6 +265,14 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
+		It("Should create node-2", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), node2Key, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = node2Key.Name
+		})
+
 		if useExistingCluster {
 			It("Should schedule node-1 and node-2 on different nodes", func() {
 				pods := &v1.PodList{}
@@ -270,7 +292,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-2 statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
@@ -312,7 +334,7 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
@@ -324,7 +346,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-2 service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -404,6 +426,14 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
+		It("Should create node-3", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), node3Key, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = node3Key.Name
+		})
+
 		if useExistingCluster {
 			It("Should schedule node-1 and node-3 on different nodes", func() {
 				pods := &v1.PodList{}
@@ -423,7 +453,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-3 statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
@@ -463,7 +493,7 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
@@ -475,7 +505,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-3 service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -581,8 +611,12 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
-			Join:            "rinkeby",
-			HighlyAvailable: true,
+			NetworkConfig: ethereumv1alpha1.NetworkConfig{
+				Join: "rinkeby",
+			},
+			AvailabilityConfig: ethereumv1alpha1.AvailabilityConfig{
+				HighlyAvailable: true,
+			},
 			Nodes: []ethereumv1alpha1.NodeSpec{
 				{
 					Name:     "node-1",
@@ -601,11 +635,17 @@ var _ = Describe("Ethereum network controller", func() {
 			Spec: spec,
 		}
 		t := true
-		ownerReference := metav1.OwnerReference{
-			// TODO: update version
+		networkOwnerReference := metav1.OwnerReference{
 			APIVersion:         "ethereum.kotal.io/v1alpha1",
 			Kind:               "Network",
 			Name:               toCreate.Name,
+			Controller:         &t,
+			BlockOwnerDeletion: &t,
+		}
+		// will be reused by bootnode, node2, and node3
+		nodeOwnerReference := metav1.OwnerReference{
+			APIVersion:         "ethereum.kotal.io/v1alpha1",
+			Kind:               "Node",
 			Controller:         &t,
 			BlockOwnerDeletion: &t,
 		}
@@ -643,29 +683,33 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			Expect(fetched.Spec).To(Equal(toCreate.Spec))
 			Expect(fetched.Status.NodesCount).To(Equal(len(toCreate.Spec.Nodes)))
-			ownerReference.UID = fetched.GetUID()
+			networkOwnerReference.UID = fetched.GetUID()
+		})
+
+		It("Should create bootnode", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = bootnodeKey.Name
 		})
 
 		It("Should create configs (genesis, init scripts, static nodes ...) configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
-			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-besu", key.Name),
-				Namespace: key.Namespace,
-			}
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).Should(Succeed())
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).Should(Succeed())
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
 			nodeSecret := &v1.Secret{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
-			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -685,7 +729,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create bootnode statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuNetwork,
@@ -723,7 +767,7 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
@@ -759,6 +803,14 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
+		It("Should create node-2", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), node2Key, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = node2Key.Name
+		})
+
 		if useExistingCluster {
 			It("Should schedule node-1 and node-2 on different nodes", func() {
 				pods := &v1.PodList{}
@@ -778,7 +830,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-2 statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
@@ -830,14 +882,14 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-2 service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -921,6 +973,14 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
+		It("Should create node-3", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), node3Key, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = node3Key.Name
+		})
+
 		if useExistingCluster {
 			It("Should schedule node-1 and node-3 on different nodes", func() {
 				pods := &v1.PodList{}
@@ -940,7 +1000,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-3 statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal("busybox"))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(ParityImage()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
@@ -991,14 +1051,14 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-3 service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -1103,13 +1163,15 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
-			ID:        networkID,
-			Consensus: ethereumv1alpha1.ProofOfAuthority,
-			Genesis: &ethereumv1alpha1.Genesis{
-				ChainID: 55555,
-				Clique: &ethereumv1alpha1.Clique{
-					Signers: []ethereumv1alpha1.EthereumAddress{
-						ethereumv1alpha1.EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706"),
+			NetworkConfig: ethereumv1alpha1.NetworkConfig{
+				ID:        networkID,
+				Consensus: ethereumv1alpha1.ProofOfAuthority,
+				Genesis: &ethereumv1alpha1.Genesis{
+					ChainID: 55555,
+					Clique: &ethereumv1alpha1.Clique{
+						Signers: []ethereumv1alpha1.EthereumAddress{
+							ethereumv1alpha1.EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706"),
+						},
 					},
 				},
 			},
@@ -1130,11 +1192,18 @@ var _ = Describe("Ethereum network controller", func() {
 			Spec: spec,
 		}
 		t := true
-		ownerReference := metav1.OwnerReference{
+		networkOwnerReference := metav1.OwnerReference{
 			// TODO: update version
 			APIVersion:         "ethereum.kotal.io/v1alpha1",
 			Kind:               "Network",
 			Name:               toCreate.Name,
+			Controller:         &t,
+			BlockOwnerDeletion: &t,
+		}
+		nodeOwnerReference := metav1.OwnerReference{
+			// TODO: update version
+			APIVersion:         "ethereum.kotal.io/v1alpha1",
+			Kind:               "Node",
 			Controller:         &t,
 			BlockOwnerDeletion: &t,
 		}
@@ -1174,20 +1243,28 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			Expect(fetched.Spec).To(Equal(toCreate.Spec))
 			Expect(fetched.Status.NodesCount).To(Equal(len(toCreate.Spec.Nodes)))
-			ownerReference.UID = fetched.GetUID()
+			networkOwnerReference.UID = fetched.GetUID()
+		})
+
+		It("Should create bootnode", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = bootnodeKey.Name
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
 			nodeSecret := &v1.Secret{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
-			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -1207,7 +1284,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create bootnode statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
@@ -1223,12 +1300,8 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should create bootnode genesis block configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
-			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-besu", key.Name),
-				Namespace: key.Namespace,
-			}
 			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
 		})
 
@@ -1256,7 +1329,7 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
@@ -1293,14 +1366,18 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
+		It("Should create node-2", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), node2Key, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = node2Key.Name
+		})
+
 		It("Should create node-2 genesis block and scripts configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
-			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-geth", key.Name),
-				Namespace: key.Namespace,
-			}
 			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
+			Expect(k8sClient.Get(context.Background(), node2Key, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
 			Expect(genesisConfig.Data["init-genesis.sh"]).To(Equal(initGenesis))
 			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importGethAccount))
@@ -1309,7 +1386,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-2 statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
@@ -1361,14 +1438,14 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-2 service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -1453,14 +1530,18 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
+		It("Should create node-3", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), node3Key, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = node3Key.Name
+		})
+
 		It("Should create node-3 genesis block and scripts configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
-			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-parity", key.Name),
-				Namespace: key.Namespace,
-			}
 			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
+			Expect(k8sClient.Get(context.Background(), node3Key, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
 			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importParityAccount))
 		})
@@ -1468,7 +1549,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-3 statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal("busybox"))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(ParityImage()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
@@ -1519,14 +1600,14 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-3 service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -1649,11 +1730,13 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
-			ID:        networkID,
-			Consensus: ethereumv1alpha1.ProofOfWork,
-			Genesis: &ethereumv1alpha1.Genesis{
-				ChainID: 55555,
-				Ethash:  &ethereumv1alpha1.Ethash{},
+			NetworkConfig: ethereumv1alpha1.NetworkConfig{
+				ID:        networkID,
+				Consensus: ethereumv1alpha1.ProofOfWork,
+				Genesis: &ethereumv1alpha1.Genesis{
+					ChainID: 55555,
+					Ethash:  &ethereumv1alpha1.Ethash{},
+				},
 			},
 			Nodes: []ethereumv1alpha1.NodeSpec{
 				{
@@ -1673,10 +1756,18 @@ var _ = Describe("Ethereum network controller", func() {
 			Spec: spec,
 		}
 		t := true
-		ownerReference := metav1.OwnerReference{
+		networkOwnerReference := metav1.OwnerReference{
 			// TODO: update version
 			APIVersion:         "ethereum.kotal.io/v1alpha1",
 			Kind:               "Network",
+			Name:               toCreate.Name,
+			Controller:         &t,
+			BlockOwnerDeletion: &t,
+		}
+		nodeOwnerReference := metav1.OwnerReference{
+			// TODO: update version
+			APIVersion:         "ethereum.kotal.io/v1alpha1",
+			Kind:               "Node",
 			Name:               toCreate.Name,
 			Controller:         &t,
 			BlockOwnerDeletion: &t,
@@ -1715,29 +1806,33 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			Expect(fetched.Spec).To(Equal(toCreate.Spec))
 			Expect(fetched.Status.NodesCount).To(Equal(len(toCreate.Spec.Nodes)))
-			ownerReference.UID = fetched.GetUID()
+			networkOwnerReference.UID = fetched.GetUID()
+		})
+
+		It("Should create bootnode", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = bootnodeKey.Name
 		})
 
 		It("Should create bootnode genesis block configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
-			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-besu", key.Name),
-				Namespace: key.Namespace,
-			}
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).To(Succeed())
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
 			nodeSecret := &v1.Secret{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
-			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -1757,7 +1852,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create bootnode statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
@@ -1795,7 +1890,7 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
@@ -1831,13 +1926,17 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
+		It("Should create node-2", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), node2Key, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = node2Key.Name
+		})
+
 		It("Should create node-2 genesis and scripts block configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
-			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-geth", key.Name),
-				Namespace: key.Namespace,
-			}
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
+			Expect(k8sClient.Get(context.Background(), node2Key, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["init-genesis.sh"]).To(Equal(initGenesis))
 			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importGethAccount))
 		})
@@ -1845,7 +1944,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-2 statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
@@ -1897,14 +1996,14 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-2 service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -1982,19 +2081,23 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
+		It("Should create node-3", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), node3Key, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = node3Key.Name
+		})
+
 		It("Should create node-3 genesis and scripts block configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
-			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-parity", key.Name),
-				Namespace: key.Namespace,
-			}
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
+			Expect(k8sClient.Get(context.Background(), node3Key, genesisConfig)).To(Succeed())
 		})
 
 		It("Should create node-3 statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
@@ -2035,14 +2138,14 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
 		It("Should create node-3 service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -2160,15 +2263,17 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NetworkSpec{
-			ID:        networkID,
-			Consensus: ethereumv1alpha1.IstanbulBFT,
-			Genesis: &ethereumv1alpha1.Genesis{
-				ChainID: 55555,
-				IBFT2: &ethereumv1alpha1.IBFT2{
-					Validators: []ethereumv1alpha1.EthereumAddress{
-						"0x427e2c7cecd72bc4cdd4f7ebb8bb6e49789c8044",
-						"0xd2c21213027cbf4d46c16b55fa98e5252b048706",
-						"0x8e1f6c7c76a1d7f74eda342d330ca9749f31cc2b",
+			NetworkConfig: ethereumv1alpha1.NetworkConfig{
+				ID:        networkID,
+				Consensus: ethereumv1alpha1.IstanbulBFT,
+				Genesis: &ethereumv1alpha1.Genesis{
+					ChainID: 55555,
+					IBFT2: &ethereumv1alpha1.IBFT2{
+						Validators: []ethereumv1alpha1.EthereumAddress{
+							"0x427e2c7cecd72bc4cdd4f7ebb8bb6e49789c8044",
+							"0xd2c21213027cbf4d46c16b55fa98e5252b048706",
+							"0x8e1f6c7c76a1d7f74eda342d330ca9749f31cc2b",
+						},
 					},
 				},
 			},
@@ -2193,11 +2298,18 @@ var _ = Describe("Ethereum network controller", func() {
 			Spec: spec,
 		}
 		t := true
-		ownerReference := metav1.OwnerReference{
+		networkOwnerReference := metav1.OwnerReference{
 			// TODO: update version
 			APIVersion:         "ethereum.kotal.io/v1alpha1",
 			Kind:               "Network",
 			Name:               toCreate.Name,
+			Controller:         &t,
+			BlockOwnerDeletion: &t,
+		}
+		nodeOwnerReference := metav1.OwnerReference{
+			// TODO: update version
+			APIVersion:         "ethereum.kotal.io/v1alpha1",
+			Kind:               "Node",
 			Controller:         &t,
 			BlockOwnerDeletion: &t,
 		}
@@ -2227,31 +2339,35 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			Expect(fetched.Spec).To(Equal(toCreate.Spec))
 			Expect(fetched.Status.NodesCount).To(Equal(len(toCreate.Spec.Nodes)))
-			ownerReference.UID = fetched.GetUID()
+			networkOwnerReference.UID = fetched.GetUID()
+		})
+
+		It("Should create bootnode", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = bootnodeKey.Name
 		})
 
 		It("Should create bootnode genesis block configmap", func() {
 			genesisConfig := &v1.ConfigMap{}
-			genesisKey := types.NamespacedName{
-				Name:      fmt.Sprintf("%s-besu", key.Name),
-				Namespace: key.Namespace,
-			}
 			expectedExtraData := "0xf869a00000000000000000000000000000000000000000000000000000000000000000f83f94427e2c7cecd72bc4cdd4f7ebb8bb6e49789c804494d2c21213027cbf4d46c16b55fa98e5252b048706948e1f6c7c76a1d7f74eda342d330ca9749f31cc2b808400000000c0"
-			Expect(k8sClient.Get(context.Background(), genesisKey, genesisConfig)).To(Succeed())
+			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
 			nodeSecret := &v1.Secret{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
-			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",
@@ -2271,7 +2387,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create bootnode statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
@@ -2309,7 +2425,7 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
@@ -2338,10 +2454,18 @@ var _ = Describe("Ethereum network controller", func() {
 			time.Sleep(sleepTime)
 		})
 
+		It("Should create node-2", func() {
+			fetched := &ethereumv1alpha1.Node{}
+			Expect(k8sClient.Get(context.Background(), node2Key, fetched)).To(Succeed())
+			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
+			nodeOwnerReference.UID = fetched.GetUID()
+			nodeOwnerReference.Name = node2Key.Name
+		})
+
 		It("Should create node-2 statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
-			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
@@ -2378,7 +2502,7 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
-			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodePVC.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodePVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
@@ -2390,7 +2514,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-2 service", func() {
 			nodeSvc := &v1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
-			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(ownerReference))
+			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
 				{
 					Name:       "discovery",

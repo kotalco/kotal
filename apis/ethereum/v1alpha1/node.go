@@ -1,8 +1,6 @@
 package v1alpha1
 
 import (
-	"fmt"
-
 	"github.com/kotalco/kotal/apis/shared"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -10,11 +8,17 @@ import (
 
 // NodeStatus defines the observed state of Node
 type NodeStatus struct {
+	// EnodeURL is the node URL
+	EnodeURL string `json:"enodeURL,omitempty"`
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // Node is the Schema for the nodes API
+// +kubebuilder:printcolumn:name="Consensus",type=string,JSONPath=".spec.consensus"
+// +kubebuilder:printcolumn:name="Join",type=string,JSONPath=".spec.join"
+// +kubebuilder:printcolumn:name="enodeURL",type=string,JSONPath=".status.enodeURL",priority=10
 type Node struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -34,6 +38,9 @@ type NodeList struct {
 
 //NodeSpec is the specification of the node
 type NodeSpec struct {
+	NetworkConfig      `json:",inline"`
+	AvailabilityConfig `json:",inline"`
+
 	// Client is ethereum client running on the node
 	Client EthereumClient `json:"client,omitempty"`
 
@@ -48,6 +55,9 @@ type NodeSpec struct {
 
 	// Nodekey is the node private key
 	Nodekey PrivateKey `json:"nodekey,omitempty"`
+
+	// StaticNodes is a set of ethereum nodes to maintain connection to
+	StaticNodes []Enode `json:"staticNodes,omitempty"`
 
 	// P2PPort is port used for peer to peer communication
 	P2PPort uint `json:"p2pPort,omitempty"`
@@ -98,70 +108,8 @@ type NodeSpec struct {
 	shared.Resources `json:"resources,omitempty"`
 }
 
-// IsBootnode is whether node is bootnode or no
-func (n *NodeSpec) IsBootnode() bool {
-	return n.Bootnode
-}
-
-// WithNodekey is whether node is configured with private key
-func (n *NodeSpec) WithNodekey() bool {
-	return n.Nodekey != ""
-}
-
-// StatefulSetName returns name to be used by node statefulset
-func (n *NodeSpec) StatefulSetName(network string) string {
-	return fmt.Sprintf("%s-%s", network, n.Name)
-}
-
-// ConfigmapName returns name to be used by genesis and scripts configmap
-func (n *NodeSpec) ConfigmapName(network string, client EthereumClient) string {
-	return fmt.Sprintf("%s-%s", network, client)
-}
-
-// PVCName returns name to be used by node pvc
-func (n *NodeSpec) PVCName(network string) string {
-	return n.StatefulSetName(network) // same as statefulset name
-}
-
-// SecretName returns name to be used by node secret
-func (n *NodeSpec) SecretName(network string) string {
-	return n.StatefulSetName(network) // same as statefulset name
-}
-
-// ServiceName returns name to be used by node service
-func (n *NodeSpec) ServiceName(network string) string {
-	return n.StatefulSetName(network) // same as statefulset name
-}
-
-// Labels to be used by node resources
-func (n *NodeSpec) Labels(network string) map[string]string {
-	return map[string]string{
-		"name":     "node",
-		"instance": n.Name,
-		"network":  network,
-	}
-}
-
-// NodeResources is node compute and storage resources
-type NodeResources struct {
-	// CPU is cpu cores the node requires
-	// +kubebuilder:validation:Pattern="^[1-9][0-9]*m?$"
-	CPU string `json:"cpu,omitempty"`
-	// CPULimit is cpu cores the node is limited to
-	// +kubebuilder:validation:Pattern="^[1-9][0-9]*m?$"
-	CPULimit string `json:"cpuLimit,omitempty"`
-	// Memory is memmory requirements
-	// +kubebuilder:validation:Pattern="^[1-9][0-9]*[KMGTPE]i$"
-	Memory string `json:"memory,omitempty"`
-	// MemoryLimit is cpu cores the node is limited to
-	// +kubebuilder:validation:Pattern="^[1-9][0-9]*[KMGTPE]i$"
-	MemoryLimit string `json:"memoryLimit,omitempty"`
-	// Storage is disk space storage requirements
-	// +kubebuilder:validation:Pattern="^[1-9][0-9]*[KMGTPE]i$"
-	Storage string `json:"storage,omitempty"`
-	// StorageClass is the volume storage class
-	StorageClass *string `json:"storageClass,omitempty"`
-}
+// Enode is ethereum node url
+type Enode string
 
 // SynchronizationMode is the node synchronization mode
 // +kubebuilder:validation:Enum=fast;full;light

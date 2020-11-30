@@ -8,8 +8,8 @@ import (
 
 // EthereumClient is Ethereum client
 type EthereumClient interface {
-	GetArgs(*ethereumv1alpha1.NodeSpec, *ethereumv1alpha1.Network) []string
-	GetGenesisFile(*ethereumv1alpha1.Network) (string, error)
+	GetArgs(*ethereumv1alpha1.Node) []string
+	GetGenesisFile(*ethereumv1alpha1.Node) (string, error)
 	LoggingArgFromVerbosity(ethereumv1alpha1.VerbosityLevel) string
 }
 

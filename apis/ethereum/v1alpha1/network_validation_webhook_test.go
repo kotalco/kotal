@@ -31,8 +31,10 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #1",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join:      RinkebyNetwork,
-					Consensus: ProofOfWork,
+					NetworkConfig: NetworkConfig{
+						Join:      RinkebyNetwork,
+						Consensus: ProofOfWork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name: "node-1",
@@ -53,9 +55,11 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #2",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
-					Genesis: &Genesis{
-						ChainID: 444,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+						Genesis: &Genesis{
+							ChainID: 444,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -97,9 +101,11 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #4",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfAuthority,
-					Genesis: &Genesis{
-						ChainID: 1,
+					NetworkConfig: NetworkConfig{
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 1,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -121,10 +127,12 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #5",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfWork,
-					Genesis: &Genesis{
-						ChainID: 55555,
-						Clique:  &Clique{},
+					NetworkConfig: NetworkConfig{
+						Consensus: ProofOfWork,
+						Genesis: &Genesis{
+							ChainID: 55555,
+							Clique:  &Clique{},
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -146,10 +154,12 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #6",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfWork,
-					Genesis: &Genesis{
-						ChainID: 55555,
-						IBFT2:   &IBFT2{},
+					NetworkConfig: NetworkConfig{
+						Consensus: ProofOfWork,
+						Genesis: &Genesis{
+							ChainID: 55555,
+							IBFT2:   &IBFT2{},
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -171,10 +181,12 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #7",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: IstanbulBFT,
-					Genesis: &Genesis{
-						ChainID: 55555,
-						Ethash:  &Ethash{},
+					NetworkConfig: NetworkConfig{
+						Consensus: IstanbulBFT,
+						Genesis: &Genesis{
+							ChainID: 55555,
+							Ethash:  &Ethash{},
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -196,9 +208,11 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #8",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: IstanbulBFT,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						Consensus: IstanbulBFT,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -223,36 +237,11 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #9",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: IstanbulBFT,
-					Genesis: &Genesis{
-						ChainID: 55555,
-					},
-					Nodes: []NodeSpec{
-						{
-							Name: "node-1",
+					NetworkConfig: NetworkConfig{
+						Consensus: IstanbulBFT,
+						Genesis: &Genesis{
+							ChainID: 55555,
 						},
-						{
-							Name: "node-1",
-						},
-					},
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.nodes[1].name",
-					BadValue: "node-1",
-					Detail:   "already used by spec.nodes[0].name",
-				},
-			},
-		},
-		{
-			Title: "network #10",
-			Network: &Network{
-				Spec: NetworkSpec{
-					Consensus: IstanbulBFT,
-					Genesis: &Genesis{
-						ChainID: 55555,
 					},
 					Nodes: []NodeSpec{
 						{
@@ -275,12 +264,14 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #11",
+			Title: "network #10",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: IstanbulBFT,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						Consensus: IstanbulBFT,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -300,12 +291,14 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #12",
+			Title: "network #11",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: IstanbulBFT,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						Consensus: IstanbulBFT,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -325,11 +318,13 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #13",
+			Title: "network #12",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -348,15 +343,17 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #14",
+			Title: "network #13",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfAuthority,
-					Genesis: &Genesis{
-						ChainID: 55555,
-						Forks: &Forks{
-							EIP150:    1,
-							Homestead: 2,
+					NetworkConfig: NetworkConfig{
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 55555,
+							Forks: &Forks{
+								EIP150:    1,
+								Homestead: 2,
+							},
 						},
 					},
 					Nodes: []NodeSpec{
@@ -376,11 +373,13 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #15",
+			Title: "network #14",
 			Network: &Network{
 				Spec: NetworkSpec{
-					ID:   networkID,
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						ID:   networkID,
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name: "node-1",
@@ -398,12 +397,14 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #16",
+			Title: "network #15",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfWork,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						Consensus: ProofOfWork,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -422,13 +423,15 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #17",
+			Title: "network #16",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfWork,
-					ID:        networkID,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: ProofOfWork,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -450,13 +453,15 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #18",
+			Title: "network #17",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfWork,
-					ID:        networkID,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: ProofOfWork,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -482,13 +487,15 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #19",
+			Title: "network #18",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfWork,
-					ID:        networkID,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: ProofOfWork,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -513,13 +520,15 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #20",
+			Title: "network #19",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: IstanbulBFT,
-					ID:        networkID,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: IstanbulBFT,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -539,13 +548,15 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #21",
+			Title: "network #20",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfAuthority,
-					ID:        networkID,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -572,13 +583,15 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #22",
+			Title: "network #21",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfAuthority,
-					ID:        networkID,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -605,13 +618,15 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #23",
+			Title: "network #22",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfAuthority,
-					ID:        networkID,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -638,15 +653,17 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #24",
+			Title: "network #23",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfWork,
-					ID:        networkID,
-					Genesis: &Genesis{
-						ChainID: 55555,
-						Ethash: &Ethash{
-							FixedDifficulty: &fixedDifficulty,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: ProofOfWork,
+						Genesis: &Genesis{
+							ChainID: 55555,
+							Ethash: &Ethash{
+								FixedDifficulty: &fixedDifficulty,
+							},
 						},
 					},
 					Nodes: []NodeSpec{
@@ -667,10 +684,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #25",
+			Title: "network #24",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name:     "node-1",
@@ -690,10 +709,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #26",
+			Title: "network #25",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name:   "node-1",
@@ -716,10 +737,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #27",
+			Title: "network #26",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name:   "node-1",
@@ -744,13 +767,15 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #28",
+			Title: "network #27",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfWork,
-					ID:        networkID,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: ProofOfWork,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -782,10 +807,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #29",
+			Title: "network #28",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name:    "node-1",
@@ -805,10 +832,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #30",
+			Title: "network #29",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name:    "node-1",
@@ -828,10 +857,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #31",
+			Title: "network #30",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name:    "node-1",
@@ -851,10 +882,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #32",
+			Title: "network #31",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name:    "node-1",
@@ -874,10 +907,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #33",
+			Title: "network #32",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name:    "node-1",
@@ -897,10 +932,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #34",
+			Title: "network #33",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name:    "node-1",
@@ -920,13 +957,15 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #35",
+			Title: "network #34",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: IstanbulBFT,
-					ID:        networkID,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: IstanbulBFT,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -946,10 +985,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #36",
+			Title: "network #35",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name:     "node-1",
@@ -969,13 +1010,15 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #37",
+			Title: "network #36",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfWork,
-					ID:        networkID,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: ProofOfWork,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -997,10 +1040,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 		},
 		{
-			Title: "network #38",
+			Title: "network #37",
 			Network: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name:    "node-1",
@@ -1031,7 +1076,9 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #1",
 			OldNetwork: &Network{
 				Spec: NetworkSpec{
-					Join: RinkebyNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RinkebyNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name: "node-1",
@@ -1041,7 +1088,9 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 			NewNetwork: &Network{
 				Spec: NetworkSpec{
-					Join: RopstenNetwork,
+					NetworkConfig: NetworkConfig{
+						Join: RopstenNetwork,
+					},
 					Nodes: []NodeSpec{
 						{
 							Name: "node-1",
@@ -1062,9 +1111,11 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #2",
 			OldNetwork: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfAuthority,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -1075,9 +1126,11 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 			NewNetwork: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfWork,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						Consensus: ProofOfWork,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -1099,9 +1152,11 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #3",
 			OldNetwork: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfAuthority,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -1112,9 +1167,11 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 			NewNetwork: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfAuthority,
-					Genesis: &Genesis{
-						ChainID: 4444,
+					NetworkConfig: NetworkConfig{
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 4444,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -1136,9 +1193,11 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #4",
 			OldNetwork: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfAuthority,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -1149,9 +1208,11 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 			NewNetwork: &Network{
 				Spec: NetworkSpec{
-					Consensus: ProofOfAuthority,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -1173,10 +1234,12 @@ var _ = Describe("Ethereum network validation", func() {
 			Title: "network #5",
 			OldNetwork: &Network{
 				Spec: NetworkSpec{
-					ID:        networkID,
-					Consensus: ProofOfAuthority,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        networkID,
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{
@@ -1187,10 +1250,12 @@ var _ = Describe("Ethereum network validation", func() {
 			},
 			NewNetwork: &Network{
 				Spec: NetworkSpec{
-					ID:        newNetworkID,
-					Consensus: ProofOfAuthority,
-					Genesis: &Genesis{
-						ChainID: 55555,
+					NetworkConfig: NetworkConfig{
+						ID:        newNetworkID,
+						Consensus: ProofOfAuthority,
+						Genesis: &Genesis{
+							ChainID: 55555,
+						},
 					},
 					Nodes: []NodeSpec{
 						{

@@ -17,7 +17,7 @@ func (b *BesuClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLev
 }
 
 // GetArgs returns command line arguments required for client run
-func (b *BesuClient) GetArgs(node *ethereumv1alpha1.NodeSpec, network *ethereumv1alpha1.Network) (args []string) {
+func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node) (args []string) {
 
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
@@ -26,100 +26,100 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.NodeSpec, network *ethereumv
 
 	appendArg(BesuNatMethod, "KUBERNETES")
 
-	appendArg(BesuLogging, b.LoggingArgFromVerbosity(node.Logging))
+	appendArg(BesuLogging, b.LoggingArgFromVerbosity(node.Spec.Logging))
 
-	if network.Spec.ID != 0 {
-		appendArg(BesuNetworkID, fmt.Sprintf("%d", network.Spec.ID))
+	if node.Spec.ID != 0 {
+		appendArg(BesuNetworkID, fmt.Sprintf("%d", node.Spec.ID))
 	}
 
-	if node.WithNodekey() {
+	if node.Spec.Nodekey != "" {
 		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", PathSecrets))
 	}
 
-	if network.Spec.Genesis != nil {
+	if node.Spec.Genesis != nil {
 		appendArg(BesuGenesisFile, fmt.Sprintf("%s/genesis.json", PathConfig))
 	}
 
 	appendArg(BesuDataPath, PathBlockchainData)
 
-	if network.Spec.Genesis == nil {
-		appendArg(BesuNetwork, network.Spec.Join)
+	if node.Spec.Genesis == nil {
+		appendArg(BesuNetwork, node.Spec.Join)
 	} else {
 		appendArg(BesuDiscoveryEnabled, "false")
 	}
 
-	if node.P2PPort != 0 {
-		appendArg(BesuP2PPort, fmt.Sprintf("%d", node.P2PPort))
+	if node.Spec.P2PPort != 0 {
+		appendArg(BesuP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 	}
 
-	if node.SyncMode != "" {
-		appendArg(BesuSyncMode, string(node.SyncMode))
+	if node.Spec.SyncMode != "" {
+		appendArg(BesuSyncMode, string(node.Spec.SyncMode))
 	}
 
-	if node.Miner {
+	if node.Spec.Miner {
 		appendArg(BesuMinerEnabled)
 	}
 
-	if node.Coinbase != "" {
-		appendArg(BesuMinerCoinbase, string(node.Coinbase))
+	if node.Spec.Coinbase != "" {
+		appendArg(BesuMinerCoinbase, string(node.Spec.Coinbase))
 	}
 
-	if node.RPC {
+	if node.Spec.RPC {
 		appendArg(BesuRPCHTTPEnabled)
 		appendArg(BesuRPCHTTPHost, DefaultHost)
 	}
 
-	if node.RPCPort != 0 {
-		appendArg(BesuRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
+	if node.Spec.RPCPort != 0 {
+		appendArg(BesuRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
 	}
 
-	if len(node.RPCAPI) != 0 {
+	if len(node.Spec.RPCAPI) != 0 {
 		apis := []string{}
-		for _, api := range node.RPCAPI {
+		for _, api := range node.Spec.RPCAPI {
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		appendArg(BesuRPCHTTPAPI, commaSeperatedAPIs)
 	}
 
-	if node.WS {
+	if node.Spec.WS {
 		appendArg(BesuRPCWSEnabled)
 		appendArg(BesuRPCWSHost, DefaultHost)
 	}
 
-	if node.WSPort != 0 {
-		appendArg(BesuRPCWSPort, fmt.Sprintf("%d", node.WSPort))
+	if node.Spec.WSPort != 0 {
+		appendArg(BesuRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
 	}
 
-	if len(node.WSAPI) != 0 {
+	if len(node.Spec.WSAPI) != 0 {
 		apis := []string{}
-		for _, api := range node.WSAPI {
+		for _, api := range node.Spec.WSAPI {
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		appendArg(BesuRPCWSAPI, commaSeperatedAPIs)
 	}
 
-	if node.GraphQL {
+	if node.Spec.GraphQL {
 		appendArg(BesuGraphQLHTTPEnabled)
 		appendArg(BesuGraphQLHTTPHost, DefaultHost)
 	}
 
-	if node.GraphQLPort != 0 {
-		appendArg(BesuGraphQLHTTPPort, fmt.Sprintf("%d", node.GraphQLPort))
+	if node.Spec.GraphQLPort != 0 {
+		appendArg(BesuGraphQLHTTPPort, fmt.Sprintf("%d", node.Spec.GraphQLPort))
 	}
 
-	if len(node.Hosts) != 0 {
-		commaSeperatedHosts := strings.Join(node.Hosts, ",")
+	if len(node.Spec.Hosts) != 0 {
+		commaSeperatedHosts := strings.Join(node.Spec.Hosts, ",")
 		appendArg(BesuHostAllowlist, commaSeperatedHosts)
 	}
 
-	if len(node.CORSDomains) != 0 {
-		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
-		if node.RPC {
+	if len(node.Spec.CORSDomains) != 0 {
+		commaSeperatedDomains := strings.Join(node.Spec.CORSDomains, ",")
+		if node.Spec.RPC {
 			appendArg(BesuRPCHTTPCorsOrigins, commaSeperatedDomains)
 		}
-		if node.GraphQL {
+		if node.Spec.GraphQL {
 			appendArg(BesuGraphQLHTTPCorsOrigins, commaSeperatedDomains)
 		}
 		// no ws cors setting
@@ -129,9 +129,9 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.NodeSpec, network *ethereumv
 }
 
 // GetGenesisFile returns genesis config parameter
-func (b *BesuClient) GetGenesisFile(network *ethereumv1alpha1.Network) (content string, err error) {
-	genesis := network.Spec.Genesis
-	consensus := network.Spec.Consensus
+func (b *BesuClient) GetGenesisFile(node *ethereumv1alpha1.Node) (content string, err error) {
+	genesis := node.Spec.Genesis
+	consensus := node.Spec.Consensus
 	mixHash := genesis.MixHash
 	nonce := genesis.Nonce
 	extraData := "0x00"

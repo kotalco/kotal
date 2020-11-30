@@ -21,29 +21,23 @@ const (
 	DevNetwork = "dev"
 )
 
-// NetworkSpec defines the desired state of Network
-type NetworkSpec struct {
-	// ID is network id
-	ID uint `json:"id,omitempty"`
-
-	// Join specifies the network to join
-	Join string `json:"join,omitempty"`
-
-	// Consensus is the consensus algorithm to be used by the network nodes to reach consensus
-	Consensus ConsensusAlgorithm `json:"consensus,omitempty"`
-
-	// Genesis is genesis block specification
-	Genesis *Genesis `json:"genesis,omitempty"`
-
-	// Nodes is array of node specifications
-	// +kubebuilder:validation:MinItems=1
-	Nodes []NodeSpec `json:"nodes"`
-
+// AvailabilityConfig is the shared high availability config between node and network
+type AvailabilityConfig struct {
 	// HighlyAvailable is whether blockchain nodes can land on the same k8s node or no
 	HighlyAvailable bool `json:"highlyAvailable,omitempty"`
 
 	// TopologyKey is the k8s node label used to distribute blockchain nodes
 	TopologyKey string `json:"TopologyKey,omitempty"`
+}
+
+// NetworkSpec defines the desired state of Network
+type NetworkSpec struct {
+	NetworkConfig      `json:",inline"`
+	AvailabilityConfig `json:",inline"`
+
+	// Nodes is array of node specifications
+	// +kubebuilder:validation:MinItems=1
+	Nodes []NodeSpec `json:"nodes"`
 }
 
 // HexString is String in hexadecial format
@@ -61,24 +55,6 @@ type Hash string
 // PrivateKey is a private key
 // +kubebuilder:validation:Pattern="^0[xX][0-9a-fA-F]{64}$"
 type PrivateKey string
-
-// ConsensusAlgorithm is the algorithm nodes use to reach consensus
-// +kubebuilder:validation:Enum=poa;pow;ibft2;quorum
-type ConsensusAlgorithm string
-
-const (
-	// ProofOfAuthority is proof of authority consensus algorithm
-	ProofOfAuthority ConsensusAlgorithm = "poa"
-
-	// ProofOfWork is proof of work (nakamoto consensus) consensus algorithm
-	ProofOfWork ConsensusAlgorithm = "pow"
-
-	// IstanbulBFT is Istanbul Byzantine Fault Tolerant consensus algorithm
-	IstanbulBFT ConsensusAlgorithm = "ibft2"
-
-	//Quorum is Quorum IBFT consensus algorithm
-	Quorum ConsensusAlgorithm = "quorum"
-)
 
 // NetworkStatus defines the observed state of Network
 type NetworkStatus struct {

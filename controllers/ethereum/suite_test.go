@@ -25,7 +25,8 @@ import (
 var cfg *rest.Config
 var k8sClient client.Client
 var testEnv *envtest.Environment
-var reconciler *NetworkReconciler
+var networkReconciler *NetworkReconciler
+var nodeReconciler *NodeReconciler
 
 func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -39,6 +40,7 @@ var _ = BeforeSuite(func(done Done) {
 	logf.SetLogger(zap.LoggerTo(GinkgoWriter, true))
 
 	By("bootstrapping test environment")
+	// create new test environment
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths: []string{filepath.Join("..", "..", "config", "crd", "bases")},
 	}
@@ -53,21 +55,33 @@ var _ = BeforeSuite(func(done Done) {
 
 	// +kubebuilder:scaffold:scheme
 
+	// create new controller manager
 	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme: scheme.Scheme,
 	})
 	Expect(err).ToNot(HaveOccurred())
 
+	// create a new k8s client
 	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
 	Expect(err).ToNot(HaveOccurred())
 	Expect(k8sClient).ToNot(BeNil())
 
-	reconciler = &NetworkReconciler{
+	// start network reconciler
+	networkReconciler = &NetworkReconciler{
 		Client: k8sManager.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("network"),
 		Scheme: scheme.Scheme,
 	}
-	reconciler.SetupWithManager(k8sManager)
+	networkReconciler.SetupWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
+	// start node reconciler
+	nodeReconciler = &NodeReconciler{
+		Client: k8sManager.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("node"),
+		Scheme: scheme.Scheme,
+	}
+	nodeReconciler.SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
 	go func() {

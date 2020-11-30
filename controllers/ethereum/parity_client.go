@@ -33,19 +33,19 @@ func (p *ParityClient) PrunningArgFromSyncMode(mode ethereumv1alpha1.Synchroniza
 }
 
 // GetArgs returns command line arguments required for client run
-func (p *ParityClient) GetArgs(node *ethereumv1alpha1.NodeSpec, network *ethereumv1alpha1.Network) (args []string) {
+func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node) (args []string) {
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
 		args = append(args, arg...)
 	}
 
-	appendArg(ParityLogging, p.LoggingArgFromVerbosity(node.Logging))
+	appendArg(ParityLogging, p.LoggingArgFromVerbosity(node.Spec.Logging))
 
-	if network.Spec.ID != 0 {
-		appendArg(ParityNetworkID, fmt.Sprintf("%d", network.Spec.ID))
+	if node.Spec.ID != 0 {
+		appendArg(ParityNetworkID, fmt.Sprintf("%d", node.Spec.ID))
 	}
 
-	if node.WithNodekey() {
+	if node.Spec.Nodekey != "" {
 		appendArg(ParityNodeKey, fmt.Sprintf("%s/nodekey", PathSecrets))
 	}
 
@@ -53,86 +53,86 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.NodeSpec, network *ethereu
 
 	appendArg(ParityReservedPeers, fmt.Sprintf("%s/static-nodes", PathConfig))
 
-	if network.Spec.Genesis == nil {
-		if network.Spec.Join != ethereumv1alpha1.MainNetwork {
-			appendArg(ParityNetwork, network.Spec.Join)
+	if node.Spec.Genesis == nil {
+		if node.Spec.Join != ethereumv1alpha1.MainNetwork {
+			appendArg(ParityNetwork, node.Spec.Join)
 		}
 	} else {
 		appendArg(ParityNetwork, fmt.Sprintf("%s/genesis.json", PathConfig))
 		appendArg(ParityNoDiscovery)
 	}
 
-	if node.P2PPort != 0 {
-		appendArg(ParityP2PPort, fmt.Sprintf("%d", node.P2PPort))
+	if node.Spec.P2PPort != 0 {
+		appendArg(ParityP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 	}
 
-	if node.SyncMode != "" {
-		appendArg(ParitySyncMode, p.PrunningArgFromSyncMode(node.SyncMode))
+	if node.Spec.SyncMode != "" {
+		appendArg(ParitySyncMode, p.PrunningArgFromSyncMode(node.Spec.SyncMode))
 	}
 
-	if node.Coinbase != "" {
-		appendArg(ParityMinerCoinbase, string(node.Coinbase))
-		appendArg(ParityUnlock, string(node.Coinbase))
+	if node.Spec.Coinbase != "" {
+		appendArg(ParityMinerCoinbase, string(node.Spec.Coinbase))
+		appendArg(ParityUnlock, string(node.Spec.Coinbase))
 		appendArg(ParityPassword, fmt.Sprintf("%s/account.password", PathSecrets))
-		if network.Spec.Consensus == ethereumv1alpha1.ProofOfAuthority {
-			appendArg(ParityEngineSigner, string(node.Coinbase))
+		if node.Spec.Consensus == ethereumv1alpha1.ProofOfAuthority {
+			appendArg(ParityEngineSigner, string(node.Spec.Coinbase))
 		}
 	}
 
-	if !node.RPC {
+	if !node.Spec.RPC {
 		appendArg(ParityDisableRPC)
 	}
 
-	if node.RPCPort != 0 {
-		appendArg(ParityRPCHTTPPort, fmt.Sprintf("%d", node.RPCPort))
+	if node.Spec.RPCPort != 0 {
+		appendArg(ParityRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
 	}
 
 	appendArg(ParityRPCHTTPHost, DefaultHost)
 
-	if len(node.RPCAPI) != 0 {
+	if len(node.Spec.RPCAPI) != 0 {
 		apis := []string{}
-		for _, api := range node.RPCAPI {
+		for _, api := range node.Spec.RPCAPI {
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		appendArg(ParityRPCHTTPAPI, commaSeperatedAPIs)
 	}
 
-	if !node.WS {
+	if !node.Spec.WS {
 		appendArg(ParityDisableWS)
 	}
 
-	if node.WSPort != 0 {
-		appendArg(ParityRPCWSPort, fmt.Sprintf("%d", node.WSPort))
+	if node.Spec.WSPort != 0 {
+		appendArg(ParityRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
 	}
 
 	appendArg(ParityRPCWSHost, DefaultHost)
 
-	if len(node.WSAPI) != 0 {
+	if len(node.Spec.WSAPI) != 0 {
 		apis := []string{}
-		for _, api := range node.WSAPI {
+		for _, api := range node.Spec.WSAPI {
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		appendArg(ParityRPCWSAPI, commaSeperatedAPIs)
 	}
 
-	if len(node.Hosts) != 0 {
-		commaSeperatedHosts := strings.Join(node.Hosts, ",")
-		if node.RPC {
+	if len(node.Spec.Hosts) != 0 {
+		commaSeperatedHosts := strings.Join(node.Spec.Hosts, ",")
+		if node.Spec.RPC {
 			appendArg(ParityRPCHostWhitelist, commaSeperatedHosts)
 		}
-		if node.WS {
+		if node.Spec.WS {
 			appendArg(ParityRPCWSWhitelist, commaSeperatedHosts)
 		}
 	}
 
-	if len(node.CORSDomains) != 0 {
-		commaSeperatedDomains := strings.Join(node.CORSDomains, ",")
-		if node.RPC {
+	if len(node.Spec.CORSDomains) != 0 {
+		commaSeperatedDomains := strings.Join(node.Spec.CORSDomains, ",")
+		if node.Spec.RPC {
 			appendArg(ParityRPCHTTPCorsOrigins, commaSeperatedDomains)
 		}
-		if node.WS {
+		if node.Spec.WS {
 			appendArg(ParityRPCWSCorsOrigins, commaSeperatedDomains)
 		}
 	}
@@ -148,9 +148,9 @@ func (p *ParityClient) NormalizeNonce(data string) string {
 }
 
 // GetGenesisFile returns genesis config parameter
-func (p *ParityClient) GetGenesisFile(network *ethereumv1alpha1.Network) (content string, err error) {
-	genesis := network.Spec.Genesis
-	consensus := network.Spec.Consensus
+func (p *ParityClient) GetGenesisFile(node *ethereumv1alpha1.Node) (content string, err error) {
+	genesis := node.Spec.Genesis
+	consensus := node.Spec.Consensus
 	extraData := "0x00"
 	var engineConfig map[string]interface{}
 
@@ -232,7 +232,7 @@ func (p *ParityClient) GetGenesisFile(network *ethereumv1alpha1.Network) (conten
 		"gasLimitBoundDivisor": "0x0400",
 		"maximumExtraDataSize": "0xffff",
 		"minGasLimit":          "0x1388",
-		"networkID":            hex(network.Spec.ID),
+		"networkID":            hex(node.Spec.ID),
 		// Tingerine Whistle
 		"eip150Transition": tingerineWhistleBlock,
 		// Spurious Dragon
