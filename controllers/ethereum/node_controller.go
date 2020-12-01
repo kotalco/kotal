@@ -156,6 +156,8 @@ func (r *NodeReconciler) specNodeConfigmap(client ethereumv1alpha1.EthereumClien
 // reconcileNodeConfigmap creates genesis config map if it doesn't exist or update it
 func (r *NodeReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node) error {
 
+	var genesis, initGenesisScript, importAccountScript string
+
 	configmap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -163,16 +165,16 @@ func (r *NodeReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node) err
 		},
 	}
 
-	var genesis, initGenesisScript, importAccountScript string
+	client, err := NewEthereumClient(node.Spec.Client)
+	if err != nil {
+		return err
+	}
 
-	staticNodes := EncodeStaticNodes(node)
+	staticNodes := client.EncodeStaticNodes(node)
 
 	// private network with custom genesis
 	if node.Spec.Genesis != nil {
-		client, err := NewEthereumClient(node.Spec.Client)
-		if err != nil {
-			return err
-		}
+
 		// create client specific genesis configuration
 		if genesis, err = client.GetGenesisFile(node); err != nil {
 			return err
@@ -196,7 +198,7 @@ func (r *NodeReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node) err
 		}
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, configmap, func() error {
+	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, configmap, func() error {
 		if err := ctrl.SetControllerReference(node, configmap, r.Scheme); err != nil {
 			r.Log.Error(err, "Unable to set controller reference on genesis configmap")
 			return err

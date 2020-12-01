@@ -297,6 +297,15 @@ func (p *ParityClient) GetGenesisFile(node *ethereumv1alpha1.Node) (content stri
 	return
 }
 
+// EncodeStaticNodes returns the static nodes, one per line
+func (p *ParityClient) EncodeStaticNodes(node *ethereumv1alpha1.Node) string {
+	nodes := []string{}
+	for _, s := range node.Spec.StaticNodes {
+		nodes = append(nodes, string(s))
+	}
+	return strings.Join(nodes, "\n")
+}
+
 // KeyStoreFromPrivatekey generates key store from private key (hex without 0x)
 func KeyStoreFromPrivatekey(key, password string) (content []byte, err error) {
 	dir, err := ioutil.TempDir(os.TempDir(), "tmp")

@@ -239,3 +239,14 @@ func (b *BesuClient) GetGenesisFile(node *ethereumv1alpha1.Node) (content string
 
 	return
 }
+
+// EncodeStaticNodes returns the static nodes, one per line
+func (b *BesuClient) EncodeStaticNodes(node *ethereumv1alpha1.Node) string {
+
+	if len(node.Spec.StaticNodes) == 0 {
+		return "[]"
+	}
+
+	encoded, _ := json.Marshal(node.Spec.StaticNodes)
+	return string(encoded)
+}

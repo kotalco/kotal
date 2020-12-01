@@ -144,6 +144,22 @@ func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node) (args []string) {
 	return args
 }
 
+// EncodeStaticNodes returns the static nodes
+// [Node.P2P]
+// StaticNodes = [enodeURL1, enodeURL2 ...]
+func (g *GethClient) EncodeStaticNodes(node *ethereumv1alpha1.Node) string {
+
+	var encoded []byte
+
+	if len(node.Spec.StaticNodes) == 0 {
+		encoded = []byte("[]")
+	} else {
+		encoded, _ = json.Marshal(node.Spec.StaticNodes)
+	}
+
+	return fmt.Sprintf("[Node.P2P]\nStaticNodes = %s", string(encoded))
+}
+
 // GetGenesisFile returns genesis config parameter
 func (g *GethClient) GetGenesisFile(node *ethereumv1alpha1.Node) (content string, err error) {
 	genesis := node.Spec.Genesis

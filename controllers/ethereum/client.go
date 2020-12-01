@@ -11,6 +11,7 @@ type EthereumClient interface {
 	GetArgs(*ethereumv1alpha1.Node) []string
 	GetGenesisFile(*ethereumv1alpha1.Node) (string, error)
 	LoggingArgFromVerbosity(ethereumv1alpha1.VerbosityLevel) string
+	EncodeStaticNodes(*ethereumv1alpha1.Node) string
 }
 
 // NewEthereumClient returns an Ethereum client instance
