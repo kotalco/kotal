@@ -387,6 +387,11 @@ func (in *NodeSpec) DeepCopyInto(out *NodeSpec) {
 		*out = new(ImportedAccount)
 		**out = **in
 	}
+	if in.Bootnodes != nil {
+		in, out := &in.Bootnodes, &out.Bootnodes
+		*out = make([]Enode, len(*in))
+		copy(*out, *in)
+	}
 	if in.StaticNodes != nil {
 		in, out := &in.StaticNodes, &out.StaticNodes
 		*out = make([]Enode, len(*in))

@@ -36,6 +36,14 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node) (args []string) {
 		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", PathSecrets))
 	}
 
+	if len(node.Spec.Bootnodes) != 0 {
+		bootnodes := []string{}
+		for _, bootnode := range node.Spec.Bootnodes {
+			bootnodes = append(bootnodes, string(bootnode))
+		}
+		appendArg(BesuBootnodes, strings.Join(bootnodes, ","))
+	}
+
 	if node.Spec.Genesis != nil {
 		appendArg(BesuGenesisFile, fmt.Sprintf("%s/genesis.json", PathConfig))
 	}

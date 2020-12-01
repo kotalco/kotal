@@ -49,6 +49,14 @@ func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node) (args []string) {
 		appendArg(ParityNodeKey, fmt.Sprintf("%s/nodekey", PathSecrets))
 	}
 
+	if len(node.Spec.Bootnodes) != 0 {
+		bootnodes := []string{}
+		for _, bootnode := range node.Spec.Bootnodes {
+			bootnodes = append(bootnodes, string(bootnode))
+		}
+		appendArg(ParityBootnodes, strings.Join(bootnodes, ","))
+	}
+
 	appendArg(ParityDataDir, PathBlockchainData)
 
 	appendArg(ParityReservedPeers, fmt.Sprintf("%s/static-nodes", PathConfig))

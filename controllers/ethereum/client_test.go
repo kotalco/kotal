@@ -18,6 +18,8 @@ var _ = Describe("Ethereum client arguments", func() {
 	accountPassword := "secret"
 	rinkeby := "rinkeby"
 	nodekey := ethereumv1alpha1.PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
+	bootnode := "enode://6f8a80d14311c39f35f516fa664deaaaa13e85b2f7493f37f6144d86991ec012937307647bd3b9a82abe2974e1407241d54947bbb39763a4cac9f77166ad92a0@10.3.58.6:30303"
+	bootnodes := []ethereumv1alpha1.Enode{ethereumv1alpha1.Enode(bootnode)}
 
 	cases := []struct {
 		title  string
@@ -31,6 +33,7 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
+					Bootnodes: bootnodes,
 				},
 			},
 			[]string{
@@ -41,6 +44,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				PathBlockchainData,
 				BesuLogging,
 				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
+				BesuBootnodes,
+				bootnode,
 			},
 		},
 		{
@@ -50,9 +55,10 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:   ethereumv1alpha1.GethClient,
-					Bootnode: true,
-					Nodekey:  nodekey,
+					Client:    ethereumv1alpha1.GethClient,
+					Bootnode:  true,
+					Nodekey:   nodekey,
+					Bootnodes: bootnodes,
 				},
 			},
 			[]string{
@@ -63,6 +69,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethLogging,
 				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
 				GethConfig,
+				GethBootnodes,
+				bootnode,
 			},
 		},
 		{
@@ -72,9 +80,10 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:   ethereumv1alpha1.ParityClient,
-					Bootnode: true,
-					Nodekey:  nodekey,
+					Client:    ethereumv1alpha1.ParityClient,
+					Bootnode:  true,
+					Nodekey:   nodekey,
+					Bootnodes: bootnodes,
 				},
 			},
 			[]string{
@@ -86,6 +95,8 @@ var _ = Describe("Ethereum client arguments", func() {
 				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
 				ParityDisableRPC,
 				ParityDisableWS,
+				ParityBootnodes,
+				bootnode,
 			},
 		},
 		{

@@ -50,6 +50,9 @@ type NodeSpec struct {
 	// Bootnode is whether node is bootnode or no
 	Bootnode bool `json:"bootnode,omitempty"`
 
+	// Bootnodes is set of ethereum node URLS for p2p discovery bootstrap
+	Bootnodes []Enode `json:"bootnodes,omitempty"`
+
 	// Nodekey is the node private key
 	Nodekey PrivateKey `json:"nodekey,omitempty"`
 

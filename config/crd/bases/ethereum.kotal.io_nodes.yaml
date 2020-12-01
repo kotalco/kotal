@@ -55,6 +55,13 @@ spec:
             bootnode:
               description: Bootnode is whether node is bootnode or no
               type: boolean
+            bootnodes:
+              description: Bootnodes is set of ethereum node URLS for p2p discovery
+                bootstrap
+              items:
+                description: Enode is ethereum node url
+                type: string
+              type: array
             client:
               description: Client is ethereum client running on the node
               enum:
