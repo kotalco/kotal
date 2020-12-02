@@ -4,5 +4,5 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
 - name: controller
-  newName: kotal/operator
-  newTag: "0.1"
+  newName: kotalco/kotal
+  newTag: v0.1-alpha.2
