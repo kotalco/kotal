@@ -11,6 +11,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	controllers "github.com/kotalco/kotal/controllers/ethereum"
@@ -29,6 +30,7 @@ func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
 
 	_ = ethereumv1alpha1.AddToScheme(scheme)
+	_ = ethereum2v1alpha1.AddToScheme(scheme)
 	_ = ipfsv1alpha1.AddToScheme(scheme)
 	_ = filecoinv1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme

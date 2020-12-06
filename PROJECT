@@ -14,4 +14,7 @@ resources:
 - group: ethereum
   kind: Node
   version: v1alpha1
+- group: ethereum2
+  kind: Node
+  version: v1alpha1
 version: "2"

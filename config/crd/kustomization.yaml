@@ -6,6 +6,7 @@ resources:
 - bases/ipfs.kotal.io_swarms.yaml
 - bases/filecoin.kotal.io_nodes.yaml
 - bases/ethereum.kotal.io_nodes.yaml
+- bases/ethereum2.kotal.io_nodes.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:
