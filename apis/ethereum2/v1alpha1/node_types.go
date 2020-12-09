@@ -10,6 +10,8 @@ type NodeSpec struct {
 	Join string `json:"join"`
 	// Client is the Ethereum 2.0 client to use
 	Client Ethereum2Client `json:"client,omitempty"`
+	// Eth1Endpoint is Ethereum 1 endpoint
+	Eth1Endpoint string `json:"eth1Endpoint,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
