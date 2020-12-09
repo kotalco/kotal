@@ -8,7 +8,11 @@ type TekuClient struct{}
 // GetArgs returns command line arguments required for client
 func (t *TekuClient) GetArgs(node *ethereum2v1alpha1.Node) (args []string) {
 
-	args = append(args, "--network", node.Spec.Join)
+	args = append(args, TekuNetwork, node.Spec.Join)
+
+	if node.Spec.Eth1Endpoint != "" {
+		args = append(args, TekuEth1Endpoint, node.Spec.Join)
+	}
 
 	return
 }
