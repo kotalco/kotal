@@ -34,15 +34,23 @@ spec:
           type: object
         spec:
           description: NodeSpec defines the desired state of Node
-          type: object
-        status:
-          description: NodeStatus defines the observed state of Node
           properties:
+            client:
+              description: Client is the Ethereum 2.0 client to use
+              enum:
+              - teku
+              - prysm
+              - lighthouse
+              - nimbus
+              type: string
             join:
               description: Join is the network to join
               type: string
           required:
           - join
+          type: object
+        status:
+          description: NodeStatus defines the observed state of Node
           type: object
       type: object
   version: v1alpha1
