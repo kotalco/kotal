@@ -65,18 +65,25 @@ func (r *NodeReconciler) reconcileNodeStatefulset(node *ethereum2v1alpha1.Node) 
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, &sts, func() error {
+	client, err := NewEthereum2Client(node.Spec.Client)
+	if err != nil {
+		return err
+	}
+
+	args := client.GetArgs(node)
+
+	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, &sts, func() error {
 		if err := ctrl.SetControllerReference(node, &sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeStatefulset(&sts, node)
+		r.specNodeStatefulset(&sts, node, args)
 		return nil
 	})
 
 	return err
 }
 
-func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethereum2v1alpha1.Node) {
+func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethereum2v1alpha1.Node, args []string) {
 	sts.Labels = node.GetLabels()
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
@@ -92,6 +99,7 @@ func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethe
 						Name: "node",
 						// TODO: move image to TekuImage()
 						Image: "consensys/teku:latest",
+						Args:  args,
 					},
 				},
 			},
