@@ -1,0 +1,6 @@
+apiVersion: ethereum2.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: node-sample
+spec:
+  join: mainnet

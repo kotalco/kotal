@@ -3,4 +3,4 @@ kind: Node
 metadata:
   name: node-sample
 spec:
-  join: "mainnet"
+  join: pyrmont
