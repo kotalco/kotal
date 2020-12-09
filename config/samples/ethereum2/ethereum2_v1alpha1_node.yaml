@@ -4,4 +4,3 @@ metadata:
   name: node-sample
 spec:
   join: "mainnet"
-  client: "teku"

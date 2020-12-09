@@ -9,4 +9,9 @@ var _ webhook.Defaulter = &Node{}
 // Default implements webhook.Defaulter so a webhook will be registered for the type
 func (r *Node) Default() {
 	nodelog.Info("default", "name", r.Name)
+
+	if r.Spec.Client == "" {
+		r.Spec.Client = DefaultClient
+	}
+
 }
