@@ -65,26 +65,32 @@ func (r *NodeReconciler) reconcileNodeStatefulset(node *ethereum2v1alpha1.Node) 
 		},
 	}
 
-	client, err := NewEthereum2Client(node.Spec.Client)
-	if err != nil {
-		return err
-	}
-
-	args := client.GetArgs(node)
-
-	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, &sts, func() error {
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, &sts, func() error {
 		if err := ctrl.SetControllerReference(node, &sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeStatefulset(&sts, node, args)
+
+		client, err := NewEthereum2Client(node.Spec.Client)
+		if err != nil {
+			return err
+		}
+
+		args := client.GetArgs(node)
+		img := client.Image()
+
+		r.specNodeStatefulset(&sts, node, args, img)
+
 		return nil
 	})
 
 	return err
 }
 
-func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethereum2v1alpha1.Node, args []string) {
+// specNodeConfigmap updates node statefulset spec
+func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethereum2v1alpha1.Node, args []string, img string) {
+
 	sts.Labels = node.GetLabels()
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.GetLabels(),
@@ -96,10 +102,9 @@ func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethe
 			Spec: v1.PodSpec{
 				Containers: []v1.Container{
 					{
-						Name: "node",
-						// TODO: move image to TekuImage()
-						Image: "consensys/teku:latest",
+						Name:  "node",
 						Args:  args,
+						Image: img,
 					},
 				},
 			},

@@ -43,6 +43,9 @@ spec:
               - lighthouse
               - nimbus
               type: string
+            eth1Endpoint:
+              description: Eth1Endpoint is Ethereum 1 endpoint
+              type: string
             join:
               description: Join is the network to join
               type: string
