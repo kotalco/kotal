@@ -26,7 +26,7 @@ type NodeReconciler struct {
 // +kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile reconcile Ethereum 2.0 node
-func (r *NodeReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err error) {
+func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var node ethereum2v1alpha1.Node
 
 	if err = r.Client.Get(context.Background(), req.NamespacedName, &node); err != nil {
