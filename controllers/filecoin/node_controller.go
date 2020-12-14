@@ -28,7 +28,7 @@ type NodeReconciler struct {
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
 
 // Reconcile reconciles Filecoin network node
-func (r *NodeReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err error) {
+func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var node filecoinv1alpha1.Node
 
 	if err = r.Client.Get(context.Background(), req.NamespacedName, &node); err != nil {

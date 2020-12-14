@@ -26,7 +26,7 @@ type NetworkReconciler struct {
 // +kubebuilder:rbac:groups=ethereum.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile reconciles ethereum networks
-func (r *NetworkReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err error) {
+func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 
 	var network ethereumv1alpha1.Network
 

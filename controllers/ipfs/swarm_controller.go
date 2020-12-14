@@ -32,7 +32,7 @@ type SwarmReconciler struct {
 // +kubebuilder:rbac:groups=core,resources=services;configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 // Reconcile reconciles ipfs swarm
-func (r *SwarmReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err error) {
+func (r *SwarmReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var _ = context.Background()
 	_ = r.Log.WithValues("swarm", req.NamespacedName)
 

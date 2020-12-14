@@ -32,7 +32,7 @@ type NodeReconciler struct {
 // +kubebuilder:rbac:groups=core,resources=secrets;services;configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 // Reconcile reconciles ethereum networks
-func (r *NodeReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err error) {
+func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 
 	var node ethereumv1alpha1.Node
 
