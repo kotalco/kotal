@@ -19,8 +19,8 @@ const (
 	DefaultPrysmImage = "gcr.io/prysmaticlabs/prysm/beacon-chain:v1.0.4"
 )
 
-// GetArgs returns command line arguments required for client
-func (t *PrysmClient) GetArgs(node *ethereum2v1alpha1.Node) (args []string) {
+// Args returns command line arguments required for client
+func (t *PrysmClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 
 	args = append(args, PrysmAcceptTermsOfUse)
 
@@ -30,6 +30,11 @@ func (t *PrysmClient) GetArgs(node *ethereum2v1alpha1.Node) (args []string) {
 
 	args = append(args, fmt.Sprintf("--%s", node.Spec.Join))
 
+	return
+}
+
+// Command returns command for running the client
+func (t *PrysmClient) Command() (command []string) {
 	return
 }
 

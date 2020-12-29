@@ -8,7 +8,8 @@ import (
 
 // Ethereum2Client is Ethereum client
 type Ethereum2Client interface {
-	GetArgs(*ethereum2v1alpha1.Node) []string
+	Args(*ethereum2v1alpha1.Node) []string
+	Command() []string
 	Image() string
 }
 
@@ -19,6 +20,8 @@ func NewEthereum2Client(name ethereum2v1alpha1.Ethereum2Client) (Ethereum2Client
 		return &TekuClient{}, nil
 	case ethereum2v1alpha1.PrysmClient:
 		return &PrysmClient{}, nil
+	case ethereum2v1alpha1.LighthouseClient:
+		return &LighthouseClient{}, nil
 	default:
 		return nil, fmt.Errorf("Client %s is not supported", name)
 	}

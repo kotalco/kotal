@@ -16,8 +16,8 @@ const (
 	DefaultTekuImage = "consensys/teku:20.12"
 )
 
-// GetArgs returns command line arguments required for client
-func (t *TekuClient) GetArgs(node *ethereum2v1alpha1.Node) (args []string) {
+// Args returns command line arguments required for client
+func (t *TekuClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 
 	args = append(args, TekuNetwork, node.Spec.Join)
 
@@ -25,6 +25,11 @@ func (t *TekuClient) GetArgs(node *ethereum2v1alpha1.Node) (args []string) {
 		args = append(args, TekuEth1Endpoint, node.Spec.Eth1Endpoint)
 	}
 
+	return
+}
+
+// Command returns command for running the client
+func (t *TekuClient) Command() (command []string) {
 	return
 }
 

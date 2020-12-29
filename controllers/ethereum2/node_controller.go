@@ -75,10 +75,11 @@ func (r *NodeReconciler) reconcileNodeStatefulset(node *ethereum2v1alpha1.Node) 
 			return err
 		}
 
-		args := client.GetArgs(node)
+		args := client.Args(node)
 		img := client.Image()
+		command := client.Command()
 
-		r.specNodeStatefulset(&sts, node, args, img)
+		r.specNodeStatefulset(&sts, node, args, command, img)
 
 		return nil
 	})
@@ -87,7 +88,7 @@ func (r *NodeReconciler) reconcileNodeStatefulset(node *ethereum2v1alpha1.Node) 
 }
 
 // specNodeConfigmap updates node statefulset spec
-func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethereum2v1alpha1.Node, args []string, img string) {
+func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethereum2v1alpha1.Node, args, command []string, img string) {
 
 	sts.Labels = node.GetLabels()
 
@@ -102,9 +103,10 @@ func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethe
 			Spec: v1.PodSpec{
 				Containers: []v1.Container{
 					{
-						Name:  "node",
-						Args:  args,
-						Image: img,
+						Name:    "node",
+						Command: command,
+						Args:    args,
+						Image:   img,
 					},
 				},
 			},
