@@ -22,6 +22,8 @@ func NewEthereum2Client(name ethereum2v1alpha1.Ethereum2Client) (Ethereum2Client
 		return &PrysmClient{}, nil
 	case ethereum2v1alpha1.LighthouseClient:
 		return &LighthouseClient{}, nil
+	case ethereum2v1alpha1.NimbusClient:
+		return &NimbusClient{}, nil
 	default:
 		return nil, fmt.Errorf("Client %s is not supported", name)
 	}

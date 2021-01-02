@@ -16,7 +16,7 @@ const (
 	PrysmAcceptTermsOfUse = "--accept-terms-of-use"
 )
 
-// Prysm client arguments
+// Lighthouse client arguments
 const (
 	// LighthouseNetwork is the argument used for selecting network
 	LighthouseNetwork = "--network"
@@ -24,4 +24,13 @@ const (
 	LighthouseEth1 = "--eth1"
 	// LighthouseEth1Endpoints is the argument used for Ethereum 1 JSON RPC endpoints
 	LighthouseEth1Endpoints = "--eth1-endpoints"
+)
+
+const (
+	// NimbusNonInteractive is the argument used for non interactive mode
+	NimbusNonInteractive = "--non-interactive"
+	// NimbusNetwork is the argument used for selecting network
+	NimbusNetwork = "--network"
+	// NimbusEth1Endpoint is the argument used for Ethereum 1 JSON RPC endpoint
+	NimbusEth1Endpoint = "--web3-url"
 )
