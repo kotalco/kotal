@@ -21,12 +21,6 @@ const (
 // Args returns command line arguments required for client
 func (t *NimbusClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 
-	// nimbus accepts arguments in the form of --arg=val
-	// --arg val is not recoginized by nimbus
-	argWithVal := func(arg, val string) string {
-		return fmt.Sprintf("%s=%s", arg, val)
-	}
-
 	args = append(args, NimbusNonInteractive)
 
 	args = append(args, argWithVal(NimbusDataDir, PathBlockchainData))
@@ -52,4 +46,10 @@ func (t *NimbusClient) Image() string {
 		return DefaultNimbusImage
 	}
 	return os.Getenv(EnvNimbusImage)
+}
+
+// nimbus accepts arguments in the form of --arg=val
+// --arg val is not recoginized by nimbus
+func argWithVal(arg, val string) string {
+	return fmt.Sprintf("%s=%s", arg, val)
 }
