@@ -19,6 +19,8 @@ const (
 // Args returns command line arguments required for client
 func (t *TekuClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 
+	args = append(args, TekuDataPath, PathBlockchainData)
+
 	args = append(args, TekuNetwork, node.Spec.Join)
 
 	if node.Spec.Eth1Endpoint != "" {

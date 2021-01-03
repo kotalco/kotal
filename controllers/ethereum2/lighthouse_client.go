@@ -20,6 +20,8 @@ const (
 // Args returns command line arguments required for client
 func (t *LighthouseClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 
+	args = append(args, LighthouseDataDir, PathBlockchainData)
+
 	args = append(args, LighthouseNetwork, node.Spec.Join)
 
 	if node.Spec.Eth1Endpoint != "" {

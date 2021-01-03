@@ -5,7 +5,8 @@ import (
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -36,6 +37,10 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	r.updateLabels(&node)
 
+	if err = r.reconcileNodeDataPVC(&node); err != nil {
+		return
+	}
+
 	if err = r.reconcileNodeStatefulset(&node); err != nil {
 		return
 	}
@@ -54,6 +59,53 @@ func (r *NodeReconciler) updateLabels(node *ethereum2v1alpha1.Node) {
 	node.Labels["name"] = "node"
 	node.Labels["protocol"] = "ethereum2"
 	node.Labels["instance"] = node.Name
+}
+
+func (r *NodeReconciler) reconcileNodeDataPVC(node *ethereum2v1alpha1.Node) error {
+	pvc := corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, &pvc, func() error {
+		if err := ctrl.SetControllerReference(node, &pvc, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specNodeDataPVC(&pvc, node)
+
+		return nil
+	})
+
+	return err
+}
+
+// specNodeDataPVC updates node data PVC spec
+func (r *NodeReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereum2v1alpha1.Node) {
+
+	request := corev1.ResourceList{
+		// TODO: update node spec with resources
+		corev1.ResourceStorage: resource.MustParse("100Gi"),
+	}
+
+	// spec is immutable after creation except resources.requests for bound claims
+	if !pvc.CreationTimestamp.IsZero() {
+		pvc.Spec.Resources.Requests = request
+		return
+	}
+
+	pvc.Labels = node.GetLabels()
+
+	pvc.Spec = corev1.PersistentVolumeClaimSpec{
+		AccessModes: []corev1.PersistentVolumeAccessMode{
+			corev1.ReadWriteOnce,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: request,
+		},
+	}
 }
 
 // reconcileNodeStatefulset reconcile Ethereum 2.0 node
@@ -87,7 +139,7 @@ func (r *NodeReconciler) reconcileNodeStatefulset(node *ethereum2v1alpha1.Node) 
 	return err
 }
 
-// specNodeConfigmap updates node statefulset spec
+// specNodeStatefulset updates node statefulset spec
 func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethereum2v1alpha1.Node, args, command []string, img string) {
 
 	sts.Labels = node.GetLabels()
@@ -96,17 +148,33 @@ func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethe
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.GetLabels(),
 		},
-		Template: v1.PodTemplateSpec{
+		Template: corev1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
 				Labels: node.GetLabels(),
 			},
-			Spec: v1.PodSpec{
-				Containers: []v1.Container{
+			Spec: corev1.PodSpec{
+				Containers: []corev1.Container{
 					{
 						Name:    "node",
 						Command: command,
 						Args:    args,
 						Image:   img,
+						VolumeMounts: []corev1.VolumeMount{
+							{
+								Name:      "data",
+								MountPath: PathBlockchainData,
+							},
+						},
+					},
+				},
+				Volumes: []corev1.Volume{
+					{
+						Name: "data",
+						VolumeSource: corev1.VolumeSource{
+							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+								ClaimName: node.Name,
+							},
+						},
 					},
 				},
 			},

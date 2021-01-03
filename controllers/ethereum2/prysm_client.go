@@ -24,6 +24,8 @@ func (t *PrysmClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 
 	args = append(args, PrysmAcceptTermsOfUse)
 
+	args = append(args, PrysmDataDir, PathBlockchainData)
+
 	if node.Spec.Eth1Endpoint != "" {
 		args = append(args, PrysmWeb3Provider, node.Spec.Eth1Endpoint)
 	}
