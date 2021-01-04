@@ -27,6 +27,10 @@ func (t *TekuClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 		args = append(args, TekuEth1Endpoint, node.Spec.Eth1Endpoint)
 	}
 
+	if node.Spec.REST {
+		args = append(args, TekuRestEnabled)
+	}
+
 	return
 }
 

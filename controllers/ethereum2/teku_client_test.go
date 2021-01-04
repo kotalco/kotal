@@ -48,6 +48,26 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 				"https://localhost:8545",
 			},
 		},
+		{
+			title: "beacon node syncing mainnet with eth1 endpoint and http enabled",
+			node: &ethereum2v1alpha1.Node{
+				Spec: ethereum2v1alpha1.NodeSpec{
+					Client:       ethereum2v1alpha1.TekuClient,
+					Join:         "mainnet",
+					Eth1Endpoint: "https://localhost:8545",
+					REST:         true,
+				},
+			},
+			result: []string{
+				TekuDataPath,
+				PathBlockchainData,
+				TekuNetwork,
+				"mainnet",
+				TekuEth1Endpoint,
+				"https://localhost:8545",
+				TekuRestEnabled,
+			},
+		},
 	}
 
 	for _, c := range cases {

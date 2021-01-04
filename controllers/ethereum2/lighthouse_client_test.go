@@ -48,6 +48,26 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 				"https://localhost:8545",
 			},
 		},
+		{
+			title: "beacon node syncing mainnet with eth1 endpoint and http enabled",
+			node: &ethereum2v1alpha1.Node{
+				Spec: ethereum2v1alpha1.NodeSpec{
+					Client:       ethereum2v1alpha1.LighthouseClient,
+					Join:         "mainnet",
+					Eth1Endpoint: "https://localhost:8545",
+					REST:         true,
+				},
+			},
+			result: []string{
+				LighthouseDataDir,
+				PathBlockchainData,
+				LighthouseNetwork,
+				"mainnet",
+				LighthouseEth1Endpoints,
+				"https://localhost:8545",
+				LighthouseHTTP,
+			},
+		},
 	}
 
 	for _, c := range cases {

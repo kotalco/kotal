@@ -29,6 +29,10 @@ func (t *LighthouseClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 		args = append(args, LighthouseEth1Endpoints, node.Spec.Eth1Endpoint)
 	}
 
+	if node.Spec.REST {
+		args = append(args, LighthouseHTTP)
+	}
+
 	return
 }
 

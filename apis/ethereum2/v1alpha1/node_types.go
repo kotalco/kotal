@@ -12,6 +12,8 @@ type NodeSpec struct {
 	Client Ethereum2Client `json:"client,omitempty"`
 	// Eth1Endpoint is Ethereum 1 endpoint
 	Eth1Endpoint string `json:"eth1Endpoint,omitempty"`
+	// REST enables Beacon REST API
+	REST bool `json:"rest,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
