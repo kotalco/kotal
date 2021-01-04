@@ -60,7 +60,29 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 		OldNode *Node
 		NewNode *Node
 		Errors  field.ErrorList
-	}{}
+	}{
+		{
+			Title: "Node #1",
+			OldNode: &Node{
+				Spec: NodeSpec{
+					Join: "mainnet",
+				},
+			},
+			NewNode: &Node{
+				Spec: NodeSpec{
+					Join: "pyrmont",
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.join",
+					BadValue: "pyrmont",
+					Detail:   "field is immutable",
+				},
+			},
+		},
+	}
 
 	Context("While creating network", func() {
 		for _, c := range createCases {

@@ -47,10 +47,17 @@ func (r *Node) ValidateCreate() error {
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
 func (r *Node) ValidateUpdate(old runtime.Object) error {
 	var allErrors field.ErrorList
+	oldNode := old.(*Node)
+	path := field.NewPath("spec")
 
 	nodelog.Info("validate update", "name", r.Name)
 
 	allErrors = append(allErrors, r.Validate()...)
+
+	if oldNode.Spec.Join != r.Spec.Join {
+		err := field.Invalid(path.Child("join"), r.Spec.Join, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
 
 	if len(allErrors) == 0 {
 		return nil
