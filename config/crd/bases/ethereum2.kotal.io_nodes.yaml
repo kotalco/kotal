@@ -49,6 +49,9 @@ spec:
             join:
               description: Join is the network to join
               type: string
+            rest:
+              description: REST enables Beacon REST API
+              type: boolean
           required:
           - join
           type: object
