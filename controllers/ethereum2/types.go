@@ -15,6 +15,8 @@ const (
 	TekuDataPath = "--data-path"
 	// TekuRestEnabled is the argument used to enable Beacon REST API
 	TekuRestEnabled = "--rest-api-enabled"
+	// TekuRestPort is the argument used for Beacon REST API server port
+	TekuRestPort = "--rest-api-port"
 )
 
 // Prysm client arguments
@@ -37,6 +39,8 @@ const (
 	LighthouseEth1 = "--eth1"
 	// LighthouseHTTP is the argument used to enable Beacon REST API
 	LighthouseHTTP = "--http"
+	// LighthouseHTTPPort is the argument used for Beacon REST API server port
+	LighthouseHTTPPort = "--http-port"
 	// LighthouseEth1Endpoints is the argument used for Ethereum 1 JSON RPC endpoints
 	LighthouseEth1Endpoints = "--eth1-endpoints"
 )

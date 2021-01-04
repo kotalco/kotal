@@ -52,6 +52,9 @@ spec:
             rest:
               description: REST enables Beacon REST API
               type: boolean
+            restPort:
+              description: RESTPort is Beacon REST API server port
+              type: integer
           required:
           - join
           type: object

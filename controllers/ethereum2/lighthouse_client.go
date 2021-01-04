@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"os"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
@@ -31,6 +32,10 @@ func (t *LighthouseClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 
 	if node.Spec.REST {
 		args = append(args, LighthouseHTTP)
+	}
+
+	if node.Spec.RESTPort != 0 {
+		args = append(args, LighthouseHTTPPort, fmt.Sprintf("%d", node.Spec.RESTPort))
 	}
 
 	return

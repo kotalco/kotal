@@ -14,6 +14,8 @@ type NodeSpec struct {
 	Eth1Endpoint string `json:"eth1Endpoint,omitempty"`
 	// REST enables Beacon REST API
 	REST bool `json:"rest,omitempty"`
+	// RESTPort is Beacon REST API server port
+	RESTPort uint `json:"restPort,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
