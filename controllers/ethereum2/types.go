@@ -29,6 +29,8 @@ const (
 	PrysmAcceptTermsOfUse = "--accept-terms-of-use"
 	// PrysmRPCPort is the argument used for RPC server port
 	PrysmRPCPort = "--rpc-port"
+	// PrysmDisableGRPC is the argument used to disable GRPC gateway server
+	PrysmDisableGRPC = "--disable-grpc-gateway"
 )
 
 // Lighthouse client arguments
