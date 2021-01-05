@@ -26,4 +26,10 @@ func (r *Node) Default() {
 		}
 	}
 
+	if r.Spec.GRPC {
+		if r.Spec.GRPCPort == 0 {
+			r.Spec.GRPCPort = DefaultGRPCPort
+		}
+	}
+
 }

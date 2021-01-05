@@ -7,4 +7,6 @@ const (
 	DefaultRestPort uint = 5051
 	// DefaultRPCPort is the default RPC server port
 	DefaultRPCPort uint = 4000
+	// DefaultGRPCPort is the default GRPC gateway server port
+	DefaultGRPCPort uint = 3500
 )

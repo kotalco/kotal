@@ -41,4 +41,16 @@ var _ = Describe("Ethereum 2.0 node defaulting", func() {
 		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))
 	})
 
+	It("Should default node with missing grpc port", func() {
+		node := Node{
+			Spec: NodeSpec{
+				Client: PrysmClient,
+				Join:   "mainnet",
+				GRPC:   true,
+			},
+		}
+		node.Default()
+		Expect(node.Spec.GRPCPort).To(Equal(DefaultGRPCPort))
+	})
+
 })
