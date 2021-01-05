@@ -20,4 +20,10 @@ func (r *Node) Default() {
 		}
 	}
 
+	if r.Spec.RPC {
+		if r.Spec.RPCPort == 0 {
+			r.Spec.RPCPort = DefaultRPCPort
+		}
+	}
+
 }
