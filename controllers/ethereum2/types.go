@@ -27,6 +27,8 @@ const (
 	PrysmWeb3Provider = "--http-web3provider"
 	// PrysmAcceptTermsOfUse is the argument used for accepting terms of use
 	PrysmAcceptTermsOfUse = "--accept-terms-of-use"
+	// PrysmRPCPort is the argument used for RPC server port
+	PrysmRPCPort = "--rpc-port"
 )
 
 // Lighthouse client arguments
@@ -56,4 +58,6 @@ const (
 	NimbusEth1Endpoint = "--web3-url"
 	// NimbusRPC is the argument used to enable RPC server
 	NimbusRPC = "--rpc"
+	// NimbusRPCPort is the argument used for RPC server port
+	NimbusRPCPort = "--rpc-port"
 )

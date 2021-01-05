@@ -18,6 +18,8 @@ type NodeSpec struct {
 	RESTPort uint `json:"restPort,omitempty"`
 	// RPC enables RPC server
 	RPC bool `json:"rpc,omitempty"`
+	// RPCPort is RPC server port
+	RPCPort uint `json:"rpcPort,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node

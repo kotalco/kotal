@@ -21,6 +21,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 				Spec: ethereum2v1alpha1.NodeSpec{
 					Client: ethereum2v1alpha1.PrysmClient,
 					Join:   "mainnet",
+					RPC:    true,
 				},
 			},
 			result: []string{
@@ -37,6 +38,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 					Client:       ethereum2v1alpha1.PrysmClient,
 					Join:         "mainnet",
 					Eth1Endpoint: "https://localhost:8545",
+					RPC:          true,
 				},
 			},
 			result: []string{
@@ -46,6 +48,28 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
+			},
+		},
+		{
+			title: "beacon node syncing mainnet with eth1 endpoint and rpc port",
+			node: &ethereum2v1alpha1.Node{
+				Spec: ethereum2v1alpha1.NodeSpec{
+					Client:       ethereum2v1alpha1.PrysmClient,
+					Join:         "mainnet",
+					Eth1Endpoint: "https://localhost:8545",
+					RPC:          true,
+					RPCPort:      9976,
+				},
+			},
+			result: []string{
+				PrysmAcceptTermsOfUse,
+				PrysmDataDir,
+				PathBlockchainData,
+				"--mainnet",
+				PrysmWeb3Provider,
+				"https://localhost:8545",
+				PrysmRPCPort,
+				"9976",
 			},
 		},
 	}

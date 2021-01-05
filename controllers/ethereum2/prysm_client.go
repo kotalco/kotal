@@ -32,6 +32,10 @@ func (t *PrysmClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 
 	args = append(args, fmt.Sprintf("--%s", node.Spec.Join))
 
+	if node.Spec.RPCPort != 0 {
+		args = append(args, PrysmRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort))
+	}
+
 	return
 }
 

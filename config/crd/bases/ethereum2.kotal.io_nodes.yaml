@@ -55,6 +55,12 @@ spec:
             restPort:
               description: RESTPort is Beacon REST API server port
               type: integer
+            rpc:
+              description: RPC enables RPC server
+              type: boolean
+            rpcPort:
+              description: RPCPort is RPC server port
+              type: integer
           required:
           - join
           type: object
