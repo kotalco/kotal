@@ -53,6 +53,59 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Node #3",
+			Node: &Node{
+				Spec: NodeSpec{
+					Join:   "mainnet",
+					Client: TekuClient,
+					RPC:    true,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.rpc",
+					BadValue: true,
+					Detail:   "not supported by teku client",
+				},
+			},
+		},
+		{
+			Title: "Node #4",
+			Node: &Node{
+				Spec: NodeSpec{
+					Join:   "mainnet",
+					Client: LighthouseClient,
+					RPC:    true,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.rpc",
+					BadValue: true,
+					Detail:   "not supported by lighthouse client",
+				},
+			},
+		},
+		{
+			Title: "Node #5",
+			Node: &Node{
+				Spec: NodeSpec{
+					Join:   "mainnet",
+					Client: PrysmClient,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.rpc",
+					BadValue: false,
+					Detail:   "can't be disabled in prysm client",
+				},
+			},
+		},
 	}
 
 	updateCases := []struct {

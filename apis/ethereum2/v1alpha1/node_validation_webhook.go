@@ -20,8 +20,21 @@ func (r *Node) Validate() field.ErrorList {
 
 	path := field.NewPath("spec")
 
+	// rest is supported by teku and lighthouse only
 	if r.Spec.REST && r.Spec.Client != TekuClient && r.Spec.Client != LighthouseClient {
 		err := field.Invalid(path.Child("rest"), r.Spec.REST, fmt.Sprintf("not supported by %s client", r.Spec.Client))
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	// rpc is supported by nimbus and prysm only
+	if r.Spec.RPC && r.Spec.Client != NimbusClient && r.Spec.Client != PrysmClient {
+		err := field.Invalid(path.Child("rpc"), r.Spec.RPC, fmt.Sprintf("not supported by %s client", r.Spec.Client))
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	// rpc is always on in prysm
+	if r.Spec.Client == PrysmClient && r.Spec.RPC == false {
+		err := field.Invalid(path.Child("rpc"), r.Spec.RPC, "can't be disabled in prysm client")
 		nodeErrors = append(nodeErrors, err)
 	}
 
