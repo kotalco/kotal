@@ -36,7 +36,11 @@ func (t *PrysmClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 		args = append(args, PrysmRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort))
 	}
 
-	if node.Spec.GRPC == false {
+	if node.Spec.GRPC {
+		if node.Spec.GRPCPort != 0 {
+			args = append(args, PrysmGRPCPort, fmt.Sprintf("%d", node.Spec.GRPCPort))
+		}
+	} else {
 		args = append(args, PrysmDisableGRPC)
 	}
 

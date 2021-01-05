@@ -91,6 +91,28 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 				PrysmDisableGRPC,
 			},
 		},
+		{
+			title: "beacon node syncing mainnet with eth1 endpoint and grpc",
+			node: &ethereum2v1alpha1.Node{
+				Spec: ethereum2v1alpha1.NodeSpec{
+					Client:       ethereum2v1alpha1.PrysmClient,
+					Join:         "mainnet",
+					Eth1Endpoint: "https://localhost:8545",
+					GRPC:         true,
+					GRPCPort:     4445,
+				},
+			},
+			result: []string{
+				PrysmAcceptTermsOfUse,
+				PrysmDataDir,
+				PathBlockchainData,
+				"--mainnet",
+				PrysmWeb3Provider,
+				"https://localhost:8545",
+				PrysmGRPCPort,
+				"4445",
+			},
+		},
 	}
 
 	for _, c := range cases {

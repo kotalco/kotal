@@ -31,6 +31,8 @@ const (
 	PrysmRPCPort = "--rpc-port"
 	// PrysmDisableGRPC is the argument used to disable GRPC gateway server
 	PrysmDisableGRPC = "--disable-grpc-gateway"
+	// PrysmGRPCPort is the argument used for GRPC gateway server port
+	PrysmGRPCPort = "--grpc-gateway-port"
 )
 
 // Lighthouse client arguments
