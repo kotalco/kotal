@@ -106,6 +106,24 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Node #6",
+			Node: &Node{
+				Spec: NodeSpec{
+					Join:   "mainnet",
+					Client: TekuClient,
+					GRPC:   true,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.grpc",
+					BadValue: true,
+					Detail:   "not supported by teku client",
+				},
+			},
+		},
 	}
 
 	updateCases := []struct {
