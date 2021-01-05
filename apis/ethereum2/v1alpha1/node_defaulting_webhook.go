@@ -14,4 +14,10 @@ func (r *Node) Default() {
 		r.Spec.Client = DefaultClient
 	}
 
+	if r.Spec.REST {
+		if r.Spec.RESTPort == 0 {
+			r.Spec.RESTPort = DefaultRestPort
+		}
+	}
+
 }
