@@ -54,4 +54,6 @@ const (
 	NimbusNetwork = "--network"
 	// NimbusEth1Endpoint is the argument used for Ethereum 1 JSON RPC endpoint
 	NimbusEth1Endpoint = "--web3-url"
+	// NimbusRPC is the argument used to enable RPC server
+	NimbusRPC = "--rpc"
 )

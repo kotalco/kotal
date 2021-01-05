@@ -16,6 +16,8 @@ type NodeSpec struct {
 	REST bool `json:"rest,omitempty"`
 	// RESTPort is Beacon REST API server port
 	RESTPort uint `json:"restPort,omitempty"`
+	// RPC enables RPC server
+	RPC bool `json:"rpc,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
