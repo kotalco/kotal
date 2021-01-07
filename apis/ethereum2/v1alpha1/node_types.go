@@ -24,6 +24,8 @@ type NodeSpec struct {
 	GRPC bool `json:"grpc,omitempty"`
 	// GRPCPort is GRPC gateway server port
 	GRPCPort uint `json:"grpcPort,omitempty"`
+	// RPCHost is host on which RPC server should listen
+	RPCHost string `json:"rpcHost,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node

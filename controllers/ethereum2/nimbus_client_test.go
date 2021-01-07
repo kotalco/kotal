@@ -83,6 +83,28 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 				argWithVal(NimbusRPCPort, fmt.Sprintf("%d", 30303)),
 			},
 		},
+		{
+			title: "beacon node syncing mainnet with eth1 endpoint and rpc with rpc port and host",
+			node: &ethereum2v1alpha1.Node{
+				Spec: ethereum2v1alpha1.NodeSpec{
+					Client:       ethereum2v1alpha1.NimbusClient,
+					Join:         "mainnet",
+					Eth1Endpoint: "https://localhost:8545",
+					RPC:          true,
+					RPCPort:      30303,
+					RPCHost:      "0.0.0.0",
+				},
+			},
+			result: []string{
+				NimbusNonInteractive,
+				argWithVal(NimbusDataDir, PathBlockchainData),
+				argWithVal(NimbusNetwork, "mainnet"),
+				argWithVal(NimbusEth1Endpoint, "https://localhost:8545"),
+				NimbusRPC,
+				argWithVal(NimbusRPCPort, fmt.Sprintf("%d", 30303)),
+				argWithVal(NimbusRPCAddress, "0.0.0.0"),
+			},
+		},
 	}
 
 	for _, c := range cases {

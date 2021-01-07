@@ -36,6 +36,9 @@ func (t *NimbusClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 		if node.Spec.RPCPort != 0 {
 			args = append(args, argWithVal(NimbusRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort)))
 		}
+		if node.Spec.RPCHost != "" {
+			args = append(args, argWithVal(NimbusRPCAddress, node.Spec.RPCHost))
+		}
 	}
 
 	return

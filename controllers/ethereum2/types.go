@@ -29,6 +29,8 @@ const (
 	PrysmAcceptTermsOfUse = "--accept-terms-of-use"
 	// PrysmRPCPort is the argument used for RPC server port
 	PrysmRPCPort = "--rpc-port"
+	// PrysmRPCHost is the argument used for host on which RPC server should listen
+	PrysmRPCHost = "--rpc-host"
 	// PrysmDisableGRPC is the argument used to disable GRPC gateway server
 	PrysmDisableGRPC = "--disable-grpc-gateway"
 	// PrysmGRPCPort is the argument used for GRPC gateway server port
@@ -64,4 +66,6 @@ const (
 	NimbusRPC = "--rpc"
 	// NimbusRPCPort is the argument used for RPC server port
 	NimbusRPCPort = "--rpc-port"
+	// NimbusRPCAddress is the argument used for host on which RPC server should listen
+	NimbusRPCAddress = "--rpc-address"
 )
