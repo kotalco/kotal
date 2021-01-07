@@ -24,6 +24,9 @@ func (r *Node) Default() {
 		if r.Spec.RPCPort == 0 {
 			r.Spec.RPCPort = DefaultRPCPort
 		}
+		if r.Spec.RPCHost == "" {
+			r.Spec.RPCHost = DefaultRPCHost
+		}
 	}
 
 	if r.Spec.GRPC {
