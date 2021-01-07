@@ -11,4 +11,6 @@ const (
 	DefaultGRPCPort uint = 3500
 	// DefaultRPCHost is the default host on which RPC server should listen
 	DefaultRPCHost = "0.0.0.0"
+	// DefaultGRPCHost is the default host on which GRPC gateway server should listen
+	DefaultGRPCHost = "0.0.0.0"
 )
