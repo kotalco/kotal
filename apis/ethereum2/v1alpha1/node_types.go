@@ -12,24 +12,27 @@ type NodeSpec struct {
 	Client Ethereum2Client `json:"client,omitempty"`
 	// Eth1Endpoint is Ethereum 1 endpoint
 	Eth1Endpoint string `json:"eth1Endpoint,omitempty"`
+
 	// REST enables Beacon REST API
 	REST bool `json:"rest,omitempty"`
-	// RESTPort is Beacon REST API server port
-	RESTPort uint `json:"restPort,omitempty"`
 	// RESTHost is Beacon REST API server host
 	RESTHost string `json:"restHost,omitempty"`
+	// RESTPort is Beacon REST API server port
+	RESTPort uint `json:"restPort,omitempty"`
+
 	// RPC enables RPC server
 	RPC bool `json:"rpc,omitempty"`
-	// RPCPort is RPC server port
-	RPCPort uint `json:"rpcPort,omitempty"`
-	// GRPC enables GRPC gateway server
-	GRPC bool `json:"grpc,omitempty"`
-	// GRPCPort is GRPC gateway server port
-	GRPCPort uint `json:"grpcPort,omitempty"`
 	// RPCHost is host on which RPC server should listen
 	RPCHost string `json:"rpcHost,omitempty"`
+	// RPCPort is RPC server port
+	RPCPort uint `json:"rpcPort,omitempty"`
+
+	// GRPC enables GRPC gateway server
+	GRPC bool `json:"grpc,omitempty"`
 	// GRPCHost is GRPC gateway server host
 	GRPCHost string `json:"grpcHost,omitempty"`
+	// GRPCPort is GRPC gateway server port
+	GRPCPort uint `json:"grpcPort,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
