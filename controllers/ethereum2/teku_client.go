@@ -30,10 +30,13 @@ func (t *TekuClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 
 	if node.Spec.REST {
 		args = append(args, TekuRestEnabled)
-	}
 
-	if node.Spec.RESTPort != 0 {
-		args = append(args, TekuRestPort, fmt.Sprintf("%d", node.Spec.RESTPort))
+		if node.Spec.RESTPort != 0 {
+			args = append(args, TekuRestPort, fmt.Sprintf("%d", node.Spec.RESTPort))
+		}
+		if node.Spec.RESTHost != "" {
+			args = append(args, TekuRestHost, node.Spec.RESTHost)
+		}
 	}
 
 	return

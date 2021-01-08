@@ -17,6 +17,8 @@ const (
 	TekuRestEnabled = "--rest-api-enabled"
 	// TekuRestPort is the argument used for Beacon REST API server port
 	TekuRestPort = "--rest-api-port"
+	// TekuRestHost is the argument used for Beacon REST API server host
+	TekuRestHost = "--rest-api-interface"
 )
 
 // Prysm client arguments
@@ -51,6 +53,8 @@ const (
 	LighthouseHTTP = "--http"
 	// LighthouseHTTPPort is the argument used for Beacon REST API server port
 	LighthouseHTTPPort = "--http-port"
+	// LighthouseHTTPAddress is the argument used for Beacon REST API server host
+	LighthouseHTTPAddress = "--http-address"
 	// LighthouseEth1Endpoints is the argument used for Ethereum 1 JSON RPC endpoints
 	LighthouseEth1Endpoints = "--eth1-endpoints"
 )

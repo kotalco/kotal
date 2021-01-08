@@ -69,7 +69,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 		},
 		{
-			title: "beacon node syncing mainnet with eth1 endpoint and http enabled and http port",
+			title: "beacon node syncing mainnet with eth1 endpoint and http enabled with port",
 			node: &ethereum2v1alpha1.Node{
 				Spec: ethereum2v1alpha1.NodeSpec{
 					Client:       ethereum2v1alpha1.TekuClient,
@@ -89,6 +89,32 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 				TekuRestEnabled,
 				TekuRestPort,
 				"3333",
+			},
+		},
+		{
+			title: "beacon node syncing mainnet with eth1 endpoint and http enabled with port and host",
+			node: &ethereum2v1alpha1.Node{
+				Spec: ethereum2v1alpha1.NodeSpec{
+					Client:       ethereum2v1alpha1.TekuClient,
+					Join:         "mainnet",
+					Eth1Endpoint: "https://localhost:8545",
+					REST:         true,
+					RESTPort:     3333,
+					RESTHost:     "0.0.0.0",
+				},
+			},
+			result: []string{
+				TekuDataPath,
+				PathBlockchainData,
+				TekuNetwork,
+				"mainnet",
+				TekuEth1Endpoint,
+				"https://localhost:8545",
+				TekuRestEnabled,
+				TekuRestPort,
+				"3333",
+				TekuRestHost,
+				"0.0.0.0",
 			},
 		},
 	}
