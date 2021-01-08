@@ -17,7 +17,7 @@ var _ = Describe("Ethereum 2.0 node defaulting", func() {
 		Expect(node.Spec.Client).To(Equal(DefaultClient))
 	})
 
-	It("Should default node with missing client and rest port", func() {
+	It("Should default node with missing client and rest port/host", func() {
 		node := Node{
 			Spec: NodeSpec{
 				Join: "mainnet",
@@ -27,6 +27,7 @@ var _ = Describe("Ethereum 2.0 node defaulting", func() {
 		node.Default()
 		Expect(node.Spec.Client).To(Equal(DefaultClient))
 		Expect(node.Spec.RESTPort).To(Equal(DefaultRestPort))
+		Expect(node.Spec.RESTHost).To(Equal(DefaultRestHost))
 	})
 
 	It("Should default node with missing rpc port and host", func() {

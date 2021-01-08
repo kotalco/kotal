@@ -18,6 +18,9 @@ func (r *Node) Default() {
 		if r.Spec.RESTPort == 0 {
 			r.Spec.RESTPort = DefaultRestPort
 		}
+		if r.Spec.RESTHost == "" {
+			r.Spec.RESTHost = DefaultRestHost
+		}
 	}
 
 	if r.Spec.RPC {

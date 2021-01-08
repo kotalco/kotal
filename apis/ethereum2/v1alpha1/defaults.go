@@ -13,4 +13,6 @@ const (
 	DefaultRPCHost = "0.0.0.0"
 	// DefaultGRPCHost is the default host on which GRPC gateway server should listen
 	DefaultGRPCHost = "0.0.0.0"
+	// DefaultRestHost is the default Beacon REST api host
+	DefaultRestHost = "0.0.0.0"
 )
