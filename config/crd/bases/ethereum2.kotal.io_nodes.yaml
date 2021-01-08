@@ -46,18 +46,33 @@ spec:
             eth1Endpoint:
               description: Eth1Endpoint is Ethereum 1 endpoint
               type: string
+            grpc:
+              description: GRPC enables GRPC gateway server
+              type: boolean
+            grpcHost:
+              description: GRPCHost is GRPC gateway server host
+              type: string
+            grpcPort:
+              description: GRPCPort is GRPC gateway server port
+              type: integer
             join:
               description: Join is the network to join
               type: string
             rest:
               description: REST enables Beacon REST API
               type: boolean
+            restHost:
+              description: RESTHost is Beacon REST API server host
+              type: string
             restPort:
               description: RESTPort is Beacon REST API server port
               type: integer
             rpc:
               description: RPC enables RPC server
               type: boolean
+            rpcHost:
+              description: RPCHost is host on which RPC server should listen
+              type: string
             rpcPort:
               description: RPCPort is RPC server port
               type: integer

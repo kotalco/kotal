@@ -124,6 +124,24 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Node #7",
+			Node: &Node{
+				Spec: NodeSpec{
+					Join:   "mainnet",
+					Client: PrysmClient,
+					RPC:    true,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.eth1Endpoint",
+					BadValue: "",
+					Detail:   "required by prysm client",
+				},
+			},
+		},
 	}
 
 	updateCases := []struct {

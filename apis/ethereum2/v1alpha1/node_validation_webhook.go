@@ -44,6 +44,12 @@ func (r *Node) Validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	// eth1 endpoint is required by prysm
+	if r.Spec.Client == PrysmClient && r.Spec.Eth1Endpoint == "" {
+		err := field.Invalid(path.Child("eth1Endpoint"), r.Spec.Eth1Endpoint, fmt.Sprintf("required by %s client", r.Spec.Client))
+		nodeErrors = append(nodeErrors, err)
+	}
+
 	return nodeErrors
 }
 
