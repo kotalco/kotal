@@ -2,6 +2,7 @@ package v1alpha1
 
 import (
 	"fmt"
+	"strings"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	runtime "k8s.io/apimachinery/pkg/runtime"
@@ -47,6 +48,12 @@ func (r *Node) Validate() field.ErrorList {
 	// eth1 endpoint is required by prysm
 	if r.Spec.Client == PrysmClient && len(r.Spec.Eth1Endpoints) == 0 {
 		err := field.Invalid(path.Child("eth1Endpoints"), "", fmt.Sprintf("required by %s client", r.Spec.Client))
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	// teku and nimbus doesn't support multiple Ethereum 1 endpoints
+	if len(r.Spec.Eth1Endpoints) > 1 && (r.Spec.Client == TekuClient || r.Spec.Client == NimbusClient) {
+		err := field.Invalid(path.Child("eth1Endpoints"), strings.Join(r.Spec.Eth1Endpoints, ", "), fmt.Sprintf("multiple Ethereum 1 endpoints not supported by %s client", r.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
 	}
 

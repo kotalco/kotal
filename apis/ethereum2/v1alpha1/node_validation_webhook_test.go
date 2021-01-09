@@ -142,6 +142,48 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Node #8",
+			Node: &Node{
+				Spec: NodeSpec{
+					Join:   "mainnet",
+					Client: TekuClient,
+					Eth1Endpoints: []string{
+						"http://localhost:8545",
+						"http://localhost:8546",
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.eth1Endpoints",
+					BadValue: "http://localhost:8545, http://localhost:8546",
+					Detail:   "multiple Ethereum 1 endpoints not supported by teku client",
+				},
+			},
+		},
+		{
+			Title: "Node #9",
+			Node: &Node{
+				Spec: NodeSpec{
+					Join:   "mainnet",
+					Client: NimbusClient,
+					Eth1Endpoints: []string{
+						"http://localhost:8545",
+						"http://localhost:8546",
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.eth1Endpoints",
+					BadValue: "http://localhost:8545, http://localhost:8546",
+					Detail:   "multiple Ethereum 1 endpoints not supported by nimbus client",
+				},
+			},
+		},
 	}
 
 	updateCases := []struct {
