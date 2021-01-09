@@ -27,8 +27,8 @@ func (t *NimbusClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 
 	args = append(args, argWithVal(NimbusNetwork, node.Spec.Join))
 
-	if node.Spec.Eth1Endpoint != "" {
-		args = append(args, argWithVal(NimbusEth1Endpoint, node.Spec.Eth1Endpoint))
+	if len(node.Spec.Eth1Endpoints) != 0 {
+		args = append(args, argWithVal(NimbusEth1Endpoint, node.Spec.Eth1Endpoints[0]))
 	}
 
 	if node.Spec.RPC {

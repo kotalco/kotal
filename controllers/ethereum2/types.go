@@ -27,6 +27,8 @@ const (
 	PrysmDataDir = "--datadir"
 	// PrysmWeb3Provider is the argument used for Ethereum 1 JSON RPC endpoint
 	PrysmWeb3Provider = "--http-web3provider"
+	// PrysmFallbackWeb3Provider is the argument used for fallback Ethereum 1 JSON RPC endpoints
+	PrysmFallbackWeb3Provider = "--fallback-web3provider"
 	// PrysmAcceptTermsOfUse is the argument used for accepting terms of use
 	PrysmAcceptTermsOfUse = "--accept-terms-of-use"
 	// PrysmRPCPort is the argument used for RPC server port

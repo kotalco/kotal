@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 )
@@ -25,9 +26,9 @@ func (t *LighthouseClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 
 	args = append(args, LighthouseNetwork, node.Spec.Join)
 
-	if node.Spec.Eth1Endpoint != "" {
+	if len(node.Spec.Eth1Endpoints) != 0 {
 		args = append(args, LighthouseEth1)
-		args = append(args, LighthouseEth1Endpoints, node.Spec.Eth1Endpoint)
+		args = append(args, LighthouseEth1Endpoints, strings.Join(node.Spec.Eth1Endpoints, ","))
 	}
 
 	if node.Spec.REST {

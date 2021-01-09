@@ -136,7 +136,7 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.eth1Endpoint",
+					Field:    "spec.eth1Endpoints",
 					BadValue: "",
 					Detail:   "required by prysm client",
 				},

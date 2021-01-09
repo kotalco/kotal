@@ -35,10 +35,10 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint",
 			node: &ethereum2v1alpha1.Node{
 				Spec: ethereum2v1alpha1.NodeSpec{
-					Client:       ethereum2v1alpha1.PrysmClient,
-					Join:         "mainnet",
-					Eth1Endpoint: "https://localhost:8545",
-					RPC:          true,
+					Client:        ethereum2v1alpha1.PrysmClient,
+					Join:          "mainnet",
+					Eth1Endpoints: []string{"https://localhost:8545"},
+					RPC:           true,
 				},
 			},
 			result: []string{
@@ -54,11 +54,11 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint and rpc port",
 			node: &ethereum2v1alpha1.Node{
 				Spec: ethereum2v1alpha1.NodeSpec{
-					Client:       ethereum2v1alpha1.PrysmClient,
-					Join:         "mainnet",
-					Eth1Endpoint: "https://localhost:8545",
-					RPC:          true,
-					RPCPort:      9976,
+					Client:        ethereum2v1alpha1.PrysmClient,
+					Join:          "mainnet",
+					Eth1Endpoints: []string{"https://localhost:8545"},
+					RPC:           true,
+					RPCPort:       9976,
 				},
 			},
 			result: []string{
@@ -76,12 +76,12 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint and rpc port and host",
 			node: &ethereum2v1alpha1.Node{
 				Spec: ethereum2v1alpha1.NodeSpec{
-					Client:       ethereum2v1alpha1.PrysmClient,
-					Join:         "mainnet",
-					Eth1Endpoint: "https://localhost:8545",
-					RPC:          true,
-					RPCPort:      9976,
-					RPCHost:      "0.0.0.0",
+					Client:        ethereum2v1alpha1.PrysmClient,
+					Join:          "mainnet",
+					Eth1Endpoints: []string{"https://localhost:8545"},
+					RPC:           true,
+					RPCPort:       9976,
+					RPCHost:       "0.0.0.0",
 				},
 			},
 			result: []string{
@@ -101,9 +101,9 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint and grpc disabled",
 			node: &ethereum2v1alpha1.Node{
 				Spec: ethereum2v1alpha1.NodeSpec{
-					Client:       ethereum2v1alpha1.PrysmClient,
-					Join:         "mainnet",
-					Eth1Endpoint: "https://localhost:8545",
+					Client:        ethereum2v1alpha1.PrysmClient,
+					Join:          "mainnet",
+					Eth1Endpoints: []string{"https://localhost:8545"},
 				},
 			},
 			result: []string{
@@ -120,11 +120,15 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint and grpc with port",
 			node: &ethereum2v1alpha1.Node{
 				Spec: ethereum2v1alpha1.NodeSpec{
-					Client:       ethereum2v1alpha1.PrysmClient,
-					Join:         "mainnet",
-					Eth1Endpoint: "https://localhost:8545",
-					GRPC:         true,
-					GRPCPort:     4445,
+					Client: ethereum2v1alpha1.PrysmClient,
+					Join:   "mainnet",
+					Eth1Endpoints: []string{
+						"https://localhost:8545",
+						"https://localhost:8546",
+						"https://localhost:8547",
+					},
+					GRPC:     true,
+					GRPCPort: 4445,
 				},
 			},
 			result: []string{
@@ -134,6 +138,10 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
+				PrysmFallbackWeb3Provider,
+				"https://localhost:8546",
+				PrysmFallbackWeb3Provider,
+				"https://localhost:8547",
 				PrysmGRPCPort,
 				"4445",
 			},
@@ -142,12 +150,15 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint and grpc with port and host",
 			node: &ethereum2v1alpha1.Node{
 				Spec: ethereum2v1alpha1.NodeSpec{
-					Client:       ethereum2v1alpha1.PrysmClient,
-					Join:         "mainnet",
-					Eth1Endpoint: "https://localhost:8545",
-					GRPC:         true,
-					GRPCPort:     4445,
-					GRPCHost:     "0.0.0.0",
+					Client: ethereum2v1alpha1.PrysmClient,
+					Join:   "mainnet",
+					Eth1Endpoints: []string{
+						"https://localhost:8545",
+						"https://localhost:8546",
+					},
+					GRPC:     true,
+					GRPCPort: 4445,
+					GRPCHost: "0.0.0.0",
 				},
 			},
 			result: []string{
@@ -157,6 +168,8 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
+				PrysmFallbackWeb3Provider,
+				"https://localhost:8546",
 				PrysmGRPCPort,
 				"4445",
 				PrysmGRPCHost,

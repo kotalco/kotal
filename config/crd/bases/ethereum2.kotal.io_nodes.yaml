@@ -43,9 +43,11 @@ spec:
               - lighthouse
               - nimbus
               type: string
-            eth1Endpoint:
-              description: Eth1Endpoint is Ethereum 1 endpoint
-              type: string
+            eth1Endpoints:
+              description: Eth1Endpoints is Ethereum 1 endpoints
+              items:
+                type: string
+              type: array
             grpc:
               description: GRPC enables GRPC gateway server
               type: boolean

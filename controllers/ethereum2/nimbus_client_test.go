@@ -33,9 +33,9 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint",
 			node: &ethereum2v1alpha1.Node{
 				Spec: ethereum2v1alpha1.NodeSpec{
-					Client:       ethereum2v1alpha1.NimbusClient,
-					Join:         "mainnet",
-					Eth1Endpoint: "https://localhost:8545",
+					Client:        ethereum2v1alpha1.NimbusClient,
+					Join:          "mainnet",
+					Eth1Endpoints: []string{"https://localhost:8545"},
 				},
 			},
 			result: []string{
@@ -49,10 +49,10 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint and rpc",
 			node: &ethereum2v1alpha1.Node{
 				Spec: ethereum2v1alpha1.NodeSpec{
-					Client:       ethereum2v1alpha1.NimbusClient,
-					Join:         "mainnet",
-					Eth1Endpoint: "https://localhost:8545",
-					RPC:          true,
+					Client:        ethereum2v1alpha1.NimbusClient,
+					Join:          "mainnet",
+					Eth1Endpoints: []string{"https://localhost:8545"},
+					RPC:           true,
 				},
 			},
 			result: []string{
@@ -67,11 +67,11 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint and rpc and rpc port",
 			node: &ethereum2v1alpha1.Node{
 				Spec: ethereum2v1alpha1.NodeSpec{
-					Client:       ethereum2v1alpha1.NimbusClient,
-					Join:         "mainnet",
-					Eth1Endpoint: "https://localhost:8545",
-					RPC:          true,
-					RPCPort:      30303,
+					Client:        ethereum2v1alpha1.NimbusClient,
+					Join:          "mainnet",
+					Eth1Endpoints: []string{"https://localhost:8545"},
+					RPC:           true,
+					RPCPort:       30303,
 				},
 			},
 			result: []string{
@@ -87,12 +87,12 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint and rpc with rpc port and host",
 			node: &ethereum2v1alpha1.Node{
 				Spec: ethereum2v1alpha1.NodeSpec{
-					Client:       ethereum2v1alpha1.NimbusClient,
-					Join:         "mainnet",
-					Eth1Endpoint: "https://localhost:8545",
-					RPC:          true,
-					RPCPort:      30303,
-					RPCHost:      "0.0.0.0",
+					Client:        ethereum2v1alpha1.NimbusClient,
+					Join:          "mainnet",
+					Eth1Endpoints: []string{"https://localhost:8545"},
+					RPC:           true,
+					RPCPort:       30303,
+					RPCHost:       "0.0.0.0",
 				},
 			},
 			result: []string{
