@@ -7,7 +7,7 @@ import (
 
 var _ = Describe("Ethereum 2.0 node defaulting", func() {
 
-	It("Should default node with missing client", func() {
+	It("Should default node with missing client and p2p port", func() {
 		node := Node{
 			Spec: NodeSpec{
 				Join: "mainnet",
@@ -15,6 +15,7 @@ var _ = Describe("Ethereum 2.0 node defaulting", func() {
 		}
 		node.Default()
 		Expect(node.Spec.Client).To(Equal(DefaultClient))
+		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
 	})
 
 	It("Should default node with missing client and rest port/host", func() {

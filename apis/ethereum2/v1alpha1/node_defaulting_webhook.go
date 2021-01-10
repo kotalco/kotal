@@ -14,6 +14,10 @@ func (r *Node) Default() {
 		r.Spec.Client = DefaultClient
 	}
 
+	if r.Spec.P2PPort == 0 {
+		r.Spec.P2PPort = DefaultP2PPort
+	}
+
 	if r.Spec.REST {
 		if r.Spec.RESTPort == 0 {
 			r.Spec.RESTPort = DefaultRestPort
