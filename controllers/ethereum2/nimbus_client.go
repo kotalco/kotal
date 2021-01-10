@@ -41,6 +41,11 @@ func (t *NimbusClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 		}
 	}
 
+	if node.Spec.P2PPort != 0 {
+		args = append(args, argWithVal(NimbusTCPPort, fmt.Sprintf("%d", node.Spec.P2PPort)))
+		args = append(args, argWithVal(NimbusUDPPort, fmt.Sprintf("%d", node.Spec.P2PPort)))
+	}
+
 	return
 }
 

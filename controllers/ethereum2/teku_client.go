@@ -39,6 +39,10 @@ func (t *TekuClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 		}
 	}
 
+	if node.Spec.P2PPort != 0 {
+		args = append(args, TekuP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
+	}
+
 	return
 }
 

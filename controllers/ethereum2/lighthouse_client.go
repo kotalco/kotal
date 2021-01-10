@@ -42,6 +42,11 @@ func (t *LighthouseClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 		}
 	}
 
+	if node.Spec.P2PPort != 0 {
+		args = append(args, LighthousePort, fmt.Sprintf("%d", node.Spec.P2PPort))
+		args = append(args, LighthouseDiscoveryPort, fmt.Sprintf("%d", node.Spec.P2PPort))
+	}
+
 	return
 }
 

@@ -19,6 +19,8 @@ const (
 	TekuRestPort = "--rest-api-port"
 	// TekuRestHost is the argument used for Beacon REST API server host
 	TekuRestHost = "--rest-api-interface"
+	// TekuP2PPort is the argument used p2p and discovery port
+	TekuP2PPort = "--p2p-port"
 )
 
 // Prysm client arguments
@@ -41,6 +43,10 @@ const (
 	PrysmGRPCPort = "--grpc-gateway-port"
 	// PrysmGRPCHost is the argument used for GRPC gateway server host
 	PrysmGRPCHost = "--grpc-gateway-host"
+	// PrysmP2PTCPPort is the argument used p2p tcp port
+	PrysmP2PTCPPort = "--p2p-tcp-port"
+	// PrysmP2PUDPPort is the argument used p2p discovery udp port
+	PrysmP2PUDPPort = "--p2p-udp-port"
 )
 
 // Lighthouse client arguments
@@ -59,8 +65,13 @@ const (
 	LighthouseHTTPAddress = "--http-address"
 	// LighthouseEth1Endpoints is the argument used for Ethereum 1 JSON RPC endpoints
 	LighthouseEth1Endpoints = "--eth1-endpoints"
+	// LighthousePort is the argument used for p2p tcp port
+	LighthousePort = "--port"
+	// LighthouseDiscoveryPort is the argument used for discovery udp port
+	LighthouseDiscoveryPort = "--discovery-port"
 )
 
+// Nimbus client arguments
 const (
 	// NimbusDataDir is the argument used for data directory
 	NimbusDataDir = "--data-dir"
@@ -76,4 +87,8 @@ const (
 	NimbusRPCPort = "--rpc-port"
 	// NimbusRPCAddress is the argument used for host on which RPC server should listen
 	NimbusRPCAddress = "--rpc-address"
+	// NimbusTCPPort is the argument used for p2p tcp port
+	NimbusTCPPort = "--tcp-port"
+	// NimbusUDPPort is the argument used for discovery udp port
+	NimbusUDPPort = "--udp-port"
 )

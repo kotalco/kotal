@@ -60,6 +60,9 @@ spec:
             join:
               description: Join is the network to join
               type: string
+            p2pPort:
+              description: P2PPort is p2p and discovery port
+              type: integer
             rest:
               description: REST enables Beacon REST API
               type: boolean

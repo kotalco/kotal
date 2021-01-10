@@ -54,6 +54,11 @@ func (t *PrysmClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
 		args = append(args, PrysmDisableGRPC)
 	}
 
+	if node.Spec.P2PPort != 0 {
+		args = append(args, PrysmP2PTCPPort, fmt.Sprintf("%d", node.Spec.P2PPort))
+		args = append(args, PrysmP2PUDPPort, fmt.Sprintf("%d", node.Spec.P2PPort))
+	}
+
 	return
 }
 
