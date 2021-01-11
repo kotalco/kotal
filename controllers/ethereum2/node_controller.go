@@ -9,6 +9,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -41,6 +42,10 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	if err = r.reconcileNodeService(&node); err != nil {
+		return
+	}
+
 	if err = r.reconcileNodeStatefulset(&node); err != nil {
 		return
 	}
@@ -59,6 +64,76 @@ func (r *NodeReconciler) updateLabels(node *ethereum2v1alpha1.Node) {
 	node.Labels["client"] = string(node.Spec.Client)
 	node.Labels["protocol"] = "ethereum2"
 	node.Labels["instance"] = node.Name
+}
+
+func (r *NodeReconciler) reconcileNodeService(node *ethereum2v1alpha1.Node) error {
+	svc := corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, &svc, func() error {
+		if err := ctrl.SetControllerReference(node, &svc, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specNodeService(&svc, node)
+
+		return nil
+	})
+
+	return err
+}
+
+func (r *NodeReconciler) specNodeService(svc *corev1.Service, node *ethereum2v1alpha1.Node) {
+	labels := node.GetLabels()
+
+	svc.ObjectMeta.Labels = labels
+	svc.Spec.Ports = []corev1.ServicePort{
+		{
+			Name:       "discovery",
+			Port:       int32(node.Spec.P2PPort),
+			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
+			Protocol:   corev1.ProtocolUDP,
+		},
+		{
+			Name:       "p2p",
+			Port:       int32(node.Spec.P2PPort),
+			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
+			Protocol:   corev1.ProtocolTCP,
+		},
+	}
+
+	if node.Spec.RPCPort != 0 {
+		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
+			Name:       "json-rpc",
+			Port:       int32(node.Spec.RPCPort),
+			TargetPort: intstr.FromInt(int(node.Spec.RPCPort)),
+			Protocol:   corev1.ProtocolTCP,
+		})
+	}
+
+	if node.Spec.GRPCPort != 0 {
+		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
+			Name:       "grpc",
+			Port:       int32(node.Spec.GRPCPort),
+			TargetPort: intstr.FromInt(int(node.Spec.GRPCPort)),
+			Protocol:   corev1.ProtocolTCP,
+		})
+	}
+
+	if node.Spec.RESTPort != 0 {
+		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
+			Name:       "rest",
+			Port:       int32(node.Spec.RESTPort),
+			TargetPort: intstr.FromInt(int(node.Spec.RESTPort)),
+			Protocol:   corev1.ProtocolTCP,
+		})
+	}
+
+	svc.Spec.Selector = labels
 }
 
 func (r *NodeReconciler) reconcileNodeDataPVC(node *ethereum2v1alpha1.Node) error {
