@@ -16,7 +16,7 @@ const (
 	// EnvLighthouseImage is the environment variable used for SigmaPrime Ethereum 2.0 client
 	EnvLighthouseImage = "LIGHTHOUSE_IMAGE"
 	// DefaultLighthouseImage is the default SigmaPrime Ethereum 2.0 client image
-	DefaultLighthouseImage = "sigp/lighthouse:v1.0.5"
+	DefaultLighthouseImage = "sigp/lighthouse:v1.0.6"
 )
 
 // Args returns command line arguments required for client

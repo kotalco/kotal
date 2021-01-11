@@ -14,7 +14,7 @@ const (
 	// EnvTekuImage is the environment variable used for PegaSys Teku client image
 	EnvTekuImage = "TEKU_IMAGE"
 	// DefaultTekuImage is PegaSys Teku client image
-	DefaultTekuImage = "consensys/teku:20.12"
+	DefaultTekuImage = "consensys/teku:20.12.1"
 )
 
 // Args returns command line arguments required for client

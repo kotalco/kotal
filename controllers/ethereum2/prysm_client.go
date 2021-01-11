@@ -16,7 +16,7 @@ const (
 	EnvPrysmImage = "PRYSM_IMAGE"
 	// DefaultPrysmImage is Prysmatic Labs Prysm client image
 	// TODO: update with validator image
-	DefaultPrysmImage = "gcr.io/prysmaticlabs/prysm/beacon-chain:v1.0.4"
+	DefaultPrysmImage = "gcr.io/prysmaticlabs/prysm/beacon-chain:v1.0.5"
 )
 
 // Args returns command line arguments required for client
