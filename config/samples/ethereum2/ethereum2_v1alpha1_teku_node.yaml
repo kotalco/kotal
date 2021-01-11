@@ -4,3 +4,8 @@ metadata:
   name: node-sample
 spec:
   join: mainnet
+  client: teku
+  rest: true
+  restPort: 8888
+  eth1Endpoints: 
+    - http://localhost:8545

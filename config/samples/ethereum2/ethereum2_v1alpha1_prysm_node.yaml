@@ -1,0 +1,14 @@
+apiVersion: ethereum2.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: node-sample
+spec:
+  join: pyrmont
+  client: prysm
+  rpc: true
+  rpcPort: 8888
+  grpc: true
+  grpcPort: 8888
+  eth1Endpoints: 
+    - http://localhost:8545
+    - http://localhost:8546

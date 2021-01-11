@@ -4,3 +4,8 @@ metadata:
   name: node-sample
 spec:
   join: pyrmont
+  client: nimbus
+  rpc: true
+  rpcPort: 8888
+  eth1Endpoints: 
+    - http://localhost:8545
