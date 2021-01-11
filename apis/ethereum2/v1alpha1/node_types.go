@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"github.com/kotalco/kotal/apis/shared"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -36,6 +37,9 @@ type NodeSpec struct {
 
 	// P2PPort is p2p and discovery port
 	P2PPort uint `json:"p2pPort,omitempty"`
+
+	// Resources is node compute and storage resources
+	shared.Resources `json:"resources,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
