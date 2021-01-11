@@ -55,8 +55,8 @@ func (r *NodeReconciler) updateLabels(node *ethereum2v1alpha1.Node) {
 		node.Labels = map[string]string{}
 	}
 
-	// TODO: update with client
 	node.Labels["name"] = "node"
+	node.Labels["client"] = string(node.Spec.Client)
 	node.Labels["protocol"] = "ethereum2"
 	node.Labels["instance"] = node.Name
 }
