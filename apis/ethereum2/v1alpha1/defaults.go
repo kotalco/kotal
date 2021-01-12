@@ -18,3 +18,16 @@ const (
 	// DefaultRestHost is the default Beacon REST api host
 	DefaultRestHost = "0.0.0.0"
 )
+
+const (
+	// DefaultCPURequest is the default CPU cores required by Ethereum 2.0 node
+	DefaultCPURequest = "4"
+	// DefaultCPULimit is the default CPU cores limit by Ethereum 2.0 node
+	DefaultCPULimit = "8"
+	// DefaultMemoryRequest is the default memory required by Ethereum 2.0 node
+	DefaultMemoryRequest = "8Gi"
+	// DefaultMemoryLimit is the default memory limit by Ethereum 2.0 node
+	DefaultMemoryLimit = "16Gi"
+	// DefaultStorage is the default disk space used by Ethereum 2.0 node
+	DefaultStorage = "200Gi"
+)

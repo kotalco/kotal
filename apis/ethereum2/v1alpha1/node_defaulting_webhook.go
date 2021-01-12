@@ -46,3 +46,26 @@ func (r *Node) Default() {
 	}
 
 }
+
+// DefaultNodeResources defaults Ethereum 2.0 node cpu, memory and storage resources
+func (r *Node) DefaultNodeResources() {
+	if r.Spec.Resources.CPU == "" {
+		r.Spec.Resources.CPU = DefaultCPURequest
+	}
+
+	if r.Spec.Resources.CPULimit == "" {
+		r.Spec.Resources.CPULimit = DefaultCPULimit
+	}
+
+	if r.Spec.Resources.Memory == "" {
+		r.Spec.Resources.Memory = DefaultMemoryRequest
+	}
+
+	if r.Spec.Resources.MemoryLimit == "" {
+		r.Spec.Resources.MemoryLimit = DefaultMemoryLimit
+	}
+
+	if r.Spec.Resources.Storage == "" {
+		r.Spec.Resources.Storage = DefaultStorage
+	}
+}

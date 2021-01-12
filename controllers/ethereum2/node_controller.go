@@ -161,8 +161,7 @@ func (r *NodeReconciler) reconcileNodeDataPVC(node *ethereum2v1alpha1.Node) erro
 func (r *NodeReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereum2v1alpha1.Node) {
 
 	request := corev1.ResourceList{
-		// TODO: update node spec with resources
-		corev1.ResourceStorage: resource.MustParse("100Gi"),
+		corev1.ResourceStorage: resource.MustParse(node.Spec.Resources.Storage),
 	}
 
 	// spec is immutable after creation except resources.requests for bound claims
@@ -180,6 +179,7 @@ func (r *NodeReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node
 		Resources: corev1.ResourceRequirements{
 			Requests: request,
 		},
+		StorageClassName: node.Spec.Resources.StorageClass,
 	}
 }
 
@@ -238,6 +238,16 @@ func (r *NodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethe
 							{
 								Name:      "data",
 								MountPath: PathBlockchainData,
+							},
+						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPU),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.Resources.Memory),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.Resources.MemoryLimit),
 							},
 						},
 					},
