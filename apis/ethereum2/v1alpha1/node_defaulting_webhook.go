@@ -45,6 +45,8 @@ func (r *Node) Default() {
 		}
 	}
 
+	r.DefaultNodeResources()
+
 }
 
 // DefaultNodeResources defaults Ethereum 2.0 node cpu, memory and storage resources
