@@ -57,7 +57,8 @@ var _ = BeforeSuite(func(done Done) {
 
 	// create new controller manager
 	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
-		Scheme: scheme.Scheme,
+		MetricsBindAddress: "0",
+		Scheme:             scheme.Scheme,
 	})
 	Expect(err).ToNot(HaveOccurred())
 
