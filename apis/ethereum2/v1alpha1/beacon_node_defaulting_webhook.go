@@ -2,12 +2,12 @@ package v1alpha1
 
 import "sigs.k8s.io/controller-runtime/pkg/webhook"
 
-// +kubebuilder:webhook:path=/mutate-ethereum2-kotal-io-v1alpha1-node,mutating=true,failurePolicy=fail,groups=ethereum2.kotal.io,resources=nodes,verbs=create;update,versions=v1alpha1,name=mnode.kb.io
+// +kubebuilder:webhook:path=/mutate-ethereum2-kotal-io-v1alpha1-beaconnode,mutating=true,failurePolicy=fail,groups=ethereum2.kotal.io,resources=beaconnodes,verbs=create;update,versions=v1alpha1,name=mbeaconnode.kb.io
 
-var _ webhook.Defaulter = &Node{}
+var _ webhook.Defaulter = &BeaconNode{}
 
 // Default implements webhook.Defaulter so a webhook will be registered for the type
-func (r *Node) Default() {
+func (r *BeaconNode) Default() {
 	nodelog.Info("default", "name", r.Name)
 
 	if r.Spec.Client == "" {
@@ -50,7 +50,7 @@ func (r *Node) Default() {
 }
 
 // DefaultNodeResources defaults Ethereum 2.0 node cpu, memory and storage resources
-func (r *Node) DefaultNodeResources() {
+func (r *BeaconNode) DefaultNodeResources() {
 	if r.Spec.Resources.CPU == "" {
 		r.Spec.Resources.CPU = DefaultCPURequest
 	}

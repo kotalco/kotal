@@ -9,7 +9,7 @@ import (
 var nodelog = logf.Log.WithName("node-resource")
 
 // SetupWebhookWithManager sets up the webook with a given controller manager
-func (r *Node) SetupWebhookWithManager(mgr ctrl.Manager) error {
+func (r *BeaconNode) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewWebhookManagedBy(mgr).
 		For(r).
 		Complete()

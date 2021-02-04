@@ -20,7 +20,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Ethereum 2.0 node", func() {
+var _ = Describe("Ethereum 2.0 beacon node", func() {
 
 	Context("Joining Mainnet", func() {
 		ns := &corev1.Namespace{
@@ -34,11 +34,11 @@ var _ = Describe("Ethereum 2.0 node", func() {
 			Namespace: ns.Name,
 		}
 
-		spec := ethereum2v1alpha1.NodeSpec{
+		spec := ethereum2v1alpha1.BeaconNodeSpec{
 			Join: "mainnet",
 		}
 
-		toCreate := &ethereum2v1alpha1.Node{
+		toCreate := &ethereum2v1alpha1.BeaconNode{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      key.Name,
 				Namespace: key.Namespace,
@@ -50,7 +50,7 @@ var _ = Describe("Ethereum 2.0 node", func() {
 
 		nodeOwnerReference := metav1.OwnerReference{
 			APIVersion:         "ethereum2.kotal.io/v1alpha1",
-			Kind:               "Node",
+			Kind:               "BeaconNode",
 			Name:               toCreate.Name,
 			Controller:         &t,
 			BlockOwnerDeletion: &t,
@@ -60,15 +60,15 @@ var _ = Describe("Ethereum 2.0 node", func() {
 			Expect(k8sClient.Create(context.TODO(), ns))
 		})
 
-		It("Should create node", func() {
+		It("Should create beacon node", func() {
 			if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
 				toCreate.Default()
 			}
 			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
 		})
 
-		It("should get node", func() {
-			fetched := &ethereum2v1alpha1.Node{}
+		It("should get beacon node", func() {
+			fetched := &ethereum2v1alpha1.BeaconNode{}
 			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 			Expect(fetched.Spec).To(Equal(toCreate.Spec))
 			nodeOwnerReference.UID = fetched.GetUID()

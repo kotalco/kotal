@@ -10,17 +10,17 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
-var _ = Describe("Ethereum 2.0 node validation", func() {
+var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 
 	createCases := []struct {
 		Title  string
-		Node   *Node
+		Node   *BeaconNode
 		Errors field.ErrorList
 	}{
 		{
 			Title: "Node #1",
-			Node: &Node{
-				Spec: NodeSpec{
+			Node: &BeaconNode{
+				Spec: BeaconNodeSpec{
 					Join:   "mainnet",
 					Client: PrysmClient,
 					REST:   true,
@@ -37,8 +37,8 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 		},
 		{
 			Title: "Node #2",
-			Node: &Node{
-				Spec: NodeSpec{
+			Node: &BeaconNode{
+				Spec: BeaconNodeSpec{
 					Join:   "mainnet",
 					Client: NimbusClient,
 					REST:   true,
@@ -55,8 +55,8 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 		},
 		{
 			Title: "Node #3",
-			Node: &Node{
-				Spec: NodeSpec{
+			Node: &BeaconNode{
+				Spec: BeaconNodeSpec{
 					Join:   "mainnet",
 					Client: TekuClient,
 					RPC:    true,
@@ -73,8 +73,8 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 		},
 		{
 			Title: "Node #4",
-			Node: &Node{
-				Spec: NodeSpec{
+			Node: &BeaconNode{
+				Spec: BeaconNodeSpec{
 					Join:   "mainnet",
 					Client: LighthouseClient,
 					RPC:    true,
@@ -91,8 +91,8 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 		},
 		{
 			Title: "Node #5",
-			Node: &Node{
-				Spec: NodeSpec{
+			Node: &BeaconNode{
+				Spec: BeaconNodeSpec{
 					Join:   "mainnet",
 					Client: PrysmClient,
 				},
@@ -108,8 +108,8 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 		},
 		{
 			Title: "Node #6",
-			Node: &Node{
-				Spec: NodeSpec{
+			Node: &BeaconNode{
+				Spec: BeaconNodeSpec{
 					Join:   "mainnet",
 					Client: TekuClient,
 					GRPC:   true,
@@ -126,8 +126,8 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 		},
 		{
 			Title: "Node #7",
-			Node: &Node{
-				Spec: NodeSpec{
+			Node: &BeaconNode{
+				Spec: BeaconNodeSpec{
 					Join:   "mainnet",
 					Client: PrysmClient,
 					RPC:    true,
@@ -144,8 +144,8 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 		},
 		{
 			Title: "Node #8",
-			Node: &Node{
-				Spec: NodeSpec{
+			Node: &BeaconNode{
+				Spec: BeaconNodeSpec{
 					Join:   "mainnet",
 					Client: TekuClient,
 					Eth1Endpoints: []string{
@@ -165,8 +165,8 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 		},
 		{
 			Title: "Node #9",
-			Node: &Node{
-				Spec: NodeSpec{
+			Node: &BeaconNode{
+				Spec: BeaconNodeSpec{
 					Join:   "mainnet",
 					Client: NimbusClient,
 					Eth1Endpoints: []string{
@@ -188,19 +188,19 @@ var _ = Describe("Ethereum 2.0 node validation", func() {
 
 	updateCases := []struct {
 		Title   string
-		OldNode *Node
-		NewNode *Node
+		OldNode *BeaconNode
+		NewNode *BeaconNode
 		Errors  field.ErrorList
 	}{
 		{
 			Title: "Node #1",
-			OldNode: &Node{
-				Spec: NodeSpec{
+			OldNode: &BeaconNode{
+				Spec: BeaconNodeSpec{
 					Join: "mainnet",
 				},
 			},
-			NewNode: &Node{
-				Spec: NodeSpec{
+			NewNode: &BeaconNode{
+				Spec: BeaconNodeSpec{
 					Join: "pyrmont",
 				},
 			},

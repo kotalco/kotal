@@ -6,19 +6,19 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.2.5
   creationTimestamp: null
-  name: nodes.ethereum2.kotal.io
+  name: beaconnodes.ethereum2.kotal.io
 spec:
   group: ethereum2.kotal.io
   names:
-    kind: Node
-    listKind: NodeList
-    plural: nodes
-    singular: node
+    kind: BeaconNode
+    listKind: BeaconNodeList
+    plural: beaconnodes
+    singular: beaconnode
   preserveUnknownFields: false
   scope: Namespaced
   validation:
     openAPIV3Schema:
-      description: Node is the Schema for the nodes API
+      description: BeaconNode is the Schema for the beaconnodes API
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
@@ -33,7 +33,7 @@ spec:
         metadata:
           type: object
         spec:
-          description: NodeSpec defines the desired state of Node
+          description: BeaconNodeSpec defines the desired state of BeaconNode
           properties:
             client:
               description: Client is the Ethereum 2.0 client to use
@@ -112,7 +112,7 @@ spec:
           - join
           type: object
         status:
-          description: NodeStatus defines the observed state of Node
+          description: BeaconNodeStatus defines the observed state of BeaconNode
           type: object
       type: object
   version: v1alpha1

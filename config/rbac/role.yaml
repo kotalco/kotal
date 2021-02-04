@@ -45,18 +45,6 @@ rules:
   - update
   - watch
 - apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
   - ethereum.kotal.io
   resources:
   - networks
@@ -99,7 +87,7 @@ rules:
 - apiGroups:
   - ethereum2.kotal.io
   resources:
-  - nodes
+  - beaconnodes
   verbs:
   - create
   - delete
@@ -111,7 +99,7 @@ rules:
 - apiGroups:
   - ethereum2.kotal.io
   resources:
-  - nodes/status
+  - beaconnodes/status
   verbs:
   - get
   - patch

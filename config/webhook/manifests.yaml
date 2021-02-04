@@ -47,9 +47,9 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-ethereum2-kotal-io-v1alpha1-node
+      path: /mutate-ethereum2-kotal-io-v1alpha1-beaconnode
   failurePolicy: Fail
-  name: mnode.kb.io
+  name: mbeaconnode.kb.io
   rules:
   - apiGroups:
     - ethereum2.kotal.io
@@ -59,7 +59,7 @@ webhooks:
     - CREATE
     - UPDATE
     resources:
-    - nodes
+    - beaconnodes
 - clientConfig:
     caBundle: Cg==
     service:
@@ -145,9 +145,9 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-ethereum2-kotal-io-v1alpha1-node
+      path: /validate-ethereum2-kotal-io-v1alpha1-beaconnode
   failurePolicy: Fail
-  name: vnode.kb.io
+  name: vbeaconnode.kb.io
   rules:
   - apiGroups:
     - ethereum2.kotal.io
@@ -157,7 +157,7 @@ webhooks:
     - CREATE
     - UPDATE
     resources:
-    - nodes
+    - beaconnodes
 - clientConfig:
     caBundle: Cg==
     service:

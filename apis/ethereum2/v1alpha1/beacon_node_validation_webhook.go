@@ -11,12 +11,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-ethereum2-kotal-io-v1alpha1-node,mutating=false,failurePolicy=fail,groups=ethereum2.kotal.io,resources=nodes,versions=v1alpha1,name=vnode.kb.io
+// +kubebuilder:webhook:verbs=create;update,path=/validate-ethereum2-kotal-io-v1alpha1-beaconnode,mutating=false,failurePolicy=fail,groups=ethereum2.kotal.io,resources=beaconnodes,versions=v1alpha1,name=vbeaconnode.kb.io
 
-var _ webhook.Validator = &Node{}
+var _ webhook.Validator = &BeaconNode{}
 
 // Validate is the shared validate create and update logic
-func (r *Node) Validate() field.ErrorList {
+func (r *BeaconNode) Validate() field.ErrorList {
 	var nodeErrors field.ErrorList
 
 	path := field.NewPath("spec")
@@ -61,7 +61,7 @@ func (r *Node) Validate() field.ErrorList {
 }
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (r *Node) ValidateCreate() error {
+func (r *BeaconNode) ValidateCreate() error {
 	var allErrors field.ErrorList
 
 	nodelog.Info("validate create", "name", r.Name)
@@ -77,9 +77,9 @@ func (r *Node) ValidateCreate() error {
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (r *Node) ValidateUpdate(old runtime.Object) error {
+func (r *BeaconNode) ValidateUpdate(old runtime.Object) error {
 	var allErrors field.ErrorList
-	oldNode := old.(*Node)
+	oldNode := old.(*BeaconNode)
 	path := field.NewPath("spec")
 
 	nodelog.Info("validate update", "name", r.Name)
@@ -99,7 +99,7 @@ func (r *Node) ValidateUpdate(old runtime.Object) error {
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (r *Node) ValidateDelete() error {
+func (r *BeaconNode) ValidateDelete() error {
 	nodelog.Info("validate delete", "name", r.Name)
 
 	return nil

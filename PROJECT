@@ -15,6 +15,6 @@ resources:
   kind: Node
   version: v1alpha1
 - group: ethereum2
-  kind: Node
+  kind: BeaconNode
   version: v1alpha1
 version: "2"

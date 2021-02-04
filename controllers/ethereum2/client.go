@@ -8,7 +8,7 @@ import (
 
 // Ethereum2Client is Ethereum client
 type Ethereum2Client interface {
-	Args(*ethereum2v1alpha1.Node) []string
+	Args(*ethereum2v1alpha1.BeaconNode) []string
 	Command() []string
 	Image() string
 }

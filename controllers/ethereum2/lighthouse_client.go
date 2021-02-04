@@ -20,7 +20,7 @@ const (
 )
 
 // Args returns command line arguments required for client
-func (t *LighthouseClient) Args(node *ethereum2v1alpha1.Node) (args []string) {
+func (t *LighthouseClient) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 
 	args = append(args, LighthouseDataDir, PathBlockchainData)
 

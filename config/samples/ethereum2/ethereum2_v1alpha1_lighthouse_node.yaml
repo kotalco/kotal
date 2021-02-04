@@ -1,7 +1,7 @@
 apiVersion: ethereum2.kotal.io/v1alpha1
-kind: Node
+kind: BeaconNode
 metadata:
-  name: node-sample
+  name: lighthouse-beacon-node
 spec:
   join: pyrmont
   client: lighthouse

@@ -111,15 +111,15 @@ func main() {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Node")
 		os.Exit(1)
 	}
-	if err = (&ethereum2controller.NodeReconciler{
+	if err = (&ethereum2controller.BeaconNodeReconciler{
 		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("Node"),
+		Log:    ctrl.Log.WithName("controllers").WithName("BeaconNode"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Node")
+		setupLog.Error(err, "unable to create controller", "controller", "BeaconNode")
 		os.Exit(1)
 	}
-	if err = (&ethereum2v1alpha1.Node{}).SetupWebhookWithManager(mgr); err != nil {
+	if err = (&ethereum2v1alpha1.BeaconNode{}).SetupWebhookWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Node")
 		os.Exit(1)
 	}

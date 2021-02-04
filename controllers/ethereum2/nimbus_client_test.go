@@ -12,13 +12,13 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 
 	cases := []struct {
 		title  string
-		node   *ethereum2v1alpha1.Node
+		node   *ethereum2v1alpha1.BeaconNode
 		result []string
 	}{
 		{
 			title: "beacon node syncing mainnet",
-			node: &ethereum2v1alpha1.Node{
-				Spec: ethereum2v1alpha1.NodeSpec{
+			node: &ethereum2v1alpha1.BeaconNode{
+				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client: ethereum2v1alpha1.NimbusClient,
 					Join:   "mainnet",
 				},
@@ -31,8 +31,8 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 		},
 		{
 			title: "beacon node syncing mainnet with eth1 endpoint",
-			node: &ethereum2v1alpha1.Node{
-				Spec: ethereum2v1alpha1.NodeSpec{
+			node: &ethereum2v1alpha1.BeaconNode{
+				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.NimbusClient,
 					Join:          "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
@@ -47,8 +47,8 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 		},
 		{
 			title: "beacon node syncing mainnet with eth1 endpoint and rpc",
-			node: &ethereum2v1alpha1.Node{
-				Spec: ethereum2v1alpha1.NodeSpec{
+			node: &ethereum2v1alpha1.BeaconNode{
+				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.NimbusClient,
 					Join:          "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
@@ -65,8 +65,8 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 		},
 		{
 			title: "beacon node syncing mainnet with eth1 endpoint and rpc and rpc port",
-			node: &ethereum2v1alpha1.Node{
-				Spec: ethereum2v1alpha1.NodeSpec{
+			node: &ethereum2v1alpha1.BeaconNode{
+				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.NimbusClient,
 					Join:          "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
@@ -85,8 +85,8 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 		},
 		{
 			title: "beacon node syncing mainnet with eth1 endpoint and rpc with rpc port and host",
-			node: &ethereum2v1alpha1.Node{
-				Spec: ethereum2v1alpha1.NodeSpec{
+			node: &ethereum2v1alpha1.BeaconNode{
+				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.NimbusClient,
 					Join:          "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
@@ -107,8 +107,8 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 		},
 		{
 			title: "beacon node syncing mainnet with p2p port, eth1 endpoint and rpc with rpc port and host",
-			node: &ethereum2v1alpha1.Node{
-				Spec: ethereum2v1alpha1.NodeSpec{
+			node: &ethereum2v1alpha1.BeaconNode{
+				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.NimbusClient,
 					P2PPort:       7891,
 					Join:          "mainnet",
