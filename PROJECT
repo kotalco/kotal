@@ -17,4 +17,7 @@ resources:
 - group: ethereum2
   kind: BeaconNode
   version: v1alpha1
+- group: ethereum2
+  kind: Validator
+  version: v1alpha1
 version: "2"

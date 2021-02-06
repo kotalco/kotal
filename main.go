@@ -123,6 +123,14 @@ func main() {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Node")
 		os.Exit(1)
 	}
+	if err = (&ethereum2controller.ValidatorReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("Validator"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Validator")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 
 	setupLog.Info("starting manager")

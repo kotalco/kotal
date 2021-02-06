@@ -1,0 +1,7 @@
+apiVersion: ethereum2.kotal.io/v1alpha1
+kind: Validator
+metadata:
+  name: validator-sample
+spec:
+  # Add fields here
+  foo: bar

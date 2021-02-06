@@ -105,6 +105,26 @@ rules:
   - patch
   - update
 - apiGroups:
+  - ethereum2.kotal.io
+  resources:
+  - validators
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ethereum2.kotal.io
+  resources:
+  - validators/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - filecoin.kotal.io
   resources:
   - nodes

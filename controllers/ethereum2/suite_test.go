@@ -65,13 +65,22 @@ var _ = BeforeSuite(func(done Done) {
 	Expect(err).ToNot(HaveOccurred())
 	Expect(k8sClient).ToNot(BeNil())
 
-	// start node reconciler
+	// start beacon node reconciler
 	beaconNodeReconciler := &BeaconNodeReconciler{
 		Client: k8sManager.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("node"),
 		Scheme: scheme.Scheme,
 	}
 	beaconNodeReconciler.SetupWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
+	// start validator reconciler
+	validatorReconciler := &ValidatorReconciler{
+		Client: k8sManager.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("validator"),
+		Scheme: scheme.Scheme,
+	}
+	validatorReconciler.SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
 	go func() {
