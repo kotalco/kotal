@@ -6,8 +6,8 @@ import (
 
 // ValidatorSpec defines the desired state of Validator
 type ValidatorSpec struct {
-	// Foo is an example field of Validator. Edit Validator_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Network is the network this validator is validating blocks for
+	Network string `json:"network"`
 }
 
 // ValidatorStatus defines the observed state of Validator

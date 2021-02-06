@@ -26,7 +26,7 @@ type BeaconNodeReconciler struct {
 // +kubebuilder:rbac:groups=ethereum2.kotal.io,resources=beaconnodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ethereum2.kotal.io,resources=beaconnodes/status,verbs=get;update;patch
 
-// Reconcile reconcile Ethereum 2.0 node
+// Reconcile reconciles Ethereum 2.0 beacon node
 func (r *BeaconNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var node ethereum2v1alpha1.BeaconNode
 
