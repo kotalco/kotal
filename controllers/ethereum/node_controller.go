@@ -176,7 +176,7 @@ func (r *NodeReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node) err
 	if node.Spec.Genesis != nil {
 
 		// create client specific genesis configuration
-		if genesis, err = client.GetGenesisFile(node); err != nil {
+		if genesis, err = client.Genesis(node); err != nil {
 			return err
 		}
 		// create init genesis script if client is geth
@@ -465,7 +465,7 @@ func (r *NodeReconciler) reconcileNodeStatefulSet(node *ethereumv1alpha1.Node) e
 	if err != nil {
 		return err
 	}
-	args := client.GetArgs(node)
+	args := client.Args(node)
 	volumes := r.createNodeVolumes(node)
 	mounts := r.createNodeVolumeMounts(node)
 	affinity := r.getNodeAffinity(node)

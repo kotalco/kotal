@@ -32,8 +32,8 @@ func (p *ParityClient) PrunningArgFromSyncMode(mode ethereumv1alpha1.Synchroniza
 	return m[mode]
 }
 
-// GetArgs returns command line arguments required for client run
-func (p *ParityClient) GetArgs(node *ethereumv1alpha1.Node) (args []string) {
+// Args returns command line arguments required for client run
+func (p *ParityClient) Args(node *ethereumv1alpha1.Node) (args []string) {
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
 		args = append(args, arg...)
@@ -155,8 +155,8 @@ func (p *ParityClient) NormalizeNonce(data string) string {
 	return fmt.Sprintf("%#0.16x", i)
 }
 
-// GetGenesisFile returns genesis config parameter
-func (p *ParityClient) GetGenesisFile(node *ethereumv1alpha1.Node) (content string, err error) {
+// Genesis returns genesis config parameter
+func (p *ParityClient) Genesis(node *ethereumv1alpha1.Node) (content string, err error) {
 	genesis := node.Spec.Genesis
 	consensus := node.Spec.Consensus
 	extraData := "0x00"

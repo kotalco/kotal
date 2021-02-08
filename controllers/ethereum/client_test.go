@@ -752,7 +752,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				cc.node.Default()
 				client, err := NewEthereumClient(cc.node.Spec.Client)
 				Expect(err).To(BeNil())
-				args := client.GetArgs(cc.node)
+				args := client.Args(cc.node)
 				Expect(args).To(ContainElements(cc.result))
 			})
 		}()

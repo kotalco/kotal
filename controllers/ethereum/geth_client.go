@@ -25,8 +25,8 @@ func (g *GethClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLev
 	return levels[level]
 }
 
-// GetArgs returns command line arguments required for client run
-func (g *GethClient) GetArgs(node *ethereumv1alpha1.Node) (args []string) {
+// Args returns command line arguments required for client run
+func (g *GethClient) Args(node *ethereumv1alpha1.Node) (args []string) {
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
 		args = append(args, arg...)
@@ -168,8 +168,8 @@ func (g *GethClient) EncodeStaticNodes(node *ethereumv1alpha1.Node) string {
 	return fmt.Sprintf("[Node.P2P]\nStaticNodes = %s", string(encoded))
 }
 
-// GetGenesisFile returns genesis config parameter
-func (g *GethClient) GetGenesisFile(node *ethereumv1alpha1.Node) (content string, err error) {
+// Genesis returns genesis config parameter
+func (g *GethClient) Genesis(node *ethereumv1alpha1.Node) (content string, err error) {
 	genesis := node.Spec.Genesis
 	consensus := node.Spec.Consensus
 	mixHash := genesis.MixHash

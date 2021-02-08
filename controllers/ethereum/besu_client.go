@@ -16,8 +16,8 @@ func (b *BesuClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLev
 	return strings.ToUpper(string(level))
 }
 
-// GetArgs returns command line arguments required for client run
-func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node) (args []string) {
+// Args returns command line arguments required for client run
+func (b *BesuClient) Args(node *ethereumv1alpha1.Node) (args []string) {
 
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
@@ -136,8 +136,8 @@ func (b *BesuClient) GetArgs(node *ethereumv1alpha1.Node) (args []string) {
 	return args
 }
 
-// GetGenesisFile returns genesis config parameter
-func (b *BesuClient) GetGenesisFile(node *ethereumv1alpha1.Node) (content string, err error) {
+// Genesis returns genesis config parameter
+func (b *BesuClient) Genesis(node *ethereumv1alpha1.Node) (content string, err error) {
 	genesis := node.Spec.Genesis
 	consensus := node.Spec.Consensus
 	mixHash := genesis.MixHash
