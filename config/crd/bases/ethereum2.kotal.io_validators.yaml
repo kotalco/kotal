@@ -35,6 +35,14 @@ spec:
         spec:
           description: ValidatorSpec defines the desired state of Validator
           properties:
+            client:
+              description: Client is the Ethereum 2.0 client to use
+              enum:
+              - teku
+              - prysm
+              - lighthouse
+              - nimbus
+              type: string
             network:
               description: Network is the network this validator is validating blocks
                 for
