@@ -7,8 +7,8 @@ import (
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 )
 
-// PrysmClient is Prysmatic Labs Ethereum 2.0 client
-type PrysmClient struct{}
+// PrysmBeaconNode is Prysmatic Labs Ethereum 2.0 client
+type PrysmBeaconNode struct{}
 
 // Images
 const (
@@ -20,7 +20,7 @@ const (
 )
 
 // Args returns command line arguments required for client
-func (t *PrysmClient) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
+func (t *PrysmBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 
 	args = append(args, PrysmAcceptTermsOfUse)
 
@@ -63,12 +63,12 @@ func (t *PrysmClient) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 }
 
 // Command returns command for running the client
-func (t *PrysmClient) Command() (command []string) {
+func (t *PrysmBeaconNode) Command() (command []string) {
 	return
 }
 
 // Image returns prysm docker image
-func (t *PrysmClient) Image() string {
+func (t *PrysmBeaconNode) Image() string {
 	if os.Getenv(EnvPrysmImage) == "" {
 		return DefaultPrysmImage
 	}

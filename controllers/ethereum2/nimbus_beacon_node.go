@@ -7,8 +7,8 @@ import (
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 )
 
-// NimbusClient is Status Ethereum 2.0 client
-type NimbusClient struct{}
+// NimbusBeaconNode is Status Ethereum 2.0 client
+type NimbusBeaconNode struct{}
 
 // Images
 const (
@@ -19,7 +19,7 @@ const (
 )
 
 // Args returns command line arguments required for client
-func (t *NimbusClient) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
+func (t *NimbusBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 
 	args = append(args, NimbusNonInteractive)
 
@@ -50,13 +50,13 @@ func (t *NimbusClient) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) 
 }
 
 // Command returns command for running the client
-func (t *NimbusClient) Command() (command []string) {
+func (t *NimbusBeaconNode) Command() (command []string) {
 	command = []string{"nimbus_beacon_node"}
 	return
 }
 
 // Image returns prysm docker image
-func (t *NimbusClient) Image() string {
+func (t *NimbusBeaconNode) Image() string {
 	if os.Getenv(EnvNimbusImage) == "" {
 		return DefaultNimbusImage
 	}

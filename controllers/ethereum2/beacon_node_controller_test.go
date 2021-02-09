@@ -77,7 +77,7 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 
 		It("Should create statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			client, err := NewEthereum2Client(toCreate.Spec.Client)
+			client, err := NewBeaconNodeClient(toCreate.Spec.Client)
 			Expect(err).To(BeNil())
 			Expect(k8sClient.Get(context.Background(), key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))

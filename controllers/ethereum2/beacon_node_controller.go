@@ -196,7 +196,7 @@ func (r *BeaconNodeReconciler) reconcileNodeStatefulset(node *ethereum2v1alpha1.
 			return err
 		}
 
-		client, err := NewEthereum2Client(node.Spec.Client)
+		client, err := NewBeaconNodeClient(node.Spec.Client)
 		if err != nil {
 			return err
 		}

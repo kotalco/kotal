@@ -8,8 +8,8 @@ import (
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 )
 
-// LighthouseClient is SigmaPrime Ethereum 2.0 client
-type LighthouseClient struct{}
+// LighthouseBeaconNode is SigmaPrime Ethereum 2.0 client
+type LighthouseBeaconNode struct{}
 
 // Images
 const (
@@ -20,7 +20,7 @@ const (
 )
 
 // Args returns command line arguments required for client
-func (t *LighthouseClient) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
+func (t *LighthouseBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 
 	args = append(args, LighthouseDataDir, PathBlockchainData)
 
@@ -51,13 +51,13 @@ func (t *LighthouseClient) Args(node *ethereum2v1alpha1.BeaconNode) (args []stri
 }
 
 // Command returns command for running the client
-func (t *LighthouseClient) Command() (command []string) {
+func (t *LighthouseBeaconNode) Command() (command []string) {
 	command = []string{"lighthouse", "beacon_node"}
 	return
 }
 
 // Image returns prysm docker image
-func (t *LighthouseClient) Image() string {
+func (t *LighthouseBeaconNode) Image() string {
 	if os.Getenv(EnvLighthouseImage) == "" {
 		return DefaultLighthouseImage
 	}

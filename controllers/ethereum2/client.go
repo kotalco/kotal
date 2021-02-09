@@ -8,22 +8,33 @@ import (
 
 // Ethereum2Client is Ethereum client
 type Ethereum2Client interface {
-	Args(*ethereum2v1alpha1.BeaconNode) []string
 	Command() []string
 	Image() string
 }
 
-// NewEthereum2Client returns an Ethereum client instance
-func NewEthereum2Client(name ethereum2v1alpha1.Ethereum2Client) (Ethereum2Client, error) {
+// BeaconNodeClient is Ethereum 2.0 beacon node client
+type BeaconNodeClient interface {
+	Ethereum2Client
+	Args(*ethereum2v1alpha1.BeaconNode) []string
+}
+
+// ValidatorClient is Ethereum 2.0 validator client
+type ValidatorClient interface {
+	Ethereum2Client
+	Args(*ethereum2v1alpha1.Validator) []string
+}
+
+// NewBeaconNodeClient returns an Ethereum beacon node client instance
+func NewBeaconNodeClient(name ethereum2v1alpha1.Ethereum2Client) (BeaconNodeClient, error) {
 	switch name {
 	case ethereum2v1alpha1.TekuClient:
-		return &TekuClient{}, nil
+		return &TekuBeaconNode{}, nil
 	case ethereum2v1alpha1.PrysmClient:
-		return &PrysmClient{}, nil
+		return &PrysmBeaconNode{}, nil
 	case ethereum2v1alpha1.LighthouseClient:
-		return &LighthouseClient{}, nil
+		return &LighthouseBeaconNode{}, nil
 	case ethereum2v1alpha1.NimbusClient:
-		return &NimbusClient{}, nil
+		return &NimbusBeaconNode{}, nil
 	default:
 		return nil, fmt.Errorf("Client %s is not supported", name)
 	}

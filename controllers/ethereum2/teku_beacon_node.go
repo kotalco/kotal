@@ -7,8 +7,8 @@ import (
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 )
 
-// TekuClient is ConsenSys Pegasys Ethereum 2.0 client
-type TekuClient struct{}
+// TekuBeaconNode is ConsenSys Pegasys Ethereum 2.0 client
+type TekuBeaconNode struct{}
 
 const (
 	// EnvTekuImage is the environment variable used for PegaSys Teku client image
@@ -18,7 +18,7 @@ const (
 )
 
 // Args returns command line arguments required for client
-func (t *TekuClient) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
+func (t *TekuBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 
 	args = append(args, TekuDataPath, PathBlockchainData)
 
@@ -47,12 +47,12 @@ func (t *TekuClient) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 }
 
 // Command returns command for running the client
-func (t *TekuClient) Command() (command []string) {
+func (t *TekuBeaconNode) Command() (command []string) {
 	return
 }
 
 // Image returns teku docker image
-func (t *TekuClient) Image() string {
+func (t *TekuBeaconNode) Image() string {
 	if os.Getenv(EnvTekuImage) == "" {
 		return DefaultTekuImage
 	}
