@@ -39,3 +39,19 @@ func NewBeaconNodeClient(name ethereum2v1alpha1.Ethereum2Client) (BeaconNodeClie
 		return nil, fmt.Errorf("Client %s is not supported", name)
 	}
 }
+
+// NewValidatorClient returns an Ethereum validator client instance
+func NewValidatorClient(name ethereum2v1alpha1.Ethereum2Client) (ValidatorClient, error) {
+	switch name {
+	case ethereum2v1alpha1.TekuClient:
+		return &TekuValidatorClient{}, nil
+	case ethereum2v1alpha1.PrysmClient:
+		return &PrysmValidatorClient{}, nil
+	case ethereum2v1alpha1.LighthouseClient:
+		return &LighthouseValidatorClient{}, nil
+	case ethereum2v1alpha1.NimbusClient:
+		return &NimbusValidatorClient{}, nil
+	default:
+		return nil, fmt.Errorf("Client %s is not supported", name)
+	}
+}

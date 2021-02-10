@@ -11,10 +11,10 @@ import (
 type TekuBeaconNode struct{}
 
 const (
-	// EnvTekuImage is the environment variable used for PegaSys Teku client image
-	EnvTekuImage = "TEKU_IMAGE"
-	// DefaultTekuImage is PegaSys Teku client image
-	DefaultTekuImage = "consensys/teku:20.12.1"
+	// EnvTekuBeaconNodeImage is the environment variable used for PegaSys Teku beacon node image
+	EnvTekuBeaconNodeImage = "TEKU_BEACON_NODE_IMAGE"
+	// DefaultTekuBeaconNodeImage is PegaSys Teku beacon node image
+	DefaultTekuBeaconNodeImage = "consensys/teku:20.12.1"
 )
 
 // Args returns command line arguments required for client
@@ -53,8 +53,8 @@ func (t *TekuBeaconNode) Command() (command []string) {
 
 // Image returns teku docker image
 func (t *TekuBeaconNode) Image() string {
-	if os.Getenv(EnvTekuImage) == "" {
-		return DefaultTekuImage
+	if os.Getenv(EnvTekuBeaconNodeImage) == "" {
+		return DefaultTekuBeaconNodeImage
 	}
-	return os.Getenv(EnvTekuImage)
+	return os.Getenv(EnvTekuBeaconNodeImage)
 }

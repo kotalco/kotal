@@ -55,7 +55,7 @@ func (r *ValidatorReconciler) updateLabels(validator *ethereum2v1alpha1.Validato
 }
 
 // specValidatorStatefulset updates node statefulset spec
-func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alpha1.Validator, sts *appsv1.StatefulSet) {
+func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alpha1.Validator, sts *appsv1.StatefulSet, img string, command, args []string) {
 
 	sts.Labels = validator.GetLabels()
 
@@ -70,9 +70,10 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 			Spec: corev1.PodSpec{
 				Containers: []corev1.Container{
 					{
-						Name:  "validator",
-						Image: "consensys/teku",
-						Args:  []string{"vc"},
+						Name:    "validator",
+						Image:   img,
+						Command: command,
+						Args:    args,
 					},
 				},
 			},
@@ -89,12 +90,20 @@ func (r *ValidatorReconciler) reconcileValidatorStatefulset(validator *ethereum2
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, &sts, func() error {
+	client, err := NewValidatorClient(validator.Spec.Client)
+	if err != nil {
+		return err
+	}
+	img := client.Image()
+	command := client.Command()
+	args := client.Args(validator)
+
+	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, &sts, func() error {
 		if err := ctrl.SetControllerReference(validator, &sts, r.Scheme); err != nil {
 			return err
 		}
 
-		r.specValidatorStatefulset(validator, &sts)
+		r.specValidatorStatefulset(validator, &sts, img, command, args)
 
 		return nil
 	})

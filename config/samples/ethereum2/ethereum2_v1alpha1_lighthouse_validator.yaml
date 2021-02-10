@@ -1,0 +1,7 @@
+apiVersion: ethereum2.kotal.io/v1alpha1
+kind: Validator
+metadata:
+  name: lighthouse-validator
+spec:
+  client: lighthouse
+  network: mainnet

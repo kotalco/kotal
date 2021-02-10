@@ -1,0 +1,7 @@
+apiVersion: ethereum2.kotal.io/v1alpha1
+kind: Validator
+metadata:
+  name: prysm-validator
+spec:
+  client: prysm
+  network: mainnet

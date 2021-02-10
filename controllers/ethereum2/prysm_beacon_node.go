@@ -12,11 +12,10 @@ type PrysmBeaconNode struct{}
 
 // Images
 const (
-	// EnvPrysmImage is the environment variable used for Prysmatic Labs Prysm client image
-	EnvPrysmImage = "PRYSM_IMAGE"
-	// DefaultPrysmImage is Prysmatic Labs Prysm client image
-	// TODO: update with validator image
-	DefaultPrysmImage = "gcr.io/prysmaticlabs/prysm/beacon-chain:v1.0.5"
+	// EnvPrysmBeaconNodeImage is the environment variable used for Prysmatic Labs beacon node image
+	EnvPrysmBeaconNodeImage = "PRYSM_BEACON_NODE_IMAGE"
+	// DefaultPrysmBeaconNodeImage is Prysmatic Labs beacon node image
+	DefaultPrysmBeaconNodeImage = "gcr.io/prysmaticlabs/prysm/beacon-chain:v1.0.5"
 )
 
 // Args returns command line arguments required for client
@@ -69,8 +68,8 @@ func (t *PrysmBeaconNode) Command() (command []string) {
 
 // Image returns prysm docker image
 func (t *PrysmBeaconNode) Image() string {
-	if os.Getenv(EnvPrysmImage) == "" {
-		return DefaultPrysmImage
+	if os.Getenv(EnvPrysmBeaconNodeImage) == "" {
+		return DefaultPrysmBeaconNodeImage
 	}
-	return os.Getenv(EnvPrysmImage)
+	return os.Getenv(EnvPrysmBeaconNodeImage)
 }

@@ -13,10 +13,10 @@ type LighthouseBeaconNode struct{}
 
 // Images
 const (
-	// EnvLighthouseImage is the environment variable used for SigmaPrime Ethereum 2.0 client
-	EnvLighthouseImage = "LIGHTHOUSE_IMAGE"
-	// DefaultLighthouseImage is the default SigmaPrime Ethereum 2.0 client image
-	DefaultLighthouseImage = "sigp/lighthouse:v1.0.6"
+	// EnvLighthouseBeaconNodeImage is the environment variable used for SigmaPrime Ethereum 2.0 beacon node image
+	EnvLighthouseBeaconNodeImage = "LIGHTHOUSE_BEACON_NODE_IMAGE"
+	// DefaultLighthouseBeaconNodeImage is the default SigmaPrime Ethereum 2.0 beacon node image
+	DefaultLighthouseBeaconNodeImage = "sigp/lighthouse:v1.0.6"
 )
 
 // Args returns command line arguments required for client
@@ -52,14 +52,14 @@ func (t *LighthouseBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []
 
 // Command returns command for running the client
 func (t *LighthouseBeaconNode) Command() (command []string) {
-	command = []string{"lighthouse", "beacon_node"}
+	command = []string{"lighthouse", "bn"}
 	return
 }
 
 // Image returns prysm docker image
 func (t *LighthouseBeaconNode) Image() string {
-	if os.Getenv(EnvLighthouseImage) == "" {
-		return DefaultLighthouseImage
+	if os.Getenv(EnvLighthouseBeaconNodeImage) == "" {
+		return DefaultLighthouseBeaconNodeImage
 	}
-	return os.Getenv(EnvLighthouseImage)
+	return os.Getenv(EnvLighthouseBeaconNodeImage)
 }

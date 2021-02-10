@@ -12,10 +12,10 @@ type NimbusBeaconNode struct{}
 
 // Images
 const (
-	// EnvNimbusImage is the environment variable used for Status Ethereum 2.0 client
-	EnvNimbusImage = "NIMBUS_IMAGE"
-	// DefaultNimbusImage is the default Status Ethereum 2.0 client
-	DefaultNimbusImage = "kotalco/nimbus:v1.0.4"
+	// EnvNimbusBeaconNodeImage is the environment variable used for Status Ethereum 2.0 beacon node image
+	EnvNimbusBeaconNodeImage = "NIMBUS_BEACON_NODE_IMAGE"
+	// DefaultNimbusBeaconNodeImage is the default Status Ethereum 2.0 beacon node image
+	DefaultNimbusBeaconNodeImage = "kotalco/nimbus:v1.0.4"
 )
 
 // Args returns command line arguments required for client
@@ -57,10 +57,10 @@ func (t *NimbusBeaconNode) Command() (command []string) {
 
 // Image returns prysm docker image
 func (t *NimbusBeaconNode) Image() string {
-	if os.Getenv(EnvNimbusImage) == "" {
-		return DefaultNimbusImage
+	if os.Getenv(EnvNimbusBeaconNodeImage) == "" {
+		return DefaultNimbusBeaconNodeImage
 	}
-	return os.Getenv(EnvNimbusImage)
+	return os.Getenv(EnvNimbusBeaconNodeImage)
 }
 
 // nimbus accepts arguments in the form of --arg=val
