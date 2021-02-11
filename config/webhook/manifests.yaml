@@ -65,6 +65,24 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
+      path: /mutate-ethereum2-kotal-io-v1alpha1-validator
+  failurePolicy: Fail
+  name: mvalidator.kb.io
+  rules:
+  - apiGroups:
+    - ethereum2.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - validators
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
       path: /mutate-filecoin-kotal-io-v1alpha1-node
   failurePolicy: Fail
   name: mnode.kb.io
@@ -158,6 +176,24 @@ webhooks:
     - UPDATE
     resources:
     - beaconnodes
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-ethereum2-kotal-io-v1alpha1-validator
+  failurePolicy: Fail
+  name: vvalidator.kb.io
+  rules:
+  - apiGroups:
+    - ethereum2.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - validators
 - clientConfig:
     caBundle: Cg==
     service:
