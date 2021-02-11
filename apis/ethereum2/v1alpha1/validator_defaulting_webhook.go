@@ -12,4 +12,7 @@ var _ webhook.Defaulter = &Validator{}
 func (r *Validator) Default() {
 	validatorlog.Info("default", "name", r.Name)
 
+	if r.Spec.Client == "" {
+		r.Spec.Client = DefaultClient
+	}
 }
