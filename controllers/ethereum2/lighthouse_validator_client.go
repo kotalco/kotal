@@ -22,6 +22,11 @@ func (t *LighthouseValidatorClient) Args(validator *ethereum2v1alpha1.Validator)
 
 	args = append(args, LighthouseNetwork, validator.Spec.Network)
 
+	if validator.Spec.BeaconEndpoint != "" {
+		args = append(args, LighthouseBeaconNodeEndpoint, validator.Spec.BeaconEndpoint)
+
+	}
+
 	return
 }
 

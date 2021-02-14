@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"net/url"
 	"os"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
@@ -21,6 +22,25 @@ const (
 func (t *NimbusValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
 
 	args = append(args, NimbusNonInteractive)
+
+	endpoint := validator.Spec.BeaconEndpoint
+
+	if endpoint != "" {
+		// TODO: validate endpoint is valid from webhook
+		u, _ := url.Parse(endpoint)
+		port := u.Port()
+
+		if port == "" {
+			port = "80"
+		} else {
+			endpoint = u.Hostname()
+		}
+
+		// TODO: resolve host to ip
+
+		args = append(args, argWithVal(NimbusRPCAddress, endpoint))
+		args = append(args, argWithVal(NimbusRPCPort, port))
+	}
 
 	return
 }

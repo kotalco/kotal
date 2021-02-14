@@ -10,6 +10,8 @@ type ValidatorSpec struct {
 	Network string `json:"network"`
 	// Client is the Ethereum 2.0 client to use
 	Client Ethereum2Client `json:"client,omitempty"`
+	// BeaconEndpoint is the beacon node endpoint
+	BeaconEndpoint string `json:"beaconEndpoint"`
 }
 
 // ValidatorStatus defines the observed state of Validator

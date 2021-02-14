@@ -23,6 +23,10 @@ func (t *TekuValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args
 
 	args = append(args, TekuNetwork, validator.Spec.Network)
 
+	if validator.Spec.BeaconEndpoint != "" {
+		args = append(args, TekuBeaconNodeEndpoint, validator.Spec.BeaconEndpoint)
+	}
+
 	return args
 }
 

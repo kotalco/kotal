@@ -25,6 +25,10 @@ func (t *PrysmValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (arg
 
 	args = append(args, fmt.Sprintf("--%s", validator.Spec.Network))
 
+	if validator.Spec.BeaconEndpoint != "" {
+		args = append(args, PrysmBeaconRPCProvider, validator.Spec.BeaconEndpoint)
+	}
+
 	return args
 }
 

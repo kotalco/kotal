@@ -5,3 +5,4 @@ metadata:
 spec:
   client: prysm
   network: mainnet
+  beaconEndpoint: http://10.96.130.88:9999

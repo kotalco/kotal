@@ -19,14 +19,17 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 			title: "mainnet validator client",
 			validator: &ethereum2v1alpha1.Validator{
 				Spec: ethereum2v1alpha1.ValidatorSpec{
-					Client:  ethereum2v1alpha1.LighthouseClient,
-					Network: "mainnet",
+					Client:         ethereum2v1alpha1.LighthouseClient,
+					Network:        "mainnet",
+					BeaconEndpoint: "http://localhost:8899",
 				},
 			},
 			result: []string{
 				// update with data dir
 				LighthouseNetwork,
 				"mainnet",
+				LighthouseBeaconNodeEndpoint,
+				"http://localhost:8899",
 			},
 		},
 	}

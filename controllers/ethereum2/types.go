@@ -21,6 +21,9 @@ const (
 	TekuRestHost = "--rest-api-interface"
 	// TekuP2PPort is the argument used p2p and discovery port
 	TekuP2PPort = "--p2p-port"
+
+	// TekuBeaconNodeEndpoint is the argument used for beacon node api endpoint
+	TekuBeaconNodeEndpoint = "--beacon-node-api-endpoint"
 )
 
 // Prysm client arguments
@@ -47,6 +50,9 @@ const (
 	PrysmP2PTCPPort = "--p2p-tcp-port"
 	// PrysmP2PUDPPort is the argument used p2p discovery udp port
 	PrysmP2PUDPPort = "--p2p-udp-port"
+
+	//	PrysmBeaconRPCProvider is the argument used for beacon node rpc endpoint
+	PrysmBeaconRPCProvider = "--beacon-rpc-provider"
 )
 
 // Lighthouse client arguments
@@ -69,6 +75,9 @@ const (
 	LighthousePort = "--port"
 	// LighthouseDiscoveryPort is the argument used for discovery udp port
 	LighthouseDiscoveryPort = "--discovery-port"
+
+	// LighthouseBeaconNodeEndpoint is the argument used for beacon node endpoint
+	LighthouseBeaconNodeEndpoint = "--beacon-node"
 )
 
 // Nimbus client arguments
