@@ -29,6 +29,10 @@ func (t *PrysmValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (arg
 		args = append(args, PrysmBeaconRPCProvider, validator.Spec.BeaconEndpoint)
 	}
 
+	if validator.Spec.Graffiti != "" {
+		args = append(args, PrysmGraffiti, validator.Spec.Graffiti)
+	}
+
 	return args
 }
 

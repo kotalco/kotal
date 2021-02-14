@@ -27,6 +27,10 @@ func (t *LighthouseValidatorClient) Args(validator *ethereum2v1alpha1.Validator)
 
 	}
 
+	if validator.Spec.Graffiti != "" {
+		args = append(args, LighthouseGraffiti, validator.Spec.Graffiti)
+	}
+
 	return
 }
 

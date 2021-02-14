@@ -6,4 +6,6 @@ spec:
   client: lighthouse
   network: mainnet
   beaconEndpoint: http://10.96.130.88:9999
+  graffiti: Validated by Kotal
+
 

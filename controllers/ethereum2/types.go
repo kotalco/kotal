@@ -24,6 +24,8 @@ const (
 
 	// TekuBeaconNodeEndpoint is the argument used for beacon node api endpoint
 	TekuBeaconNodeEndpoint = "--beacon-node-api-endpoint"
+	// TekuGraffiti is the argument used for text include in proposed blocks
+	TekuGraffiti = "--validators-graffiti"
 )
 
 // Prysm client arguments
@@ -53,6 +55,8 @@ const (
 
 	//	PrysmBeaconRPCProvider is the argument used for beacon node rpc endpoint
 	PrysmBeaconRPCProvider = "--beacon-rpc-provider"
+	//	PrysmGraffiti is the argument used to include in proposed blocks
+	PrysmGraffiti = "--graffiti"
 )
 
 // Lighthouse client arguments
@@ -78,6 +82,8 @@ const (
 
 	// LighthouseBeaconNodeEndpoint is the argument used for beacon node endpoint
 	LighthouseBeaconNodeEndpoint = "--beacon-node"
+	// LighthouseGraffiti is the argument used to include in proposed blocks
+	LighthouseGraffiti = "--graffiti"
 )
 
 // Nimbus client arguments
@@ -100,4 +106,7 @@ const (
 	NimbusTCPPort = "--tcp-port"
 	// NimbusUDPPort is the argument used for discovery udp port
 	NimbusUDPPort = "--udp-port"
+
+	// NimbusGraffiti is the argument used to include in proposed blocks
+	NimbusGraffiti = "--graffiti"
 )

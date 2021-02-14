@@ -46,6 +46,9 @@ spec:
               - lighthouse
               - nimbus
               type: string
+            graffiti:
+              description: Graffiti is the text to include in proposed blocks
+              type: string
             network:
               description: Network is the network this validator is validating blocks
                 for

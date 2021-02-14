@@ -22,6 +22,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 					Client:         ethereum2v1alpha1.LighthouseClient,
 					Network:        "mainnet",
 					BeaconEndpoint: "http://localhost:8899",
+					Graffiti:       "Validated by Kotal",
 				},
 			},
 			result: []string{
@@ -30,6 +31,8 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 				"mainnet",
 				LighthouseBeaconNodeEndpoint,
 				"http://localhost:8899",
+				LighthouseGraffiti,
+				"Validated by Kotal",
 			},
 		},
 	}

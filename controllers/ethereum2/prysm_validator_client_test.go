@@ -22,6 +22,7 @@ var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 					Client:         ethereum2v1alpha1.PrysmClient,
 					Network:        "mainnet",
 					BeaconEndpoint: "http://localhost:8899",
+					Graffiti:       "Validated by Kotal",
 				},
 			},
 			result: []string{
@@ -30,6 +31,8 @@ var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 				"--mainnet",
 				PrysmBeaconRPCProvider,
 				"http://localhost:8899",
+				PrysmGraffiti,
+				"Validated by Kotal",
 			},
 		},
 	}

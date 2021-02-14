@@ -42,6 +42,10 @@ func (t *NimbusValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (ar
 		args = append(args, argWithVal(NimbusRPCPort, port))
 	}
 
+	if validator.Spec.Graffiti != "" {
+		args = append(args, argWithVal(NimbusGraffiti, validator.Spec.Graffiti))
+	}
+
 	return
 }
 

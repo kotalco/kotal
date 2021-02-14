@@ -12,6 +12,8 @@ type ValidatorSpec struct {
 	Client Ethereum2Client `json:"client,omitempty"`
 	// BeaconEndpoint is the beacon node endpoint
 	BeaconEndpoint string `json:"beaconEndpoint"`
+	// Graffiti is the text to include in proposed blocks
+	Graffiti string `json:"graffiti,omitempty"`
 }
 
 // ValidatorStatus defines the observed state of Validator

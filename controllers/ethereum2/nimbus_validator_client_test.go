@@ -21,14 +21,16 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 				Spec: ethereum2v1alpha1.ValidatorSpec{
 					Client:         ethereum2v1alpha1.NimbusClient,
 					Network:        "mainnet",
-					BeaconEndpoint: "10.0.0.11",
+					BeaconEndpoint: "http://10.0.0.11",
+					Graffiti:       "Validated by Kotal",
 				},
 			},
 			result: []string{
 				// update with data dir
 				NimbusNonInteractive,
-				argWithVal(NimbusRPCAddress, "10.0.0.11"),
+				argWithVal(NimbusRPCAddress, "http://10.0.0.11"),
 				argWithVal(NimbusRPCPort, "80"),
+				argWithVal(NimbusGraffiti, "Validated by Kotal"),
 			},
 		},
 	}
