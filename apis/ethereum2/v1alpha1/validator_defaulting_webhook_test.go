@@ -7,7 +7,7 @@ import (
 
 var _ = Describe("Ethereum 2.0 validator client defaulting", func() {
 
-	It("Should default validator client with missing client", func() {
+	It("Should default validator client with missing client and graffiti", func() {
 		node := Validator{
 			Spec: ValidatorSpec{
 				Network: "mainnet",
@@ -15,6 +15,7 @@ var _ = Describe("Ethereum 2.0 validator client defaulting", func() {
 		}
 		node.Default()
 		Expect(node.Spec.Client).To(Equal(DefaultClient))
+		Expect(node.Spec.Graffiti).To(Equal(DefaultGraffiti))
 	})
 
 })

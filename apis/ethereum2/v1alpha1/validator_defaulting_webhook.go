@@ -15,4 +15,8 @@ func (r *Validator) Default() {
 	if r.Spec.Client == "" {
 		r.Spec.Client = DefaultClient
 	}
+
+	if r.Spec.Graffiti == "" {
+		r.Spec.Graffiti = DefaultGraffiti
+	}
 }

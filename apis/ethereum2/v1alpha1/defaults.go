@@ -17,6 +17,8 @@ const (
 	DefaultGRPCHost = "0.0.0.0"
 	// DefaultRestHost is the default Beacon REST api host
 	DefaultRestHost = "0.0.0.0"
+	// DefaultGraffiti is the default text to include in proposed blocks
+	DefaultGraffiti = "Powered by Kotal"
 )
 
 const (
