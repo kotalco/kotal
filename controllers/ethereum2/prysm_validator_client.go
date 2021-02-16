@@ -23,6 +23,8 @@ func (t *PrysmValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (arg
 
 	args = append(args, PrysmAcceptTermsOfUse)
 
+	args = append(args, PrysmDataDir, PathBlockchainData)
+
 	args = append(args, fmt.Sprintf("--%s", validator.Spec.Network))
 
 	if validator.Spec.BeaconEndpoint != "" {

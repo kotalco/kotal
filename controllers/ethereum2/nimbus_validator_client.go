@@ -23,6 +23,8 @@ func (t *NimbusValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (ar
 
 	args = append(args, NimbusNonInteractive)
 
+	args = append(args, argWithVal(NimbusDataDir, PathBlockchainData))
+
 	endpoint := validator.Spec.BeaconEndpoint
 
 	if endpoint != "" {

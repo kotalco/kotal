@@ -20,6 +20,8 @@ const (
 // Args returns command line arguments required for client
 func (t *LighthouseValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
 
+	args = append(args, LighthouseDataDir, PathBlockchainData)
+
 	args = append(args, LighthouseNetwork, validator.Spec.Network)
 
 	if validator.Spec.BeaconEndpoint != "" {

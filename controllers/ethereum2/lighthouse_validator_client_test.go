@@ -26,7 +26,8 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 				},
 			},
 			result: []string{
-				// update with data dir
+				LighthouseDataDir,
+				PathBlockchainData,
 				LighthouseNetwork,
 				"mainnet",
 				LighthouseBeaconNodeEndpoint,

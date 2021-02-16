@@ -26,7 +26,9 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 				},
 			},
 			result: []string{
-				// update with data dir
+				"vc",
+				TekuDataPath,
+				PathBlockchainData,
 				TekuNetwork,
 				"mainnet",
 				TekuBeaconNodeEndpoint,

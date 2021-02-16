@@ -6,6 +6,7 @@ import (
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -35,6 +36,10 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	r.updateLabels(&validator)
 
+	if err = r.reconcileValidatorDataPVC(&validator); err != nil {
+		return
+	}
+
 	if err = r.reconcileValidatorStatefulset(&validator); err != nil {
 		return
 	}
@@ -52,6 +57,55 @@ func (r *ValidatorReconciler) updateLabels(validator *ethereum2v1alpha1.Validato
 	validator.Labels["name"] = "node"
 	validator.Labels["protocol"] = "ethereum2"
 	validator.Labels["instance"] = validator.Name
+}
+
+// reconcileValidatorDataPVC reconciles node data persistent volume claim
+func (r *ValidatorReconciler) reconcileValidatorDataPVC(validator *ethereum2v1alpha1.Validator) error {
+	pvc := corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      validator.Name,
+			Namespace: validator.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, &pvc, func() error {
+		if err := ctrl.SetControllerReference(validator, &pvc, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specValidatorDataPVC(validator, &pvc)
+
+		return nil
+	})
+
+	return err
+}
+
+// specValidatorDataPVC updates node data PVC spec
+func (r *ValidatorReconciler) specValidatorDataPVC(node *ethereum2v1alpha1.Validator, pvc *corev1.PersistentVolumeClaim) {
+
+	request := corev1.ResourceList{
+		// TODO: update validator .spec with resources
+		corev1.ResourceStorage: resource.MustParse("100Gi"),
+	}
+
+	// spec is immutable after creation except resources.requests for bound claims
+	if !pvc.CreationTimestamp.IsZero() {
+		pvc.Spec.Resources.Requests = request
+		return
+	}
+
+	pvc.Labels = node.GetLabels()
+
+	pvc.Spec = corev1.PersistentVolumeClaimSpec{
+		AccessModes: []corev1.PersistentVolumeAccessMode{
+			corev1.ReadWriteOnce,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: request,
+		},
+		// TODO: set storage class
+	}
 }
 
 // specValidatorStatefulset updates node statefulset spec
@@ -74,6 +128,22 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 						Image:   img,
 						Command: command,
 						Args:    args,
+						VolumeMounts: []corev1.VolumeMount{
+							{
+								Name:      "data",
+								MountPath: PathBlockchainData,
+							},
+						},
+					},
+				},
+				Volumes: []corev1.Volume{
+					{
+						Name: "data",
+						VolumeSource: corev1.VolumeSource{
+							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+								ClaimName: validator.Name,
+							},
+						},
 					},
 				},
 			},

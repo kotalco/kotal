@@ -26,8 +26,9 @@ var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 				},
 			},
 			result: []string{
-				// update with data dir
 				PrysmAcceptTermsOfUse,
+				PrysmDataDir,
+				PathBlockchainData,
 				"--mainnet",
 				PrysmBeaconRPCProvider,
 				"http://localhost:8899",
