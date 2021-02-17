@@ -53,6 +53,33 @@ spec:
               description: Network is the network this validator is validating blocks
                 for
               type: string
+            resources:
+              description: Resources is node compute and storage resources
+              properties:
+                cpu:
+                  description: CPU is cpu cores the node requires
+                  pattern: ^[1-9][0-9]*m?$
+                  type: string
+                cpuLimit:
+                  description: CPULimit is cpu cores the node is limited to
+                  pattern: ^[1-9][0-9]*m?$
+                  type: string
+                memory:
+                  description: Memory is memmory requirements
+                  pattern: ^[1-9][0-9]*[KMGTPE]i$
+                  type: string
+                memoryLimit:
+                  description: MemoryLimit is cpu cores the node is limited to
+                  pattern: ^[1-9][0-9]*[KMGTPE]i$
+                  type: string
+                storage:
+                  description: Storage is disk space storage requirements
+                  pattern: ^[1-9][0-9]*[KMGTPE]i$
+                  type: string
+                storageClass:
+                  description: StorageClass is the volume storage class
+                  type: string
+              type: object
           required:
           - beaconEndpoint
           - network

@@ -82,11 +82,10 @@ func (r *ValidatorReconciler) reconcileValidatorDataPVC(validator *ethereum2v1al
 }
 
 // specValidatorDataPVC updates node data PVC spec
-func (r *ValidatorReconciler) specValidatorDataPVC(node *ethereum2v1alpha1.Validator, pvc *corev1.PersistentVolumeClaim) {
+func (r *ValidatorReconciler) specValidatorDataPVC(validator *ethereum2v1alpha1.Validator, pvc *corev1.PersistentVolumeClaim) {
 
 	request := corev1.ResourceList{
-		// TODO: update validator .spec with resources
-		corev1.ResourceStorage: resource.MustParse("100Gi"),
+		corev1.ResourceStorage: resource.MustParse(validator.Spec.Resources.Storage),
 	}
 
 	// spec is immutable after creation except resources.requests for bound claims
@@ -95,7 +94,7 @@ func (r *ValidatorReconciler) specValidatorDataPVC(node *ethereum2v1alpha1.Valid
 		return
 	}
 
-	pvc.Labels = node.GetLabels()
+	pvc.Labels = validator.GetLabels()
 
 	pvc.Spec = corev1.PersistentVolumeClaimSpec{
 		AccessModes: []corev1.PersistentVolumeAccessMode{
@@ -104,7 +103,7 @@ func (r *ValidatorReconciler) specValidatorDataPVC(node *ethereum2v1alpha1.Valid
 		Resources: corev1.ResourceRequirements{
 			Requests: request,
 		},
-		// TODO: set storage class
+		StorageClassName: validator.Spec.Resources.StorageClass,
 	}
 }
 
@@ -132,6 +131,16 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 							{
 								Name:      "data",
 								MountPath: PathBlockchainData,
+							},
+						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(validator.Spec.Resources.CPU),
+								corev1.ResourceMemory: resource.MustParse(validator.Spec.Resources.Memory),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(validator.Spec.Resources.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(validator.Spec.Resources.MemoryLimit),
 							},
 						},
 					},

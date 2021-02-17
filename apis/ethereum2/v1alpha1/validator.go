@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"github.com/kotalco/kotal/apis/shared"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -14,6 +15,8 @@ type ValidatorSpec struct {
 	BeaconEndpoint string `json:"beaconEndpoint"`
 	// Graffiti is the text to include in proposed blocks
 	Graffiti string `json:"graffiti,omitempty"`
+	// Resources is node compute and storage resources
+	shared.Resources `json:"resources,omitempty"`
 }
 
 // ValidatorStatus defines the observed state of Validator
