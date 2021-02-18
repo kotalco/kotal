@@ -3,6 +3,8 @@ package controllers
 const (
 	// PathBlockchainData is the blockchain data path
 	PathBlockchainData = "/mnt/data"
+	// PathSecrets is the secrets (private keys, password ... etc) path
+	PathSecrets = "/mnt/secrets"
 )
 
 // Teku client arguments
@@ -26,6 +28,8 @@ const (
 	TekuBeaconNodeEndpoint = "--beacon-node-api-endpoint"
 	// TekuGraffiti is the argument used for text include in proposed blocks
 	TekuGraffiti = "--validators-graffiti"
+	// TekuValidatorKeys is the argument used for Validator keys and secrets
+	TekuValidatorKeys = "--validator-keys"
 )
 
 // Prysm client arguments

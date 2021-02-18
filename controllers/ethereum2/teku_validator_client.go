@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"fmt"
 	"os"
+	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 )
@@ -32,6 +34,14 @@ func (t *TekuValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args
 	if validator.Spec.Graffiti != "" {
 		args = append(args, TekuGraffiti, validator.Spec.Graffiti)
 	}
+
+	keyPass := []string{}
+	for _, secretName := range validator.Spec.Secrets {
+		path := fmt.Sprintf("%s/%s", PathSecrets, secretName)
+		keyPass = append(keyPass, fmt.Sprintf("%s/key.json:%s/password.txt", path, path))
+	}
+
+	args = append(args, TekuValidatorKeys, strings.Join(keyPass, ","))
 
 	return args
 }

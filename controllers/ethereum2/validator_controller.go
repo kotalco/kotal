@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -107,6 +108,51 @@ func (r *ValidatorReconciler) specValidatorDataPVC(validator *ethereum2v1alpha1.
 	}
 }
 
+func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha1.Validator) (volumes []corev1.Volume) {
+	dataVolume := corev1.Volume{
+		Name: "data",
+		VolumeSource: corev1.VolumeSource{
+			PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+				ClaimName: validator.Name,
+			},
+		},
+	}
+	volumes = append(volumes, dataVolume)
+
+	for _, secretName := range validator.Spec.Secrets {
+		secretVolume := corev1.Volume{
+			Name: secretName,
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: secretName,
+				},
+			},
+		}
+		volumes = append(volumes, secretVolume)
+	}
+
+	return
+}
+
+func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1alpha1.Validator) (mounts []corev1.VolumeMount) {
+	dataMount := corev1.VolumeMount{
+		Name:      "data",
+		MountPath: PathBlockchainData,
+	}
+	mounts = append(mounts, dataMount)
+
+	for _, secretName := range validator.Spec.Secrets {
+		secretMount := corev1.VolumeMount{
+			Name:      secretName,
+			ReadOnly:  true,
+			MountPath: fmt.Sprintf("%s/%s", PathSecrets, secretName),
+		}
+		mounts = append(mounts, secretMount)
+	}
+
+	return
+}
+
 // specValidatorStatefulset updates node statefulset spec
 func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alpha1.Validator, sts *appsv1.StatefulSet, img string, command, args []string) {
 
@@ -123,16 +169,11 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 			Spec: corev1.PodSpec{
 				Containers: []corev1.Container{
 					{
-						Name:    "validator",
-						Image:   img,
-						Command: command,
-						Args:    args,
-						VolumeMounts: []corev1.VolumeMount{
-							{
-								Name:      "data",
-								MountPath: PathBlockchainData,
-							},
-						},
+						Name:         "validator",
+						Image:        img,
+						Command:      command,
+						Args:         args,
+						VolumeMounts: r.createValidatorVolumeMounts(validator),
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
 								corev1.ResourceCPU:    resource.MustParse(validator.Spec.Resources.CPU),
@@ -145,16 +186,7 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 						},
 					},
 				},
-				Volumes: []corev1.Volume{
-					{
-						Name: "data",
-						VolumeSource: corev1.VolumeSource{
-							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-								ClaimName: validator.Name,
-							},
-						},
-					},
-				},
+				Volumes: r.createValidatorVolumes(validator),
 			},
 		},
 	}

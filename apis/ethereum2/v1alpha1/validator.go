@@ -15,6 +15,8 @@ type ValidatorSpec struct {
 	BeaconEndpoint string `json:"beaconEndpoint"`
 	// Graffiti is the text to include in proposed blocks
 	Graffiti string `json:"graffiti,omitempty"`
+	// Secrets is a list of k8s secret references by name
+	Secrets []string `json:"secrets"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

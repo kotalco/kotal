@@ -7,3 +7,9 @@ spec:
   network: mainnet
   beaconEndpoint: http://10.96.130.88:9999
   graffiti: Validated by Kotal
+  secrets:
+    # my-vaidator secret must exist before deploying the validator
+    # my-validator secret must has [key] and [password] keys
+    # key is the keystore file
+    # password is the password file
+    - my-validator

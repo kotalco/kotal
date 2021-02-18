@@ -80,9 +80,15 @@ spec:
                   description: StorageClass is the volume storage class
                   type: string
               type: object
+            secrets:
+              description: Secrets is a list of k8s secret references by name
+              items:
+                type: string
+              type: array
           required:
           - beaconEndpoint
           - network
+          - secrets
           type: object
         status:
           description: ValidatorStatus defines the observed state of Validator
