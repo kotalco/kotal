@@ -85,6 +85,9 @@ spec:
               items:
                 type: string
               type: array
+            walletPasswordSecret:
+              description: WalletPasswordSecret is wallet password secret
+              type: string
           required:
           - beaconEndpoint
           - network

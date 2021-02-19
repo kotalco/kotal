@@ -17,6 +17,8 @@ type ValidatorSpec struct {
 	Graffiti string `json:"graffiti,omitempty"`
 	// Secrets is a list of k8s secret references by name
 	Secrets []string `json:"secrets"`
+	// WalletPasswordSecret is wallet password secret
+	WalletPasswordSecret string `json:"walletPasswordSecret,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
