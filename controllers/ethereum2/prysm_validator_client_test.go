@@ -23,6 +23,10 @@ var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 					Network:        "mainnet",
 					BeaconEndpoint: "http://localhost:8899",
 					Graffiti:       "Validated by Kotal",
+					Secrets: []string{
+						"my-validator",
+					},
+					WalletPasswordSecret: "wallet-password",
 				},
 			},
 			result: []string{
@@ -34,6 +38,10 @@ var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 				"http://localhost:8899",
 				PrysmGraffiti,
 				"Validated by Kotal",
+				PrysmWalletDir,
+				fmt.Sprintf("%s/prysm-wallet", PathBlockchainData),
+				PrysmWalletPasswordFile,
+				fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", PathSecrets),
 			},
 		},
 	}

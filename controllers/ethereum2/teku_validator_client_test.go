@@ -39,7 +39,7 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 				TekuGraffiti,
 				"Validated by Kotal",
 				TekuValidatorKeys,
-				"/mnt/secrets/my-validator/key.json:/mnt/secrets/my-validator/password.txt",
+				"/mnt/secrets/validator-keys/my-validator/keystore-0.json:/mnt/secrets/validator-keys/my-validator/password.txt",
 			},
 		},
 	}

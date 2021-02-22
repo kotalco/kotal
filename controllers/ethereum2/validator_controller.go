@@ -119,21 +119,52 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 	}
 	volumes = append(volumes, dataVolume)
 
-	for _, secretName := range validator.Spec.Secrets {
+	// validator key/secret volumes
+	for i, secretName := range validator.Spec.Secrets {
 		secretVolume := corev1.Volume{
 			Name: secretName,
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
 					SecretName: secretName,
+					Items: []corev1.KeyToPath{
+						{
+							Key:  "key",
+							Path: fmt.Sprintf("keystore-%d.json", i),
+						},
+						{
+							Key:  "password",
+							Path: "password.txt",
+						},
+					},
 				},
 			},
 		}
 		volumes = append(volumes, secretVolume)
 	}
 
+	// prysm wallet password volume
+	if validator.Spec.Client == ethereum2v1alpha1.PrysmClient {
+		walletPasswordVolume := corev1.Volume{
+			Name: validator.Spec.WalletPasswordSecret,
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: validator.Spec.WalletPasswordSecret,
+					Items: []corev1.KeyToPath{
+						{
+							Key:  "password",
+							Path: "prysm-wallet-password.txt",
+						},
+					},
+				},
+			},
+		}
+		volumes = append(volumes, walletPasswordVolume)
+	}
+
 	return
 }
 
+// createValidatorVolumeMounts creates validator volume mounts
 func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1alpha1.Validator) (mounts []corev1.VolumeMount) {
 	dataMount := corev1.VolumeMount{
 		Name:      "data",
@@ -145,9 +176,18 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 		secretMount := corev1.VolumeMount{
 			Name:      secretName,
 			ReadOnly:  true,
-			MountPath: fmt.Sprintf("%s/%s", PathSecrets, secretName),
+			MountPath: fmt.Sprintf("%s/validator-keys/%s", PathSecrets, secretName),
 		}
 		mounts = append(mounts, secretMount)
+	}
+
+	if validator.Spec.Client == ethereum2v1alpha1.PrysmClient {
+		walletPasswordMount := corev1.VolumeMount{
+			Name:      validator.Spec.WalletPasswordSecret,
+			ReadOnly:  true,
+			MountPath: fmt.Sprintf("%s/prysm-wallet", PathSecrets),
+		}
+		mounts = append(mounts, walletPasswordMount)
 	}
 
 	return
@@ -157,6 +197,33 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alpha1.Validator, sts *appsv1.StatefulSet, img string, command, args []string) {
 
 	sts.Labels = validator.GetLabels()
+
+	initContainers := []corev1.Container{}
+	if validator.Spec.Client == ethereum2v1alpha1.PrysmClient {
+		for i, secretName := range validator.Spec.Secrets {
+			keyDir := fmt.Sprintf("%s/validator-keys/%s", PathSecrets, secretName)
+			importAccountContainer := corev1.Container{
+				Name:  fmt.Sprintf("import-validator-%s", secretName),
+				Image: img,
+				Args: []string{
+					"accounts",
+					"import",
+					PrysmAcceptTermsOfUse,
+					fmt.Sprintf("--%s", validator.Spec.Network),
+					PrysmWalletDir,
+					fmt.Sprintf("%s/prysm-wallet", PathBlockchainData),
+					PrysmKeysDir,
+					fmt.Sprintf("%s/keystore-%d.json", keyDir, i),
+					PrysmAccountPasswordFile,
+					fmt.Sprintf("%s/password.txt", keyDir),
+					PrysmWalletPasswordFile,
+					fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", PathSecrets),
+				},
+				VolumeMounts: r.createValidatorVolumeMounts(validator),
+			}
+			initContainers = append(initContainers, importAccountContainer)
+		}
+	}
 
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
@@ -186,7 +253,8 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 						},
 					},
 				},
-				Volumes: r.createValidatorVolumes(validator),
+				InitContainers: initContainers,
+				Volumes:        r.createValidatorVolumes(validator),
 			},
 		},
 	}

@@ -36,9 +36,9 @@ func (t *TekuValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args
 	}
 
 	keyPass := []string{}
-	for _, secretName := range validator.Spec.Secrets {
-		path := fmt.Sprintf("%s/%s", PathSecrets, secretName)
-		keyPass = append(keyPass, fmt.Sprintf("%s/key.json:%s/password.txt", path, path))
+	for i, secretName := range validator.Spec.Secrets {
+		path := fmt.Sprintf("%s/validator-keys/%s", PathSecrets, secretName)
+		keyPass = append(keyPass, fmt.Sprintf("%s/keystore-%d.json:%s/password.txt", path, i, path))
 	}
 
 	args = append(args, TekuValidatorKeys, strings.Join(keyPass, ","))

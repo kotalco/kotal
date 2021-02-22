@@ -57,10 +57,18 @@ const (
 	// PrysmP2PUDPPort is the argument used p2p discovery udp port
 	PrysmP2PUDPPort = "--p2p-udp-port"
 
-	//	PrysmBeaconRPCProvider is the argument used for beacon node rpc endpoint
+	// PrysmBeaconRPCProvider is the argument used for beacon node rpc endpoint
 	PrysmBeaconRPCProvider = "--beacon-rpc-provider"
-	//	PrysmGraffiti is the argument used to include in proposed blocks
+	// PrysmGraffiti is the argument used to include in proposed blocks
 	PrysmGraffiti = "--graffiti"
+	// PrysmKeysDir is the argument used to locate keystores to be imported are stored
+	PrysmKeysDir = "--keys-dir"
+	// PrysmWalletDir is the argument used to locate wallet directory
+	PrysmWalletDir = "--wallet-dir"
+	// PrysmAccountPasswordFile is the argument used to locate account password file
+	PrysmAccountPasswordFile = "--account-password-file"
+	// PrysmWalletPasswordFile is the argument used to locate wallet password file
+	PrysmWalletPasswordFile = "--wallet-password-file"
 )
 
 // Lighthouse client arguments
