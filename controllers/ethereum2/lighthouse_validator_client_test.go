@@ -34,6 +34,8 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 				"http://localhost:8899",
 				LighthouseGraffiti,
 				"Validated by Kotal",
+				LighthouseDisableAutoDiscover,
+				LighthouseInitSlashingProtection,
 			},
 		},
 	}

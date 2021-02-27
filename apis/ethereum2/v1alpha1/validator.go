@@ -15,12 +15,21 @@ type ValidatorSpec struct {
 	BeaconEndpoint string `json:"beaconEndpoint"`
 	// Graffiti is the text to include in proposed blocks
 	Graffiti string `json:"graffiti,omitempty"`
-	// Secrets is a list of k8s secret references by name
-	Secrets []string `json:"secrets"`
+	// Keystores is a list of Validator keystores
+	Keystores []Keystore `json:"keystores"`
 	// WalletPasswordSecret is wallet password secret
 	WalletPasswordSecret string `json:"walletPasswordSecret,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
+}
+
+// Keystore is Ethereum 2.0 validator EIP-2335 BLS12-381 keystore https://eips.ethereum.org/EIPS/eip-2335
+type Keystore struct {
+	// PublicKey is the validator public key in hexadecimal
+	// +kubebuilder:validation:Pattern="^0[xX][0-9a-fA-F]{96}$"
+	PublicKey string `json:"publicKey,omitempty"`
+	// SecretName is the kubernetes secret holding [keystore] and [password]
+	SecretName string `json:"secretName"`
 }
 
 // ValidatorStatus defines the observed state of Validator

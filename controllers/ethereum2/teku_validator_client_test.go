@@ -23,8 +23,10 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 					Network:        "mainnet",
 					BeaconEndpoint: "http://localhost:9988",
 					Graffiti:       "Validated by Kotal",
-					Secrets: []string{
-						"my-validator",
+					Keystores: []ethereum2v1alpha1.Keystore{
+						{
+							SecretName: "my-validator",
+						},
 					},
 				},
 			},

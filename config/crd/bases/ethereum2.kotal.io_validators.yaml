@@ -49,6 +49,24 @@ spec:
             graffiti:
               description: Graffiti is the text to include in proposed blocks
               type: string
+            keystores:
+              description: Keystores is a list of Validator keystores
+              items:
+                description: Keystore is Ethereum 2.0 validator EIP-2335 BLS12-381
+                  keystore https://eips.ethereum.org/EIPS/eip-2335
+                properties:
+                  publicKey:
+                    description: PublicKey is the validator public key in hexadecimal
+                    pattern: ^0[xX][0-9a-fA-F]{96}$
+                    type: string
+                  secretName:
+                    description: SecretName is the kubernetes secret holding [keystore]
+                      and [password]
+                    type: string
+                required:
+                - secretName
+                type: object
+              type: array
             network:
               description: Network is the network this validator is validating blocks
                 for
@@ -80,18 +98,13 @@ spec:
                   description: StorageClass is the volume storage class
                   type: string
               type: object
-            secrets:
-              description: Secrets is a list of k8s secret references by name
-              items:
-                type: string
-              type: array
             walletPasswordSecret:
               description: WalletPasswordSecret is wallet password secret
               type: string
           required:
           - beaconEndpoint
+          - keystores
           - network
-          - secrets
           type: object
         status:
           description: ValidatorStatus defines the observed state of Validator

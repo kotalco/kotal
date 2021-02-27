@@ -5,6 +5,8 @@ const (
 	PathBlockchainData = "/mnt/data"
 	// PathSecrets is the secrets (private keys, password ... etc) path
 	PathSecrets = "/mnt/secrets"
+	// PathConfig is the configuration path
+	PathConfig = "/mnt/config"
 )
 
 // Teku client arguments
@@ -96,6 +98,10 @@ const (
 	LighthouseBeaconNodeEndpoint = "--beacon-node"
 	// LighthouseGraffiti is the argument used to include in proposed blocks
 	LighthouseGraffiti = "--graffiti"
+	// LighthouseDisableAutoDiscover is the argument used to disable auto validator keystores discovery
+	LighthouseDisableAutoDiscover = "--disable-auto-discover"
+	// LighthouseInitSlashingProtection is the argument used to init slashing protection
+	LighthouseInitSlashingProtection = "--init-slashing-protection"
 )
 
 // Nimbus client arguments

@@ -41,6 +41,10 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return
 	}
 
+	if err = r.reconcileValidatorConfigmap(&validator); err != nil {
+		return
+	}
+
 	if err = r.reconcileValidatorStatefulset(&validator); err != nil {
 		return
 	}
@@ -58,6 +62,52 @@ func (r *ValidatorReconciler) updateLabels(validator *ethereum2v1alpha1.Validato
 	validator.Labels["name"] = "node"
 	validator.Labels["protocol"] = "ethereum2"
 	validator.Labels["instance"] = validator.Name
+}
+
+// specValidatorConfigmap updates validator configmap spec
+func (r *ValidatorReconciler) specValidatorConfigmap(validator *ethereum2v1alpha1.Validator, configmap *corev1.ConfigMap, definitions string) {
+
+	configmap.ObjectMeta.Labels = validator.Labels
+
+	if configmap.Data == nil {
+		configmap.Data = map[string]string{}
+	}
+
+	configmap.Data["validator_definitions.yml"] = definitions
+}
+
+// reconcileValidatorConfigmap creates config map if it doesn't exist or update it
+func (r *ValidatorReconciler) reconcileValidatorConfigmap(validator *ethereum2v1alpha1.Validator) error {
+
+	// configmap is required for lighthouse validator definitions
+	if validator.Spec.Client != ethereum2v1alpha1.LighthouseClient {
+		return nil
+	}
+
+	configmap := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      validator.Name,
+			Namespace: validator.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, configmap, func() error {
+		if err := ctrl.SetControllerReference(validator, configmap, r.Scheme); err != nil {
+			r.Log.Error(err, "Unable to set controller reference on configmap")
+			return err
+		}
+
+		definitions, err := CreateValidatorDefinitions(validator)
+		if err != nil {
+			return err
+		}
+
+		r.specValidatorConfigmap(validator, configmap, definitions)
+
+		return nil
+	})
+
+	return err
 }
 
 // reconcileValidatorDataPVC reconciles node data persistent volume claim
@@ -108,6 +158,7 @@ func (r *ValidatorReconciler) specValidatorDataPVC(validator *ethereum2v1alpha1.
 	}
 }
 
+// createValidatorVolumes creates validator volumes
 func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha1.Validator) (volumes []corev1.Volume) {
 	dataVolume := corev1.Volume{
 		Name: "data",
@@ -120,15 +171,16 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 	volumes = append(volumes, dataVolume)
 
 	// validator key/secret volumes
-	for i, secretName := range validator.Spec.Secrets {
-		secretVolume := corev1.Volume{
-			Name: secretName,
+	for i, keystore := range validator.Spec.Keystores {
+
+		keystoreVolume := corev1.Volume{
+			Name: keystore.SecretName,
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
-					SecretName: secretName,
+					SecretName: keystore.SecretName,
 					Items: []corev1.KeyToPath{
 						{
-							Key:  "key",
+							Key:  "keystore",
 							Path: fmt.Sprintf("keystore-%d.json", i),
 						},
 						{
@@ -139,7 +191,24 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 				},
 			},
 		}
-		volumes = append(volumes, secretVolume)
+		volumes = append(volumes, keystoreVolume)
+	}
+
+	// lighthouse validator_definitions.yml
+	if validator.Spec.Client == ethereum2v1alpha1.LighthouseClient {
+		validatorDefinitionsVolume := corev1.Volume{
+			// TODO: prepend validator name to avoid collision
+			Name: "validator-definitions",
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: validator.Name,
+					},
+				},
+			},
+		}
+		volumes = append(volumes, validatorDefinitionsVolume)
+
 	}
 
 	// prysm wallet password volume
@@ -172,15 +241,25 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 	}
 	mounts = append(mounts, dataMount)
 
-	for _, secretName := range validator.Spec.Secrets {
-		secretMount := corev1.VolumeMount{
-			Name:      secretName,
-			ReadOnly:  true,
-			MountPath: fmt.Sprintf("%s/validator-keys/%s", PathSecrets, secretName),
+	for _, keystore := range validator.Spec.Keystores {
+
+		keystoreMount := corev1.VolumeMount{
+			Name:      keystore.SecretName,
+			MountPath: fmt.Sprintf("%s/validator-keys/%s", PathSecrets, keystore.SecretName),
 		}
-		mounts = append(mounts, secretMount)
+		mounts = append(mounts, keystoreMount)
 	}
 
+	// Lighthouse validator_definitions.yml config
+	if validator.Spec.Client == ethereum2v1alpha1.LighthouseClient {
+		validatorDefinitionsMount := corev1.VolumeMount{
+			Name:      "validator-definitions",
+			MountPath: PathConfig,
+		}
+		mounts = append(mounts, validatorDefinitionsMount)
+	}
+
+	// prysm wallet password
 	if validator.Spec.Client == ethereum2v1alpha1.PrysmClient {
 		walletPasswordMount := corev1.VolumeMount{
 			Name:      validator.Spec.WalletPasswordSecret,
@@ -199,11 +278,14 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 	sts.Labels = validator.GetLabels()
 
 	initContainers := []corev1.Container{}
+	mounts := r.createValidatorVolumeMounts(validator)
+
+	// import validator keys into Prysm client
 	if validator.Spec.Client == ethereum2v1alpha1.PrysmClient {
-		for i, secretName := range validator.Spec.Secrets {
-			keyDir := fmt.Sprintf("%s/validator-keys/%s", PathSecrets, secretName)
-			importAccountContainer := corev1.Container{
-				Name:  fmt.Sprintf("import-validator-%s", secretName),
+		for i, keystore := range validator.Spec.Keystores {
+			keyDir := fmt.Sprintf("%s/validator-keys/%s", PathSecrets, keystore.SecretName)
+			importValidatorContainer := corev1.Container{
+				Name:  fmt.Sprintf("import-validator-%s", keystore.SecretName),
 				Image: img,
 				Args: []string{
 					"accounts",
@@ -219,10 +301,26 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 					PrysmWalletPasswordFile,
 					fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", PathSecrets),
 				},
-				VolumeMounts: r.createValidatorVolumeMounts(validator),
+				VolumeMounts: mounts,
 			}
-			initContainers = append(initContainers, importAccountContainer)
+			initContainers = append(initContainers, importValidatorContainer)
 		}
+	}
+
+	if validator.Spec.Client == ethereum2v1alpha1.LighthouseClient {
+		// TODO: replace with validator account import init container
+		// TODO: follow up with lighthouse PR https://github.com/sigp/lighthouse/issues/2224
+		validatorsPath := fmt.Sprintf("%s/validators", PathBlockchainData)
+		linkValidatorDefinitions := corev1.Container{
+			Name:    "link-validator-definitions",
+			Image:   "busybox",
+			Command: []string{"/bin/sh", "-c"},
+			Args: []string{
+				fmt.Sprintf("mkdir -p %s && cp %s/validator_definitions.yml %s/validator_definitions.yml && cp -R %s/validator-keys/. %s/validator-keys", validatorsPath, PathConfig, validatorsPath, PathSecrets, PathBlockchainData),
+			},
+			VolumeMounts: mounts,
+		}
+		initContainers = append(initContainers, linkValidatorDefinitions)
 	}
 
 	sts.Spec = appsv1.StatefulSetSpec{
@@ -240,7 +338,7 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 						Image:        img,
 						Command:      command,
 						Args:         args,
-						VolumeMounts: r.createValidatorVolumeMounts(validator),
+						VolumeMounts: mounts,
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
 								corev1.ResourceCPU:    resource.MustParse(validator.Spec.Resources.CPU),

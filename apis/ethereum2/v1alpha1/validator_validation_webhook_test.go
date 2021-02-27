@@ -24,8 +24,10 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 					Network:  "mainnet",
 					Client:   PrysmClient,
 					Graffiti: "Kotal is amazing",
-					Secrets: []string{
-						"my-validator",
+					Keystores: []Keystore{
+						{
+							SecretName: "my-validator",
+						},
 					},
 				},
 			},
@@ -53,8 +55,10 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 					Network:  "mainnet",
 					Client:   TekuClient,
 					Graffiti: "Kotal is amazing",
-					Secrets: []string{
-						"my-validator",
+					Keystores: []Keystore{
+						{
+							SecretName: "my-validator",
+						},
 					},
 				},
 			},
@@ -63,8 +67,10 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 					Network:  "mainnet",
 					Client:   PrysmClient,
 					Graffiti: "Kotal is amazing",
-					Secrets: []string{
-						"my-validator",
+					Keystores: []Keystore{
+						{
+							SecretName: "my-validator",
+						},
 					},
 				},
 			},
