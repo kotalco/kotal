@@ -233,6 +233,7 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 	}
 
 	if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
+		// Nimbus checks if secrets dir has 0600 and tries to fix it if not
 		mode := int32(0600)
 		validatorSecretsVolume := corev1.Volume{
 			Name: "validator-secrets",
