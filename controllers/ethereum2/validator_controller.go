@@ -160,6 +160,9 @@ func (r *ValidatorReconciler) specValidatorDataPVC(validator *ethereum2v1alpha1.
 
 // createValidatorVolumes creates validator volumes
 func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha1.Validator) (volumes []corev1.Volume) {
+
+	var volumeProjections []corev1.VolumeProjection
+
 	dataVolume := corev1.Volume{
 		Name: "data",
 		VolumeSource: corev1.VolumeSource{
@@ -173,6 +176,20 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 	// validator key/secret volumes
 	for i, keystore := range validator.Spec.Keystores {
 
+		var keystorePath string
+
+		// Nimbus: looking for keystore.json files
+		// Prysm: looking for keystore-{any suffix}.json files
+		// lighthouse:
+		//	- in auto discover mode: looking for voting-keystore.json files
+		//	- in validator_defintions.yml: any file name or directory structure can be used
+		// teku: indifferernt to file names or directory structure
+		if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
+			keystorePath = "keystore.json"
+		} else {
+			keystorePath = fmt.Sprintf("keystore-%d.json", i)
+		}
+
 		keystoreVolume := corev1.Volume{
 			Name: keystore.SecretName,
 			VolumeSource: corev1.VolumeSource{
@@ -181,17 +198,52 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 					Items: []corev1.KeyToPath{
 						{
 							Key:  "keystore",
-							Path: fmt.Sprintf("keystore-%d.json", i),
-						},
-						{
-							Key:  "password",
-							Path: "password.txt",
+							Path: keystorePath,
 						},
 					},
 				},
 			},
 		}
+
+		// aggregate volume projections for nimbus client
+		if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
+			volumeProjections = append(volumeProjections, corev1.VolumeProjection{
+				Secret: &corev1.SecretProjection{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: keystore.SecretName,
+					},
+					Items: []corev1.KeyToPath{
+						{
+							Key:  "password",
+							Path: keystore.SecretName,
+						},
+					},
+				},
+			})
+		} else {
+			// update keystore volume with password for other clients
+			keystoreVolume.VolumeSource.Secret.Items = append(keystoreVolume.VolumeSource.Secret.Items, corev1.KeyToPath{
+				Key:  "password",
+				Path: "password.txt",
+			})
+		}
+
 		volumes = append(volumes, keystoreVolume)
+
+	}
+
+	if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
+		mode := int32(0600)
+		validatorSecretsVolume := corev1.Volume{
+			Name: "validator-secrets",
+			VolumeSource: corev1.VolumeSource{
+				Projected: &corev1.ProjectedVolumeSource{
+					Sources:     volumeProjections,
+					DefaultMode: &mode,
+				},
+			},
+		}
+		volumes = append(volumes, validatorSecretsVolume)
 	}
 
 	// lighthouse validator_definitions.yml
@@ -267,6 +319,16 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 			MountPath: fmt.Sprintf("%s/prysm-wallet", PathSecrets),
 		}
 		mounts = append(mounts, walletPasswordMount)
+	}
+
+	// nimbus client
+	if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
+		ValidatorSecretsMount := corev1.VolumeMount{
+			Name:      "validator-secrets",
+			ReadOnly:  true,
+			MountPath: fmt.Sprintf("%s/validator-secrets", PathSecrets),
+		}
+		mounts = append(mounts, ValidatorSecretsMount)
 	}
 
 	return

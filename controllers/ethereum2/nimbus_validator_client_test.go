@@ -23,6 +23,11 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 					Network:        "mainnet",
 					BeaconEndpoint: "http://10.0.0.11",
 					Graffiti:       "Validated by Kotal",
+					Keystores: []ethereum2v1alpha1.Keystore{
+						{
+							SecretName: "my-validator",
+						},
+					},
 				},
 			},
 			result: []string{
@@ -31,6 +36,8 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 				argWithVal(NimbusRPCAddress, "http://10.0.0.11"),
 				argWithVal(NimbusRPCPort, "80"),
 				argWithVal(NimbusGraffiti, "Validated by Kotal"),
+				argWithVal(NimbusValidatorsDir, fmt.Sprintf("%s/validator-keys", PathSecrets)),
+				argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/validator-secrets", PathSecrets)),
 			},
 		},
 	}

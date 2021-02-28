@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/url"
 	"os"
 
@@ -24,6 +25,10 @@ func (t *NimbusValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (ar
 	args = append(args, NimbusNonInteractive)
 
 	args = append(args, argWithVal(NimbusDataDir, PathBlockchainData))
+
+	args = append(args, argWithVal(NimbusValidatorsDir, fmt.Sprintf("%s/validator-keys", PathSecrets)))
+
+	args = append(args, argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/validator-secrets", PathSecrets)))
 
 	endpoint := validator.Spec.BeaconEndpoint
 

@@ -127,4 +127,8 @@ const (
 
 	// NimbusGraffiti is the argument used to include in proposed blocks
 	NimbusGraffiti = "--graffiti"
+	// NimbusValidatorsDir is the argument used to locate validator keystores directory
+	NimbusValidatorsDir = "--validators-dir"
+	// NimbusSecretsDir is the argument used to locate validator keystores secrets directory
+	NimbusSecretsDir = "--secrets-dir"
 )
