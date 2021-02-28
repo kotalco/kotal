@@ -18,7 +18,7 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 		Errors    field.ErrorList
 	}{
 		{
-			Title: "Node #1",
+			Title: "Validator #1",
 			Validator: &Validator{
 				Spec: ValidatorSpec{
 					Network:  "mainnet",
@@ -49,7 +49,7 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 		Errors       field.ErrorList
 	}{
 		{
-			Title: "Node #1",
+			Title: "Validator #1",
 			OldValidator: &Validator{
 				Spec: ValidatorSpec{
 					Network:  "mainnet",
@@ -80,6 +80,41 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 					Field:    "spec.walletPasswordSecret",
 					BadValue: "",
 					Detail:   "must provide walletPasswordSecret if client is prysm",
+				},
+			},
+		},
+		{
+			Title: "Validator #2",
+			OldValidator: &Validator{
+				Spec: ValidatorSpec{
+					Network:  "mainnet",
+					Client:   TekuClient,
+					Graffiti: "Kotal is amazing",
+					Keystores: []Keystore{
+						{
+							SecretName: "my-validator",
+						},
+					},
+				},
+			},
+			NewValidator: &Validator{
+				Spec: ValidatorSpec{
+					Network:  "pyrmont",
+					Client:   TekuClient,
+					Graffiti: "Kotal is amazing",
+					Keystores: []Keystore{
+						{
+							SecretName: "my-validator",
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.network",
+					BadValue: "pyrmont",
+					Detail:   "field is immutable",
 				},
 			},
 		},
