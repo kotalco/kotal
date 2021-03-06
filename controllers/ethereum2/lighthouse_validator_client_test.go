@@ -10,6 +10,8 @@ import (
 
 var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 
+	client, _ := NewValidatorClient(ethereum2v1alpha1.LighthouseClient)
+
 	cases := []struct {
 		title     string
 		validator *ethereum2v1alpha1.Validator
@@ -27,7 +29,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				LighthouseNetwork,
 				"mainnet",
 				LighthouseBeaconNodeEndpoint,
@@ -45,8 +47,6 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.validator.Default()
-				client, err := NewValidatorClient(cc.validator.Spec.Client)
-				Expect(err).To(BeNil())
 				args := client.Args(cc.validator)
 				Expect(args).To(ContainElements(cc.result))
 			})

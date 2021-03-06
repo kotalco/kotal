@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -204,8 +205,9 @@ func (r *BeaconNodeReconciler) reconcileNodeStatefulset(node *ethereum2v1alpha1.
 		args := client.Args(node)
 		img := client.Image()
 		command := client.Command()
+		homeDir := client.HomeDir()
 
-		r.specNodeStatefulset(&sts, node, args, command, img)
+		r.specNodeStatefulset(&sts, node, args, command, img, homeDir)
 
 		return nil
 	})
@@ -214,9 +216,47 @@ func (r *BeaconNodeReconciler) reconcileNodeStatefulset(node *ethereum2v1alpha1.
 }
 
 // specNodeStatefulset updates node statefulset spec
-func (r *BeaconNodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethereum2v1alpha1.BeaconNode, args, command []string, img string) {
+func (r *BeaconNodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethereum2v1alpha1.BeaconNode, args, command []string, img, homeDir string) {
 
 	sts.Labels = node.GetLabels()
+
+	mountPath := homeDir
+	// teku bin is in homedir
+	// mounting at homedir overwrites its contents
+	if node.Spec.Client == ethereum2v1alpha1.TekuClient {
+		mountPath = PathBlockchainData(homeDir)
+	}
+
+	mounts := []corev1.VolumeMount{
+		{
+			Name:      "data",
+			MountPath: mountPath,
+		},
+	}
+
+	initContainers := []corev1.Container{}
+
+	// Nimbus client requires data dir path to be read and write only by the owner 0700
+	if node.Spec.Client == ethereum2v1alpha1.NimbusClient {
+		fixPermissionContainer := corev1.Container{
+			Name:  "fix-datadir-permission",
+			Image: img,
+			Command: []string{
+				"/bin/sh",
+				"-c",
+			},
+			Args: []string{
+				fmt.Sprintf(`
+					mkdir -p %s &&
+					chmod 700 %s`,
+					PathBlockchainData(homeDir),
+					PathBlockchainData(homeDir),
+				),
+			},
+			VolumeMounts: mounts,
+		}
+		initContainers = append(initContainers, fixPermissionContainer)
+	}
 
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
@@ -229,16 +269,11 @@ func (r *BeaconNodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node
 			Spec: corev1.PodSpec{
 				Containers: []corev1.Container{
 					{
-						Name:    "node",
-						Command: command,
-						Args:    args,
-						Image:   img,
-						VolumeMounts: []corev1.VolumeMount{
-							{
-								Name:      "data",
-								MountPath: PathBlockchainData,
-							},
-						},
+						Name:         "node",
+						Command:      command,
+						Args:         args,
+						Image:        img,
+						VolumeMounts: mounts,
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
 								corev1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPU),
@@ -251,6 +286,7 @@ func (r *BeaconNodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node
 						},
 					},
 				},
+				InitContainers: initContainers,
 				Volumes: []corev1.Volume{
 					{
 						Name: "data",

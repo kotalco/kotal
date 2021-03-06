@@ -10,6 +10,8 @@ import (
 
 var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 
+	client, _ := NewBeaconNodeClient(ethereum2v1alpha1.TekuClient)
+
 	cases := []struct {
 		title  string
 		node   *ethereum2v1alpha1.BeaconNode
@@ -25,7 +27,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 			},
@@ -41,7 +43,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 				TekuEth1Endpoint,
@@ -60,7 +62,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 				TekuEth1Endpoint,
@@ -81,7 +83,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 				TekuEth1Endpoint,
@@ -105,7 +107,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 				TekuEth1Endpoint,
@@ -132,7 +134,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				TekuP2PPort,
 				"7891",
 				TekuNetwork,
@@ -153,8 +155,6 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.node.Default()
-				client, err := NewBeaconNodeClient(cc.node.Spec.Client)
-				Expect(err).To(BeNil())
 				args := client.Args(cc.node)
 				Expect(args).To(ContainElements(cc.result))
 			})

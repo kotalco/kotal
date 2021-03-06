@@ -10,6 +10,8 @@ import (
 
 var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 
+	client, _ := NewBeaconNodeClient(ethereum2v1alpha1.PrysmClient)
+
 	cases := []struct {
 		title  string
 		node   *ethereum2v1alpha1.BeaconNode
@@ -27,7 +29,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				"--mainnet",
 			},
 		},
@@ -44,7 +46,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -64,7 +66,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -87,7 +89,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -109,7 +111,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -134,7 +136,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -164,7 +166,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -195,7 +197,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				PrysmP2PTCPPort,
 				"7891",
 				PrysmP2PUDPPort,
@@ -218,8 +220,6 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.node.Default()
-				client, err := NewBeaconNodeClient(cc.node.Spec.Client)
-				Expect(err).To(BeNil())
 				args := client.Args(cc.node)
 				Expect(args).To(ContainElements(cc.result))
 			})

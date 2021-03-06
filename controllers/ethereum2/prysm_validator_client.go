@@ -15,19 +15,24 @@ const (
 	// EnvPrysmValidatorImage is the environment variable used for Prysmatic Labs validator client image
 	EnvPrysmValidatorImage = "PRYSM_VALIDATOR_CLIENT_IMAGE"
 	// DefaultPrysmValidatorImage is Prysmatic Labs validator client image
-	DefaultPrysmValidatorImage = "gcr.io/prysmaticlabs/prysm/validator:v1.0.5"
+	DefaultPrysmValidatorImage = "gcr.io/prysmaticlabs/prysm/validator:v1.3.1"
 )
+
+// HomeDir returns container home directory
+func (t *PrysmValidatorClient) HomeDir() string {
+	return PrysmHomeDir
+}
 
 // Args returns command line arguments required for client
 func (t *PrysmValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
 
 	args = append(args, PrysmAcceptTermsOfUse)
 
-	args = append(args, PrysmDataDir, PathBlockchainData)
+	args = append(args, PrysmDataDir, PathBlockchainData(t.HomeDir()))
 
-	args = append(args, PrysmWalletDir, fmt.Sprintf("%s/prysm-wallet", PathBlockchainData))
+	args = append(args, PrysmWalletDir, fmt.Sprintf("%s/prysm-wallet", PathBlockchainData(t.HomeDir())))
 
-	args = append(args, PrysmWalletPasswordFile, fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", PathSecrets))
+	args = append(args, PrysmWalletPasswordFile, fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", PathSecrets(t.HomeDir())))
 
 	args = append(args, fmt.Sprintf("--%s", validator.Spec.Network))
 

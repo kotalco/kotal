@@ -14,13 +14,18 @@ const (
 	// EnvTekuBeaconNodeImage is the environment variable used for PegaSys Teku beacon node image
 	EnvTekuBeaconNodeImage = "TEKU_BEACON_NODE_IMAGE"
 	// DefaultTekuBeaconNodeImage is PegaSys Teku beacon node image
-	DefaultTekuBeaconNodeImage = "consensys/teku:20.12.1"
+	DefaultTekuBeaconNodeImage = "consensys/teku:21.2.0"
 )
+
+// HomeDir returns container home directory
+func (t *TekuBeaconNode) HomeDir() string {
+	return TekuHomeDir
+}
 
 // Args returns command line arguments required for client
 func (t *TekuBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 
-	args = append(args, TekuDataPath, PathBlockchainData)
+	args = append(args, TekuDataPath, PathBlockchainData(t.HomeDir()))
 
 	args = append(args, TekuNetwork, node.Spec.Join)
 

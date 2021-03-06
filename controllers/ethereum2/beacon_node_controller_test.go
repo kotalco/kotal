@@ -56,6 +56,8 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 			BlockOwnerDeletion: &t,
 		}
 
+		client, _ := NewBeaconNodeClient(ethereum2v1alpha1.TekuClient)
+
 		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.TODO(), ns))
 		})
@@ -77,14 +79,13 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 
 		It("Should create statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			client, err := NewBeaconNodeClient(toCreate.Spec.Client)
-			Expect(err).To(BeNil())
+
 			Expect(k8sClient.Get(context.Background(), key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				TekuDataPath,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 			}))

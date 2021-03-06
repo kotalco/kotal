@@ -10,6 +10,8 @@ import (
 
 var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 
+	client, _ := NewValidatorClient(ethereum2v1alpha1.TekuClient)
+
 	cases := []struct {
 		title     string
 		validator *ethereum2v1alpha1.Validator
@@ -33,7 +35,7 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 			result: []string{
 				"vc",
 				TekuDataPath,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 				TekuBeaconNodeEndpoint,
@@ -41,7 +43,7 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 				TekuGraffiti,
 				"Validated by Kotal",
 				TekuValidatorKeys,
-				"/mnt/secrets/validator-keys/my-validator/keystore-0.json:/mnt/secrets/validator-keys/my-validator/password.txt",
+				fmt.Sprintf("%s/validator-keys/my-validator/keystore-0.json:%s/validator-keys/my-validator/password.txt", PathSecrets(client.HomeDir()), PathSecrets(client.HomeDir())),
 			},
 		},
 	}
@@ -51,8 +53,6 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.validator.Default()
-				client, err := NewValidatorClient(cc.validator.Spec.Client)
-				Expect(err).To(BeNil())
 				args := client.Args(cc.validator)
 				Expect(args).To(ContainElements(cc.result))
 			})

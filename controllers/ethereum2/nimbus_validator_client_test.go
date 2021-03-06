@@ -10,6 +10,8 @@ import (
 
 var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 
+	client, _ := NewValidatorClient(ethereum2v1alpha1.NimbusClient)
+
 	cases := []struct {
 		title     string
 		validator *ethereum2v1alpha1.Validator
@@ -32,12 +34,12 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 			},
 			result: []string{
 				NimbusNonInteractive,
-				argWithVal(NimbusDataDir, PathBlockchainData),
+				argWithVal(NimbusDataDir, PathBlockchainData(client.HomeDir())),
 				argWithVal(NimbusRPCAddress, "http://10.0.0.11"),
 				argWithVal(NimbusRPCPort, "80"),
 				argWithVal(NimbusGraffiti, "Validated by Kotal"),
-				argWithVal(NimbusValidatorsDir, fmt.Sprintf("%s/validator-keys", PathSecrets)),
-				argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/validator-secrets", PathSecrets)),
+				argWithVal(NimbusValidatorsDir, fmt.Sprintf("%s/kotal-validators/validator-keys", PathBlockchainData(client.HomeDir()))),
+				argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/kotal-validators/validator-secrets", PathBlockchainData(client.HomeDir()))),
 			},
 		},
 	}
@@ -47,8 +49,6 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.validator.Default()
-				client, err := NewValidatorClient(cc.validator.Spec.Client)
-				Expect(err).To(BeNil())
 				args := client.Args(cc.validator)
 				Expect(args).To(ContainElements(cc.result))
 			})

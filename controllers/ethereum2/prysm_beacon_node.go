@@ -15,15 +15,20 @@ const (
 	// EnvPrysmBeaconNodeImage is the environment variable used for Prysmatic Labs beacon node image
 	EnvPrysmBeaconNodeImage = "PRYSM_BEACON_NODE_IMAGE"
 	// DefaultPrysmBeaconNodeImage is Prysmatic Labs beacon node image
-	DefaultPrysmBeaconNodeImage = "gcr.io/prysmaticlabs/prysm/beacon-chain:v1.0.5"
+	DefaultPrysmBeaconNodeImage = "gcr.io/prysmaticlabs/prysm/beacon-chain:v1.3.1"
 )
+
+// HomeDir returns container home directory
+func (t *PrysmBeaconNode) HomeDir() string {
+	return PrysmHomeDir
+}
 
 // Args returns command line arguments required for client
 func (t *PrysmBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 
 	args = append(args, PrysmAcceptTermsOfUse)
 
-	args = append(args, PrysmDataDir, PathBlockchainData)
+	args = append(args, PrysmDataDir, PathBlockchainData(t.HomeDir()))
 
 	if len(node.Spec.Eth1Endpoints) != 0 {
 		args = append(args, PrysmWeb3Provider, node.Spec.Eth1Endpoints[0])

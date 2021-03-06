@@ -16,19 +16,24 @@ const (
 	// EnvNimbusValidatorImage is the environment variable used for Status Ethereum 2.0 validator client image
 	EnvNimbusValidatorImage = "NIMBUS_VALIDATOR_CLIENT_IMAGE"
 	// DefaultNimbusValidatorImage is the default Status Ethereum 2.0 validator client image
-	DefaultNimbusValidatorImage = "kotalco/nimbus:v1.0.4"
+	DefaultNimbusValidatorImage = "kotalco/nimbus:v1.0.8"
 )
+
+// HomeDir returns container home directory
+func (t *NimbusValidatorClient) HomeDir() string {
+	return NimbusHomeDir
+}
 
 // Args returns command line arguments required for client
 func (t *NimbusValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
 
 	args = append(args, NimbusNonInteractive)
 
-	args = append(args, argWithVal(NimbusDataDir, PathBlockchainData))
+	args = append(args, argWithVal(NimbusDataDir, PathBlockchainData(t.HomeDir())))
 
-	args = append(args, argWithVal(NimbusValidatorsDir, fmt.Sprintf("%s/validator-keys", PathSecrets)))
+	args = append(args, argWithVal(NimbusValidatorsDir, fmt.Sprintf("%s/kotal-validators/validator-keys", PathBlockchainData(t.HomeDir()))))
 
-	args = append(args, argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/validator-secrets", PathSecrets)))
+	args = append(args, argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/kotal-validators/validator-secrets", PathBlockchainData(t.HomeDir()))))
 
 	endpoint := validator.Spec.BeaconEndpoint
 

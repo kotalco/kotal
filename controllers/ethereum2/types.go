@@ -1,12 +1,41 @@
 package controllers
 
+import "fmt"
+
 const (
-	// PathBlockchainData is the blockchain data path
-	PathBlockchainData = "/mnt/data"
-	// PathSecrets is the secrets (private keys, password ... etc) path
-	PathSecrets = "/mnt/secrets"
-	// PathConfig is the configuration path
-	PathConfig = "/mnt/config"
+	// BlockchainDataSubDir is the blockchain data sub directory
+	BlockchainDataSubDir = "kotal-data"
+	// SecretsSubDir is the secrets (private keys, password ... etc) sub directory
+	SecretsSubDir = ".kotal-secrets"
+	// ConfigSubDir is the configuration sub directory
+	ConfigSubDir = "kotal-config"
+)
+
+// PathBlockchainData returns blockchain data directory
+func PathBlockchainData(homeDir string) string {
+	return fmt.Sprintf("%s/%s", homeDir, BlockchainDataSubDir)
+}
+
+// PathSecrets returns secrets directory
+func PathSecrets(homeDir string) string {
+	return fmt.Sprintf("%s/%s", homeDir, SecretsSubDir)
+}
+
+// PathConfig returns configuration directory
+func PathConfig(homeDir string) string {
+	return fmt.Sprintf("%s/%s", homeDir, ConfigSubDir)
+}
+
+// Client home directories
+const (
+	// TekuHomeDir is teku home directory
+	TekuHomeDir = "/opt/teku"
+	// PrysmHomeDir is prysm home directory
+	PrysmHomeDir = "/home/.eth2"
+	// NimbusHomeDir is nimbus home directory
+	NimbusHomeDir = "/home/user"
+	// LighthouseHomeDir is lighthouse home directory
+	LighthouseHomeDir = "/root"
 )
 
 // Teku client arguments
@@ -32,6 +61,8 @@ const (
 	TekuGraffiti = "--validators-graffiti"
 	// TekuValidatorKeys is the argument used for Validator keys and secrets
 	TekuValidatorKeys = "--validator-keys"
+	// TekuValidatorsKeystoreLockingEnabled is the argument used to enable keystore locking files
+	TekuValidatorsKeystoreLockingEnabled = "--validators-keystore-locking-enabled"
 )
 
 // Prysm client arguments

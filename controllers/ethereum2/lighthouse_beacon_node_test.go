@@ -10,6 +10,8 @@ import (
 
 var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 
+	client, _ := NewBeaconNodeClient(ethereum2v1alpha1.LighthouseClient)
+
 	cases := []struct {
 		title  string
 		node   *ethereum2v1alpha1.BeaconNode
@@ -25,7 +27,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				LighthouseNetwork,
 				"mainnet",
 			},
@@ -41,7 +43,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				LighthouseNetwork,
 				"mainnet",
 				LighthouseEth1Endpoints,
@@ -60,7 +62,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				LighthouseNetwork,
 				"mainnet",
 				LighthouseEth1Endpoints,
@@ -81,7 +83,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				LighthouseNetwork,
 				"mainnet",
 				LighthouseEth1Endpoints,
@@ -108,7 +110,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				LighthouseNetwork,
 				"mainnet",
 				LighthouseEth1Endpoints,
@@ -138,7 +140,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				PathBlockchainData,
+				PathBlockchainData(client.HomeDir()),
 				LighthousePort,
 				"7891",
 				LighthouseDiscoveryPort,
@@ -161,8 +163,6 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.node.Default()
-				client, err := NewBeaconNodeClient(cc.node.Spec.Client)
-				Expect(err).To(BeNil())
 				args := client.Args(cc.node)
 				Expect(args).To(ContainElements(cc.result))
 			})

@@ -15,15 +15,20 @@ const (
 	// EnvNimbusBeaconNodeImage is the environment variable used for Status Ethereum 2.0 beacon node image
 	EnvNimbusBeaconNodeImage = "NIMBUS_BEACON_NODE_IMAGE"
 	// DefaultNimbusBeaconNodeImage is the default Status Ethereum 2.0 beacon node image
-	DefaultNimbusBeaconNodeImage = "kotalco/nimbus:v1.0.4"
+	DefaultNimbusBeaconNodeImage = "kotalco/nimbus:v1.0.8"
 )
+
+// HomeDir returns container home directory
+func (t *NimbusBeaconNode) HomeDir() string {
+	return NimbusHomeDir
+}
 
 // Args returns command line arguments required for client
 func (t *NimbusBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 
 	args = append(args, NimbusNonInteractive)
 
-	args = append(args, argWithVal(NimbusDataDir, PathBlockchainData))
+	args = append(args, argWithVal(NimbusDataDir, PathBlockchainData(t.HomeDir())))
 
 	args = append(args, argWithVal(NimbusNetwork, node.Spec.Join))
 

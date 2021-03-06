@@ -16,13 +16,18 @@ const (
 	// EnvLighthouseValidatorImage is the environment variable used for SigmaPrime Ethereum 2.0 validator client image
 	EnvLighthouseValidatorImage = "LIGHTHOUSE_VALIDATOR_CLIENT_IMAGE"
 	// DefaultLighthouseValidatorImage is the default SigmaPrime Ethereum 2.0 validator client image
-	DefaultLighthouseValidatorImage = "sigp/lighthouse:v1.0.6"
+	DefaultLighthouseValidatorImage = "sigp/lighthouse:v1.1.3"
 )
+
+// HomeDir returns container home directory
+func (t *LighthouseValidatorClient) HomeDir() string {
+	return LighthouseHomeDir
+}
 
 // Args returns command line arguments required for client
 func (t *LighthouseValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
 
-	args = append(args, LighthouseDataDir, PathBlockchainData)
+	args = append(args, LighthouseDataDir, PathBlockchainData(t.HomeDir()))
 
 	args = append(args, LighthouseNetwork, validator.Spec.Network)
 
@@ -32,7 +37,6 @@ func (t *LighthouseValidatorClient) Args(validator *ethereum2v1alpha1.Validator)
 
 	if validator.Spec.BeaconEndpoint != "" {
 		args = append(args, LighthouseBeaconNodeEndpoint, validator.Spec.BeaconEndpoint)
-
 	}
 
 	if validator.Spec.Graffiti != "" {
@@ -68,12 +72,12 @@ type ValidatorDefinition struct {
 
 // CreateValidatorDefinitions create validator definitions yaml file
 // https://lighthouse-book.sigmaprime.io/validator-management.html
-func CreateValidatorDefinitions(validator *ethereum2v1alpha1.Validator) (data string, err error) {
+func (t *LighthouseValidatorClient) CreateValidatorDefinitions(validator *ethereum2v1alpha1.Validator) (data string, err error) {
 	definitions := []ValidatorDefinition{}
 
 	for i, keystore := range validator.Spec.Keystores {
 
-		keystorePath := fmt.Sprintf("%s/validator-keys/%s", PathBlockchainData, keystore.SecretName)
+		keystorePath := fmt.Sprintf("%s/validator-keys/%s", PathBlockchainData(t.HomeDir()), keystore.SecretName)
 
 		definitions = append(definitions, ValidatorDefinition{
 			VotingPublicKey:            keystore.PublicKey,

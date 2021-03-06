@@ -10,6 +10,8 @@ import (
 
 var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 
+	client, _ := NewBeaconNodeClient(ethereum2v1alpha1.NimbusClient)
+
 	cases := []struct {
 		title  string
 		node   *ethereum2v1alpha1.BeaconNode
@@ -25,7 +27,7 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				NimbusNonInteractive,
-				argWithVal(NimbusDataDir, PathBlockchainData),
+				argWithVal(NimbusDataDir, PathBlockchainData(client.HomeDir())),
 				argWithVal(NimbusNetwork, "mainnet"),
 			},
 		},
@@ -40,7 +42,7 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				NimbusNonInteractive,
-				argWithVal(NimbusDataDir, PathBlockchainData),
+				argWithVal(NimbusDataDir, PathBlockchainData(client.HomeDir())),
 				argWithVal(NimbusNetwork, "mainnet"),
 				argWithVal(NimbusEth1Endpoint, "https://localhost:8545"),
 			},
@@ -57,7 +59,7 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				NimbusNonInteractive,
-				argWithVal(NimbusDataDir, PathBlockchainData),
+				argWithVal(NimbusDataDir, PathBlockchainData(client.HomeDir())),
 				argWithVal(NimbusNetwork, "mainnet"),
 				argWithVal(NimbusEth1Endpoint, "https://localhost:8545"),
 				NimbusRPC,
@@ -76,7 +78,7 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				NimbusNonInteractive,
-				argWithVal(NimbusDataDir, PathBlockchainData),
+				argWithVal(NimbusDataDir, PathBlockchainData(client.HomeDir())),
 				argWithVal(NimbusNetwork, "mainnet"),
 				argWithVal(NimbusEth1Endpoint, "https://localhost:8545"),
 				NimbusRPC,
@@ -97,7 +99,7 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				NimbusNonInteractive,
-				argWithVal(NimbusDataDir, PathBlockchainData),
+				argWithVal(NimbusDataDir, PathBlockchainData(client.HomeDir())),
 				argWithVal(NimbusNetwork, "mainnet"),
 				argWithVal(NimbusEth1Endpoint, "https://localhost:8545"),
 				NimbusRPC,
@@ -120,7 +122,7 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				NimbusNonInteractive,
-				argWithVal(NimbusDataDir, PathBlockchainData),
+				argWithVal(NimbusDataDir, PathBlockchainData(client.HomeDir())),
 				argWithVal(NimbusTCPPort, "7891"),
 				argWithVal(NimbusUDPPort, "7891"),
 				argWithVal(NimbusNetwork, "mainnet"),
@@ -137,8 +139,6 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.node.Default()
-				client, err := NewBeaconNodeClient(cc.node.Spec.Client)
-				Expect(err).To(BeNil())
 				args := client.Args(cc.node)
 				Expect(args).To(ContainElements(cc.result))
 			})

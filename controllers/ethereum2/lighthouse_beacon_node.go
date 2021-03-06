@@ -16,13 +16,18 @@ const (
 	// EnvLighthouseBeaconNodeImage is the environment variable used for SigmaPrime Ethereum 2.0 beacon node image
 	EnvLighthouseBeaconNodeImage = "LIGHTHOUSE_BEACON_NODE_IMAGE"
 	// DefaultLighthouseBeaconNodeImage is the default SigmaPrime Ethereum 2.0 beacon node image
-	DefaultLighthouseBeaconNodeImage = "sigp/lighthouse:v1.0.6"
+	DefaultLighthouseBeaconNodeImage = "sigp/lighthouse:v1.1.3"
 )
+
+// HomeDir returns container home directory
+func (t *LighthouseBeaconNode) HomeDir() string {
+	return LighthouseHomeDir
+}
 
 // Args returns command line arguments required for client
 func (t *LighthouseBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 
-	args = append(args, LighthouseDataDir, PathBlockchainData)
+	args = append(args, LighthouseDataDir, PathBlockchainData(t.HomeDir()))
 
 	args = append(args, LighthouseNetwork, node.Spec.Join)
 

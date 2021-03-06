@@ -97,7 +97,15 @@ func (r *ValidatorReconciler) reconcileValidatorConfigmap(validator *ethereum2v1
 			return err
 		}
 
-		definitions, err := CreateValidatorDefinitions(validator)
+		vc, err := NewValidatorClient(validator.Spec.Client)
+		if err != nil {
+			return err
+		}
+
+		// because CreateValidatorDefinitions not defined on the ValidatorClient interface
+		client := vc.(*LighthouseValidatorClient)
+
+		definitions, err := client.CreateValidatorDefinitions(validator)
 		if err != nil {
 			return err
 		}
@@ -234,13 +242,11 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 
 	if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
 		// Nimbus checks if secrets dir has 0600 and tries to fix it if not
-		mode := int32(0600)
 		validatorSecretsVolume := corev1.Volume{
 			Name: "validator-secrets",
 			VolumeSource: corev1.VolumeSource{
 				Projected: &corev1.ProjectedVolumeSource{
-					Sources:     volumeProjections,
-					DefaultMode: &mode,
+					Sources: volumeProjections,
 				},
 			},
 		}
@@ -287,10 +293,10 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 }
 
 // createValidatorVolumeMounts creates validator volume mounts
-func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1alpha1.Validator) (mounts []corev1.VolumeMount) {
+func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1alpha1.Validator, homeDir string) (mounts []corev1.VolumeMount) {
 	dataMount := corev1.VolumeMount{
 		Name:      "data",
-		MountPath: PathBlockchainData,
+		MountPath: PathBlockchainData(homeDir),
 	}
 	mounts = append(mounts, dataMount)
 
@@ -298,7 +304,7 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 
 		keystoreMount := corev1.VolumeMount{
 			Name:      keystore.SecretName,
-			MountPath: fmt.Sprintf("%s/validator-keys/%s", PathSecrets, keystore.SecretName),
+			MountPath: fmt.Sprintf("%s/validator-keys/%s", PathSecrets(homeDir), keystore.SecretName),
 		}
 		mounts = append(mounts, keystoreMount)
 	}
@@ -307,7 +313,7 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 	if validator.Spec.Client == ethereum2v1alpha1.LighthouseClient {
 		validatorDefinitionsMount := corev1.VolumeMount{
 			Name:      "validator-definitions",
-			MountPath: PathConfig,
+			MountPath: PathConfig(homeDir),
 		}
 		mounts = append(mounts, validatorDefinitionsMount)
 	}
@@ -317,7 +323,7 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 		walletPasswordMount := corev1.VolumeMount{
 			Name:      validator.Spec.WalletPasswordSecret,
 			ReadOnly:  true,
-			MountPath: fmt.Sprintf("%s/prysm-wallet", PathSecrets),
+			MountPath: fmt.Sprintf("%s/prysm-wallet", PathSecrets(homeDir)),
 		}
 		mounts = append(mounts, walletPasswordMount)
 	}
@@ -326,8 +332,7 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 	if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
 		ValidatorSecretsMount := corev1.VolumeMount{
 			Name:      "validator-secrets",
-			ReadOnly:  true,
-			MountPath: fmt.Sprintf("%s/validator-secrets", PathSecrets),
+			MountPath: fmt.Sprintf("%s/validator-secrets", PathSecrets(homeDir)),
 		}
 		mounts = append(mounts, ValidatorSecretsMount)
 	}
@@ -336,17 +341,18 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 }
 
 // specValidatorStatefulset updates node statefulset spec
-func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alpha1.Validator, sts *appsv1.StatefulSet, img string, command, args []string) {
+func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alpha1.Validator, sts *appsv1.StatefulSet, img string, command, args []string, homeDir string) {
 
 	sts.Labels = validator.GetLabels()
 
 	initContainers := []corev1.Container{}
-	mounts := r.createValidatorVolumeMounts(validator)
+
+	mounts := r.createValidatorVolumeMounts(validator, homeDir)
 
 	// import validator keys into Prysm client
 	if validator.Spec.Client == ethereum2v1alpha1.PrysmClient {
 		for i, keystore := range validator.Spec.Keystores {
-			keyDir := fmt.Sprintf("%s/validator-keys/%s", PathSecrets, keystore.SecretName)
+			keyDir := fmt.Sprintf("%s/validator-keys/%s", PathSecrets(homeDir), keystore.SecretName)
 			importValidatorContainer := corev1.Container{
 				Name:  fmt.Sprintf("import-validator-%s", keystore.SecretName),
 				Image: img,
@@ -356,13 +362,13 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 					PrysmAcceptTermsOfUse,
 					fmt.Sprintf("--%s", validator.Spec.Network),
 					PrysmWalletDir,
-					fmt.Sprintf("%s/prysm-wallet", PathBlockchainData),
+					fmt.Sprintf("%s/prysm-wallet", PathBlockchainData(homeDir)),
 					PrysmKeysDir,
 					fmt.Sprintf("%s/keystore-%d.json", keyDir, i),
 					PrysmAccountPasswordFile,
 					fmt.Sprintf("%s/password.txt", keyDir),
 					PrysmWalletPasswordFile,
-					fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", PathSecrets),
+					fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", PathSecrets(homeDir)),
 				},
 				VolumeMounts: mounts,
 			}
@@ -373,17 +379,50 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 	if validator.Spec.Client == ethereum2v1alpha1.LighthouseClient {
 		// TODO: replace with validator account import init container
 		// TODO: follow up with lighthouse PR https://github.com/sigp/lighthouse/issues/2224
-		validatorsPath := fmt.Sprintf("%s/validators", PathBlockchainData)
-		linkValidatorDefinitions := corev1.Container{
-			Name:    "link-validator-definitions",
+		validatorsPath := fmt.Sprintf("%s/validators", PathBlockchainData(homeDir))
+		CopyValidatorDefinitions := corev1.Container{
+			Name:    "copy-validator-definitions",
 			Image:   "busybox",
 			Command: []string{"/bin/sh", "-c"},
 			Args: []string{
-				fmt.Sprintf("mkdir -p %s && cp %s/validator_definitions.yml %s/validator_definitions.yml && cp -R %s/validator-keys/. %s/validator-keys", validatorsPath, PathConfig, validatorsPath, PathSecrets, PathBlockchainData),
+				fmt.Sprintf(`
+					mkdir -p %s &&
+					cp %s/validator_definitions.yml %s/validator_definitions.yml &&
+					cp -R %s/validator-keys/. %s/validator-keys`,
+					validatorsPath,
+					PathConfig(homeDir), validatorsPath,
+					PathSecrets(homeDir), PathBlockchainData(homeDir),
+				),
 			},
 			VolumeMounts: mounts,
 		}
-		initContainers = append(initContainers, linkValidatorDefinitions)
+		initContainers = append(initContainers, CopyValidatorDefinitions)
+	}
+
+	if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
+		// copy secrets into rw directory under blockchain data directory
+		// set new validator secrets mode to 600 so it can be read and write only by owner
+		validatorsPath := fmt.Sprintf("%s/kotal-validators", PathBlockchainData(homeDir))
+		copyValidators := corev1.Container{
+			Name:  "copy-validators",
+			Image: img,
+			Command: []string{
+				"/bin/sh",
+				"-c",
+			},
+			Args: []string{
+				fmt.Sprintf(`
+					mkdir -p %s
+					cp -RL %s/validator-keys/ %s/validator-keys &&
+					cp -RL %s/validator-secrets/ %s/validator-secrets`,
+					validatorsPath,
+					PathSecrets(homeDir), validatorsPath,
+					PathSecrets(homeDir), validatorsPath,
+				),
+			},
+			VolumeMounts: mounts,
+		}
+		initContainers = append(initContainers, copyValidators)
 	}
 
 	sts.Spec = appsv1.StatefulSetSpec{
@@ -437,13 +476,14 @@ func (r *ValidatorReconciler) reconcileValidatorStatefulset(validator *ethereum2
 	img := client.Image()
 	command := client.Command()
 	args := client.Args(validator)
+	homeDir := client.HomeDir()
 
 	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, &sts, func() error {
 		if err := ctrl.SetControllerReference(validator, &sts, r.Scheme); err != nil {
 			return err
 		}
 
-		r.specValidatorStatefulset(validator, &sts, img, command, args)
+		r.specValidatorStatefulset(validator, &sts, img, command, args, homeDir)
 
 		return nil
 	})

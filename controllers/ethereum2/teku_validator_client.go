@@ -15,17 +15,24 @@ const (
 	// EnvTekuValidatorImage is the environment variable used for PegaSys Teku validator client image
 	EnvTekuValidatorImage = "TEKU_VALIDATOR_CLIENT_IMAGE"
 	// DefaultTekuValidatorImage is PegaSys Teku validator client image
-	DefaultTekuValidatorImage = "consensys/teku:20.12.1"
+	DefaultTekuValidatorImage = "consensys/teku:21.2.0"
 )
+
+// HomeDir returns container home directory
+func (t *TekuValidatorClient) HomeDir() string {
+	return TekuHomeDir
+}
 
 // Args returns command line arguments required for client
 func (t *TekuValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
 
 	args = append(args, "vc")
 
-	args = append(args, TekuDataPath, PathBlockchainData)
+	args = append(args, TekuDataPath, PathBlockchainData(t.HomeDir()))
 
 	args = append(args, TekuNetwork, validator.Spec.Network)
+
+	args = append(args, TekuValidatorsKeystoreLockingEnabled, "false")
 
 	if validator.Spec.BeaconEndpoint != "" {
 		args = append(args, TekuBeaconNodeEndpoint, validator.Spec.BeaconEndpoint)
@@ -37,7 +44,7 @@ func (t *TekuValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args
 
 	keyPass := []string{}
 	for i, keystore := range validator.Spec.Keystores {
-		path := fmt.Sprintf("%s/validator-keys/%s", PathSecrets, keystore.SecretName)
+		path := fmt.Sprintf("%s/validator-keys/%s", PathSecrets(t.HomeDir()), keystore.SecretName)
 		keyPass = append(keyPass, fmt.Sprintf("%s/keystore-%d.json:%s/password.txt", path, i, path))
 	}
 

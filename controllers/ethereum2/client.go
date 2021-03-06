@@ -10,6 +10,7 @@ import (
 type Ethereum2Client interface {
 	Command() []string
 	Image() string
+	HomeDir() string
 }
 
 // BeaconNodeClient is Ethereum 2.0 beacon node client
