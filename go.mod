@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/ethereum/go-ethereum v1.10.0
-	github.com/go-logr/logr v0.3.0
+	github.com/go-logr/logr v0.4.0
 	github.com/onsi/ginkgo v1.15.1
 	github.com/onsi/gomega v1.11.0
 	gopkg.in/yaml.v2 v2.4.0
