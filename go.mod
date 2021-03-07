@@ -3,7 +3,7 @@ module github.com/kotalco/kotal
 go 1.16
 
 require (
-	github.com/ethereum/go-ethereum v1.9.13
+	github.com/ethereum/go-ethereum v1.10.0
 	github.com/go-logr/logr v0.3.0
 	github.com/onsi/ginkgo v1.15.1
 	github.com/onsi/gomega v1.11.0
