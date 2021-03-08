@@ -26,7 +26,7 @@ func (t *TekuValidatorClient) HomeDir() string {
 // Args returns command line arguments required for client
 func (t *TekuValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
 
-	args = append(args, "vc")
+	args = append(args, TekuVC)
 
 	args = append(args, TekuDataPath, PathBlockchainData(t.HomeDir()))
 

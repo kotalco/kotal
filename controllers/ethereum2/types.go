@@ -55,6 +55,8 @@ const (
 	// TekuP2PPort is the argument used p2p and discovery port
 	TekuP2PPort = "--p2p-port"
 
+	// TekuVC is the argument used to run validator client
+	TekuVC = "vc"
 	// TekuBeaconNodeEndpoint is the argument used for beacon node api endpoint
 	TekuBeaconNodeEndpoint = "--beacon-node-api-endpoint"
 	// TekuGraffiti is the argument used for text include in proposed blocks
