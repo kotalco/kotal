@@ -13,7 +13,7 @@ webhooks:
       namespace: system
       path: /mutate-ethereum-kotal-io-v1alpha1-network
   failurePolicy: Fail
-  name: mnetwork.kb.io
+  name: mutate-ethereum-v1alpha1-network.kb.io
   rules:
   - apiGroups:
     - ethereum.kotal.io
@@ -31,7 +31,7 @@ webhooks:
       namespace: system
       path: /mutate-ethereum-kotal-io-v1alpha1-node
   failurePolicy: Fail
-  name: mnode.kb.io
+  name: mutate-ethereum-v1alpha1-node.kb.io
   rules:
   - apiGroups:
     - ethereum.kotal.io
@@ -49,7 +49,7 @@ webhooks:
       namespace: system
       path: /mutate-ethereum2-kotal-io-v1alpha1-beaconnode
   failurePolicy: Fail
-  name: mbeaconnode.kb.io
+  name: mutate-ethereum2-v1alpha1-beaconnode.kb.io
   rules:
   - apiGroups:
     - ethereum2.kotal.io
@@ -67,7 +67,7 @@ webhooks:
       namespace: system
       path: /mutate-ethereum2-kotal-io-v1alpha1-validator
   failurePolicy: Fail
-  name: mvalidator.kb.io
+  name: mutate-ethereum2-v1alpha1-validator.kb.io
   rules:
   - apiGroups:
     - ethereum2.kotal.io
@@ -85,7 +85,7 @@ webhooks:
       namespace: system
       path: /mutate-filecoin-kotal-io-v1alpha1-node
   failurePolicy: Fail
-  name: mnode.kb.io
+  name: mutate-filecoin-v1alpha1-node.kb.io
   rules:
   - apiGroups:
     - filecoin.kotal.io
@@ -103,7 +103,7 @@ webhooks:
       namespace: system
       path: /mutate-ipfs-kotal-io-v1alpha1-swarm
   failurePolicy: Fail
-  name: mswarm.kb.io
+  name: mutate-ipfs-v1alpha1-swarm.kb.io
   rules:
   - apiGroups:
     - ipfs.kotal.io
@@ -129,7 +129,7 @@ webhooks:
       namespace: system
       path: /validate-ethereum-kotal-io-v1alpha1-network
   failurePolicy: Fail
-  name: vnetwork.kb.io
+  name: validate-ethereum-v1alpha1-network.kb.io
   rules:
   - apiGroups:
     - ethereum.kotal.io
@@ -147,7 +147,7 @@ webhooks:
       namespace: system
       path: /validate-ethereum-kotal-io-v1alpha1-node
   failurePolicy: Fail
-  name: vnode.kb.io
+  name: validate-ethereum-v1alpha1-node.kb.io
   rules:
   - apiGroups:
     - ethereum.kotal.io
@@ -165,7 +165,7 @@ webhooks:
       namespace: system
       path: /validate-ethereum2-kotal-io-v1alpha1-beaconnode
   failurePolicy: Fail
-  name: vbeaconnode.kb.io
+  name: validate-ethereum2-v1alpha1-beaconnode.kb.io
   rules:
   - apiGroups:
     - ethereum2.kotal.io
@@ -183,7 +183,7 @@ webhooks:
       namespace: system
       path: /validate-ethereum2-kotal-io-v1alpha1-validator
   failurePolicy: Fail
-  name: vvalidator.kb.io
+  name: validate-ethereum2-v1alpha1-validator.kb.io
   rules:
   - apiGroups:
     - ethereum2.kotal.io
@@ -201,7 +201,7 @@ webhooks:
       namespace: system
       path: /validate-filecoin-kotal-io-v1alpha1-node
   failurePolicy: Fail
-  name: vnode.kb.io
+  name: validate-filecoin-v1alpha1-node.kb.io
   rules:
   - apiGroups:
     - filecoin.kotal.io
@@ -219,7 +219,7 @@ webhooks:
       namespace: system
       path: /validate-ipfs-kotal-io-v1alpha1-swarm
   failurePolicy: Fail
-  name: vswarm.kb.io
+  name: validate-ipfs-v1alpha1-swarm.kb.io
   rules:
   - apiGroups:
     - ipfs.kotal.io

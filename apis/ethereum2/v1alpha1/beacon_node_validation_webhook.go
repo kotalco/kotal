@@ -11,7 +11,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-ethereum2-kotal-io-v1alpha1-beaconnode,mutating=false,failurePolicy=fail,groups=ethereum2.kotal.io,resources=beaconnodes,versions=v1alpha1,name=vbeaconnode.kb.io
+// +kubebuilder:webhook:verbs=create;update,path=/validate-ethereum2-kotal-io-v1alpha1-beaconnode,mutating=false,failurePolicy=fail,groups=ethereum2.kotal.io,resources=beaconnodes,versions=v1alpha1,name=validate-ethereum2-v1alpha1-beaconnode.kb.io
 
 var _ webhook.Validator = &BeaconNode{}
 

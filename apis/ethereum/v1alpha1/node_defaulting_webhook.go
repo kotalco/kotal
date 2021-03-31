@@ -2,7 +2,7 @@ package v1alpha1
 
 import "sigs.k8s.io/controller-runtime/pkg/webhook"
 
-// +kubebuilder:webhook:path=/mutate-ethereum-kotal-io-v1alpha1-node,mutating=true,failurePolicy=fail,groups=ethereum.kotal.io,resources=nodes,verbs=create;update,versions=v1alpha1,name=mnode.kb.io
+// +kubebuilder:webhook:path=/mutate-ethereum-kotal-io-v1alpha1-node,mutating=true,failurePolicy=fail,groups=ethereum.kotal.io,resources=nodes,verbs=create;update,versions=v1alpha1,name=mutate-ethereum-v1alpha1-node.kb.io
 
 var _ webhook.Defaulter = &Node{}
 
