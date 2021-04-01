@@ -23,7 +23,7 @@ func (s *Swarm) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-// +kubebuilder:webhook:path=/mutate-ipfs-kotal-io-v1alpha1-swarm,mutating=true,failurePolicy=fail,groups=ipfs.kotal.io,resources=swarms,verbs=create;update,versions=v1alpha1,name=mutate-ipfs-v1alpha1-swarm.kb.io
+// +kubebuilder:webhook:path=/mutate-ipfs-kotal-io-v1alpha1-swarm,mutating=true,failurePolicy=fail,groups=ipfs.kotal.io,resources=swarms,verbs=create;update,versions=v1alpha1,name=mutate-ipfs-v1alpha1-swarm.kb.io,sideEffects=None,admissionReviewVersions=v1
 
 var _ webhook.Defaulter = &Swarm{}
 
@@ -60,7 +60,7 @@ func (s *Swarm) DefaultNode(node *Node) {
 	}
 }
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-ipfs-kotal-io-v1alpha1-swarm,mutating=false,failurePolicy=fail,groups=ipfs.kotal.io,resources=swarms,versions=v1alpha1,name=validate-ipfs-v1alpha1-swarm.kb.io
+// +kubebuilder:webhook:verbs=create;update,path=/validate-ipfs-kotal-io-v1alpha1-swarm,mutating=false,failurePolicy=fail,groups=ipfs.kotal.io,resources=swarms,versions=v1alpha1,name=validate-ipfs-v1alpha1-swarm.kb.io,sideEffects=None,admissionReviewVersions=v1
 
 var _ webhook.Validator = &Swarm{}
 

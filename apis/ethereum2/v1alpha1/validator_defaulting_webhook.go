@@ -4,7 +4,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
-// +kubebuilder:webhook:path=/mutate-ethereum2-kotal-io-v1alpha1-validator,mutating=true,failurePolicy=fail,groups=ethereum2.kotal.io,resources=validators,verbs=create;update,versions=v1alpha1,name=mutate-ethereum2-v1alpha1-validator.kb.io
+// +kubebuilder:webhook:path=/mutate-ethereum2-kotal-io-v1alpha1-validator,mutating=true,failurePolicy=fail,groups=ethereum2.kotal.io,resources=validators,verbs=create;update,versions=v1alpha1,name=mutate-ethereum2-v1alpha1-validator.kb.io,sideEffects=None,admissionReviewVersions=v1
 
 var _ webhook.Defaulter = &Validator{}
 

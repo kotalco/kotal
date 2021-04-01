@@ -13,7 +13,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-ethereum-kotal-io-v1alpha1-node,mutating=false,failurePolicy=fail,groups=ethereum.kotal.io,resources=nodes,versions=v1alpha1,name=validate-ethereum-v1alpha1-node.kb.io
+// +kubebuilder:webhook:verbs=create;update,path=/validate-ethereum-kotal-io-v1alpha1-node,mutating=false,failurePolicy=fail,groups=ethereum.kotal.io,resources=nodes,versions=v1alpha1,name=validate-ethereum-v1alpha1-node.kb.io,sideEffects=None,admissionReviewVersions=v1
 
 var _ webhook.Validator = &Node{}
 

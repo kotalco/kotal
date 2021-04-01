@@ -20,7 +20,7 @@ func (n *Node) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-// +kubebuilder:webhook:path=/mutate-filecoin-kotal-io-v1alpha1-node,mutating=true,failurePolicy=fail,groups=filecoin.kotal.io,resources=nodes,verbs=create;update,versions=v1alpha1,name=mutate-filecoin-v1alpha1-node.kb.io
+// +kubebuilder:webhook:path=/mutate-filecoin-kotal-io-v1alpha1-node,mutating=true,failurePolicy=fail,groups=filecoin.kotal.io,resources=nodes,verbs=create;update,versions=v1alpha1,name=mutate-filecoin-v1alpha1-node.kb.io,sideEffects=None,admissionReviewVersions=v1
 
 var _ webhook.Defaulter = &Node{}
 
@@ -110,7 +110,7 @@ func (n *Node) Default() {
 
 }
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-filecoin-kotal-io-v1alpha1-node,mutating=false,failurePolicy=fail,groups=filecoin.kotal.io,resources=nodes,versions=v1alpha1,name=validate-filecoin-v1alpha1-node.kb.io
+// +kubebuilder:webhook:verbs=create;update,path=/validate-filecoin-kotal-io-v1alpha1-node,mutating=false,failurePolicy=fail,groups=filecoin.kotal.io,resources=nodes,versions=v1alpha1,name=validate-filecoin-v1alpha1-node.kb.io,sideEffects=None,admissionReviewVersions=v1
 
 var _ webhook.Validator = &Node{}
 
