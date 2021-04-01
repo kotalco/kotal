@@ -1,10 +1,10 @@
 
 ---
-apiVersion: apiextensions.k8s.io/v1beta1
+apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.2.5
+    controller-gen.kubebuilder.io/version: v0.5.0
   creationTimestamp: null
   name: validators.ethereum2.kotal.io
 spec:
@@ -14,105 +14,96 @@ spec:
     listKind: ValidatorList
     plural: validators
     singular: validator
-  preserveUnknownFields: false
   scope: Namespaced
-  validation:
-    openAPIV3Schema:
-      description: Validator is the Schema for the validators API
-      properties:
-        apiVersion:
-          description: 'APIVersion defines the versioned schema of this representation
-            of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-          type: string
-        kind:
-          description: 'Kind is a string value representing the REST resource this
-            object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-          type: string
-        metadata:
-          type: object
-        spec:
-          description: ValidatorSpec defines the desired state of Validator
-          properties:
-            beaconEndpoint:
-              description: BeaconEndpoint is the beacon node endpoint
-              type: string
-            client:
-              description: Client is the Ethereum 2.0 client to use
-              enum:
-              - teku
-              - prysm
-              - lighthouse
-              - nimbus
-              type: string
-            graffiti:
-              description: Graffiti is the text to include in proposed blocks
-              type: string
-            keystores:
-              description: Keystores is a list of Validator keystores
-              items:
-                description: Keystore is Ethereum 2.0 validator EIP-2335 BLS12-381
-                  keystore https://eips.ethereum.org/EIPS/eip-2335
-                properties:
-                  publicKey:
-                    description: PublicKey is the validator public key in hexadecimal
-                    pattern: ^0[xX][0-9a-fA-F]{96}$
-                    type: string
-                  secretName:
-                    description: SecretName is the kubernetes secret holding [keystore]
-                      and [password]
-                    type: string
-                required:
-                - secretName
-                type: object
-              type: array
-            network:
-              description: Network is the network this validator is validating blocks
-                for
-              type: string
-            resources:
-              description: Resources is node compute and storage resources
-              properties:
-                cpu:
-                  description: CPU is cpu cores the node requires
-                  pattern: ^[1-9][0-9]*m?$
-                  type: string
-                cpuLimit:
-                  description: CPULimit is cpu cores the node is limited to
-                  pattern: ^[1-9][0-9]*m?$
-                  type: string
-                memory:
-                  description: Memory is memmory requirements
-                  pattern: ^[1-9][0-9]*[KMGTPE]i$
-                  type: string
-                memoryLimit:
-                  description: MemoryLimit is cpu cores the node is limited to
-                  pattern: ^[1-9][0-9]*[KMGTPE]i$
-                  type: string
-                storage:
-                  description: Storage is disk space storage requirements
-                  pattern: ^[1-9][0-9]*[KMGTPE]i$
-                  type: string
-                storageClass:
-                  description: StorageClass is the volume storage class
-                  type: string
-              type: object
-            walletPasswordSecret:
-              description: WalletPasswordSecret is wallet password secret
-              type: string
-          required:
-          - beaconEndpoint
-          - keystores
-          - network
-          type: object
-        status:
-          description: ValidatorStatus defines the observed state of Validator
-          type: object
-      type: object
-  version: v1alpha1
   versions:
   - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Validator is the Schema for the validators API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ValidatorSpec defines the desired state of Validator
+            properties:
+              beaconEndpoint:
+                description: BeaconEndpoint is the beacon node endpoint
+                type: string
+              client:
+                description: Client is the Ethereum 2.0 client to use
+                enum:
+                - teku
+                - prysm
+                - lighthouse
+                - nimbus
+                type: string
+              graffiti:
+                description: Graffiti is the text to include in proposed blocks
+                type: string
+              keystores:
+                description: Keystores is a list of Validator keystores
+                items:
+                  description: Keystore is Ethereum 2.0 validator EIP-2335 BLS12-381 keystore https://eips.ethereum.org/EIPS/eip-2335
+                  properties:
+                    publicKey:
+                      description: PublicKey is the validator public key in hexadecimal
+                      pattern: ^0[xX][0-9a-fA-F]{96}$
+                      type: string
+                    secretName:
+                      description: SecretName is the kubernetes secret holding [keystore] and [password]
+                      type: string
+                  required:
+                  - secretName
+                  type: object
+                type: array
+              network:
+                description: Network is the network this validator is validating blocks for
+                type: string
+              resources:
+                description: Resources is node compute and storage resources
+                properties:
+                  cpu:
+                    description: CPU is cpu cores the node requires
+                    pattern: ^[1-9][0-9]*m?$
+                    type: string
+                  cpuLimit:
+                    description: CPULimit is cpu cores the node is limited to
+                    pattern: ^[1-9][0-9]*m?$
+                    type: string
+                  memory:
+                    description: Memory is memmory requirements
+                    pattern: ^[1-9][0-9]*[KMGTPE]i$
+                    type: string
+                  memoryLimit:
+                    description: MemoryLimit is cpu cores the node is limited to
+                    pattern: ^[1-9][0-9]*[KMGTPE]i$
+                    type: string
+                  storage:
+                    description: Storage is disk space storage requirements
+                    pattern: ^[1-9][0-9]*[KMGTPE]i$
+                    type: string
+                  storageClass:
+                    description: StorageClass is the volume storage class
+                    type: string
+                type: object
+              walletPasswordSecret:
+                description: WalletPasswordSecret is wallet password secret
+                type: string
+            required:
+            - beaconEndpoint
+            - keystores
+            - network
+            type: object
+          status:
+            description: ValidatorStatus defines the observed state of Validator
+            type: object
+        type: object
     served: true
     storage: true
 status:
