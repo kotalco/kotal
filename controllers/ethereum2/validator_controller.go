@@ -25,6 +25,8 @@ type ValidatorReconciler struct {
 
 // +kubebuilder:rbac:groups=ethereum2.kotal.io,resources=validators,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ethereum2.kotal.io,resources=validators/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
+// +kubebuilder:rbac:groups=core,resources=configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 // Reconcile reconciles Ethereum 2.0 validator client node
 func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
@@ -495,5 +497,8 @@ func (r *ValidatorReconciler) reconcileValidatorStatefulset(ctx context.Context,
 func (r *ValidatorReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ethereum2v1alpha1.Validator{}).
+		Owns(&appsv1.StatefulSet{}).
+		Owns(&corev1.ConfigMap{}).
+		Owns(&corev1.PersistentVolumeClaim{}).
 		Complete(r)
 }

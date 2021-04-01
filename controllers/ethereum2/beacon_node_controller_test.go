@@ -25,7 +25,7 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 	Context("Joining Mainnet", func() {
 		ns := &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "mainnet",
+				Name: "beacon-node",
 			},
 		}
 

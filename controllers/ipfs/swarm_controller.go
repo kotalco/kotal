@@ -471,6 +471,7 @@ func (r *SwarmReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&ipfsv1alpha1.Swarm{}).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.Service{}).
+		Owns(&corev1.ConfigMap{}).
 		Owns(&corev1.PersistentVolumeClaim{}).
 		Complete(r)
 }

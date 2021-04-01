@@ -24,7 +24,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 	Context("Teku validator client", func() {
 		ns := &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "teku",
+				Name: "validator-client",
 			},
 		}
 
