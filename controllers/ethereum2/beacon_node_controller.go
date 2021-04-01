@@ -31,22 +31,22 @@ type BeaconNodeReconciler struct {
 func (r *BeaconNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var node ethereum2v1alpha1.BeaconNode
 
-	if err = r.Client.Get(context.Background(), req.NamespacedName, &node); err != nil {
+	if err = r.Client.Get(ctx, req.NamespacedName, &node); err != nil {
 		err = client.IgnoreNotFound(err)
 		return
 	}
 
 	r.updateLabels(&node)
 
-	if err = r.reconcileNodeDataPVC(&node); err != nil {
+	if err = r.reconcileNodeDataPVC(ctx, &node); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeService(&node); err != nil {
+	if err = r.reconcileNodeService(ctx, &node); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeStatefulset(&node); err != nil {
+	if err = r.reconcileNodeStatefulset(ctx, &node); err != nil {
 		return
 	}
 
@@ -66,7 +66,7 @@ func (r *BeaconNodeReconciler) updateLabels(node *ethereum2v1alpha1.BeaconNode) 
 	node.Labels["instance"] = node.Name
 }
 
-func (r *BeaconNodeReconciler) reconcileNodeService(node *ethereum2v1alpha1.BeaconNode) error {
+func (r *BeaconNodeReconciler) reconcileNodeService(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
 	svc := corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -74,7 +74,7 @@ func (r *BeaconNodeReconciler) reconcileNodeService(node *ethereum2v1alpha1.Beac
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, &svc, func() error {
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &svc, func() error {
 		if err := ctrl.SetControllerReference(node, &svc, r.Scheme); err != nil {
 			return err
 		}
@@ -136,7 +136,7 @@ func (r *BeaconNodeReconciler) specNodeService(svc *corev1.Service, node *ethere
 	svc.Spec.Selector = labels
 }
 
-func (r *BeaconNodeReconciler) reconcileNodeDataPVC(node *ethereum2v1alpha1.BeaconNode) error {
+func (r *BeaconNodeReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
 	pvc := corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -144,7 +144,7 @@ func (r *BeaconNodeReconciler) reconcileNodeDataPVC(node *ethereum2v1alpha1.Beac
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, &pvc, func() error {
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &pvc, func() error {
 		if err := ctrl.SetControllerReference(node, &pvc, r.Scheme); err != nil {
 			return err
 		}
@@ -184,7 +184,7 @@ func (r *BeaconNodeReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim
 }
 
 // reconcileNodeStatefulset reconcile Ethereum 2.0 node
-func (r *BeaconNodeReconciler) reconcileNodeStatefulset(node *ethereum2v1alpha1.BeaconNode) error {
+func (r *BeaconNodeReconciler) reconcileNodeStatefulset(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
 	sts := appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -192,7 +192,7 @@ func (r *BeaconNodeReconciler) reconcileNodeStatefulset(node *ethereum2v1alpha1.
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, &sts, func() error {
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &sts, func() error {
 		if err := ctrl.SetControllerReference(node, &sts, r.Scheme); err != nil {
 			return err
 		}

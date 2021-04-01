@@ -37,15 +37,15 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	r.updateLabels(&validator)
 
-	if err = r.reconcileValidatorDataPVC(&validator); err != nil {
+	if err = r.reconcileValidatorDataPVC(ctx, &validator); err != nil {
 		return
 	}
 
-	if err = r.reconcileValidatorConfigmap(&validator); err != nil {
+	if err = r.reconcileValidatorConfigmap(ctx, &validator); err != nil {
 		return
 	}
 
-	if err = r.reconcileValidatorStatefulset(&validator); err != nil {
+	if err = r.reconcileValidatorStatefulset(ctx, &validator); err != nil {
 		return
 	}
 
@@ -77,7 +77,7 @@ func (r *ValidatorReconciler) specValidatorConfigmap(validator *ethereum2v1alpha
 }
 
 // reconcileValidatorConfigmap creates config map if it doesn't exist or update it
-func (r *ValidatorReconciler) reconcileValidatorConfigmap(validator *ethereum2v1alpha1.Validator) error {
+func (r *ValidatorReconciler) reconcileValidatorConfigmap(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
 
 	// configmap is required for lighthouse validator definitions
 	if validator.Spec.Client != ethereum2v1alpha1.LighthouseClient {
@@ -91,7 +91,7 @@ func (r *ValidatorReconciler) reconcileValidatorConfigmap(validator *ethereum2v1
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, configmap, func() error {
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
 		if err := ctrl.SetControllerReference(validator, configmap, r.Scheme); err != nil {
 			r.Log.Error(err, "Unable to set controller reference on configmap")
 			return err
@@ -119,7 +119,7 @@ func (r *ValidatorReconciler) reconcileValidatorConfigmap(validator *ethereum2v1
 }
 
 // reconcileValidatorDataPVC reconciles node data persistent volume claim
-func (r *ValidatorReconciler) reconcileValidatorDataPVC(validator *ethereum2v1alpha1.Validator) error {
+func (r *ValidatorReconciler) reconcileValidatorDataPVC(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
 	pvc := corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      validator.Name,
@@ -127,7 +127,7 @@ func (r *ValidatorReconciler) reconcileValidatorDataPVC(validator *ethereum2v1al
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, &pvc, func() error {
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &pvc, func() error {
 		if err := ctrl.SetControllerReference(validator, &pvc, r.Scheme); err != nil {
 			return err
 		}
@@ -461,7 +461,7 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 }
 
 // reconcileValidatorStatefulset reconciles node statefulset
-func (r *ValidatorReconciler) reconcileValidatorStatefulset(validator *ethereum2v1alpha1.Validator) error {
+func (r *ValidatorReconciler) reconcileValidatorStatefulset(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
 	sts := appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      validator.Name,
@@ -478,7 +478,7 @@ func (r *ValidatorReconciler) reconcileValidatorStatefulset(validator *ethereum2
 	args := client.Args(validator)
 	homeDir := client.HomeDir()
 
-	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, &sts, func() error {
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, &sts, func() error {
 		if err := ctrl.SetControllerReference(validator, &sts, r.Scheme); err != nil {
 			return err
 		}

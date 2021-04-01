@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -31,20 +31,20 @@ type NodeReconciler struct {
 func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var node filecoinv1alpha1.Node
 
-	if err = r.Client.Get(context.Background(), req.NamespacedName, &node); err != nil {
+	if err = r.Client.Get(ctx, req.NamespacedName, &node); err != nil {
 		err = client.IgnoreNotFound(err)
 		return
 	}
 
-	if err = r.reconcileNodeService(&node); err != nil {
+	if err = r.reconcileNodeService(ctx, &node); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodePVC(&node); err != nil {
+	if err = r.reconcileNodePVC(ctx, &node); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeStatefulSet(&node); err != nil {
+	if err = r.reconcileNodeStatefulSet(ctx, &node); err != nil {
 		return
 	}
 
@@ -52,15 +52,15 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 }
 
 // reconcileNodePVC reconciles node pvc
-func (r *NodeReconciler) reconcileNodePVC(node *filecoinv1alpha1.Node) error {
-	pvc := &v1.PersistentVolumeClaim{
+func (r *NodeReconciler) reconcileNodePVC(ctx context.Context, node *filecoinv1alpha1.Node) error {
+	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
 			Namespace: node.Namespace,
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, pvc, func() error {
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
 		if err := ctrl.SetControllerReference(node, pvc, r.Scheme); err != nil {
 			return err
 		}
@@ -72,9 +72,9 @@ func (r *NodeReconciler) reconcileNodePVC(node *filecoinv1alpha1.Node) error {
 }
 
 // specNodePVC updates node PVC spec
-func (r *NodeReconciler) specNodePVC(pvc *v1.PersistentVolumeClaim, node *filecoinv1alpha1.Node) {
-	request := v1.ResourceList{
-		v1.ResourceStorage: resource.MustParse(node.Spec.Resources.Storage),
+func (r *NodeReconciler) specNodePVC(pvc *corev1.PersistentVolumeClaim, node *filecoinv1alpha1.Node) {
+	request := corev1.ResourceList{
+		corev1.ResourceStorage: resource.MustParse(node.Spec.Resources.Storage),
 	}
 
 	// spec is immutable after creation except resources.requests for bound claims
@@ -88,11 +88,11 @@ func (r *NodeReconciler) specNodePVC(pvc *v1.PersistentVolumeClaim, node *fileco
 		"instance": node.Name,
 	}
 
-	pvc.Spec = v1.PersistentVolumeClaimSpec{
-		AccessModes: []v1.PersistentVolumeAccessMode{
-			v1.ReadWriteOnce,
+	pvc.Spec = corev1.PersistentVolumeClaimSpec{
+		AccessModes: []corev1.PersistentVolumeAccessMode{
+			corev1.ReadWriteOnce,
 		},
-		Resources: v1.ResourceRequirements{
+		Resources: corev1.ResourceRequirements{
 			Requests: request,
 		},
 		StorageClassName: node.Spec.Resources.StorageClass,
@@ -100,16 +100,16 @@ func (r *NodeReconciler) specNodePVC(pvc *v1.PersistentVolumeClaim, node *fileco
 }
 
 // reconcileNodeService reconciles node service
-func (r *NodeReconciler) reconcileNodeService(node *filecoinv1alpha1.Node) error {
+func (r *NodeReconciler) reconcileNodeService(ctx context.Context, node *filecoinv1alpha1.Node) error {
 
-	svc := &v1.Service{
+	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
 			Namespace: node.Namespace,
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, svc, func() error {
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
 		if err := ctrl.SetControllerReference(node, svc, r.Scheme); err != nil {
 			return err
 		}
@@ -121,7 +121,7 @@ func (r *NodeReconciler) reconcileNodeService(node *filecoinv1alpha1.Node) error
 }
 
 // reconcileNodeStatefulSet reconciles node stateful set
-func (r *NodeReconciler) reconcileNodeStatefulSet(node *filecoinv1alpha1.Node) error {
+func (r *NodeReconciler) reconcileNodeStatefulSet(ctx context.Context, node *filecoinv1alpha1.Node) error {
 	sts := &appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -129,7 +129,7 @@ func (r *NodeReconciler) reconcileNodeStatefulSet(node *filecoinv1alpha1.Node) e
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, sts, func() error {
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
@@ -143,7 +143,7 @@ func (r *NodeReconciler) reconcileNodeStatefulSet(node *filecoinv1alpha1.Node) e
 }
 
 // specNodeService updates node statefulset spec
-func (r *NodeReconciler) specNodeService(svc *v1.Service, node *filecoinv1alpha1.Node) {
+func (r *NodeReconciler) specNodeService(svc *corev1.Service, node *filecoinv1alpha1.Node) {
 	labels := map[string]string{
 		"name":     "node",
 		"instance": node.Name,
@@ -151,12 +151,12 @@ func (r *NodeReconciler) specNodeService(svc *v1.Service, node *filecoinv1alpha1
 
 	svc.ObjectMeta.Labels = labels
 
-	svc.Spec.Ports = []v1.ServicePort{
+	svc.Spec.Ports = []corev1.ServicePort{
 		{
 			Name:       "api",
 			Port:       int32(1234),
 			TargetPort: intstr.FromInt(1234),
-			Protocol:   v1.ProtocolTCP,
+			Protocol:   corev1.ProtocolTCP,
 		},
 	}
 
@@ -182,45 +182,45 @@ func (r *NodeReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *file
 			MatchLabels: labels,
 		},
 		ServiceName: node.Name,
-		Template: v1.PodTemplateSpec{
+		Template: corev1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
 				Labels: labels,
 			},
-			Spec: v1.PodSpec{
-				Containers: []v1.Container{
+			Spec: corev1.PodSpec{
+				Containers: []corev1.Container{
 					{
 						Name:  "node",
 						Image: image,
 						Args:  []string{"daemon"},
-						Env: []v1.EnvVar{
+						Env: []corev1.EnvVar{
 							{
 								Name:  "LOTUS_PATH",
 								Value: "/mnt/data",
 							},
 						},
-						VolumeMounts: []v1.VolumeMount{
+						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      node.Name,
 								MountPath: "/mnt/data",
 							},
 						},
-						Resources: v1.ResourceRequirements{
-							Requests: v1.ResourceList{
-								v1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPU),
-								v1.ResourceMemory: resource.MustParse(node.Spec.Resources.Memory),
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPU),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.Resources.Memory),
 							},
-							Limits: v1.ResourceList{
-								v1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPULimit),
-								v1.ResourceMemory: resource.MustParse(node.Spec.Resources.MemoryLimit),
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.Resources.MemoryLimit),
 							},
 						},
 					},
 				},
-				Volumes: []v1.Volume{
+				Volumes: []corev1.Volume{
 					{
 						Name: node.Name,
-						VolumeSource: v1.VolumeSource{
-							PersistentVolumeClaim: &v1.PersistentVolumeClaimVolumeSource{
+						VolumeSource: corev1.VolumeSource{
+							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
 								ClaimName: node.Name,
 							},
 						},

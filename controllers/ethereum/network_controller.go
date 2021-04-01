@@ -31,18 +31,18 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (re
 	var network ethereumv1alpha1.Network
 
 	// Get desired ethereum network
-	if err = r.Client.Get(context.Background(), req.NamespacedName, &network); err != nil {
+	if err = r.Client.Get(ctx, req.NamespacedName, &network); err != nil {
 		err = client.IgnoreNotFound(err)
 		return
 	}
 
 	// update network status
-	if err = r.updateStatus(&network); err != nil {
+	if err = r.updateStatus(ctx, &network); err != nil {
 		return
 	}
 
 	// reconcile network nodes
-	if err = r.reconcileNodes(&network); err != nil {
+	if err = r.reconcileNodes(ctx, &network); err != nil {
 		return
 	}
 
@@ -52,10 +52,10 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (re
 
 // updateStatus updates network status
 // TODO: don't update statuse on network deletion
-func (r *NetworkReconciler) updateStatus(network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) updateStatus(ctx context.Context, network *ethereumv1alpha1.Network) error {
 	network.Status.NodesCount = len(network.Spec.Nodes)
 
-	if err := r.Status().Update(context.Background(), network); err != nil {
+	if err := r.Status().Update(ctx, network); err != nil {
 		r.Log.Error(err, "unable to update network status")
 		return err
 	}
@@ -65,12 +65,12 @@ func (r *NetworkReconciler) updateStatus(network *ethereumv1alpha1.Network) erro
 
 // reconcileNodes creates or updates nodes according to nodes spec
 // deletes nodes missing from nodes spec
-func (r *NetworkReconciler) reconcileNodes(network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) reconcileNodes(ctx context.Context, network *ethereumv1alpha1.Network) error {
 
 	var staticNodes []string
 
 	for i := range network.Spec.Nodes {
-		enodeURL, err := r.reconcileNode(network, network.Spec.Nodes[i], staticNodes)
+		enodeURL, err := r.reconcileNode(ctx, network, network.Spec.Nodes[i], staticNodes)
 		if err != nil {
 			return err
 		}
@@ -79,7 +79,7 @@ func (r *NetworkReconciler) reconcileNodes(network *ethereumv1alpha1.Network) er
 		}
 	}
 
-	if err := r.deleteRedundantNodes(network); err != nil {
+	if err := r.deleteRedundantNodes(ctx, network); err != nil {
 		return err
 	}
 
@@ -87,7 +87,7 @@ func (r *NetworkReconciler) reconcileNodes(network *ethereumv1alpha1.Network) er
 }
 
 // reconcileNode reconciles a single etheruem node from within the network.spec.nodes
-func (r *NetworkReconciler) reconcileNode(network *ethereumv1alpha1.Network, spec ethereumv1alpha1.NetworkNodeSpec, staticNodes []string) (enodeURL string, err error) {
+func (r *NetworkReconciler) reconcileNode(ctx context.Context, network *ethereumv1alpha1.Network, spec ethereumv1alpha1.NetworkNodeSpec, staticNodes []string) (enodeURL string, err error) {
 	node := ethereumv1alpha1.Node{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      fmt.Sprintf("%s-%s", network.Name, spec.Name),
@@ -95,7 +95,7 @@ func (r *NetworkReconciler) reconcileNode(network *ethereumv1alpha1.Network, spe
 		},
 	}
 
-	ctrl.CreateOrUpdate(context.Background(), r.Client, &node, func() error {
+	ctrl.CreateOrUpdate(ctx, r.Client, &node, func() error {
 		if err := ctrl.SetControllerReference(network, &node, r.Scheme); err != nil {
 			return err
 		}
@@ -127,7 +127,7 @@ func (r *NetworkReconciler) specNode(network *ethereumv1alpha1.Network, node *et
 }
 
 // deleteRedundantNode deletes all nodes that has been removed from spec
-func (r *NetworkReconciler) deleteRedundantNodes(network *ethereumv1alpha1.Network) error {
+func (r *NetworkReconciler) deleteRedundantNodes(ctx context.Context, network *ethereumv1alpha1.Network) error {
 	log := r.Log.WithName("delete redundant nodes")
 
 	var nodeList ethereumv1alpha1.NodeList
@@ -145,7 +145,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(network *ethereumv1alpha1.Netwo
 	}
 
 	// Nodes
-	if err := r.Client.List(context.Background(), &nodeList, matchingLabels, inNamespace); err != nil {
+	if err := r.Client.List(ctx, &nodeList, matchingLabels, inNamespace); err != nil {
 		log.Error(err, "unable to list all node statefulsets")
 		return err
 	}
@@ -155,7 +155,7 @@ func (r *NetworkReconciler) deleteRedundantNodes(network *ethereumv1alpha1.Netwo
 		if exist := names[name]; !exist {
 			log.Info(fmt.Sprintf("deleting node %s", name))
 
-			if err := r.Client.Delete(context.Background(), &node); err != nil {
+			if err := r.Client.Delete(ctx, &node); err != nil {
 				log.Error(err, fmt.Sprintf("unable to delete node %s", name))
 				return err
 			}

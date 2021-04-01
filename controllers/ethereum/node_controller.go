@@ -36,7 +36,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	var node ethereumv1alpha1.Node
 
-	if err = r.Client.Get(context.Background(), req.NamespacedName, &node); err != nil {
+	if err = r.Client.Get(ctx, req.NamespacedName, &node); err != nil {
 		err = client.IgnoreNotFound(err)
 		return
 	}
@@ -44,20 +44,20 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	r.updateLabels(&node)
 	r.updateStaticNodes(&node)
 
-	if err = r.reconcileNodeDataPVC(&node); err != nil {
+	if err = r.reconcileNodeDataPVC(ctx, &node); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeConfigmap(&node); err != nil {
+	if err = r.reconcileNodeConfigmap(ctx, &node); err != nil {
 		return
 	}
 
-	ip, err := r.reconcileNodeService(&node)
+	ip, err := r.reconcileNodeService(ctx, &node)
 	if err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeStatefulSet(&node); err != nil {
+	if err = r.reconcileNodeStatefulSet(ctx, &node); err != nil {
 		return
 	}
 
@@ -66,7 +66,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	}
 
 	var publicKey string
-	if publicKey, err = r.reconcileNodeSecret(&node); err != nil {
+	if publicKey, err = r.reconcileNodeSecret(ctx, &node); err != nil {
 		return
 	}
 
@@ -76,7 +76,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	enodeURL := fmt.Sprintf("enode://%s@%s:%d", publicKey, ip, node.Spec.P2PPort)
 
-	if err = r.updateStatus(&node, enodeURL); err != nil {
+	if err = r.updateStatus(ctx, &node, enodeURL); err != nil {
 		return
 	}
 
@@ -100,10 +100,10 @@ func (r *NodeReconciler) updateLabels(node *ethereumv1alpha1.Node) {
 }
 
 // updateStatus updates network status
-func (r *NodeReconciler) updateStatus(node *ethereumv1alpha1.Node, enodeURL string) error {
+func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha1.Node, enodeURL string) error {
 	node.Status.EnodeURL = enodeURL
 
-	if err := r.Status().Update(context.Background(), node); err != nil {
+	if err := r.Status().Update(ctx, node); err != nil {
 		r.Log.Error(err, "unable to update node status")
 		return err
 	}
@@ -154,7 +154,7 @@ func (r *NodeReconciler) specNodeConfigmap(client ethereumv1alpha1.EthereumClien
 }
 
 // reconcileNodeConfigmap creates genesis config map if it doesn't exist or update it
-func (r *NodeReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node) error {
+func (r *NodeReconciler) reconcileNodeConfigmap(ctx context.Context, node *ethereumv1alpha1.Node) error {
 
 	var genesis, initGenesisScript, importAccountScript string
 
@@ -198,7 +198,7 @@ func (r *NodeReconciler) reconcileNodeConfigmap(node *ethereumv1alpha1.Node) err
 		}
 	}
 
-	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, configmap, func() error {
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
 		if err := ctrl.SetControllerReference(node, configmap, r.Scheme); err != nil {
 			r.Log.Error(err, "Unable to set controller reference on genesis configmap")
 			return err
@@ -237,7 +237,7 @@ func (r *NodeReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node
 }
 
 // reconcileNodeDataPVC creates node data pvc if it doesn't exist
-func (r *NodeReconciler) reconcileNodeDataPVC(node *ethereumv1alpha1.Node) error {
+func (r *NodeReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethereumv1alpha1.Node) error {
 
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
@@ -246,7 +246,7 @@ func (r *NodeReconciler) reconcileNodeDataPVC(node *ethereumv1alpha1.Node) error
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(context.Background(), r.Client, pvc, func() error {
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
 		if err := ctrl.SetControllerReference(node, pvc, r.Scheme); err != nil {
 			return err
 		}
@@ -452,7 +452,7 @@ func (r *NodeReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *ethe
 }
 
 // reconcileNodeStatefulSet creates node statefulset if it doesn't exist, update it if it does exist
-func (r *NodeReconciler) reconcileNodeStatefulSet(node *ethereumv1alpha1.Node) error {
+func (r *NodeReconciler) reconcileNodeStatefulSet(ctx context.Context, node *ethereumv1alpha1.Node) error {
 
 	sts := &appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
@@ -470,7 +470,7 @@ func (r *NodeReconciler) reconcileNodeStatefulSet(node *ethereumv1alpha1.Node) e
 	mounts := r.createNodeVolumeMounts(node)
 	affinity := r.getNodeAffinity(node)
 
-	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, sts, func() error {
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
@@ -510,7 +510,7 @@ func (r *NodeReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1a
 }
 
 // reconcileNodeSecret creates node secret if it doesn't exist, update it if it exists
-func (r *NodeReconciler) reconcileNodeSecret(node *ethereumv1alpha1.Node) (publicKey string, err error) {
+func (r *NodeReconciler) reconcileNodeSecret(ctx context.Context, node *ethereumv1alpha1.Node) (publicKey string, err error) {
 
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
@@ -528,7 +528,7 @@ func (r *NodeReconciler) reconcileNodeSecret(node *ethereumv1alpha1.Node) (publi
 		}
 	}
 
-	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, secret, func() error {
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, secret, func() error {
 		if err := ctrl.SetControllerReference(node, secret, r.Scheme); err != nil {
 			return err
 		}
@@ -595,7 +595,7 @@ func (r *NodeReconciler) specNodeService(svc *corev1.Service, node *ethereumv1al
 }
 
 // reconcileNodeService reconciles node service
-func (r *NodeReconciler) reconcileNodeService(node *ethereumv1alpha1.Node) (ip string, err error) {
+func (r *NodeReconciler) reconcileNodeService(ctx context.Context, node *ethereumv1alpha1.Node) (ip string, err error) {
 
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
@@ -604,7 +604,7 @@ func (r *NodeReconciler) reconcileNodeService(node *ethereumv1alpha1.Node) (ip s
 		},
 	}
 
-	_, err = ctrl.CreateOrUpdate(context.Background(), r.Client, svc, func() error {
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
 		if err = ctrl.SetControllerReference(node, svc, r.Scheme); err != nil {
 			return err
 		}
