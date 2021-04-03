@@ -38,6 +38,8 @@ type ValidatorStatus struct{}
 // +kubebuilder:object:root=true
 
 // Validator is the Schema for the validators API
+// +kubebuilder:printcolumn:name="Client",type=string,JSONPath=".spec.client"
+// +kubebuilder:printcolumn:name="Network",type=string,JSONPath=".spec.network"
 type Validator struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

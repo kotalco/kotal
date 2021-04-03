@@ -16,7 +16,11 @@ spec:
     singular: node
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.network
+      name: Network
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: Node is the Schema for the nodes API
@@ -76,6 +80,7 @@ spec:
         type: object
     served: true
     storage: true
+    subresources: {}
 status:
   acceptedNames:
     kind: ""

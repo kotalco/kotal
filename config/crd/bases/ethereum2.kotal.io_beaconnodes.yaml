@@ -16,7 +16,14 @@ spec:
     singular: beaconnode
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.client
+      name: Client
+      type: string
+    - jsonPath: .spec.join
+      name: Join
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: BeaconNode is the Schema for the beaconnodes API
@@ -114,6 +121,7 @@ spec:
         type: object
     served: true
     storage: true
+    subresources: {}
 status:
   acceptedNames:
     kind: ""

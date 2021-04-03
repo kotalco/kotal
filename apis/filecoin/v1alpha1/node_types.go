@@ -35,6 +35,7 @@ type NodeStatus struct {
 // +kubebuilder:object:root=true
 
 // Node is the Schema for the nodes API
+// +kubebuilder:printcolumn:name="Network",type=string,JSONPath=".spec.network"
 type Node struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

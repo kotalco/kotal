@@ -17,6 +17,9 @@ spec:
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
+    - jsonPath: .spec.client
+      name: Client
+      type: string
     - jsonPath: .spec.consensus
       name: Consensus
       type: string

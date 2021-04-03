@@ -49,6 +49,8 @@ type BeaconNodeStatus struct {
 // +kubebuilder:object:root=true
 
 // BeaconNode is the Schema for the beaconnodes API
+// +kubebuilder:printcolumn:name="Client",type=string,JSONPath=".spec.client"
+// +kubebuilder:printcolumn:name="Join",type=string,JSONPath=".spec.join"
 type BeaconNode struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

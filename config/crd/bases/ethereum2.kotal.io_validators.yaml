@@ -16,7 +16,14 @@ spec:
     singular: validator
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.client
+      name: Client
+      type: string
+    - jsonPath: .spec.network
+      name: Network
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: Validator is the Schema for the validators API
@@ -106,6 +113,7 @@ spec:
         type: object
     served: true
     storage: true
+    subresources: {}
 status:
   acceptedNames:
     kind: ""
