@@ -171,6 +171,26 @@ rules:
 - apiGroups:
   - ipfs.kotal.io
   resources:
+  - peers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ipfs.kotal.io
+  resources:
+  - peers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ipfs.kotal.io
+  resources:
   - swarms
   verbs:
   - create

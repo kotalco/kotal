@@ -20,4 +20,7 @@ resources:
 - group: ethereum2
   kind: Validator
   version: v1alpha1
+- group: ipfs
+  kind: Peer
+  version: v1alpha1
 version: "2"

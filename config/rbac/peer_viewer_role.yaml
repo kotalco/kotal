@@ -1,0 +1,20 @@
+# permissions for end users to view peers.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: peer-viewer-role
+rules:
+- apiGroups:
+  - ipfs.kotal.io
+  resources:
+  - peers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ipfs.kotal.io
+  resources:
+  - peers/status
+  verbs:
+  - get
