@@ -83,6 +83,22 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 
 	sts.ObjectMeta.Labels = labels
 
+	initIPFS := corev1.Container{
+		Name:    "init-ipfs",
+		Image:   "ipfs/go-ipfs:v0.8.0",
+		Command: []string{"ipfs"},
+		Args: []string{
+			"init",
+			"--empty-repo",
+		},
+		VolumeMounts: []corev1.VolumeMount{
+			{
+				Name:      "data",
+				MountPath: "/data/ipfs",
+			},
+		},
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: labels,
@@ -92,12 +108,29 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 				Labels: labels,
 			},
 			Spec: corev1.PodSpec{
+				InitContainers: []corev1.Container{
+					initIPFS,
+				},
 				Containers: []corev1.Container{
 					{
 						Name:    "peer",
 						Image:   "ipfs/go-ipfs:v0.8.0",
 						Command: []string{"ipfs"},
 						Args:    []string{"daemon"},
+						VolumeMounts: []corev1.VolumeMount{
+							{
+								Name:      "data",
+								MountPath: "/data/ipfs",
+							},
+						},
+					},
+				},
+				Volumes: []corev1.Volume{
+					{
+						Name: "data",
+						VolumeSource: corev1.VolumeSource{
+							EmptyDir: &corev1.EmptyDirVolumeSource{},
+						},
 					},
 				},
 			},
