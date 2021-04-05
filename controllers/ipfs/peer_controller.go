@@ -33,11 +33,28 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	r.updateLabels(&peer)
+
 	if err = r.reconcilePeerStatefulSet(ctx, &peer); err != nil {
 		return
 	}
 
 	return
+}
+
+// updateLabels adds meta labels to the peer
+func (r *PeerReconciler) updateLabels(peer *ipfsv1alpha1.Peer) {
+
+	if peer.Labels == nil {
+		peer.Labels = map[string]string{}
+	}
+
+	// TODO: change client implementing multi-clients
+	peer.Labels["name"] = "peer"
+	peer.Labels["protocol"] = "ipfs"
+	peer.Labels["client"] = "go-ipfs"
+	peer.Labels["instance"] = peer.Name
+
 }
 
 // reconcilePeerStatefulSet reconciles ipfs peer statefulset
