@@ -1,13 +1,14 @@
 package v1alpha1
 
 import (
+	"github.com/kotalco/kotal/apis/shared"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // PeerSpec defines the desired state of Peer
 type PeerSpec struct {
-	// Foo is an example field of Peer. Edit Peer_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Resources is node compute and storage resources
+	shared.Resources `json:"resources,omitempty"`
 }
 
 // PeerStatus defines the observed state of Peer

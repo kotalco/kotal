@@ -134,7 +134,7 @@ func (r *PeerReconciler) specPeerPVC(peer *ipfsv1alpha1.Peer, pvc *corev1.Persis
 		},
 		Resources: corev1.ResourceRequirements{
 			Requests: corev1.ResourceList{
-				corev1.ResourceStorage: resource.MustParse("100Gi"),
+				corev1.ResourceStorage: resource.MustParse(peer.Spec.Resources.Storage),
 			},
 		},
 	}
@@ -206,6 +206,16 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 							{
 								Name:      "data",
 								MountPath: "/data/ipfs",
+							},
+						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(peer.Spec.Resources.CPU),
+								corev1.ResourceMemory: resource.MustParse(peer.Spec.Resources.Memory),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(peer.Spec.Resources.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(peer.Spec.Resources.MemoryLimit),
 							},
 						},
 					},
