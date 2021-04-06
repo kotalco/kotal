@@ -143,6 +143,10 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Peer")
 		os.Exit(1)
 	}
+	if err = (&ipfsv1alpha1.Peer{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "Peer")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 
 	setupLog.Info("starting manager")

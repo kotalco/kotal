@@ -2,6 +2,4 @@ apiVersion: ipfs.kotal.io/v1alpha1
 kind: Peer
 metadata:
   name: peer-sample
-spec:
-  # Add fields here
-  foo: bar
+spec: {}
