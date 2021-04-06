@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	_ "embed"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -22,10 +23,13 @@ type PeerReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+//go:embed init_ipfs_config.sh
+var initIPFSConfig string
+
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=peers,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=peers/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
-// +kubebuilder:rbac:groups=core,resources=persistentvolumeclaims,verbs=watch;get;create;update;list;delete
+// +kubebuilder:rbac:groups=core,resources=configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var peer ipfsv1alpha1.Peer
@@ -36,6 +40,10 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	}
 
 	r.updateLabels(&peer)
+
+	if err = r.reconcilePeerConfig(ctx, &peer); err != nil {
+		return
+	}
 
 	if err = r.reconcilePeerPVC(ctx, &peer); err != nil {
 		return
@@ -63,6 +71,38 @@ func (r *PeerReconciler) updateLabels(peer *ipfsv1alpha1.Peer) {
 
 }
 
+// reconcilePeerConfig reconciles ipfs peer config map
+func (r *PeerReconciler) reconcilePeerConfig(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
+	config := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      peer.Name,
+			Namespace: peer.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, config, func() error {
+		if err := ctrl.SetControllerReference(peer, config, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specPeerConfig(peer, config)
+
+		return nil
+	})
+
+	return err
+
+}
+
+// specPeerConfig updates ipfs peer config spec
+func (r *PeerReconciler) specPeerConfig(peer *ipfsv1alpha1.Peer, config *corev1.ConfigMap) {
+	config.ObjectMeta.Labels = peer.Labels
+	if config.Data == nil {
+		config.Data = make(map[string]string)
+	}
+	config.Data["init_ipfs_config.sh"] = initIPFSConfig
+}
+
 func (r *PeerReconciler) reconcilePeerPVC(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
@@ -84,7 +124,7 @@ func (r *PeerReconciler) reconcilePeerPVC(ctx context.Context, peer *ipfsv1alpha
 	return err
 }
 
-// specPeerPVC updates peer persistent volume claim
+// specPeerPVC updates ipfs peer persistent volume claim
 func (r *PeerReconciler) specPeerPVC(peer *ipfsv1alpha1.Peer, pvc *corev1.PersistentVolumeClaim) {
 	pvc.ObjectMeta.Labels = peer.Labels
 
@@ -121,7 +161,7 @@ func (r *PeerReconciler) reconcilePeerStatefulSet(ctx context.Context, peer *ipf
 	return err
 }
 
-// specPeerStatefulSet updates peer statefulset spec
+// specPeerStatefulSet updates ipfs peer statefulset spec
 func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.StatefulSet) {
 	labels := peer.Labels
 
@@ -130,15 +170,16 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 	initIPFS := corev1.Container{
 		Name:    "init-ipfs",
 		Image:   "ipfs/go-ipfs:v0.8.0",
-		Command: []string{"ipfs"},
-		Args: []string{
-			"init",
-			"--empty-repo",
-		},
+		Command: []string{"/bin/sh"},
+		Args:    []string{"/scripts/init_ipfs_config.sh"},
 		VolumeMounts: []corev1.VolumeMount{
 			{
 				Name:      "data",
 				MountPath: "/data/ipfs",
+			},
+			{
+				Name:      "script",
+				MountPath: "/scripts",
 			},
 		},
 	}
@@ -178,6 +219,16 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 							},
 						},
 					},
+					{
+						Name: "script",
+						VolumeSource: corev1.VolumeSource{
+							ConfigMap: &corev1.ConfigMapVolumeSource{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: peer.Name,
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -190,5 +241,6 @@ func (r *PeerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&ipfsv1alpha1.Peer{}).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.PersistentVolumeClaim{}).
+		Owns(&corev1.ConfigMap{}).
 		Complete(r)
 }
