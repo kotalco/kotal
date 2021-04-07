@@ -10,6 +10,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -29,7 +30,7 @@ var initIPFSConfig string
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=peers,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=peers/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
-// +kubebuilder:rbac:groups=core,resources=configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
+// +kubebuilder:rbac:groups=core,resources=services;configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var peer ipfsv1alpha1.Peer
@@ -42,6 +43,10 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	r.updateLabels(&peer)
 
 	if err = r.reconcilePeerConfig(ctx, &peer); err != nil {
+		return
+	}
+
+	if err = r.reconcilePeerService(ctx, &peer); err != nil {
 		return
 	}
 
@@ -86,6 +91,62 @@ func (r *PeerReconciler) updateLabels(peer *ipfsv1alpha1.Peer) {
 	peer.Labels["client"] = "go-ipfs"
 	peer.Labels["instance"] = peer.Name
 
+}
+
+// reconcilePeerService reconciles ipfs peer service
+func (r *PeerReconciler) reconcilePeerService(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
+	svc := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      peer.Name,
+			Namespace: peer.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
+		if err := ctrl.SetControllerReference(peer, svc, r.Scheme); err != nil {
+			return err
+		}
+		r.specPeerService(peer, svc)
+		return nil
+	})
+
+	return err
+}
+
+// specPeerService updates ipfs peer service spec
+func (r *PeerReconciler) specPeerService(peer *ipfsv1alpha1.Peer, svc *corev1.Service) {
+	labels := peer.Labels
+
+	svc.ObjectMeta.Labels = labels
+
+	svc.Spec.Ports = []corev1.ServicePort{
+		{
+			Name:       "swarm",
+			Port:       4001,
+			TargetPort: intstr.FromInt(4001),
+			Protocol:   corev1.ProtocolTCP,
+		},
+		{
+			Name:       "swarm-udp",
+			Port:       4001,
+			TargetPort: intstr.FromInt(4002),
+			Protocol:   corev1.ProtocolUDP,
+		},
+		{
+			Name:       "api",
+			Port:       5001,
+			TargetPort: intstr.FromInt(5001),
+			Protocol:   corev1.ProtocolTCP,
+		},
+		{
+			Name:       "gateway",
+			Port:       8080,
+			TargetPort: intstr.FromInt(8080),
+			Protocol:   corev1.ProtocolTCP,
+		},
+	}
+
+	svc.Spec.Selector = labels
 }
 
 // reconcilePeerConfig reconciles ipfs peer config map
@@ -269,5 +330,6 @@ func (r *PeerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.PersistentVolumeClaim{}).
 		Owns(&corev1.ConfigMap{}).
+		Owns(&corev1.Service{}).
 		Complete(r)
 }
