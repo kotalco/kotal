@@ -13,11 +13,14 @@ type PeerSpec struct {
 
 // PeerStatus defines the observed state of Peer
 type PeerStatus struct {
+	Client string `json:"client,omitempty"`
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // Peer is the Schema for the peers API
+// +kubebuilder:printcolumn:name="Client",type=string,JSONPath=".status.client"
 type Peer struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

@@ -16,7 +16,11 @@ spec:
     singular: peer
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .status.client
+      name: Client
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: Peer is the Schema for the peers API
@@ -62,10 +66,15 @@ spec:
             type: object
           status:
             description: PeerStatus defines the observed state of Peer
+            properties:
+              client:
+                type: string
             type: object
         type: object
     served: true
     storage: true
+    subresources:
+      status: {}
 status:
   acceptedNames:
     kind: ""

@@ -53,7 +53,24 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	if err = r.updateStatus(ctx, &peer); err != nil {
+		return
+	}
+
 	return
+}
+
+// updateStatus updates ipfs peer status
+func (r *PeerReconciler) updateStatus(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
+	// TODO: update after multi-client support
+	peer.Status.Client = "go-ipfs"
+
+	if err := r.Status().Update(ctx, peer); err != nil {
+		r.Log.Error(err, "unable to update peer status")
+		return err
+	}
+
+	return nil
 }
 
 // updateLabels adds meta labels to the peer
