@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -27,7 +28,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 			},
@@ -43,7 +44,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 				TekuEth1Endpoint,
@@ -62,7 +63,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 				TekuEth1Endpoint,
@@ -83,7 +84,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 				TekuEth1Endpoint,
@@ -107,7 +108,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 				TekuEth1Endpoint,
@@ -134,7 +135,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				TekuDataPath,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				TekuP2PPort,
 				"7891",
 				TekuNetwork,

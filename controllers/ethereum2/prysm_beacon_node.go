@@ -5,6 +5,7 @@ import (
 	"os"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // PrysmBeaconNode is Prysmatic Labs Ethereum 2.0 client
@@ -28,7 +29,7 @@ func (t *PrysmBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []strin
 
 	args = append(args, PrysmAcceptTermsOfUse)
 
-	args = append(args, PrysmDataDir, PathBlockchainData(t.HomeDir()))
+	args = append(args, PrysmDataDir, shared.PathData(t.HomeDir()))
 
 	if len(node.Spec.Eth1Endpoints) != 0 {
 		args = append(args, PrysmWeb3Provider, node.Spec.Eth1Endpoints[0])

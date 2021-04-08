@@ -5,6 +5,7 @@ import (
 	"os"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // PrysmValidatorClient is Prysmatic labs validator client
@@ -28,11 +29,11 @@ func (t *PrysmValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (arg
 
 	args = append(args, PrysmAcceptTermsOfUse)
 
-	args = append(args, PrysmDataDir, PathBlockchainData(t.HomeDir()))
+	args = append(args, PrysmDataDir, shared.PathData(t.HomeDir()))
 
-	args = append(args, PrysmWalletDir, fmt.Sprintf("%s/prysm-wallet", PathBlockchainData(t.HomeDir())))
+	args = append(args, PrysmWalletDir, fmt.Sprintf("%s/prysm-wallet", shared.PathData(t.HomeDir())))
 
-	args = append(args, PrysmWalletPasswordFile, fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", PathSecrets(t.HomeDir())))
+	args = append(args, PrysmWalletPasswordFile, fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", shared.PathSecrets(t.HomeDir())))
 
 	args = append(args, fmt.Sprintf("--%s", validator.Spec.Network))
 

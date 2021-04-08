@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -29,7 +31,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				"--mainnet",
 			},
 		},
@@ -46,7 +48,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -66,7 +68,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -89,7 +91,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -111,7 +113,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -136,7 +138,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -166,7 +168,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				"--mainnet",
 				PrysmWeb3Provider,
 				"https://localhost:8545",
@@ -197,7 +199,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				PrysmP2PTCPPort,
 				"7891",
 				PrysmP2PUDPPort,

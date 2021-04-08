@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // TekuValidatorClient is Teku validator client
@@ -28,7 +29,7 @@ func (t *TekuValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args
 
 	args = append(args, TekuVC)
 
-	args = append(args, TekuDataPath, PathBlockchainData(t.HomeDir()))
+	args = append(args, TekuDataPath, shared.PathData(t.HomeDir()))
 
 	args = append(args, TekuNetwork, validator.Spec.Network)
 
@@ -44,7 +45,7 @@ func (t *TekuValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args
 
 	keyPass := []string{}
 	for i, keystore := range validator.Spec.Keystores {
-		path := fmt.Sprintf("%s/validator-keys/%s", PathSecrets(t.HomeDir()), keystore.SecretName)
+		path := fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(t.HomeDir()), keystore.SecretName)
 		keyPass = append(keyPass, fmt.Sprintf("%s/keystore-%d.json:%s/password.txt", path, i, path))
 	}
 

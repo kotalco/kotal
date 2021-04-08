@@ -5,6 +5,8 @@ import (
 	"os"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
+
 	"gopkg.in/yaml.v2"
 )
 
@@ -27,7 +29,7 @@ func (t *LighthouseValidatorClient) HomeDir() string {
 // Args returns command line arguments required for client
 func (t *LighthouseValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
 
-	args = append(args, LighthouseDataDir, PathBlockchainData(t.HomeDir()))
+	args = append(args, LighthouseDataDir, shared.PathData(t.HomeDir()))
 
 	args = append(args, LighthouseNetwork, validator.Spec.Network)
 
@@ -77,7 +79,7 @@ func (t *LighthouseValidatorClient) CreateValidatorDefinitions(validator *ethere
 
 	for i, keystore := range validator.Spec.Keystores {
 
-		keystorePath := fmt.Sprintf("%s/validator-keys/%s", PathBlockchainData(t.HomeDir()), keystore.SecretName)
+		keystorePath := fmt.Sprintf("%s/validator-keys/%s", shared.PathData(t.HomeDir()), keystore.SecretName)
 
 		definitions = append(definitions, ValidatorDefinition{
 			VotingPublicKey:            keystore.PublicKey,

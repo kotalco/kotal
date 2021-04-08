@@ -15,6 +15,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // BeaconNodeReconciler reconciles a Node object
@@ -226,7 +227,7 @@ func (r *BeaconNodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node
 	// teku bin is in homedir
 	// mounting at homedir overwrites its contents
 	if node.Spec.Client == ethereum2v1alpha1.TekuClient {
-		mountPath = PathBlockchainData(homeDir)
+		mountPath = shared.PathData(homeDir)
 	}
 
 	mounts := []corev1.VolumeMount{
@@ -251,8 +252,8 @@ func (r *BeaconNodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node
 				fmt.Sprintf(`
 					mkdir -p %s &&
 					chmod 700 %s`,
-					PathBlockchainData(homeDir),
-					PathBlockchainData(homeDir),
+					shared.PathData(homeDir),
+					shared.PathData(homeDir),
 				),
 			},
 			VolumeMounts: mounts,

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -34,12 +35,12 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 			},
 			result: []string{
 				NimbusNonInteractive,
-				argWithVal(NimbusDataDir, PathBlockchainData(client.HomeDir())),
+				argWithVal(NimbusDataDir, shared.PathData(client.HomeDir())),
 				argWithVal(NimbusRPCAddress, "http://10.0.0.11"),
 				argWithVal(NimbusRPCPort, "80"),
 				argWithVal(NimbusGraffiti, "Validated by Kotal"),
-				argWithVal(NimbusValidatorsDir, fmt.Sprintf("%s/kotal-validators/validator-keys", PathBlockchainData(client.HomeDir()))),
-				argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/kotal-validators/validator-secrets", PathBlockchainData(client.HomeDir()))),
+				argWithVal(NimbusValidatorsDir, fmt.Sprintf("%s/kotal-validators/validator-keys", shared.PathData(client.HomeDir()))),
+				argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/kotal-validators/validator-secrets", shared.PathData(client.HomeDir()))),
 			},
 		},
 	}

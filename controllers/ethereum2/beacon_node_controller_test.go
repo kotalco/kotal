@@ -15,6 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -85,7 +86,7 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				TekuDataPath,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 			}))

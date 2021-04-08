@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // LighthouseBeaconNode is SigmaPrime Ethereum 2.0 client
@@ -27,7 +28,7 @@ func (t *LighthouseBeaconNode) HomeDir() string {
 // Args returns command line arguments required for client
 func (t *LighthouseBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 
-	args = append(args, LighthouseDataDir, PathBlockchainData(t.HomeDir()))
+	args = append(args, LighthouseDataDir, shared.PathData(t.HomeDir()))
 
 	args = append(args, LighthouseNetwork, node.Spec.Join)
 

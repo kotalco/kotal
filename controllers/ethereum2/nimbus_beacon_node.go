@@ -5,6 +5,7 @@ import (
 	"os"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // NimbusBeaconNode is Status Ethereum 2.0 client
@@ -28,7 +29,7 @@ func (t *NimbusBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []stri
 
 	args = append(args, NimbusNonInteractive)
 
-	args = append(args, argWithVal(NimbusDataDir, PathBlockchainData(t.HomeDir())))
+	args = append(args, argWithVal(NimbusDataDir, shared.PathData(t.HomeDir())))
 
 	args = append(args, argWithVal(NimbusNetwork, node.Spec.Join))
 

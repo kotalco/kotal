@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -35,7 +36,7 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 			result: []string{
 				"vc",
 				TekuDataPath,
-				PathBlockchainData(client.HomeDir()),
+				shared.PathData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 				TekuBeaconNodeEndpoint,
@@ -43,7 +44,7 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 				TekuGraffiti,
 				"Validated by Kotal",
 				TekuValidatorKeys,
-				fmt.Sprintf("%s/validator-keys/my-validator/keystore-0.json:%s/validator-keys/my-validator/password.txt", PathSecrets(client.HomeDir()), PathSecrets(client.HomeDir())),
+				fmt.Sprintf("%s/validator-keys/my-validator/keystore-0.json:%s/validator-keys/my-validator/password.txt", shared.PathSecrets(client.HomeDir()), shared.PathSecrets(client.HomeDir())),
 			},
 		},
 	}

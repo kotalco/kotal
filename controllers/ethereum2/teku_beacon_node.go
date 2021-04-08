@@ -5,6 +5,7 @@ import (
 	"os"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // TekuBeaconNode is ConsenSys Pegasys Ethereum 2.0 client
@@ -25,7 +26,7 @@ func (t *TekuBeaconNode) HomeDir() string {
 // Args returns command line arguments required for client
 func (t *TekuBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
 
-	args = append(args, TekuDataPath, PathBlockchainData(t.HomeDir()))
+	args = append(args, TekuDataPath, shared.PathData(t.HomeDir()))
 
 	args = append(args, TekuNetwork, node.Spec.Join)
 
