@@ -7,6 +7,7 @@ import (
 
 // PeerSpec defines the desired state of Peer
 type PeerSpec struct {
+	SwarmKeySecret string `json:"swarmKeySecret,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

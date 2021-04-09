@@ -63,6 +63,8 @@ spec:
                     description: StorageClass is the volume storage class
                     type: string
                 type: object
+              swarmKeySecret:
+                type: string
             type: object
           status:
             description: PeerStatus defines the observed state of Peer

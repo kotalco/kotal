@@ -253,7 +253,76 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 
 	sts.ObjectMeta.Labels = labels
 
-	initIPFS := corev1.Container{
+	volumes := []corev1.Volume{
+		{
+			Name: "data",
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: peer.Name,
+				},
+			},
+		},
+		{
+			Name: "script",
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: peer.Name,
+					},
+				},
+			},
+		},
+	}
+
+	volumeMounts := []corev1.VolumeMount{
+		{
+			Name:      "data",
+			MountPath: shared.PathData(homeDir),
+		},
+		{
+			Name:      "script",
+			MountPath: shared.PathConfig(homeDir),
+		},
+	}
+
+	initContainers := []corev1.Container{}
+
+	// copy swarm key before init ipfs
+	if peer.Spec.SwarmKeySecret != "" {
+		volumes = append(volumes, corev1.Volume{
+			Name: "swarm-key",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: peer.Spec.SwarmKeySecret,
+				},
+			},
+		})
+
+		volumeMounts = append(volumeMounts, corev1.VolumeMount{
+			Name:      "swarm-key",
+			MountPath: shared.PathSecrets(homeDir),
+		})
+
+		initContainers = append(initContainers, corev1.Container{
+			Name:    "copy-swarm-key",
+			Image:   "busybox",
+			Command: []string{"/bin/sh", "-c"},
+			Args: []string{
+				// create data dir if it doesn't exist
+				// then copy swarm.key from secrets to data dir
+				fmt.Sprintf(`
+					mkdir -p %s &&
+					cp %s/swarm.key %s`,
+					shared.PathData(homeDir),
+					shared.PathSecrets(homeDir), shared.PathData(homeDir),
+				),
+			},
+			VolumeMounts: volumeMounts,
+		})
+
+	}
+
+	initContainers = append(initContainers, corev1.Container{
 		Name:  "init-ipfs",
 		Image: img,
 		Env: []corev1.EnvVar{
@@ -266,17 +335,8 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 		Args: []string{
 			fmt.Sprintf("%s/init_ipfs_config.sh", shared.PathConfig(homeDir)),
 		},
-		VolumeMounts: []corev1.VolumeMount{
-			{
-				Name:      "data",
-				MountPath: shared.PathData(homeDir),
-			},
-			{
-				Name:      "script",
-				MountPath: shared.PathConfig(homeDir),
-			},
-		},
-	}
+		VolumeMounts: volumeMounts,
+	})
 
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
@@ -287,9 +347,7 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 				Labels: labels,
 			},
 			Spec: corev1.PodSpec{
-				InitContainers: []corev1.Container{
-					initIPFS,
-				},
+				InitContainers: initContainers,
 				Containers: []corev1.Container{
 					{
 						Name:  "peer",
@@ -300,14 +358,9 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 								Value: shared.PathData(homeDir),
 							},
 						},
-						Command: command,
-						Args:    args,
-						VolumeMounts: []corev1.VolumeMount{
-							{
-								Name:      "data",
-								MountPath: shared.PathData(homeDir),
-							},
-						},
+						Command:      command,
+						Args:         args,
+						VolumeMounts: volumeMounts,
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
 								corev1.ResourceCPU:    resource.MustParse(peer.Spec.Resources.CPU),
@@ -320,26 +373,7 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 						},
 					},
 				},
-				Volumes: []corev1.Volume{
-					{
-						Name: "data",
-						VolumeSource: corev1.VolumeSource{
-							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-								ClaimName: peer.Name,
-							},
-						},
-					},
-					{
-						Name: "script",
-						VolumeSource: corev1.VolumeSource{
-							ConfigMap: &corev1.ConfigMapVolumeSource{
-								LocalObjectReference: corev1.LocalObjectReference{
-									Name: peer.Name,
-								},
-							},
-						},
-					},
-				},
+				Volumes: volumes,
 			},
 		},
 	}
