@@ -26,8 +26,12 @@ type PeerReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-//go:embed init_ipfs_config.sh
-var initIPFSConfig string
+var (
+	//go:embed init_ipfs_config.sh
+	initIPFSConfig string
+	//go:embed copy_swarm_key.sh
+	copySwarmKey string
+)
 
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=peers,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=peers/status,verbs=get;update;patch
@@ -181,6 +185,7 @@ func (r *PeerReconciler) specPeerConfig(peer *ipfsv1alpha1.Peer, config *corev1.
 		config.Data = make(map[string]string)
 	}
 	config.Data["init_ipfs_config.sh"] = initIPFSConfig
+	config.Data["copy_swarm_key.sh"] = copySwarmKey
 }
 
 func (r *PeerReconciler) reconcilePeerPVC(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
@@ -304,18 +309,21 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 		})
 
 		initContainers = append(initContainers, corev1.Container{
-			Name:    "copy-swarm-key",
-			Image:   "busybox",
-			Command: []string{"/bin/sh", "-c"},
+			Name:  "copy-swarm-key",
+			Image: "busybox",
+			Env: []corev1.EnvVar{
+				{
+					Name:  EnvIPFSPath,
+					Value: shared.PathData(homeDir),
+				},
+				{
+					Name:  EnvSecretsPath,
+					Value: shared.PathSecrets(homeDir),
+				},
+			},
+			Command: []string{"/bin/sh"},
 			Args: []string{
-				// create data dir if it doesn't exist
-				// then copy swarm.key from secrets to data dir
-				fmt.Sprintf(`
-					mkdir -p %s &&
-					cp %s/swarm.key %s`,
-					shared.PathData(homeDir),
-					shared.PathSecrets(homeDir), shared.PathData(homeDir),
-				),
+				fmt.Sprintf("%s/copy_swarm_key.sh", shared.PathConfig(homeDir)),
 			},
 			VolumeMounts: volumeMounts,
 		})
