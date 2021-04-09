@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	_ "embed"
+	"fmt"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -15,6 +16,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // PeerReconciler reconciles a Peer object
@@ -228,11 +230,17 @@ func (r *PeerReconciler) reconcilePeerStatefulSet(ctx context.Context, peer *ipf
 		},
 	}
 
+	client := NewIPFSClient()
+	img := client.Image()
+	command := client.Command()
+	args := client.Args()
+	homeDir := client.HomeDir()
+
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
 		if err := ctrl.SetControllerReference(peer, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specPeerStatefulSet(peer, sts)
+		r.specPeerStatefulSet(peer, sts, img, homeDir, command, args)
 		return nil
 	})
 
@@ -240,24 +248,32 @@ func (r *PeerReconciler) reconcilePeerStatefulSet(ctx context.Context, peer *ipf
 }
 
 // specPeerStatefulSet updates ipfs peer statefulset spec
-func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.StatefulSet) {
+func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.StatefulSet, img, homeDir string, command, args []string) {
 	labels := peer.Labels
 
 	sts.ObjectMeta.Labels = labels
 
 	initIPFS := corev1.Container{
-		Name:    "init-ipfs",
-		Image:   "ipfs/go-ipfs:v0.8.0",
+		Name:  "init-ipfs",
+		Image: img,
+		Env: []corev1.EnvVar{
+			{
+				Name:  EnvIPFSPath,
+				Value: shared.PathData(homeDir),
+			},
+		},
 		Command: []string{"/bin/sh"},
-		Args:    []string{"/scripts/init_ipfs_config.sh"},
+		Args: []string{
+			fmt.Sprintf("%s/init_ipfs_config.sh", shared.PathConfig(homeDir)),
+		},
 		VolumeMounts: []corev1.VolumeMount{
 			{
 				Name:      "data",
-				MountPath: "/data/ipfs",
+				MountPath: shared.PathData(homeDir),
 			},
 			{
 				Name:      "script",
-				MountPath: "/scripts",
+				MountPath: shared.PathConfig(homeDir),
 			},
 		},
 	}
@@ -276,14 +292,20 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 				},
 				Containers: []corev1.Container{
 					{
-						Name:    "peer",
-						Image:   "ipfs/go-ipfs:v0.8.0",
-						Command: []string{"ipfs"},
-						Args:    []string{"daemon"},
+						Name:  "peer",
+						Image: img,
+						Env: []corev1.EnvVar{
+							{
+								Name:  EnvIPFSPath,
+								Value: shared.PathData(homeDir),
+							},
+						},
+						Command: command,
+						Args:    args,
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",
-								MountPath: "/data/ipfs",
+								MountPath: shared.PathData(homeDir),
 							},
 						},
 						Resources: corev1.ResourceRequirements{
