@@ -2,8 +2,7 @@
 
 set -e
 
-# TODO: replace with data dir var
-if [ -e /data/ipfs/config ]
+if [ -e $IPFS_PATH/config ]
 then
 	echo "ipfs config has already been initialized"
 else 
