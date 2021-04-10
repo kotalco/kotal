@@ -1,5 +1,10 @@
 package v1alpha1
 
+const (
+	// DefaultRoutingMode is default content routing mechanism
+	DefaultRoutingMode = DHTRouting
+)
+
 // Resources
 const (
 	// DefaultNodeCPURequest is the cpu requested by ipfs node
