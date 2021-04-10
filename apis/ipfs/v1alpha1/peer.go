@@ -7,10 +7,28 @@ import (
 
 // PeerSpec defines the desired state of Peer
 type PeerSpec struct {
+	// Routing is the content routing mechanism
+	Routing RoutingMechanism `json:"routing,omitempty"`
+	// SwarmKeySecret is the k8s secret holding swarm key
 	SwarmKeySecret string `json:"swarmKeySecret,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
+
+// RoutingMechanism is the content routing mechanism
+// +kubebuilder:validation:Enum=none;dht;dhtclient;dhtserver
+type RoutingMechanism string
+
+const (
+	// NoneRouting is no routing mechanism
+	NoneRouting RoutingMechanism = "none"
+	// DHTRouting is automatic dht routing mechanism
+	DHTRouting RoutingMechanism = "dht"
+	// DHTClientRouting is the dht client routing mechanism
+	DHTClientRouting RoutingMechanism = "dhtclient"
+	// DHTServerRouting is the dht server routing mechanism
+	DHTServerRouting RoutingMechanism = "dhtserver"
+)
 
 // PeerStatus defines the observed state of Peer
 type PeerStatus struct {

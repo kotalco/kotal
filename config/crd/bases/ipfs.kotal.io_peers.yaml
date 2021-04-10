@@ -63,7 +63,16 @@ spec:
                     description: StorageClass is the volume storage class
                     type: string
                 type: object
+              routing:
+                description: Routing is the content routing mechanism
+                enum:
+                - none
+                - dht
+                - dhtclient
+                - dhtserver
+                type: string
               swarmKeySecret:
+                description: SwarmKeySecret is the k8s secret holding swarm key
                 type: string
             type: object
           status:

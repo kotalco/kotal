@@ -1,6 +1,10 @@
 package controllers
 
-import "os"
+import (
+	"os"
+
+	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+)
 
 // GoIPFSClient is go-ipfs client
 // https://github.com/ipfs/go-ipfs
@@ -30,8 +34,13 @@ func (c *GoIPFSClient) Command() []string {
 }
 
 // Args returns go-ipfs args
-func (c *GoIPFSClient) Args() []string {
-	return []string{"daemon"}
+func (c *GoIPFSClient) Args(peer *ipfsv1alpha1.Peer) (args []string) {
+
+	args = append(args, GoIPFSDaemonArg)
+
+	args = append(args, GoIPFSRoutingArg, string(peer.Spec.Routing))
+
+	return
 }
 
 func (c *GoIPFSClient) HomeDir() string {

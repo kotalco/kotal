@@ -4,3 +4,4 @@ metadata:
   name: peer-sample
 spec:
   swarmKeySecret: my-swarm-key
+  routing: dhtclient
