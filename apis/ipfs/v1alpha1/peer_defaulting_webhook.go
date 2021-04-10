@@ -6,10 +6,8 @@ import "sigs.k8s.io/controller-runtime/pkg/webhook"
 
 var _ webhook.Defaulter = &Peer{}
 
-// Default implements webhook.Defaulter so a webhook will be registered for the type
-func (r *Peer) Default() {
-	peerlog.Info("default", "name", r.Name)
-
+// DefaultPeerResources defaults peer resources
+func (r *Peer) DefaultPeerResources() {
 	if r.Spec.Resources.CPU == "" {
 		r.Spec.Resources.CPU = DefaultNodeCPURequest
 	}
@@ -29,5 +27,12 @@ func (r *Peer) Default() {
 	if r.Spec.Resources.Storage == "" {
 		r.Spec.Resources.Storage = DefaultNodeStorageRequest
 	}
+}
+
+// Default implements webhook.Defaulter so a webhook will be registered for the type
+func (r *Peer) Default() {
+	peerlog.Info("default", "name", r.Name)
+
+	r.DefaultPeerResources()
 
 }
