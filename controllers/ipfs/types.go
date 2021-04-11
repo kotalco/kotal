@@ -7,6 +7,8 @@ const (
 	EnvSecretsPath = "SECRETS_PATH"
 	// EnvIPFSAPIPort is the environment variable used for api port
 	EnvIPFSAPIPort = "IPFS_API_PORT"
+	// EnvIPFSGatewayPort is the environment variable used for local gateway port
+	EnvIPFSGatewayPort = "IPFS_GATEWAY_PORT"
 	// EnvIPFSAPIHost is the environment variable used for api host
 	EnvIPFSAPIHost = "IPFS_API_HOST"
 )

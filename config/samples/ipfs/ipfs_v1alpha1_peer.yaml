@@ -7,3 +7,4 @@ spec:
   routing: dhtclient
   apiPort: 8999
   apiHost: "127.0.0.2"
+  gatewayPort: 4444
