@@ -1,10 +1,12 @@
 package v1alpha1
 
 const (
-	// DefaultRoutingMode is default content routing mechanism
+	// DefaultRoutingMode is the default content routing mechanism
 	DefaultRoutingMode = DHTRouting
-	// DefaultAPIPort is default API port
+	// DefaultAPIPort is the default API port
 	DefaultAPIPort = 5001
+	// DefaultHost is the default API host
+	DefaultHost = "0.0.0.0"
 )
 
 // Resources

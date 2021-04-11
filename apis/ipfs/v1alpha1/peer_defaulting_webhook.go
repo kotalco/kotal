@@ -41,6 +41,10 @@ func (r *Peer) Default() {
 		r.Spec.APIPort = DefaultAPIPort
 	}
 
+	if r.Spec.APIHost == "" {
+		r.Spec.APIHost = DefaultHost
+	}
+
 	r.DefaultPeerResources()
 
 }
