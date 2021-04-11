@@ -5,6 +5,8 @@ const (
 	DefaultRoutingMode = DHTRouting
 	// DefaultAPIPort is the default API port
 	DefaultAPIPort = 5001
+	// DefaultGatewayPort is the default local gateway port
+	DefaultGatewayPort = 8080
 	// DefaultHost is the default API host
 	DefaultHost = "0.0.0.0"
 )
