@@ -31,6 +31,8 @@ var (
 	initIPFSConfig string
 	//go:embed copy_swarm_key.sh
 	copySwarmKey string
+	//go:embed config_ipfs.sh
+	configIPFS string
 )
 
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=peers,verbs=get;list;watch;create;update;patch;delete
@@ -140,7 +142,7 @@ func (r *PeerReconciler) specPeerService(peer *ipfsv1alpha1.Peer, svc *corev1.Se
 		},
 		{
 			Name:       "api",
-			Port:       5001,
+			Port:       int32(peer.Spec.APIPort),
 			TargetPort: intstr.FromInt(5001),
 			Protocol:   corev1.ProtocolTCP,
 		},
@@ -186,6 +188,7 @@ func (r *PeerReconciler) specPeerConfig(peer *ipfsv1alpha1.Peer, config *corev1.
 	}
 	config.Data["init_ipfs_config.sh"] = initIPFSConfig
 	config.Data["copy_swarm_key.sh"] = copySwarmKey
+	config.Data["config_ipfs.sh"] = configIPFS
 }
 
 func (r *PeerReconciler) reconcilePeerPVC(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
@@ -330,6 +333,7 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 
 	}
 
+	// init ipfs config
 	initContainers = append(initContainers, corev1.Container{
 		Name:  "init-ipfs",
 		Image: img,
@@ -342,6 +346,27 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 		Command: []string{"/bin/sh"},
 		Args: []string{
 			fmt.Sprintf("%s/init_ipfs_config.sh", shared.PathConfig(homeDir)),
+		},
+		VolumeMounts: volumeMounts,
+	})
+
+	// config ipfs
+	initContainers = append(initContainers, corev1.Container{
+		Name:  "config-ipfs",
+		Image: img,
+		Env: []corev1.EnvVar{
+			{
+				Name:  EnvIPFSPath,
+				Value: shared.PathData(homeDir),
+			},
+			{
+				Name:  EnvIPFSAPIPort,
+				Value: fmt.Sprintf("%d", peer.Spec.APIPort),
+			},
+		},
+		Command: []string{"/bin/sh"},
+		Args: []string{
+			fmt.Sprintf("%s/config_ipfs.sh", shared.PathConfig(homeDir)),
 		},
 		VolumeMounts: volumeMounts,
 	})

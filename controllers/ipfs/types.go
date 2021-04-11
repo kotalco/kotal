@@ -5,6 +5,8 @@ const (
 	EnvIPFSPath = "IPFS_PATH"
 	// EnvSecretsPath is the environment variable used for secrets path
 	EnvSecretsPath = "SECRETS_PATH"
+	// EnvIPFSAPIPort is the environment variable used for api port
+	EnvIPFSAPIPort = "IPFS_API_PORT"
 )
 
 const (

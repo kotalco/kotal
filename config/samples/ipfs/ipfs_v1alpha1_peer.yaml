@@ -5,3 +5,4 @@ metadata:
 spec:
   swarmKeySecret: my-swarm-key
   routing: dhtclient
+  apiPort: 8999
