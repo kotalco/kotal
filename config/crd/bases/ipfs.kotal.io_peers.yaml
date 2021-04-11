@@ -42,6 +42,9 @@ spec:
               apiPort:
                 description: APIPort is api server port
                 type: integer
+              gatewayHost:
+                description: GatewayHost is local gateway host
+                type: string
               gatewayPort:
                 description: GatewayPort is local gateway port
                 type: integer
