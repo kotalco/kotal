@@ -143,7 +143,7 @@ func (r *PeerReconciler) specPeerService(peer *ipfsv1alpha1.Peer, svc *corev1.Se
 		{
 			Name:       "api",
 			Port:       int32(peer.Spec.APIPort),
-			TargetPort: intstr.FromInt(5001),
+			TargetPort: intstr.FromInt(int(peer.Spec.APIPort)),
 			Protocol:   corev1.ProtocolTCP,
 		},
 		{
@@ -362,6 +362,10 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 			{
 				Name:  EnvIPFSAPIPort,
 				Value: fmt.Sprintf("%d", peer.Spec.APIPort),
+			},
+			{
+				Name:  EnvIPFSAPIHost,
+				Value: peer.Spec.APIHost,
 			},
 		},
 		Command: []string{"/bin/sh"},
