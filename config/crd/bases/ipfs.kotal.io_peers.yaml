@@ -36,7 +36,11 @@ spec:
           spec:
             description: PeerSpec defines the desired state of Peer
             properties:
+              apiHost:
+                description: APIHost is api server host
+                type: string
               apiPort:
+                description: APIPort is api server port
                 type: integer
               resources:
                 description: Resources is node compute and storage resources
