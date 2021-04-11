@@ -48,6 +48,22 @@ spec:
               gatewayPort:
                 description: GatewayPort is local gateway port
                 type: integer
+              initProfiles:
+                description: InitProfiles is the intial profiles to apply during
+                items:
+                  description: Profile is ipfs configuration
+                  enum:
+                  - server
+                  - randomports
+                  - default-datastore
+                  - local-discovery
+                  - test
+                  - default-networking
+                  - flatfs
+                  - badgerds
+                  - lowpower
+                  type: string
+                type: array
               resources:
                 description: Resources is node compute and storage resources
                 properties:

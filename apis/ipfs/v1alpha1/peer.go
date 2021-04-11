@@ -7,6 +7,8 @@ import (
 
 // PeerSpec defines the desired state of Peer
 type PeerSpec struct {
+	// InitProfiles is the intial profiles to apply during
+	InitProfiles []Profile `json:"initProfiles,omitempty"`
 	// APIPort is api server port
 	APIPort uint `json:"apiPort,omitempty"`
 	// APIHost is api server host
@@ -22,6 +24,31 @@ type PeerSpec struct {
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
+
+// Profile is ipfs configuration
+// +kubebuilder:validation:Enum=server;randomports;default-datastore;local-discovery;test;default-networking;flatfs;badgerds;lowpower
+type Profile string
+
+const (
+	// ServerProfile is the server profile
+	ServerProfile Profile = "server"
+	// RandomPortsProfile is the random ports profile
+	RandomPortsProfile Profile = "randomports"
+	// DefaultDatastoreProfile is the default data store profile
+	DefaultDatastoreProfile Profile = "default-datastore"
+	// LocalDiscoveryProfile is the local discovery profile
+	LocalDiscoveryProfile Profile = "local-discovery"
+	// TestProfile is the test profile
+	TestProfile Profile = "test"
+	// DefaultNetworkingProfile is the default networking profile
+	DefaultNetworkingProfile Profile = "default-networking"
+	// FlatFSProfile is the flat file system profile
+	FlatFSProfile Profile = "flatfs"
+	// BadgerDSProfile is badger data store profile
+	BadgerDSProfile Profile = "badgerds"
+	// LowPowerProfile is the low power profile
+	LowPowerProfile Profile = "lowpower"
+)
 
 // RoutingMechanism is the content routing mechanism
 // +kubebuilder:validation:Enum=none;dht;dhtclient;dhtserver

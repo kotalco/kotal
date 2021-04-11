@@ -63,10 +63,6 @@ func (n *Node) Labels(swarm string) map[string]string {
 	}
 }
 
-// Profile is ipfs configuration
-// +kubebuilder:validation:Enum=server;randomports;default-datastore;local-discovery;test;default-networking;flatfs;badgerds;lowpower
-type Profile string
-
 // SwarmStatus defines the observed state of Swarm
 type SwarmStatus struct {
 	// NodesCount is number of nodes in this swarm
