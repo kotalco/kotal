@@ -37,6 +37,10 @@ func (r *Peer) Default() {
 		r.Spec.Routing = DefaultRoutingMode
 	}
 
+	if r.Spec.APIPort == 0 {
+		r.Spec.APIPort = DefaultAPIPort
+	}
+
 	r.DefaultPeerResources()
 
 }
