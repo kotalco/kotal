@@ -7,6 +7,7 @@ import (
 
 // PeerSpec defines the desired state of Peer
 type PeerSpec struct {
+	APIPort uint `json:"apiPort,omitempty"`
 	// Routing is the content routing mechanism
 	Routing RoutingMechanism `json:"routing,omitempty"`
 	// SwarmKeySecret is the k8s secret holding swarm key

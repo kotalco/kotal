@@ -36,6 +36,8 @@ spec:
           spec:
             description: PeerSpec defines the desired state of Peer
             properties:
+              apiPort:
+                type: integer
               resources:
                 description: Resources is node compute and storage resources
                 properties:
