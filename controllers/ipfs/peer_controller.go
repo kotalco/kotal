@@ -371,6 +371,10 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 				Name:  EnvIPFSGatewayPort,
 				Value: fmt.Sprintf("%d", peer.Spec.GatewayPort),
 			},
+			{
+				Name:  EnvIPFSGatewayHost,
+				Value: peer.Spec.GatewayHost,
+			},
 		},
 		Command: []string{"/bin/sh"},
 		Args: []string{
