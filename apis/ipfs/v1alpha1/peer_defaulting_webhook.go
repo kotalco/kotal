@@ -49,6 +49,10 @@ func (r *Peer) Default() {
 		r.Spec.GatewayPort = DefaultGatewayPort
 	}
 
+	if r.Spec.GatewayHost == "" {
+		r.Spec.GatewayHost = DefaultHost
+	}
+
 	r.DefaultPeerResources()
 
 }
