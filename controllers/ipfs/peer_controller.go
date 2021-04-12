@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"strings"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -334,6 +335,10 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 	}
 
 	// init ipfs config
+	initProfiles := []string{}
+	for _, profile := range peer.Spec.InitProfiles {
+		initProfiles = append(initProfiles, string(profile))
+	}
 	initContainers = append(initContainers, corev1.Container{
 		Name:  "init-ipfs",
 		Image: img,
@@ -341,6 +346,10 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 			{
 				Name:  EnvIPFSPath,
 				Value: shared.PathData(homeDir),
+			},
+			{
+				Name:  EnvIPFSInitProfiles,
+				Value: strings.Join(initProfiles, ","),
 			},
 		},
 		Command: []string{"/bin/sh"},

@@ -13,6 +13,8 @@ const (
 	EnvIPFSGatewayPort = "IPFS_GATEWAY_PORT"
 	// EnvIPFSGatewayHost is the environment variable used for local gateway host
 	EnvIPFSGatewayHost = "IPFS_GATEWAY_HOST"
+	// EnvIPFSProfiles is the environment variables used for initial profiles
+	EnvIPFSInitProfiles = "IPFS_INIT_PROFILES"
 )
 
 const (
