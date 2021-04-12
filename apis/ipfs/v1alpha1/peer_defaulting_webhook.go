@@ -53,6 +53,10 @@ func (r *Peer) Default() {
 		r.Spec.GatewayHost = DefaultHost
 	}
 
+	if len(r.Spec.InitProfiles) == 0 {
+		r.Spec.InitProfiles = []Profile{DefaultDatastoreProfile}
+	}
+
 	r.DefaultPeerResources()
 
 }
