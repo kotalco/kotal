@@ -15,7 +15,7 @@ all: manager
 
 # Run tests
 test: generate fmt vet manifests
-	go test ./... -v -ginkgo.v -ginkgo.failFast -coverprofile cover.out
+	go test -v -coverprofile cover.out ./...
 
 cover:
 	go tool cover -html=cover.out
