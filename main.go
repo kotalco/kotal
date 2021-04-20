@@ -23,8 +23,9 @@ import (
 )
 
 var (
-	scheme   = runtime.NewScheme()
-	setupLog = ctrl.Log.WithName("setup")
+	scheme         = runtime.NewScheme()
+	setupLog       = ctrl.Log.WithName("setup")
+	enableWebhooks = os.Getenv("ENABLE_WEBHOOKS") != "false"
 )
 
 func init() {
@@ -68,9 +69,11 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Network")
 		os.Exit(1)
 	}
-	if err = (&ethereumv1alpha1.Network{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Network")
-		os.Exit(1)
+	if enableWebhooks {
+		if err = (&ethereumv1alpha1.Network{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Network")
+			os.Exit(1)
+		}
 	}
 
 	if err = (&ipfscontroller.SwarmReconciler{
@@ -81,9 +84,11 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Swarm")
 		os.Exit(1)
 	}
-	if err = (&ipfsv1alpha1.Swarm{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Swarm")
-		os.Exit(1)
+	if enableWebhooks {
+		if err = (&ipfsv1alpha1.Swarm{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Swarm")
+			os.Exit(1)
+		}
 	}
 
 	if err = (&filecoincontroller.NodeReconciler{
@@ -94,9 +99,11 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Node")
 		os.Exit(1)
 	}
-	if err = (&filecoinv1alpha1.Node{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Node")
-		os.Exit(1)
+	if enableWebhooks {
+		if err = (&filecoinv1alpha1.Node{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Node")
+			os.Exit(1)
+		}
 	}
 
 	if err = (&ethereumcontroller.NodeReconciler{
@@ -107,10 +114,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Node")
 		os.Exit(1)
 	}
-	if err = (&ethereumv1alpha1.Node{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Node")
-		os.Exit(1)
+	if enableWebhooks {
+		if err = (&ethereumv1alpha1.Node{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Node")
+			os.Exit(1)
+		}
 	}
+
 	if err = (&ethereum2controller.BeaconNodeReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("BeaconNode"),
@@ -119,10 +129,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "BeaconNode")
 		os.Exit(1)
 	}
-	if err = (&ethereum2v1alpha1.BeaconNode{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Node")
-		os.Exit(1)
+	if enableWebhooks {
+		if err = (&ethereum2v1alpha1.BeaconNode{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Node")
+			os.Exit(1)
+		}
 	}
+
 	if err = (&ethereum2controller.ValidatorReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("Validator"),
@@ -131,10 +144,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Validator")
 		os.Exit(1)
 	}
-	if err = (&ethereum2v1alpha1.Validator{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Validator")
-		os.Exit(1)
+	if enableWebhooks {
+		if err = (&ethereum2v1alpha1.Validator{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Validator")
+			os.Exit(1)
+		}
 	}
+
 	if err = (&ipfscontroller.PeerReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("Peer"),
@@ -143,9 +159,11 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Peer")
 		os.Exit(1)
 	}
-	if err = (&ipfsv1alpha1.Peer{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Peer")
-		os.Exit(1)
+	if enableWebhooks {
+		if err = (&ipfsv1alpha1.Peer{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Peer")
+			os.Exit(1)
+		}
 	}
 	// +kubebuilder:scaffold:builder
 
