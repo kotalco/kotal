@@ -1,0 +1,5 @@
+apiVersion: ipfs.kotal.io/v1alpha1
+kind: ClusterPeer
+metadata:
+  name: clusterpeer-sample
+spec: {}
