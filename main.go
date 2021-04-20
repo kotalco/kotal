@@ -14,7 +14,6 @@ import (
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
-	controllers "github.com/kotalco/kotal/controllers/ethereum"
 	ethereumcontroller "github.com/kotalco/kotal/controllers/ethereum"
 	ethereum2controller "github.com/kotalco/kotal/controllers/ethereum2"
 	filecoincontroller "github.com/kotalco/kotal/controllers/filecoin"
@@ -61,7 +60,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.NetworkReconciler{
+	if err = (&ethereumcontroller.NetworkReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("Network"),
 		Scheme: mgr.GetScheme(),
