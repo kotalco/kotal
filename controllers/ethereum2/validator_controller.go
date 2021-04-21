@@ -38,6 +38,11 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return
 	}
 
+	// default the peer if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		validator.Default()
+	}
+
 	r.updateLabels(&validator)
 
 	if err = r.reconcileValidatorDataPVC(ctx, &validator); err != nil {

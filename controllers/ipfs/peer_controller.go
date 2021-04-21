@@ -49,6 +49,11 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	// default the peer if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		peer.Default()
+	}
+
 	r.updateLabels(&peer)
 
 	if err = r.reconcilePeerConfig(ctx, &peer); err != nil {

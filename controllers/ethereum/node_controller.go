@@ -16,6 +16,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	"github.com/kotalco/kotal/helpers"
 )
 
@@ -39,6 +40,11 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	if err = r.Client.Get(ctx, req.NamespacedName, &node); err != nil {
 		err = client.IgnoreNotFound(err)
 		return
+	}
+
+	// default the node if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		node.Default()
 	}
 
 	r.updateLabels(&node)

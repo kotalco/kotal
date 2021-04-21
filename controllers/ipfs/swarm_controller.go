@@ -17,6 +17,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // SwarmReconciler reconciles a Swarm object
@@ -38,6 +39,11 @@ func (r *SwarmReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resu
 	if err = r.Client.Get(ctx, req.NamespacedName, &swarm); err != nil {
 		err = client.IgnoreNotFound(err)
 		return
+	}
+
+	// default the swarm if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		swarm.Default()
 	}
 
 	if err = r.updateStatus(ctx, &swarm); err != nil {

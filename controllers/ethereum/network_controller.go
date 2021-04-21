@@ -12,6 +12,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // NetworkReconciler reconciles a Network object
@@ -34,6 +35,11 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (re
 	if err = r.Client.Get(ctx, req.NamespacedName, &network); err != nil {
 		err = client.IgnoreNotFound(err)
 		return
+	}
+
+	// default the network if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		network.Default()
 	}
 
 	// update network status

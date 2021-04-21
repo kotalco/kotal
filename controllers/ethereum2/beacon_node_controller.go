@@ -39,6 +39,11 @@ func (r *BeaconNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		return
 	}
 
+	// default the beacon node if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		node.Default()
+	}
+
 	r.updateLabels(&node)
 
 	if err = r.reconcileNodeDataPVC(ctx, &node); err != nil {

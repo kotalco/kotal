@@ -14,6 +14,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // NodeReconciler reconciles a Node object
@@ -35,6 +36,11 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	if err = r.Client.Get(ctx, req.NamespacedName, &node); err != nil {
 		err = client.IgnoreNotFound(err)
 		return
+	}
+
+	// default the node if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		node.Default()
 	}
 
 	if err = r.reconcileNodeService(ctx, &node); err != nil {
