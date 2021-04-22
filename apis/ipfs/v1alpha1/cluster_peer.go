@@ -1,11 +1,14 @@
 package v1alpha1
 
 import (
+	"github.com/kotalco/kotal/apis/shared"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // ClusterPeerSpec defines the desired state of ClusterPeer
 type ClusterPeerSpec struct {
+	// Resources is node compute and storage resources
+	shared.Resources `json:"resources,omitempty"`
 }
 
 // ClusterPeerStatus defines the observed state of ClusterPeer
