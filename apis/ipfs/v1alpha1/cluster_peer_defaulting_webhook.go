@@ -6,7 +6,32 @@ import "sigs.k8s.io/controller-runtime/pkg/webhook"
 
 var _ webhook.Defaulter = &ClusterPeer{}
 
+// DefaultResources defaults cluster peer resources
+func (r *ClusterPeer) DefaultResources() {
+	if r.Spec.Resources.CPU == "" {
+		r.Spec.Resources.CPU = DefaultNodeCPURequest
+	}
+
+	if r.Spec.Resources.CPULimit == "" {
+		r.Spec.Resources.CPULimit = DefaultNodeCPULimit
+	}
+
+	if r.Spec.Resources.Memory == "" {
+		r.Spec.Resources.Memory = DefaultNodeMemoryRequest
+	}
+
+	if r.Spec.Resources.MemoryLimit == "" {
+		r.Spec.Resources.MemoryLimit = DefaultNodeMemoryLimit
+	}
+
+	if r.Spec.Resources.Storage == "" {
+		r.Spec.Resources.Storage = DefaultNodeStorageRequest
+	}
+}
+
 // Default implements webhook.Defaulter so a webhook will be registered for the type
 func (r *ClusterPeer) Default() {
 	clusterpeerlog.Info("default", "name", r.Name)
+
+	r.DefaultResources()
 }
