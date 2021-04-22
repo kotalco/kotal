@@ -12,6 +12,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // ClusterPeerReconciler reconciles a ClusterPeer object
@@ -33,7 +34,10 @@ func (r *ClusterPeerReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return
 	}
 
-	//TODO: default the peer if webhooks are disabled
+	// default the cluster peer if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		peer.Default()
+	}
 
 	r.updateLabels(&peer)
 
