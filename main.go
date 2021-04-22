@@ -164,12 +164,17 @@ func main() {
 			os.Exit(1)
 		}
 	}
+
 	if err = (&ipfscontroller.ClusterPeerReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("ClusterPeer"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ClusterPeer")
+		os.Exit(1)
+	}
+	if err = (&ipfsv1alpha1.ClusterPeer{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "ClusterPeer")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
