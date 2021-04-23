@@ -173,9 +173,11 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "ClusterPeer")
 		os.Exit(1)
 	}
-	if err = (&ipfsv1alpha1.ClusterPeer{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "ClusterPeer")
-		os.Exit(1)
+	if enableWebhooks {
+		if err = (&ipfsv1alpha1.ClusterPeer{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "ClusterPeer")
+			os.Exit(1)
+		}
 	}
 	// +kubebuilder:scaffold:builder
 
