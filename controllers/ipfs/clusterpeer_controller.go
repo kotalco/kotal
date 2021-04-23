@@ -6,6 +6,7 @@ import (
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -41,6 +42,10 @@ func (r *ClusterPeerReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	r.updateLabels(&peer)
 
+	if err = r.reconcileClusterPeerPVC(ctx, &peer); err != nil {
+		return
+	}
+
 	if err = r.reconcileClusterPeerStatefulset(ctx, &peer); err != nil {
 		return
 	}
@@ -58,6 +63,50 @@ func (r *ClusterPeerReconciler) updateLabels(peer *ipfsv1alpha1.ClusterPeer) {
 	peer.Labels["protocol"] = "ipfs"
 	peer.Labels["client"] = "ipfs-cluster-service"
 	peer.Labels["instance"] = peer.Name
+}
+
+// reconcileClusterPeerPVC reconciles IPFS cluster peer persistent volume claim
+func (r *ClusterPeerReconciler) reconcileClusterPeerPVC(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
+	pvc := corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      peer.Name,
+			Namespace: peer.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &pvc, func() error {
+		if err := ctrl.SetControllerReference(peer, &pvc, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specClusterPeerPVC(peer, &pvc)
+		return nil
+	})
+
+	return err
+}
+
+// specClusterPeerPVC updates IPFS cluster peer persistent volume claim
+func (r *ClusterPeerReconciler) specClusterPeerPVC(peer *ipfsv1alpha1.ClusterPeer, pvc *corev1.PersistentVolumeClaim) {
+	request := corev1.ResourceList{
+		corev1.ResourceStorage: resource.MustParse(peer.Spec.Resources.Storage),
+	}
+
+	// spec is immutable after creation except resources.requests for bound claims
+	if !pvc.CreationTimestamp.IsZero() {
+		pvc.Spec.Resources.Requests = request
+		return
+	}
+
+	pvc.ObjectMeta.Labels = peer.Labels
+	pvc.Spec = corev1.PersistentVolumeClaimSpec{
+		AccessModes: []corev1.PersistentVolumeAccessMode{
+			corev1.ReadWriteOnce,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: request,
+		},
+	}
 }
 
 // reconcileClusterPeerStatefulset reconciles IPFS cluster peer statefulset
@@ -129,7 +178,9 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 					{
 						Name: "data",
 						VolumeSource: corev1.VolumeSource{
-							EmptyDir: &corev1.EmptyDirVolumeSource{},
+							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+								ClaimName: peer.Name,
+							},
 						},
 					},
 				},
