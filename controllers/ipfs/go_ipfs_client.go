@@ -8,7 +8,9 @@ import (
 
 // GoIPFSClient is go-ipfs client
 // https://github.com/ipfs/go-ipfs
-type GoIPFSClient struct{}
+type GoIPFSClient struct {
+	peer *ipfsv1alpha1.Peer
+}
 
 // Images
 const (
@@ -34,7 +36,9 @@ func (c *GoIPFSClient) Command() []string {
 }
 
 // Args returns go-ipfs args
-func (c *GoIPFSClient) Args(peer *ipfsv1alpha1.Peer) (args []string) {
+func (c *GoIPFSClient) Args() (args []string) {
+
+	peer := c.peer
 
 	args = append(args, GoIPFSDaemonArg)
 

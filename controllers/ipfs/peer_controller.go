@@ -251,10 +251,10 @@ func (r *PeerReconciler) reconcilePeerStatefulSet(ctx context.Context, peer *ipf
 		},
 	}
 
-	client := NewIPFSClient()
+	client := NewIPFSClient(peer)
 	img := client.Image()
 	command := client.Command()
-	args := client.Args(peer)
+	args := client.Args()
 	homeDir := client.HomeDir()
 
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {

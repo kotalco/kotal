@@ -31,8 +31,6 @@ var _ = Describe("IPFS peer controller", func() {
 		Namespace: ns.Name,
 	}
 
-	client := NewIPFSClient()
-
 	spec := ipfsv1alpha1.PeerSpec{
 		APIPort:        3333,
 		GatewayPort:    4444,
@@ -47,6 +45,8 @@ var _ = Describe("IPFS peer controller", func() {
 		},
 		Spec: spec,
 	}
+
+	client := NewIPFSClient(toCreate)
 
 	t := true
 
