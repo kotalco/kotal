@@ -209,9 +209,9 @@ func (r *PeerReconciler) reconcilePeerPVC(ctx context.Context, peer *ipfsv1alpha
 		if err := ctrl.SetControllerReference(peer, pvc, r.Scheme); err != nil {
 			return err
 		}
-		if pvc.CreationTimestamp.IsZero() {
-			r.specPeerPVC(peer, pvc)
-		}
+
+		r.specPeerPVC(peer, pvc)
+
 		return nil
 	})
 
@@ -220,16 +220,23 @@ func (r *PeerReconciler) reconcilePeerPVC(ctx context.Context, peer *ipfsv1alpha
 
 // specPeerPVC updates ipfs peer persistent volume claim
 func (r *PeerReconciler) specPeerPVC(peer *ipfsv1alpha1.Peer, pvc *corev1.PersistentVolumeClaim) {
-	pvc.ObjectMeta.Labels = peer.Labels
+	request := corev1.ResourceList{
+		corev1.ResourceStorage: resource.MustParse(peer.Spec.Resources.Storage),
+	}
 
+	// spec is immutable after creation except resources.requests for bound claims
+	if !pvc.CreationTimestamp.IsZero() {
+		pvc.Spec.Resources.Requests = request
+		return
+	}
+
+	pvc.ObjectMeta.Labels = peer.Labels
 	pvc.Spec = corev1.PersistentVolumeClaimSpec{
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
 		},
 		Resources: corev1.ResourceRequirements{
-			Requests: corev1.ResourceList{
-				corev1.ResourceStorage: resource.MustParse(peer.Spec.Resources.Storage),
-			},
+			Requests: request,
 		},
 	}
 }
