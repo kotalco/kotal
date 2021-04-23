@@ -4,15 +4,12 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
-	"github.com/kotalco/kotal/controllers/shared"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
-
-	client, _ := NewBeaconNodeClient(ethereum2v1alpha1.LighthouseClient)
 
 	cases := []struct {
 		title  string
@@ -29,7 +26,6 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				shared.PathData(client.HomeDir()),
 				LighthouseNetwork,
 				"mainnet",
 			},
@@ -45,7 +41,6 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				shared.PathData(client.HomeDir()),
 				LighthouseNetwork,
 				"mainnet",
 				LighthouseEth1Endpoints,
@@ -64,7 +59,6 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				shared.PathData(client.HomeDir()),
 				LighthouseNetwork,
 				"mainnet",
 				LighthouseEth1Endpoints,
@@ -85,7 +79,6 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				shared.PathData(client.HomeDir()),
 				LighthouseNetwork,
 				"mainnet",
 				LighthouseEth1Endpoints,
@@ -112,7 +105,6 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				shared.PathData(client.HomeDir()),
 				LighthouseNetwork,
 				"mainnet",
 				LighthouseEth1Endpoints,
@@ -142,7 +134,6 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			},
 			result: []string{
 				LighthouseDataDir,
-				shared.PathData(client.HomeDir()),
 				LighthousePort,
 				"7891",
 				LighthouseDiscoveryPort,
@@ -165,7 +156,8 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.node.Default()
-				args := client.Args(cc.node)
+				client, _ := NewBeaconNodeClient(cc.node)
+				args := client.Args()
 				Expect(args).To(ContainElements(cc.result))
 			})
 		}()

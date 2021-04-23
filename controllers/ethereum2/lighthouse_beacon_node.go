@@ -10,7 +10,9 @@ import (
 )
 
 // LighthouseBeaconNode is SigmaPrime Ethereum 2.0 client
-type LighthouseBeaconNode struct{}
+type LighthouseBeaconNode struct {
+	node *ethereum2v1alpha1.BeaconNode
+}
 
 // Images
 const (
@@ -26,7 +28,9 @@ func (t *LighthouseBeaconNode) HomeDir() string {
 }
 
 // Args returns command line arguments required for client
-func (t *LighthouseBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
+func (t *LighthouseBeaconNode) Args() (args []string) {
+
+	node := t.node
 
 	args = append(args, LighthouseDataDir, shared.PathData(t.HomeDir()))
 

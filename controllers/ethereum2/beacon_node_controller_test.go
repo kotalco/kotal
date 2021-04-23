@@ -36,7 +36,8 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 		}
 
 		spec := ethereum2v1alpha1.BeaconNodeSpec{
-			Join: "mainnet",
+			Client: ethereum2v1alpha1.TekuClient,
+			Join:   "mainnet",
 		}
 
 		toCreate := &ethereum2v1alpha1.BeaconNode{
@@ -57,7 +58,7 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 			BlockOwnerDeletion: &t,
 		}
 
-		client, _ := NewBeaconNodeClient(ethereum2v1alpha1.TekuClient)
+		client, _ := NewBeaconNodeClient(toCreate)
 
 		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.TODO(), ns))

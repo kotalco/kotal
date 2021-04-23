@@ -10,7 +10,9 @@ import (
 )
 
 // TekuValidatorClient is Teku validator client
-type TekuValidatorClient struct{}
+type TekuValidatorClient struct {
+	validator *ethereum2v1alpha1.Validator
+}
 
 const (
 	// EnvTekuValidatorImage is the environment variable used for PegaSys Teku validator client image
@@ -25,7 +27,9 @@ func (t *TekuValidatorClient) HomeDir() string {
 }
 
 // Args returns command line arguments required for client
-func (t *TekuValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
+func (t *TekuValidatorClient) Args() (args []string) {
+
+	validator := t.validator
 
 	args = append(args, TekuVC)
 

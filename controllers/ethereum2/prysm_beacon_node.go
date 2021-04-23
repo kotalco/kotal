@@ -9,7 +9,9 @@ import (
 )
 
 // PrysmBeaconNode is Prysmatic Labs Ethereum 2.0 client
-type PrysmBeaconNode struct{}
+type PrysmBeaconNode struct {
+	node *ethereum2v1alpha1.BeaconNode
+}
 
 // Images
 const (
@@ -25,7 +27,9 @@ func (t *PrysmBeaconNode) HomeDir() string {
 }
 
 // Args returns command line arguments required for client
-func (t *PrysmBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
+func (t *PrysmBeaconNode) Args() (args []string) {
+
+	node := t.node
 
 	args = append(args, PrysmAcceptTermsOfUse)
 

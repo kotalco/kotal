@@ -4,14 +4,11 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
-	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
-
-	client, _ := NewValidatorClient(ethereum2v1alpha1.TekuClient)
 
 	cases := []struct {
 		title     string
@@ -36,7 +33,6 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 			result: []string{
 				"vc",
 				TekuDataPath,
-				shared.PathData(client.HomeDir()),
 				TekuNetwork,
 				"mainnet",
 				TekuBeaconNodeEndpoint,
@@ -44,7 +40,7 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 				TekuGraffiti,
 				"Validated by Kotal",
 				TekuValidatorKeys,
-				fmt.Sprintf("%s/validator-keys/my-validator/keystore-0.json:%s/validator-keys/my-validator/password.txt", shared.PathSecrets(client.HomeDir()), shared.PathSecrets(client.HomeDir())),
+				// fmt.Sprintf("%s/validator-keys/my-validator/keystore-0.json:%s/validator-keys/my-validator/password.txt", shared.PathSecrets(client.HomeDir()), shared.PathSecrets(client.HomeDir())),
 			},
 		},
 	}
@@ -54,7 +50,8 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.validator.Default()
-				args := client.Args(cc.validator)
+				client, _ := NewValidatorClient(cc.validator)
+				args := client.Args()
 				Expect(args).To(ContainElements(cc.result))
 			})
 		}()

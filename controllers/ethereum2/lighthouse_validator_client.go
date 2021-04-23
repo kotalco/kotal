@@ -11,7 +11,9 @@ import (
 )
 
 // LighthouseValidatorClient is SigmaPrime Ethereum 2.0 validator client
-type LighthouseValidatorClient struct{}
+type LighthouseValidatorClient struct {
+	validator *ethereum2v1alpha1.Validator
+}
 
 // Images
 const (
@@ -27,7 +29,9 @@ func (t *LighthouseValidatorClient) HomeDir() string {
 }
 
 // Args returns command line arguments required for client
-func (t *LighthouseValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
+func (t *LighthouseValidatorClient) Args() (args []string) {
+
+	validator := t.validator
 
 	args = append(args, LighthouseDataDir, shared.PathData(t.HomeDir()))
 

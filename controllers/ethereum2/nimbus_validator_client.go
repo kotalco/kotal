@@ -10,7 +10,9 @@ import (
 )
 
 // NimbusValidatorClient is Status Ethereum 2.0 client
-type NimbusValidatorClient struct{}
+type NimbusValidatorClient struct {
+	validator *ethereum2v1alpha1.Validator
+}
 
 // Images
 const (
@@ -26,7 +28,9 @@ func (t *NimbusValidatorClient) HomeDir() string {
 }
 
 // Args returns command line arguments required for client
-func (t *NimbusValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
+func (t *NimbusValidatorClient) Args() (args []string) {
+
+	validator := t.validator
 
 	args = append(args, NimbusNonInteractive)
 

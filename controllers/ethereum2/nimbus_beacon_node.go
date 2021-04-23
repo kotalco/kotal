@@ -9,7 +9,9 @@ import (
 )
 
 // NimbusBeaconNode is Status Ethereum 2.0 client
-type NimbusBeaconNode struct{}
+type NimbusBeaconNode struct {
+	node *ethereum2v1alpha1.BeaconNode
+}
 
 // Images
 const (
@@ -25,7 +27,9 @@ func (t *NimbusBeaconNode) HomeDir() string {
 }
 
 // Args returns command line arguments required for client
-func (t *NimbusBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
+func (t *NimbusBeaconNode) Args() (args []string) {
+
+	node := t.node
 
 	args = append(args, NimbusNonInteractive)
 

@@ -4,14 +4,11 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
-	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
-
-	client, _ := NewValidatorClient(ethereum2v1alpha1.PrysmClient)
 
 	cases := []struct {
 		title     string
@@ -37,16 +34,15 @@ var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
-				shared.PathData(client.HomeDir()),
 				"--mainnet",
 				PrysmBeaconRPCProvider,
 				"http://localhost:8899",
 				PrysmGraffiti,
 				"Validated by Kotal",
 				PrysmWalletDir,
-				fmt.Sprintf("%s/prysm-wallet", shared.PathData(client.HomeDir())),
+				// fmt.Sprintf("%s/prysm-wallet", shared.PathData(client.HomeDir())),
 				PrysmWalletPasswordFile,
-				fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", shared.PathSecrets(client.HomeDir())),
+				// fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", shared.PathSecrets(client.HomeDir())),
 			},
 		},
 	}
@@ -56,7 +52,8 @@ var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.validator.Default()
-				args := client.Args(cc.validator)
+				client, _ := NewValidatorClient(cc.validator)
+				args := client.Args()
 				Expect(args).To(ContainElements(cc.result))
 			})
 		}()

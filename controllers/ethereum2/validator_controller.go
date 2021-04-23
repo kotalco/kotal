@@ -105,7 +105,7 @@ func (r *ValidatorReconciler) reconcileValidatorConfigmap(ctx context.Context, v
 			return err
 		}
 
-		vc, err := NewValidatorClient(validator.Spec.Client)
+		vc, err := NewValidatorClient(validator)
 		if err != nil {
 			return err
 		}
@@ -477,13 +477,13 @@ func (r *ValidatorReconciler) reconcileValidatorStatefulset(ctx context.Context,
 		},
 	}
 
-	client, err := NewValidatorClient(validator.Spec.Client)
+	client, err := NewValidatorClient(validator)
 	if err != nil {
 		return err
 	}
 	img := client.Image()
 	command := client.Command()
-	args := client.Args(validator)
+	args := client.Args()
 	homeDir := client.HomeDir()
 
 	_, err = ctrl.CreateOrUpdate(ctx, r.Client, &sts, func() error {

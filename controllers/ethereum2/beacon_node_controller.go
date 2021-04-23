@@ -205,12 +205,12 @@ func (r *BeaconNodeReconciler) reconcileNodeStatefulset(ctx context.Context, nod
 			return err
 		}
 
-		client, err := NewBeaconNodeClient(node.Spec.Client)
+		client, err := NewBeaconNodeClient(node)
 		if err != nil {
 			return err
 		}
 
-		args := client.Args(node)
+		args := client.Args()
 		img := client.Image()
 		command := client.Command()
 		homeDir := client.HomeDir()

@@ -9,7 +9,9 @@ import (
 )
 
 // TekuBeaconNode is ConsenSys Pegasys Ethereum 2.0 client
-type TekuBeaconNode struct{}
+type TekuBeaconNode struct {
+	node *ethereum2v1alpha1.BeaconNode
+}
 
 const (
 	// EnvTekuBeaconNodeImage is the environment variable used for PegaSys Teku beacon node image
@@ -24,7 +26,9 @@ func (t *TekuBeaconNode) HomeDir() string {
 }
 
 // Args returns command line arguments required for client
-func (t *TekuBeaconNode) Args(node *ethereum2v1alpha1.BeaconNode) (args []string) {
+func (t *TekuBeaconNode) Args() (args []string) {
+
+	node := t.node
 
 	args = append(args, TekuDataPath, shared.PathData(t.HomeDir()))
 

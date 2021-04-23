@@ -9,7 +9,9 @@ import (
 )
 
 // PrysmValidatorClient is Prysmatic labs validator client
-type PrysmValidatorClient struct{}
+type PrysmValidatorClient struct {
+	validator *ethereum2v1alpha1.Validator
+}
 
 // Images
 const (
@@ -25,7 +27,9 @@ func (t *PrysmValidatorClient) HomeDir() string {
 }
 
 // Args returns command line arguments required for client
-func (t *PrysmValidatorClient) Args(validator *ethereum2v1alpha1.Validator) (args []string) {
+func (t *PrysmValidatorClient) Args() (args []string) {
+
+	validator := t.validator
 
 	args = append(args, PrysmAcceptTermsOfUse)
 
