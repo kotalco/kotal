@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	_ "embed"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -22,6 +23,11 @@ type ClusterPeerReconciler struct {
 	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
+
+var (
+	//go:embed init_ipfs_cluster_config.sh
+	initIPFSClusterConfig string
+)
 
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=clusterpeers,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=clusterpeers/status,verbs=get;update;patch
@@ -48,6 +54,10 @@ func (r *ClusterPeerReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return
 	}
 
+	if err = r.reconcileClusterPeerConfig(ctx, &peer); err != nil {
+		return
+	}
+
 	if err = r.reconcileClusterPeerStatefulset(ctx, &peer); err != nil {
 		return
 	}
@@ -65,6 +75,38 @@ func (r *ClusterPeerReconciler) updateLabels(peer *ipfsv1alpha1.ClusterPeer) {
 	peer.Labels["protocol"] = "ipfs"
 	peer.Labels["client"] = "ipfs-cluster-service"
 	peer.Labels["instance"] = peer.Name
+}
+
+// reconcileClusterPeerConfig reconciles IPFS cluster peer configmap
+func (r *ClusterPeerReconciler) reconcileClusterPeerConfig(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
+	config := corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      peer.Name,
+			Namespace: peer.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &config, func() error {
+		if err := ctrl.SetControllerReference(peer, &config, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specClusterPeerConfig(peer, &config)
+		return nil
+	})
+
+	return err
+}
+
+// specClusterPeerConfig updates IPFS cluster peer configmap spec
+func (r *ClusterPeerReconciler) specClusterPeerConfig(peer *ipfsv1alpha1.ClusterPeer, config *corev1.ConfigMap) {
+	config.ObjectMeta.Labels = peer.Labels
+
+	if config.Data == nil {
+		config.Data = make(map[string]string)
+	}
+
+	config.Data["init_ipfs_cluster_config.sh"] = initIPFSClusterConfig
 }
 
 // reconcileClusterPeerPVC reconciles IPFS cluster peer persistent volume claim
@@ -152,12 +194,18 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 					{
 						Name:    "init-cluster-peer",
 						Image:   "ipfs/ipfs-cluster:v0.13.2",
-						Command: []string{"ipfs-cluster-service"},
-						Args:    []string{"init"},
+						Command: []string{"/bin/sh"},
+						Args: []string{
+							"/config/init_ipfs_cluster_config.sh",
+						},
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",
 								MountPath: "/data/ipfs-cluster",
+							},
+							{
+								Name:      "config",
+								MountPath: "/config",
 							},
 						},
 					},
@@ -192,6 +240,16 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 						VolumeSource: corev1.VolumeSource{
 							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
 								ClaimName: peer.Name,
+							},
+						},
+					},
+					{
+						Name: "config",
+						VolumeSource: corev1.VolumeSource{
+							ConfigMap: &corev1.ConfigMapVolumeSource{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: peer.Name,
+								},
 							},
 						},
 					},
