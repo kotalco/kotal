@@ -172,6 +172,16 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 								MountPath: "/data/ipfs-cluster",
 							},
 						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(peer.Spec.CPU),
+								corev1.ResourceMemory: resource.MustParse(peer.Spec.Memory),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(peer.Spec.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(peer.Spec.MemoryLimit),
+							},
+						},
 					},
 				},
 				Volumes: []corev1.Volume{
