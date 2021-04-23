@@ -162,13 +162,17 @@ func (r *ClusterPeerReconciler) reconcileClusterPeerStatefulset(ctx context.Cont
 		},
 	}
 
-	client := NewIPFSClusterClient(peer)
+	client, err := NewIPFSClient(peer)
+	if err != nil {
+		return err
+	}
+
 	img := client.Image()
 	command := client.Command()
 	args := client.Args()
 	homeDir := client.HomeDir()
 
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &sts, func() error {
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, &sts, func() error {
 		if err := ctrl.SetControllerReference(peer, &sts, r.Scheme); err != nil {
 			return err
 		}

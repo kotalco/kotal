@@ -46,7 +46,7 @@ var _ = Describe("IPFS peer controller", func() {
 		Spec: spec,
 	}
 
-	client := NewIPFSClient(toCreate)
+	client, _ := NewIPFSClient(toCreate)
 
 	t := true
 

@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"fmt"
+
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // IPFSClient is IPFS peer client
@@ -10,19 +13,13 @@ type IPFSClient interface {
 	shared.Client
 }
 
-// IPFSClusterClient is IPFS cluster peer client
-type IPFSClusterClient interface {
-	shared.Client
-}
-
-// NewIPFSClient creates new ipfs client
-func NewIPFSClient(peer *ipfsv1alpha1.Peer) IPFSClient {
-	// TODO: update after multi-client support
-	return &GoIPFSClient{peer}
-}
-
-// NewIPFSClusterClient creates new ipfs cluster client
-func NewIPFSClusterClient(peer *ipfsv1alpha1.ClusterPeer) IPFSClusterClient {
-	// TODO: update after multi-client support
-	return &GoIPFSClusterClient{peer}
+// NewIPFSClient creates a new client for ipfs peer or cluster peer
+func NewIPFSClient(obj runtime.Object) (IPFSClient, error) {
+	switch peer := obj.(type) {
+	case *ipfsv1alpha1.Peer:
+		return &GoIPFSClient{peer}, nil
+	case *ipfsv1alpha1.ClusterPeer:
+		return &GoIPFSClusterClient{peer}, nil
+	}
+	return nil, fmt.Errorf("no client support for %s", obj)
 }
