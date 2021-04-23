@@ -156,7 +156,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.node.Default()
-				client, _ := NewBeaconNodeClient(cc.node)
+				client, _ := NewEthereum2Client(cc.node)
 				args := client.Args()
 				Expect(args).To(ContainElements(cc.result))
 			})

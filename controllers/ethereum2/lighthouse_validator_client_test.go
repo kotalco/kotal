@@ -21,7 +21,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 		}
 
 		validator.Default()
-		client, _ := NewValidatorClient(validator)
+		client, _ := NewEthereum2Client(validator)
 		args := client.Args()
 
 		Expect(args).To(ContainElements([]string{

@@ -64,7 +64,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			BlockOwnerDeletion: &t,
 		}
 
-		client, _ := NewValidatorClient(toCreate)
+		client, _ := NewEthereum2Client(toCreate)
 
 		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.TODO(), ns))

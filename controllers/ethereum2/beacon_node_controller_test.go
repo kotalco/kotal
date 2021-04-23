@@ -58,7 +58,7 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 			BlockOwnerDeletion: &t,
 		}
 
-		client, _ := NewBeaconNodeClient(toCreate)
+		client, _ := NewEthereum2Client(toCreate)
 
 		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.TODO(), ns))

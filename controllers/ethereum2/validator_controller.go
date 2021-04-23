@@ -105,7 +105,7 @@ func (r *ValidatorReconciler) reconcileValidatorConfigmap(ctx context.Context, v
 			return err
 		}
 
-		vc, err := NewValidatorClient(validator)
+		vc, err := NewEthereum2Client(validator)
 		if err != nil {
 			return err
 		}
@@ -477,7 +477,7 @@ func (r *ValidatorReconciler) reconcileValidatorStatefulset(ctx context.Context,
 		},
 	}
 
-	client, err := NewValidatorClient(validator)
+	client, err := NewEthereum2Client(validator)
 	if err != nil {
 		return err
 	}
