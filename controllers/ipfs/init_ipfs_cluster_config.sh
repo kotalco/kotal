@@ -2,7 +2,7 @@
 
 set -e
 
-if [ -e /data/ipfs-cluster/service.json ]
+if [ -e $IPFS_CLUSTER_PATH/service.json ]
 then
 	echo "ipfs cluster config has already been initialized"
 else

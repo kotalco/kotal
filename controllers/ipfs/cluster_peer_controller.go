@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	_ "embed"
+	"fmt"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -205,17 +206,23 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 						Name:    "init-cluster-peer",
 						Image:   img,
 						Command: []string{"/bin/sh"},
+						Env: []corev1.EnvVar{
+							{
+								Name:  EnvIPFSClusterPath,
+								Value: shared.PathData(homeDir),
+							},
+						},
 						Args: []string{
-							"/config/init_ipfs_cluster_config.sh",
+							fmt.Sprintf("%s/init_ipfs_cluster_config.sh", shared.PathConfig(homeDir)),
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",
-								MountPath: "/data/ipfs-cluster",
+								MountPath: shared.PathData(homeDir),
 							},
 							{
 								Name:      "config",
-								MountPath: "/config",
+								MountPath: shared.PathConfig(homeDir),
 							},
 						},
 					},
@@ -225,11 +232,17 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 						Name:    "cluster-peer",
 						Image:   img,
 						Command: command,
-						Args:    args,
+						Env: []corev1.EnvVar{
+							{
+								Name:  EnvIPFSClusterPath,
+								Value: shared.PathData(homeDir),
+							},
+						},
+						Args: args,
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",
-								MountPath: "/data/ipfs-cluster",
+								MountPath: shared.PathData(homeDir),
 							},
 						},
 						Resources: corev1.ResourceRequirements{
