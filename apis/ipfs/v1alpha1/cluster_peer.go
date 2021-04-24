@@ -7,6 +7,8 @@ import (
 
 // ClusterPeerSpec defines the desired state of ClusterPeer
 type ClusterPeerSpec struct {
+	// PeerEndpoint is ipfs peer http API endpoint
+	PeerEndpoint string `json:"peerEndpoint"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

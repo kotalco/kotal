@@ -32,6 +32,9 @@ spec:
           spec:
             description: ClusterPeerSpec defines the desired state of ClusterPeer
             properties:
+              peerEndpoint:
+                description: PeerEndpoint is ipfs peer http API endpoint
+                type: string
               resources:
                 description: Resources is node compute and storage resources
                 properties:
@@ -59,6 +62,8 @@ spec:
                     description: StorageClass is the volume storage class
                     type: string
                 type: object
+            required:
+            - peerEndpoint
             type: object
           status:
             description: ClusterPeerStatus defines the observed state of ClusterPeer
