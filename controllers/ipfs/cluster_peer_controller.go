@@ -211,6 +211,10 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 								Name:  EnvIPFSClusterPath,
 								Value: shared.PathData(homeDir),
 							},
+							{
+								Name:  EnvIPFSClusterPeerEndpoint,
+								Value: peer.Spec.PeerEndpoint,
+							},
 						},
 						Args: []string{
 							fmt.Sprintf("%s/init_ipfs_cluster_config.sh", shared.PathConfig(homeDir)),
