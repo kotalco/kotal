@@ -32,6 +32,9 @@ spec:
           spec:
             description: ClusterPeerSpec defines the desired state of ClusterPeer
             properties:
+              clusterSecretName:
+                description: ClusterSecretName is k8s secret holding cluster secret
+                type: string
               peerEndpoint:
                 description: PeerEndpoint is ipfs peer http API endpoint
                 type: string
@@ -63,6 +66,7 @@ spec:
                     type: string
                 type: object
             required:
+            - clusterSecretName
             - peerEndpoint
             type: object
           status:

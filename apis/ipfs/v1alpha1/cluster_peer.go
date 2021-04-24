@@ -7,6 +7,8 @@ import (
 
 // ClusterPeerSpec defines the desired state of ClusterPeer
 type ClusterPeerSpec struct {
+	// ClusterSecretName is k8s secret holding cluster secret
+	ClusterSecretName string `json:"clusterSecretName"`
 	// PeerEndpoint is ipfs peer http API endpoint
 	PeerEndpoint string `json:"peerEndpoint"`
 	// Resources is node compute and storage resources
