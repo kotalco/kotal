@@ -18,8 +18,10 @@ const (
 
 	// EnvIPFSClusterPath is the environment variables used for ipfs-cluster-service path
 	EnvIPFSClusterPath = "IPFS_CLUSTER_PATH"
-	// EnvIPFSClusterPath is the environment variables used for ipfs peer API endpoint
+	// EnvIPFSClusterPeerEndpoint is the environment variables used for ipfs cluster peer API endpoint
 	EnvIPFSClusterPeerEndpoint = "CLUSTER_IPFSHTTP_NODEMULTIADDRESS"
+	// EnvIPFSClusterPeerName is the environment variables used for ipfs cluster peer name
+	EnvIPFSClusterPeerName = "CLUSTER_PEERNAME"
 )
 
 const (

@@ -241,6 +241,10 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 								Name:  EnvIPFSClusterPath,
 								Value: shared.PathData(homeDir),
 							},
+							{
+								Name:  EnvIPFSClusterPeerName,
+								Value: peer.Name,
+							},
 						},
 						Args: args,
 						VolumeMounts: []corev1.VolumeMount{
