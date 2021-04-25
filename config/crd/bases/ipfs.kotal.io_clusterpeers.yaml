@@ -35,6 +35,12 @@ spec:
               clusterSecretName:
                 description: ClusterSecretName is k8s secret holding cluster secret
                 type: string
+              consensus:
+                description: ConsensusAlgorithm is IPFS cluster consensus algorithm
+                enum:
+                - crdt
+                - raft
+                type: string
               peerEndpoint:
                 description: PeerEndpoint is ipfs peer http API endpoint
                 type: string

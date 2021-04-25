@@ -7,6 +7,7 @@ import (
 
 // ClusterPeerSpec defines the desired state of ClusterPeer
 type ClusterPeerSpec struct {
+	Consensus ConsensusAlgorithm `json:"consensus,omitempty"`
 	// ClusterSecretName is k8s secret holding cluster secret
 	ClusterSecretName string `json:"clusterSecretName"`
 	// PeerEndpoint is ipfs peer http API endpoint
@@ -14,6 +15,17 @@ type ClusterPeerSpec struct {
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
+
+// ConsensusAlgorithm is IPFS cluster consensus algorithm
+// +kubebuilder:validation:Enum=crdt;raft
+type ConsensusAlgorithm string
+
+const (
+	// CRDT consensus algorithm
+	CRDT ConsensusAlgorithm = "crdt"
+	// Raft consensus algorithm
+	Raft ConsensusAlgorithm = "raft"
+)
 
 // ClusterPeerStatus defines the observed state of ClusterPeer
 type ClusterPeerStatus struct {
