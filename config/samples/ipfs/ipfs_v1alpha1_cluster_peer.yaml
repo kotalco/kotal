@@ -3,5 +3,6 @@ kind: ClusterPeer
 metadata:
   name: clusterpeer-sample
 spec:
+  consensus: raft
   peerEndpoint: /dns4/peer-sample/tcp/5001
   clusterSecretName: cluster-secret
