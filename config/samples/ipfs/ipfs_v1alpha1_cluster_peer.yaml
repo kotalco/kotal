@@ -4,3 +4,4 @@ metadata:
   name: clusterpeer-sample
 spec:
   peerEndpoint: /dns4/peer-sample/tcp/5001
+  clusterSecretName: cluster-secret

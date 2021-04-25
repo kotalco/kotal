@@ -22,6 +22,8 @@ const (
 	EnvIPFSClusterPeerEndpoint = "CLUSTER_IPFSHTTP_NODEMULTIADDRESS"
 	// EnvIPFSClusterPeerName is the environment variables used for ipfs cluster peer name
 	EnvIPFSClusterPeerName = "CLUSTER_PEERNAME"
+	// EnvIPFSClusterSecret is the environment variables used for ipfs cluster secret
+	EnvIPFSClusterSecret = "CLUSTER_SECRET"
 )
 
 const (

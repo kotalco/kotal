@@ -215,6 +215,17 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 								Name:  EnvIPFSClusterPeerEndpoint,
 								Value: peer.Spec.PeerEndpoint,
 							},
+							{
+								Name: EnvIPFSClusterSecret,
+								ValueFrom: &corev1.EnvVarSource{
+									SecretKeyRef: &corev1.SecretKeySelector{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: peer.Spec.ClusterSecretName,
+										},
+										Key: "secret",
+									},
+								},
+							},
 						},
 						Args: []string{
 							fmt.Sprintf("%s/init_ipfs_cluster_config.sh", shared.PathConfig(homeDir)),
