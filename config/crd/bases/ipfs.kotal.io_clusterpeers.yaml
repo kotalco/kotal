@@ -32,11 +32,16 @@ spec:
           spec:
             description: ClusterPeerSpec defines the desired state of ClusterPeer
             properties:
+              bootstrapPeers:
+                description: BootstrapPeers are ipfs cluster peers to connect to
+                items:
+                  type: string
+                type: array
               clusterSecretName:
                 description: ClusterSecretName is k8s secret holding cluster secret
                 type: string
               consensus:
-                description: ConsensusAlgorithm is IPFS cluster consensus algorithm
+                description: Consensus is ipfs cluster consensus algorithm
                 enum:
                 - crdt
                 - raft

@@ -7,6 +7,9 @@ import (
 
 // ClusterPeerSpec defines the desired state of ClusterPeer
 type ClusterPeerSpec struct {
+	// BootstrapPeers are ipfs cluster peers to connect to
+	BootstrapPeers []string `json:"bootstrapPeers,omitempty"`
+	// Consensus is ipfs cluster consensus algorithm
 	Consensus ConsensusAlgorithm `json:"consensus,omitempty"`
 	// ClusterSecretName is k8s secret holding cluster secret
 	ClusterSecretName string `json:"clusterSecretName"`
