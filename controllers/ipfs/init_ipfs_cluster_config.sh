@@ -7,5 +7,5 @@ then
 	echo "ipfs cluster config has already been initialized"
 else
 	echo "initializing ipfs cluster config"
-	ipfs-cluster-service init
+	ipfs-cluster-service init --consensus $IPFS_CLUSTER_CONSENSUS
 fi
