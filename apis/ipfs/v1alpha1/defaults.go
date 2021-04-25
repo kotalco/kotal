@@ -26,3 +26,9 @@ const (
 	// DefaultNodeStorageRequest is the Storage requested by ipfs node
 	DefaultNodeStorageRequest = "10Gi"
 )
+
+// Cluster peer
+const (
+	// DefaultIPFSClusterConsensus is the default ipfs cluster consensus algorithm
+	DefaultIPFSClusterConsensus = CRDT
+)

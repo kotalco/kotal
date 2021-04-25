@@ -20,5 +20,6 @@ var _ = Describe("IPFS cluster peer defaulting", func() {
 		Expect(peer.Spec.Resources.Memory).To(Equal(DefaultNodeMemoryRequest))
 		Expect(peer.Spec.Resources.MemoryLimit).To(Equal(DefaultNodeMemoryLimit))
 		Expect(peer.Spec.Resources.Storage).To(Equal(DefaultNodeStorageRequest))
+		Expect(peer.Spec.Consensus).To(Equal(DefaultIPFSClusterConsensus))
 	})
 })

@@ -33,5 +33,9 @@ func (r *ClusterPeer) DefaultResources() {
 func (r *ClusterPeer) Default() {
 	clusterpeerlog.Info("default", "name", r.Name)
 
+	if r.Spec.Consensus == "" {
+		r.Spec.Consensus = DefaultIPFSClusterConsensus
+	}
+
 	r.DefaultResources()
 }
