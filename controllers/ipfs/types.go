@@ -26,6 +26,8 @@ const (
 	EnvIPFSClusterPeerName = "CLUSTER_PEERNAME"
 	// EnvIPFSClusterSecret is the environment variables used for ipfs cluster secret
 	EnvIPFSClusterSecret = "CLUSTER_SECRET"
+	// EnvIPFSClusterTrustedPeers is the environment variables used for ipfs cluster trusted peers
+	EnvIPFSClusterTrustedPeers = "CLUSTER_CRDT_TRUSTEDPEERS"
 )
 
 const (

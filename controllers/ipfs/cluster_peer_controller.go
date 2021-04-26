@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"strings"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -229,6 +230,10 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 										Key: "secret",
 									},
 								},
+							},
+							{
+								Name:  EnvIPFSClusterTrustedPeers,
+								Value: strings.Join(peer.Spec.TrustedPeers, ","),
 							},
 						},
 						Args: []string{
