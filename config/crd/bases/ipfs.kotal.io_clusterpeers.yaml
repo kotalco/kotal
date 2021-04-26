@@ -46,8 +46,14 @@ spec:
                 - crdt
                 - raft
                 type: string
+              id:
+                description: ID is the the cluster peer id
+                type: string
               peerEndpoint:
                 description: PeerEndpoint is ipfs peer http API endpoint
+                type: string
+              privatekeySecretName:
+                description: PrivatekeySecretName is k8s secret holding private key
                 type: string
               resources:
                 description: Resources is node compute and storage resources

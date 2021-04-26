@@ -7,6 +7,10 @@ import (
 
 // ClusterPeerSpec defines the desired state of ClusterPeer
 type ClusterPeerSpec struct {
+	// ID is the the cluster peer id
+	ID string `json:"id,omitempty"`
+	// PrivatekeySecretName is k8s secret holding private key
+	PrivatekeySecretName string `json:"privatekeySecretName,omitempty"`
 	// TrustedPeers is CRDT trusted cluster peers who can manage the pinset
 	TrustedPeers []string `json:"trustedPeers,omitempty"`
 	// BootstrapPeers are ipfs cluster peers to connect to
