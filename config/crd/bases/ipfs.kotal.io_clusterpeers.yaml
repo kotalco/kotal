@@ -76,6 +76,11 @@ spec:
                     description: StorageClass is the volume storage class
                     type: string
                 type: object
+              trustedPeers:
+                description: TrustedPeers is CRDT trusted cluster peers who can manage the pinset
+                items:
+                  type: string
+                type: array
             required:
             - clusterSecretName
             - peerEndpoint

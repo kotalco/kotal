@@ -7,6 +7,8 @@ import (
 
 // ClusterPeerSpec defines the desired state of ClusterPeer
 type ClusterPeerSpec struct {
+	// TrustedPeers is CRDT trusted cluster peers who can manage the pinset
+	TrustedPeers []string `json:"trustedPeers,omitempty"`
 	// BootstrapPeers are ipfs cluster peers to connect to
 	BootstrapPeers []string `json:"bootstrapPeers,omitempty"`
 	// Consensus is ipfs cluster consensus algorithm
