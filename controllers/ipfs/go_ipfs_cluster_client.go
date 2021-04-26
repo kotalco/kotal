@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"os"
+	"strings"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 )
@@ -35,8 +36,14 @@ func (c *GoIPFSClusterClient) Command() []string {
 }
 
 // Arg returns go ipfs cluster arguments
-func (c *GoIPFSClusterClient) Args() []string {
-	return []string{"daemon"}
+func (c *GoIPFSClusterClient) Args() (args []string) {
+	args = append(args, GoIPFSClusterDaemonArg)
+
+	if len(c.peer.Spec.BootstrapPeers) != 0 {
+		args = append(args, GoIPFSClusterBootstrapArg, strings.Join(c.peer.Spec.BootstrapPeers, ","))
+	}
+
+	return
 }
 
 // HomeDir returns go ipfs cluster image home directory

@@ -33,4 +33,9 @@ const (
 	GoIPFSDaemonArg = "daemon"
 	// GoIPFSRoutingArg is the argument used to set content routing mechanism
 	GoIPFSRoutingArg = "--routing"
+
+	// GoIPFSClusterDaemonArg is the argument used to run go ipfs cluster daemon
+	GoIPFSClusterDaemonArg = "daemon"
+	// GoIPFSClusterBootstrapArg is the argument used for go ipfs cluster bootstrap peers
+	GoIPFSClusterBootstrapArg = "--bootstrap"
 )
