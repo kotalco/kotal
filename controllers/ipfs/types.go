@@ -28,6 +28,10 @@ const (
 	EnvIPFSClusterSecret = "CLUSTER_SECRET"
 	// EnvIPFSClusterTrustedPeers is the environment variables used for ipfs cluster trusted peers
 	EnvIPFSClusterTrustedPeers = "CLUSTER_CRDT_TRUSTEDPEERS"
+	// EnvIPFSClusterId is the environment variables used for ipfs cluster id
+	EnvIPFSClusterId = "CLUSTER_ID"
+	// EnvIPFSClusterPrivatekey is the environment variables used for ipfs cluster private key
+	EnvIPFSClusterPrivatekey = "CLUSTER_PRIVATEKEY"
 )
 
 const (
