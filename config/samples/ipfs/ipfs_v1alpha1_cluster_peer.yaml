@@ -1,8 +1,23 @@
 apiVersion: ipfs.kotal.io/v1alpha1
 kind: ClusterPeer
 metadata:
-  name: clusterpeer-sample
+  name: cluster-peer
 spec:
-  consensus: raft
-  peerEndpoint: /dns4/peer-sample/tcp/5001
+  # the follwing <id> and <privatekey> has been created using ipfs-key utility
+  # https://github.com/whyrusleeping/ipfs-key
+  # ipfs-key -type ed25519 | base64
+  id: "12D3KooWBcEtY8GH4mNkri9kM3haeWhEXtQV7mi81ErWrqLYGuiq"
+  # WARNING: DON'T use the following private key in production
+  # KEY=CAESQOH/DvUJmeJ9z6m3wAStpkrlBwJQxIyNSK0YGf0EI5ZRGpwsWxl4wmgReqmHl8LQjTC2iPM0QbYAjeY3Z63AFnI=
+  # kubectl create secret generic my-cluster-privatekey --from-literal=key=$KEY
+  privatekeySecretName: my-cluster-privatekey
+  consensus: crdt
+  trustedPeers:
+    - 12D3KooWBcEtY8GH4mNkri9kM3haeWhEXtQV7mi81ErWrqLYGuiq
+    - 12D3KooWQ9yZnqowEDme3gSgS45KY9ZoEmAiGYRxusdEaqtFa9pr
+  # can be obtained by deploying bare-peer sample
+  # kubectl apply -f ipfs_v1alpha1_bare_peer.yaml
+  peerEndpoint: /dns4/bare-peer/tcp/5001
+  # WARNING: DON'T use the following cluster secret in production
+  # kubectl create secret generic cluster-secret --from-literal=secret=clu$ter$3cr3t
   clusterSecretName: cluster-secret
