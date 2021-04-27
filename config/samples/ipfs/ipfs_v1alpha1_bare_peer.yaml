@@ -1,3 +1,7 @@
+# deploying this bare peer is equivalent to running peer with default config
+# `ipfs init` then `ipfs daemon` except that:
+# - it persists data in volume
+# - it creates service for api, gateway, and swarm
 apiVersion: ipfs.kotal.io/v1alpha1
 kind: Peer
 metadata:
