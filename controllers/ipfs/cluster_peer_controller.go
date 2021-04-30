@@ -12,6 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -52,6 +53,10 @@ func (r *ClusterPeerReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	r.updateLabels(&peer)
 
+	if err = r.reconcileClusterPeerService(ctx, &peer); err != nil {
+		return
+	}
+
 	if err = r.reconcileClusterPeerPVC(ctx, &peer); err != nil {
 		return
 	}
@@ -65,6 +70,80 @@ func (r *ClusterPeerReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	}
 
 	return
+}
+
+// reconcileClusterPeerService reconciles ipfs peer service
+func (r *ClusterPeerReconciler) reconcileClusterPeerService(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
+	svc := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      peer.Name,
+			Namespace: peer.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
+		if err := ctrl.SetControllerReference(peer, svc, r.Scheme); err != nil {
+			return err
+		}
+		r.specClusterPeerService(peer, svc)
+		return nil
+	})
+
+	return err
+}
+
+// specClusterPeerService updates ipfs peer service spec
+func (r *ClusterPeerReconciler) specClusterPeerService(peer *ipfsv1alpha1.ClusterPeer, svc *corev1.Service) {
+	labels := peer.Labels
+
+	svc.ObjectMeta.Labels = labels
+
+	svc.Spec.Ports = []corev1.ServicePort{
+		{
+			Name:       "swarm",
+			Port:       9096,
+			TargetPort: intstr.FromInt(9096),
+			Protocol:   corev1.ProtocolTCP,
+		},
+		{
+			Name:       "swarm-udp",
+			Port:       9096,
+			TargetPort: intstr.FromInt(9096),
+			Protocol:   corev1.ProtocolUDP,
+		},
+		{
+			Name:       "ipfs-api",
+			Port:       5001,
+			TargetPort: intstr.FromInt(int(5001)),
+			Protocol:   corev1.ProtocolTCP,
+		},
+		{
+			Name:       "ipfs-proxy",
+			Port:       9095,
+			TargetPort: intstr.FromInt(int(9095)),
+			Protocol:   corev1.ProtocolTCP,
+		},
+		{
+			Name:       "rest-api",
+			Port:       9094,
+			TargetPort: intstr.FromInt(int(9094)),
+			Protocol:   corev1.ProtocolTCP,
+		},
+		{
+			Name:       "metrics",
+			Port:       8888,
+			TargetPort: intstr.FromInt(int(8888)),
+			Protocol:   corev1.ProtocolTCP,
+		},
+		{
+			Name:       "tracing",
+			Port:       6831,
+			TargetPort: intstr.FromInt(int(6831)),
+			Protocol:   corev1.ProtocolTCP,
+		},
+	}
+
+	svc.Spec.Selector = labels
 }
 
 // updateLabels updates IPFS cluster peer labels
