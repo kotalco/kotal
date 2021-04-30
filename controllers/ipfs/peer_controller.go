@@ -143,7 +143,7 @@ func (r *PeerReconciler) specPeerService(peer *ipfsv1alpha1.Peer, svc *corev1.Se
 		{
 			Name:       "swarm-udp",
 			Port:       4001,
-			TargetPort: intstr.FromInt(4002),
+			TargetPort: intstr.FromInt(4001),
 			Protocol:   corev1.ProtocolUDP,
 		},
 		{
