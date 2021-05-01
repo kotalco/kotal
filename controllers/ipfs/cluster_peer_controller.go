@@ -272,6 +272,59 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 
 	sts.Labels = labels
 
+	// environment variables required by `ipfs-cluster-service init`
+	initClusterPeerENV := []corev1.EnvVar{
+		{
+			Name:  EnvIPFSClusterPath,
+			Value: shared.PathData(homeDir),
+		},
+		{
+			Name:  EnvIPFSClusterConsensus,
+			Value: string(peer.Spec.Consensus),
+		},
+		{
+			Name:  EnvIPFSClusterPeerEndpoint,
+			Value: peer.Spec.PeerEndpoint,
+		},
+		{
+			Name: EnvIPFSClusterSecret,
+			ValueFrom: &corev1.EnvVarSource{
+				SecretKeyRef: &corev1.SecretKeySelector{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: peer.Spec.ClusterSecretName,
+					},
+					Key: "secret",
+				},
+			},
+		},
+		{
+			Name:  EnvIPFSClusterTrustedPeers,
+			Value: strings.Join(peer.Spec.TrustedPeers, ","),
+		},
+	}
+
+	// if cluster peer ID (which implies private key) is provided
+	// append cluster id and private key environment variables
+	if peer.Spec.ID != "" {
+		// cluster id
+		initClusterPeerENV = append(initClusterPeerENV, corev1.EnvVar{
+			Name:  EnvIPFSClusterId,
+			Value: peer.Spec.ID,
+		})
+		// cluster private key
+		initClusterPeerENV = append(initClusterPeerENV, corev1.EnvVar{
+			Name: EnvIPFSClusterPrivatekey,
+			ValueFrom: &corev1.EnvVarSource{
+				SecretKeyRef: &corev1.SecretKeySelector{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: peer.Spec.PrivatekeySecretName,
+					},
+					Key: "key",
+				},
+			},
+		})
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: labels,
@@ -286,50 +339,7 @@ func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.Cl
 						Name:    "init-cluster-peer",
 						Image:   img,
 						Command: []string{"/bin/sh"},
-						Env: []corev1.EnvVar{
-							{
-								Name:  EnvIPFSClusterPath,
-								Value: shared.PathData(homeDir),
-							},
-							{
-								Name:  EnvIPFSClusterConsensus,
-								Value: string(peer.Spec.Consensus),
-							},
-							{
-								Name:  EnvIPFSClusterPeerEndpoint,
-								Value: peer.Spec.PeerEndpoint,
-							},
-							{
-								Name: EnvIPFSClusterSecret,
-								ValueFrom: &corev1.EnvVarSource{
-									SecretKeyRef: &corev1.SecretKeySelector{
-										LocalObjectReference: corev1.LocalObjectReference{
-											Name: peer.Spec.ClusterSecretName,
-										},
-										Key: "secret",
-									},
-								},
-							},
-							{
-								Name:  EnvIPFSClusterTrustedPeers,
-								Value: strings.Join(peer.Spec.TrustedPeers, ","),
-							},
-							{
-								Name:  EnvIPFSClusterId,
-								Value: peer.Spec.ID,
-							},
-							{
-								Name: EnvIPFSClusterPrivatekey,
-								ValueFrom: &corev1.EnvVarSource{
-									SecretKeyRef: &corev1.SecretKeySelector{
-										LocalObjectReference: corev1.LocalObjectReference{
-											Name: peer.Spec.PrivatekeySecretName,
-										},
-										Key: "key",
-									},
-								},
-							},
-						},
+						Env:     initClusterPeerENV,
 						Args: []string{
 							fmt.Sprintf("%s/init_ipfs_cluster_config.sh", shared.PathConfig(homeDir)),
 						},
