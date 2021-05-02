@@ -141,7 +141,7 @@ var _ = Describe("IPFS peer controller", func() {
 				{
 					Name:       "swarm-udp",
 					Port:       4001,
-					TargetPort: intstr.FromInt(4002),
+					TargetPort: intstr.FromInt(4001),
 					Protocol:   corev1.ProtocolUDP,
 				},
 				{
