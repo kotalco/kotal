@@ -52,9 +52,6 @@ var _ = BeforeSuite(func(done Done) {
 	err = ipfsv1alpha1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
-	err = ipfsv1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
 	// +kubebuilder:scaffold:scheme
 
 	// create new controller manager
@@ -76,6 +73,15 @@ var _ = BeforeSuite(func(done Done) {
 		Scheme: scheme.Scheme,
 	}
 	peerReconciler.SetupWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
+	// start cluster peer reconciler
+	clusterPeerReconciler := &ClusterPeerReconciler{
+		Client: k8sManager.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("clusterpeer"),
+		Scheme: scheme.Scheme,
+	}
+	clusterPeerReconciler.SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
 	go func() {
