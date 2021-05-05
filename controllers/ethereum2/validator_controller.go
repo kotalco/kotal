@@ -206,6 +206,8 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 			keystorePath = fmt.Sprintf("keystore-%d.json", i)
 		}
 
+		// rename the keystore file (available in key "keystore")
+		// will take effect after mounting this volume
 		keystoreVolume := corev1.Volume{
 			Name: keystore.SecretName,
 			VolumeSource: corev1.VolumeSource{
@@ -221,7 +223,9 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 			},
 		}
 
-		// aggregate volume projections for nimbus client
+		// nimbus requires that all passwords are in same directory
+		// each password file holds the name of the key
+		// that's why we're creating aggregate volume projections
 		if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
 			volumeProjections = append(volumeProjections, corev1.VolumeProjection{
 				Secret: &corev1.SecretProjection{
@@ -248,8 +252,8 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 
 	}
 
+	// nimbus: create projected volume that holds all secrets
 	if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
-		// Nimbus checks if secrets dir has 0600 and tries to fix it if not
 		validatorSecretsVolume := corev1.Volume{
 			Name: "validator-secrets",
 			VolumeSource: corev1.VolumeSource{
@@ -261,7 +265,7 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 		volumes = append(volumes, validatorSecretsVolume)
 	}
 
-	// lighthouse validator_definitions.yml
+	// lighthouse: validator_definitions.yml
 	if validator.Spec.Client == ethereum2v1alpha1.LighthouseClient {
 		validatorDefinitionsVolume := corev1.Volume{
 			// TODO: prepend validator name to avoid collision
@@ -278,9 +282,10 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 
 	}
 
-	// prysm wallet password volume
+	// prysm: wallet password volume
 	if validator.Spec.Client == ethereum2v1alpha1.PrysmClient {
 		walletPasswordVolume := corev1.Volume{
+			// TODO: rename volume name to prysm-wallet-password
 			Name: validator.Spec.WalletPasswordSecret,
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
@@ -301,6 +306,16 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 }
 
 // createValidatorVolumeMounts creates validator volume mounts
+// secrets-dir/
+// |___validator-keys/
+// |		|__key-name
+// |			|_ keystore[-n].json
+// |			|_ password.txt
+// |___validator-secrets/
+// |		|_ key-name-1.txt
+// |		|_ key-name-n.txt
+// |___prysm-wallet
+// 			|_prysm-wallet-pasword.txt
 func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1alpha1.Validator, homeDir string) (mounts []corev1.VolumeMount) {
 	dataMount := corev1.VolumeMount{
 		Name:      "data",
@@ -357,7 +372,9 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 
 	mounts := r.createValidatorVolumeMounts(validator, homeDir)
 
-	// import validator keys into Prysm client
+	// prysm: import validator keys from secrets dir
+	// keystores are imported into wallet after being decrypted with keystore secret
+	// then encrypted with wallet password
 	if validator.Spec.Client == ethereum2v1alpha1.PrysmClient {
 		for i, keystore := range validator.Spec.Keystores {
 			keyDir := fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(homeDir), keystore.SecretName)
