@@ -81,13 +81,12 @@ kubectl apply -f ethereum-node.yaml
 
 Kotal documentation is available [here](https://docs.kotal.co)
 
-## Contact
+## Get in touch
 
-- Slack kotal.slack.com
-- [website](kotal.co)
-- twitter [@kotalco](https://twitter.com/kotalco)
-- github github.com/kotalco
-- email mostafa@kotal.co
+- [Discord](https://discord.com/invite/kTxy4SA)
+- [website](https://kotal.co)
+- [@kotalco](https://twitter.com/kotalco)
+- [mostafa@kotal.co](mailto:mostafa@kotal.co)
 
 ## Contriubuting
 
