@@ -141,5 +141,9 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 			}))
 		})
 
+		It(fmt.Sprintf("Should delete %s namespace", ns.Name), func() {
+			Expect(k8sClient.Delete(context.Background(), ns)).To(Succeed())
+		})
+
 	})
 })

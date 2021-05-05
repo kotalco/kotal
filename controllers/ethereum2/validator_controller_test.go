@@ -137,5 +137,9 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			Expect(validatorPVC.Spec.Resources).To(Equal(expectedResources))
 		})
 
+		It(fmt.Sprintf("Should delete %s namespace", ns.Name), func() {
+			Expect(k8sClient.Delete(context.Background(), ns)).To(Succeed())
+		})
+
 	})
 })
