@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: kotalco/kotal
-  newTag: v0.1-alpha.2
+  newTag: v0.1-alpha.3
