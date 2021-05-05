@@ -27,7 +27,7 @@ type ValidatorReconciler struct {
 // +kubebuilder:rbac:groups=ethereum2.kotal.io,resources=validators,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ethereum2.kotal.io,resources=validators/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
-// +kubebuilder:rbac:groups=core,resources=configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
+// +kubebuilder:rbac:groups=core,resources=persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 // Reconcile reconciles Ethereum 2.0 validator client node
 func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
@@ -49,10 +49,6 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return
 	}
 
-	if err = r.reconcileValidatorConfigmap(ctx, &validator); err != nil {
-		return
-	}
-
 	if err = r.reconcileValidatorStatefulset(ctx, &validator); err != nil {
 		return
 	}
@@ -70,60 +66,6 @@ func (r *ValidatorReconciler) updateLabels(validator *ethereum2v1alpha1.Validato
 	validator.Labels["name"] = "node"
 	validator.Labels["protocol"] = "ethereum2"
 	validator.Labels["instance"] = validator.Name
-}
-
-// specValidatorConfigmap updates validator configmap spec
-func (r *ValidatorReconciler) specValidatorConfigmap(validator *ethereum2v1alpha1.Validator, configmap *corev1.ConfigMap, definitions string) {
-
-	configmap.ObjectMeta.Labels = validator.Labels
-
-	if configmap.Data == nil {
-		configmap.Data = map[string]string{}
-	}
-
-	configmap.Data["validator_definitions.yml"] = definitions
-}
-
-// reconcileValidatorConfigmap creates config map if it doesn't exist or update it
-func (r *ValidatorReconciler) reconcileValidatorConfigmap(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
-
-	// configmap is required for lighthouse validator definitions
-	if validator.Spec.Client != ethereum2v1alpha1.LighthouseClient {
-		return nil
-	}
-
-	configmap := &corev1.ConfigMap{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      validator.Name,
-			Namespace: validator.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
-		if err := ctrl.SetControllerReference(validator, configmap, r.Scheme); err != nil {
-			r.Log.Error(err, "Unable to set controller reference on configmap")
-			return err
-		}
-
-		vc, err := NewEthereum2Client(validator)
-		if err != nil {
-			return err
-		}
-
-		// because CreateValidatorDefinitions not defined on the ValidatorClient interface
-		client := vc.(*LighthouseValidatorClient)
-
-		definitions, err := client.CreateValidatorDefinitions(validator)
-		if err != nil {
-			return err
-		}
-
-		r.specValidatorConfigmap(validator, configmap, definitions)
-
-		return nil
-	})
-
-	return err
 }
 
 // reconcileValidatorDataPVC reconciles node data persistent volume claim
@@ -378,8 +320,8 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 	if validator.Spec.Client == ethereum2v1alpha1.PrysmClient {
 		for i, keystore := range validator.Spec.Keystores {
 			keyDir := fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(homeDir), keystore.SecretName)
-			importValidatorContainer := corev1.Container{
-				Name:  fmt.Sprintf("import-validator-%s", keystore.SecretName),
+			importKeystoreContainer := corev1.Container{
+				Name:  fmt.Sprintf("import-keystore-%s", keystore.SecretName),
 				Image: img,
 				Args: []string{
 					"accounts",
@@ -397,36 +339,43 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 				},
 				VolumeMounts: mounts,
 			}
-			initContainers = append(initContainers, importValidatorContainer)
+			initContainers = append(initContainers, importKeystoreContainer)
 		}
 	}
 
 	if validator.Spec.Client == ethereum2v1alpha1.LighthouseClient {
-		// TODO: replace with validator account import init container
-		// TODO: follow up with lighthouse PR https://github.com/sigp/lighthouse/issues/2224
-		validatorsPath := fmt.Sprintf("%s/validators", shared.PathData(homeDir))
-		CopyValidatorDefinitions := corev1.Container{
-			Name:    "copy-validator-definitions",
-			Image:   "busybox",
-			Command: []string{"/bin/sh", "-c"},
-			Args: []string{
-				fmt.Sprintf(`
-					mkdir -p %s &&
-					cp %s/validator_definitions.yml %s/validator_definitions.yml &&
-					cp -R %s/validator-keys/. %s/validator-keys`,
-					validatorsPath,
-					shared.PathConfig(homeDir), validatorsPath,
-					shared.PathSecrets(homeDir), shared.PathData(homeDir),
-				),
-			},
-			VolumeMounts: mounts,
+		for i, keystore := range validator.Spec.Keystores {
+			keyDir := fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(homeDir), keystore.SecretName)
+			importKeystoreContainer := corev1.Container{
+				Name:  fmt.Sprintf("import-keystore-%s", keystore.SecretName),
+				Image: img,
+				Command: []string{
+					"lighthouse",
+					"account",
+					"validator",
+					"import",
+				},
+				Args: []string{
+					LighthouseDataDir,
+					shared.PathData(homeDir),
+					LighthouseNetwork,
+					validator.Spec.Network,
+					LighthouseKeystore,
+					fmt.Sprintf("%s/keystore-%d.json", keyDir, i),
+					LighthouseReusePassword,
+					LighthousePasswordFile,
+					fmt.Sprintf("%s/password.txt", keyDir),
+				},
+				VolumeMounts: mounts,
+			}
+			initContainers = append(initContainers, importKeystoreContainer)
+
 		}
-		initContainers = append(initContainers, CopyValidatorDefinitions)
+		// TODO: delete validator definitions file
 	}
 
 	if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
 		// copy secrets into rw directory under blockchain data directory
-		// set new validator secrets mode to 600 so it can be read and write only by owner
 		validatorsPath := fmt.Sprintf("%s/kotal-validators", shared.PathData(homeDir))
 		copyValidators := corev1.Container{
 			Name:  "copy-validators",
@@ -521,7 +470,6 @@ func (r *ValidatorReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ethereum2v1alpha1.Validator{}).
 		Owns(&appsv1.StatefulSet{}).
-		Owns(&corev1.ConfigMap{}).
 		Owns(&corev1.PersistentVolumeClaim{}).
 		Complete(r)
 }

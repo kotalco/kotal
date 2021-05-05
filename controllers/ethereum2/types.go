@@ -109,6 +109,12 @@ const (
 	LighthouseDisableAutoDiscover = "--disable-auto-discover"
 	// LighthouseInitSlashingProtection is the argument used to init slashing protection
 	LighthouseInitSlashingProtection = "--init-slashing-protection"
+	// LighthouseReusePassword is the argument used to reuse password during keystore import
+	LighthouseReusePassword = "--reuse-password"
+	// LighthouseKeystore is the argument used to locate keystore file
+	LighthouseKeystore = "--keystore"
+	// LighthousePasswordFile is the argument used to locate password file
+	LighthousePasswordFile = "--password-file"
 )
 
 // Nimbus client arguments
