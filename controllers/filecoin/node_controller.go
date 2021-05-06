@@ -55,7 +55,24 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	if err = r.updateStatus(ctx, &node); err != nil {
+		return
+	}
+
 	return
+}
+
+// updateStatus updates filecoin node status
+func (r *NodeReconciler) updateStatus(ctx context.Context, node *filecoinv1alpha1.Node) error {
+	// TODO: update after multi-client support
+	node.Status.Client = "lotus"
+
+	if err := r.Status().Update(ctx, node); err != nil {
+		r.Log.Error(err, "unable to update filecoin node status")
+		return err
+	}
+
+	return nil
 }
 
 // reconcileNodePVC reconciles node pvc

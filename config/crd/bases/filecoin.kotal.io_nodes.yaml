@@ -20,6 +20,9 @@ spec:
     - jsonPath: .spec.network
       name: Network
       type: string
+    - jsonPath: .status.client
+      name: Client
+      type: string
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -76,11 +79,17 @@ spec:
             type: object
           status:
             description: NodeStatus defines the observed state of Node
+            properties:
+              client:
+                type: string
+            required:
+            - client
             type: object
         type: object
     served: true
     storage: true
-    subresources: {}
+    subresources:
+      status: {}
 status:
   acceptedNames:
     kind: ""

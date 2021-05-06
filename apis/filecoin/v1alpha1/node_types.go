@@ -30,12 +30,15 @@ const (
 
 // NodeStatus defines the observed state of Node
 type NodeStatus struct {
+	Client string `json:"client"`
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // Node is the Schema for the nodes API
 // +kubebuilder:printcolumn:name="Network",type=string,JSONPath=".spec.network"
+// +kubebuilder:printcolumn:name="Client",type=string,JSONPath=".status.client"
 type Node struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
