@@ -53,19 +53,19 @@ func (r *ClusterPeerReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	r.updateLabels(&peer)
 
-	if err = r.reconcileClusterPeerService(ctx, &peer); err != nil {
+	if err = r.reconcileService(ctx, &peer); err != nil {
 		return
 	}
 
-	if err = r.reconcileClusterPeerPVC(ctx, &peer); err != nil {
+	if err = r.reconcilePVC(ctx, &peer); err != nil {
 		return
 	}
 
-	if err = r.reconcileClusterPeerConfig(ctx, &peer); err != nil {
+	if err = r.reconcileConfigmap(ctx, &peer); err != nil {
 		return
 	}
 
-	if err = r.reconcileClusterPeerStatefulset(ctx, &peer); err != nil {
+	if err = r.reconcileStatefulset(ctx, &peer); err != nil {
 		return
 	}
 
@@ -89,8 +89,8 @@ func (r *ClusterPeerReconciler) updateStatus(ctx context.Context, peer *ipfsv1al
 	return nil
 }
 
-// reconcileClusterPeerService reconciles ipfs peer service
-func (r *ClusterPeerReconciler) reconcileClusterPeerService(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
+// reconcileService reconciles ipfs peer service
+func (r *ClusterPeerReconciler) reconcileService(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      peer.Name,
@@ -102,15 +102,15 @@ func (r *ClusterPeerReconciler) reconcileClusterPeerService(ctx context.Context,
 		if err := ctrl.SetControllerReference(peer, svc, r.Scheme); err != nil {
 			return err
 		}
-		r.specClusterPeerService(peer, svc)
+		r.specService(peer, svc)
 		return nil
 	})
 
 	return err
 }
 
-// specClusterPeerService updates ipfs peer service spec
-func (r *ClusterPeerReconciler) specClusterPeerService(peer *ipfsv1alpha1.ClusterPeer, svc *corev1.Service) {
+// specService updates ipfs peer service spec
+func (r *ClusterPeerReconciler) specService(peer *ipfsv1alpha1.ClusterPeer, svc *corev1.Service) {
 	labels := peer.Labels
 
 	svc.ObjectMeta.Labels = labels
@@ -175,8 +175,8 @@ func (r *ClusterPeerReconciler) updateLabels(peer *ipfsv1alpha1.ClusterPeer) {
 	peer.Labels["instance"] = peer.Name
 }
 
-// reconcileClusterPeerConfig reconciles IPFS cluster peer configmap
-func (r *ClusterPeerReconciler) reconcileClusterPeerConfig(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
+// reconcileConfigmap reconciles IPFS cluster peer configmap
+func (r *ClusterPeerReconciler) reconcileConfigmap(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
 	config := corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      peer.Name,
@@ -189,15 +189,15 @@ func (r *ClusterPeerReconciler) reconcileClusterPeerConfig(ctx context.Context, 
 			return err
 		}
 
-		r.specClusterPeerConfig(peer, &config)
+		r.specConfigmap(peer, &config)
 		return nil
 	})
 
 	return err
 }
 
-// specClusterPeerConfig updates IPFS cluster peer configmap spec
-func (r *ClusterPeerReconciler) specClusterPeerConfig(peer *ipfsv1alpha1.ClusterPeer, config *corev1.ConfigMap) {
+// specConfigmap updates IPFS cluster peer configmap spec
+func (r *ClusterPeerReconciler) specConfigmap(peer *ipfsv1alpha1.ClusterPeer, config *corev1.ConfigMap) {
 	config.ObjectMeta.Labels = peer.Labels
 
 	if config.Data == nil {
@@ -207,8 +207,8 @@ func (r *ClusterPeerReconciler) specClusterPeerConfig(peer *ipfsv1alpha1.Cluster
 	config.Data["init_ipfs_cluster_config.sh"] = initIPFSClusterConfig
 }
 
-// reconcileClusterPeerPVC reconciles IPFS cluster peer persistent volume claim
-func (r *ClusterPeerReconciler) reconcileClusterPeerPVC(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
+// reconcilePVC reconciles IPFS cluster peer persistent volume claim
+func (r *ClusterPeerReconciler) reconcilePVC(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
 	pvc := corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      peer.Name,
@@ -221,15 +221,15 @@ func (r *ClusterPeerReconciler) reconcileClusterPeerPVC(ctx context.Context, pee
 			return err
 		}
 
-		r.specClusterPeerPVC(peer, &pvc)
+		r.specPVC(peer, &pvc)
 		return nil
 	})
 
 	return err
 }
 
-// specClusterPeerPVC updates IPFS cluster peer persistent volume claim
-func (r *ClusterPeerReconciler) specClusterPeerPVC(peer *ipfsv1alpha1.ClusterPeer, pvc *corev1.PersistentVolumeClaim) {
+// specPVC updates IPFS cluster peer persistent volume claim
+func (r *ClusterPeerReconciler) specPVC(peer *ipfsv1alpha1.ClusterPeer, pvc *corev1.PersistentVolumeClaim) {
 	request := corev1.ResourceList{
 		corev1.ResourceStorage: resource.MustParse(peer.Spec.Resources.Storage),
 	}
@@ -251,8 +251,8 @@ func (r *ClusterPeerReconciler) specClusterPeerPVC(peer *ipfsv1alpha1.ClusterPee
 	}
 }
 
-// reconcileClusterPeerStatefulset reconciles IPFS cluster peer statefulset
-func (r *ClusterPeerReconciler) reconcileClusterPeerStatefulset(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
+// reconcileStatefulset reconciles IPFS cluster peer statefulset
+func (r *ClusterPeerReconciler) reconcileStatefulset(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
 	sts := appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      peer.Name,
@@ -275,7 +275,7 @@ func (r *ClusterPeerReconciler) reconcileClusterPeerStatefulset(ctx context.Cont
 			return err
 		}
 
-		r.specClusterPeerStatefulset(peer, &sts, img, homeDir, command, args)
+		r.specStatefulset(peer, &sts, img, homeDir, command, args)
 
 		return nil
 	})
@@ -283,8 +283,8 @@ func (r *ClusterPeerReconciler) reconcileClusterPeerStatefulset(ctx context.Cont
 	return err
 }
 
-// specClusterPeerStatefulset updates IPFS cluster peer statefulset
-func (r *ClusterPeerReconciler) specClusterPeerStatefulset(peer *ipfsv1alpha1.ClusterPeer, sts *appsv1.StatefulSet, img, homeDir string, command, args []string) {
+// specStatefulset updates IPFS cluster peer statefulset
+func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, sts *appsv1.StatefulSet, img, homeDir string, command, args []string) {
 	labels := peer.Labels
 
 	sts.Labels = labels

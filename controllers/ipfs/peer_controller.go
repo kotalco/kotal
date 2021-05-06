@@ -56,19 +56,19 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	r.updateLabels(&peer)
 
-	if err = r.reconcilePeerConfig(ctx, &peer); err != nil {
+	if err = r.reconcileConfigmap(ctx, &peer); err != nil {
 		return
 	}
 
-	if err = r.reconcilePeerService(ctx, &peer); err != nil {
+	if err = r.reconcileService(ctx, &peer); err != nil {
 		return
 	}
 
-	if err = r.reconcilePeerPVC(ctx, &peer); err != nil {
+	if err = r.reconcilePVC(ctx, &peer); err != nil {
 		return
 	}
 
-	if err = r.reconcilePeerStatefulSet(ctx, &peer); err != nil {
+	if err = r.reconcileStatefulSet(ctx, &peer); err != nil {
 		return
 	}
 
@@ -107,8 +107,8 @@ func (r *PeerReconciler) updateLabels(peer *ipfsv1alpha1.Peer) {
 
 }
 
-// reconcilePeerService reconciles ipfs peer service
-func (r *PeerReconciler) reconcilePeerService(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
+// reconcileService reconciles ipfs peer service
+func (r *PeerReconciler) reconcileService(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      peer.Name,
@@ -120,15 +120,15 @@ func (r *PeerReconciler) reconcilePeerService(ctx context.Context, peer *ipfsv1a
 		if err := ctrl.SetControllerReference(peer, svc, r.Scheme); err != nil {
 			return err
 		}
-		r.specPeerService(peer, svc)
+		r.specService(peer, svc)
 		return nil
 	})
 
 	return err
 }
 
-// specPeerService updates ipfs peer service spec
-func (r *PeerReconciler) specPeerService(peer *ipfsv1alpha1.Peer, svc *corev1.Service) {
+// specService updates ipfs peer service spec
+func (r *PeerReconciler) specService(peer *ipfsv1alpha1.Peer, svc *corev1.Service) {
 	labels := peer.Labels
 
 	svc.ObjectMeta.Labels = labels
@@ -163,8 +163,8 @@ func (r *PeerReconciler) specPeerService(peer *ipfsv1alpha1.Peer, svc *corev1.Se
 	svc.Spec.Selector = labels
 }
 
-// reconcilePeerConfig reconciles ipfs peer config map
-func (r *PeerReconciler) reconcilePeerConfig(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
+// reconcileConfigmap reconciles ipfs peer config map
+func (r *PeerReconciler) reconcileConfigmap(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
 	config := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      peer.Name,
@@ -177,7 +177,7 @@ func (r *PeerReconciler) reconcilePeerConfig(ctx context.Context, peer *ipfsv1al
 			return err
 		}
 
-		r.specPeerConfig(peer, config)
+		r.specConfigmap(peer, config)
 
 		return nil
 	})
@@ -186,8 +186,8 @@ func (r *PeerReconciler) reconcilePeerConfig(ctx context.Context, peer *ipfsv1al
 
 }
 
-// specPeerConfig updates ipfs peer config spec
-func (r *PeerReconciler) specPeerConfig(peer *ipfsv1alpha1.Peer, config *corev1.ConfigMap) {
+// specConfigmap updates ipfs peer config spec
+func (r *PeerReconciler) specConfigmap(peer *ipfsv1alpha1.Peer, config *corev1.ConfigMap) {
 	config.ObjectMeta.Labels = peer.Labels
 	if config.Data == nil {
 		config.Data = make(map[string]string)
@@ -197,7 +197,8 @@ func (r *PeerReconciler) specPeerConfig(peer *ipfsv1alpha1.Peer, config *corev1.
 	config.Data["config_ipfs.sh"] = configIPFS
 }
 
-func (r *PeerReconciler) reconcilePeerPVC(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
+// reconcilePVC reconciles ipfs peer persistent volume claim
+func (r *PeerReconciler) reconcilePVC(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      peer.Name,
@@ -210,7 +211,7 @@ func (r *PeerReconciler) reconcilePeerPVC(ctx context.Context, peer *ipfsv1alpha
 			return err
 		}
 
-		r.specPeerPVC(peer, pvc)
+		r.specPVC(peer, pvc)
 
 		return nil
 	})
@@ -218,8 +219,8 @@ func (r *PeerReconciler) reconcilePeerPVC(ctx context.Context, peer *ipfsv1alpha
 	return err
 }
 
-// specPeerPVC updates ipfs peer persistent volume claim
-func (r *PeerReconciler) specPeerPVC(peer *ipfsv1alpha1.Peer, pvc *corev1.PersistentVolumeClaim) {
+// specPVC updates ipfs peer persistent volume claim
+func (r *PeerReconciler) specPVC(peer *ipfsv1alpha1.Peer, pvc *corev1.PersistentVolumeClaim) {
 	request := corev1.ResourceList{
 		corev1.ResourceStorage: resource.MustParse(peer.Spec.Resources.Storage),
 	}
@@ -241,8 +242,8 @@ func (r *PeerReconciler) specPeerPVC(peer *ipfsv1alpha1.Peer, pvc *corev1.Persis
 	}
 }
 
-// reconcilePeerStatefulSet reconciles ipfs peer statefulset
-func (r *PeerReconciler) reconcilePeerStatefulSet(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
+// reconcileStatefulSet reconciles ipfs peer statefulset
+func (r *PeerReconciler) reconcileStatefulSet(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
 
 	sts := &appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
@@ -265,15 +266,15 @@ func (r *PeerReconciler) reconcilePeerStatefulSet(ctx context.Context, peer *ipf
 		if err := ctrl.SetControllerReference(peer, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specPeerStatefulSet(peer, sts, img, homeDir, command, args)
+		r.specStatefulSet(peer, sts, img, homeDir, command, args)
 		return nil
 	})
 
 	return err
 }
 
-// specPeerStatefulSet updates ipfs peer statefulset spec
-func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.StatefulSet, img, homeDir string, command, args []string) {
+// specStatefulSet updates ipfs peer statefulset spec
+func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.StatefulSet, img, homeDir string, command, args []string) {
 	labels := peer.Labels
 
 	sts.ObjectMeta.Labels = labels
@@ -288,7 +289,7 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 			},
 		},
 		{
-			Name: "script",
+			Name: "config",
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
 					LocalObjectReference: corev1.LocalObjectReference{
@@ -305,7 +306,7 @@ func (r *PeerReconciler) specPeerStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv
 			MountPath: shared.PathData(homeDir),
 		},
 		{
-			Name:      "script",
+			Name:      "config",
 			MountPath: shared.PathConfig(homeDir),
 		},
 	}
