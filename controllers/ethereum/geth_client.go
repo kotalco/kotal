@@ -32,8 +32,6 @@ func (g *GethClient) Args(node *ethereumv1alpha1.Node) (args []string) {
 		args = append(args, arg...)
 	}
 
-	appendArg("--nousb")
-
 	appendArg(GethLogging, g.LoggingArgFromVerbosity(node.Spec.Logging))
 
 	appendArg(GethConfig, fmt.Sprintf("%s/config.toml", PathConfig))
