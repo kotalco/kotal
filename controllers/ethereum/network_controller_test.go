@@ -298,6 +298,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
+				"--mainnet",
 				GethDataDir,
 				GethRPCHTTPEnabled,
 				GethRPCHTTPPort,

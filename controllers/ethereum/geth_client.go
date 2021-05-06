@@ -58,7 +58,7 @@ func (g *GethClient) Args(node *ethereumv1alpha1.Node) (args []string) {
 
 	appendArg(GethDataDir, PathBlockchainData)
 
-	if node.Spec.Join != "" && node.Spec.Join != ethereumv1alpha1.MainNetwork {
+	if node.Spec.Join != "" {
 		appendArg(fmt.Sprintf("--%s", node.Spec.Join))
 	}
 
