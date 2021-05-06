@@ -16,7 +16,14 @@ spec:
     singular: clusterpeer
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .status.client
+      name: Client
+      type: string
+    - jsonPath: .spec.consensus
+      name: Consensus
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: ClusterPeer is the Schema for the clusterpeers API
@@ -93,10 +100,20 @@ spec:
             type: object
           status:
             description: ClusterPeerStatus defines the observed state of ClusterPeer
+            properties:
+              client:
+                type: string
+              consensus:
+                type: string
+            required:
+            - client
+            - consensus
             type: object
         type: object
     served: true
     storage: true
+    subresources:
+      status: {}
 status:
   acceptedNames:
     kind: ""

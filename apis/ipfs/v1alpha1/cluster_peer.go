@@ -38,11 +38,16 @@ const (
 
 // ClusterPeerStatus defines the observed state of ClusterPeer
 type ClusterPeerStatus struct {
+	Client    string `json:"client"`
+	Consensus string `json:"consensus"`
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // ClusterPeer is the Schema for the clusterpeers API
+// +kubebuilder:printcolumn:name="Client",type=string,JSONPath=".status.client"
+// +kubebuilder:printcolumn:name="Consensus",type=string,JSONPath=".spec.consensus"
 type ClusterPeer struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

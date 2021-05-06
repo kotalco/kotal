@@ -69,7 +69,24 @@ func (r *ClusterPeerReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return
 	}
 
+	if err = r.updateStatus(ctx, &peer); err != nil {
+		return
+	}
+
 	return
+}
+
+// updateStatus updates ipfs cluster peer status
+func (r *ClusterPeerReconciler) updateStatus(ctx context.Context, peer *ipfsv1alpha1.ClusterPeer) error {
+	// TODO: update after multi-client support
+	peer.Status.Client = "ipfs-cluster-service"
+
+	if err := r.Status().Update(ctx, peer); err != nil {
+		r.Log.Error(err, "unable to update cluster peer status")
+		return err
+	}
+
+	return nil
 }
 
 // reconcileClusterPeerService reconciles ipfs peer service
