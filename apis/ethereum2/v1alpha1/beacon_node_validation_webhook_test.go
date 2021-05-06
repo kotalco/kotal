@@ -147,27 +147,6 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
 					Join:   "mainnet",
-					Client: TekuClient,
-					Eth1Endpoints: []string{
-						"http://localhost:8545",
-						"http://localhost:8546",
-					},
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.eth1Endpoints",
-					BadValue: "http://localhost:8545, http://localhost:8546",
-					Detail:   "multiple Ethereum 1 endpoints not supported by teku client",
-				},
-			},
-		},
-		{
-			Title: "Node #9",
-			Node: &BeaconNode{
-				Spec: BeaconNodeSpec{
-					Join:   "mainnet",
 					Client: NimbusClient,
 					Eth1Endpoints: []string{
 						"http://localhost:8545",
@@ -215,13 +194,14 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 		},
 	}
 
-	Context("While creating network", func() {
+	Context("While creating beacon node", func() {
 		for _, c := range createCases {
 			func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.Node.Default()
 					err := cc.Node.ValidateCreate()
+					Expect(err).ToNot(BeNil())
 
 					errStatus := err.(*errors.StatusError)
 
@@ -233,13 +213,14 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 		}
 	})
 
-	Context("While updating network", func() {
+	Context("While updating beacon node", func() {
 		for _, c := range updateCases {
 			func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.NewNode.Default()
 					err := cc.NewNode.ValidateUpdate(cc.OldNode)
+					Expect(err).ToNot(BeNil())
 
 					errStatus := err.(*errors.StatusError)
 

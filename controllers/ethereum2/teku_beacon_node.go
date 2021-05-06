@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -35,7 +36,7 @@ func (t *TekuBeaconNode) Args() (args []string) {
 	args = append(args, TekuNetwork, node.Spec.Join)
 
 	if len(node.Spec.Eth1Endpoints) != 0 {
-		args = append(args, TekuEth1Endpoint, node.Spec.Eth1Endpoints[0])
+		args = append(args, TekuEth1Endpoints, strings.Join(node.Spec.Eth1Endpoints, ","))
 	}
 
 	if node.Spec.REST {

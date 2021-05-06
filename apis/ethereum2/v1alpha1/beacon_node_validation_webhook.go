@@ -40,7 +40,7 @@ func (r *BeaconNode) Validate() field.ErrorList {
 	}
 
 	// rpc is always on in prysm
-	if r.Spec.Client == PrysmClient && r.Spec.RPC == false {
+	if r.Spec.Client == PrysmClient && !r.Spec.RPC {
 		err := field.Invalid(path.Child("rpc"), r.Spec.RPC, "can't be disabled in prysm client")
 		nodeErrors = append(nodeErrors, err)
 	}
@@ -52,7 +52,7 @@ func (r *BeaconNode) Validate() field.ErrorList {
 	}
 
 	// teku and nimbus doesn't support multiple Ethereum 1 endpoints
-	if len(r.Spec.Eth1Endpoints) > 1 && (r.Spec.Client == TekuClient || r.Spec.Client == NimbusClient) {
+	if len(r.Spec.Eth1Endpoints) > 1 && r.Spec.Client == NimbusClient {
 		err := field.Invalid(path.Child("eth1Endpoints"), strings.Join(r.Spec.Eth1Endpoints, ", "), fmt.Sprintf("multiple Ethereum 1 endpoints not supported by %s client", r.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
 	}

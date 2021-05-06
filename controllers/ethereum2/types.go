@@ -16,8 +16,8 @@ const (
 const (
 	// TekuNetwork is the argument used for selecting network
 	TekuNetwork = "--network"
-	// TekuEth1Endpoint is the argument used for Ethereum 1 JSON RPC endpoint
-	TekuEth1Endpoint = "--eth1-endpoint"
+	// TekuEth1Endpoints is the argument used for Ethereum 1 JSON RPC endpoint
+	TekuEth1Endpoints = "--eth1-endpoints"
 	// TekuDataPath is the argument used for data directory
 	TekuDataPath = "--data-path"
 	// TekuRestEnabled is the argument used to enable Beacon REST API
