@@ -43,15 +43,15 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
-	if err = r.reconcileNodeService(ctx, &node); err != nil {
+	if err = r.reconcileService(ctx, &node); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodePVC(ctx, &node); err != nil {
+	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeStatefulSet(ctx, &node); err != nil {
+	if err = r.reconcileStatefulSet(ctx, &node); err != nil {
 		return
 	}
 
@@ -75,8 +75,8 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *filecoinv1alpha
 	return nil
 }
 
-// reconcileNodePVC reconciles node pvc
-func (r *NodeReconciler) reconcileNodePVC(ctx context.Context, node *filecoinv1alpha1.Node) error {
+// reconcilePVC reconciles node pvc
+func (r *NodeReconciler) reconcilePVC(ctx context.Context, node *filecoinv1alpha1.Node) error {
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -88,15 +88,15 @@ func (r *NodeReconciler) reconcileNodePVC(ctx context.Context, node *filecoinv1a
 		if err := ctrl.SetControllerReference(node, pvc, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodePVC(pvc, node)
+		r.specPVC(node, pvc)
 		return nil
 	})
 
 	return err
 }
 
-// specNodePVC updates node PVC spec
-func (r *NodeReconciler) specNodePVC(pvc *corev1.PersistentVolumeClaim, node *filecoinv1alpha1.Node) {
+// specPVC updates node PVC spec
+func (r *NodeReconciler) specPVC(node *filecoinv1alpha1.Node, pvc *corev1.PersistentVolumeClaim) {
 	request := corev1.ResourceList{
 		corev1.ResourceStorage: resource.MustParse(node.Spec.Resources.Storage),
 	}
@@ -123,8 +123,8 @@ func (r *NodeReconciler) specNodePVC(pvc *corev1.PersistentVolumeClaim, node *fi
 	}
 }
 
-// reconcileNodeService reconciles node service
-func (r *NodeReconciler) reconcileNodeService(ctx context.Context, node *filecoinv1alpha1.Node) error {
+// reconcileService reconciles node service
+func (r *NodeReconciler) reconcileService(ctx context.Context, node *filecoinv1alpha1.Node) error {
 
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
@@ -137,15 +137,15 @@ func (r *NodeReconciler) reconcileNodeService(ctx context.Context, node *filecoi
 		if err := ctrl.SetControllerReference(node, svc, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeService(svc, node)
+		r.specService(node, svc)
 		return nil
 	})
 
 	return err
 }
 
-// reconcileNodeStatefulSet reconciles node stateful set
-func (r *NodeReconciler) reconcileNodeStatefulSet(ctx context.Context, node *filecoinv1alpha1.Node) error {
+// reconcileStatefulSet reconciles node stateful set
+func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *filecoinv1alpha1.Node) error {
 	sts := &appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -157,7 +157,7 @@ func (r *NodeReconciler) reconcileNodeStatefulSet(ctx context.Context, node *fil
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		if err := r.specNodeStatefulSet(sts, node); err != nil {
+		if err := r.specStatefulSet(node, sts); err != nil {
 			return err
 		}
 		return nil
@@ -166,8 +166,8 @@ func (r *NodeReconciler) reconcileNodeStatefulSet(ctx context.Context, node *fil
 	return err
 }
 
-// specNodeService updates node statefulset spec
-func (r *NodeReconciler) specNodeService(svc *corev1.Service, node *filecoinv1alpha1.Node) {
+// specService updates node statefulset spec
+func (r *NodeReconciler) specService(node *filecoinv1alpha1.Node, svc *corev1.Service) {
 	labels := map[string]string{
 		"name":     "node",
 		"instance": node.Name,
@@ -187,8 +187,8 @@ func (r *NodeReconciler) specNodeService(svc *corev1.Service, node *filecoinv1al
 	svc.Spec.Selector = labels
 }
 
-// specNodeStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *filecoinv1alpha1.Node) error {
+// specStatefulSet updates node statefulset spec
+func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv1.StatefulSet) error {
 	labels := map[string]string{
 		"name":     "node",
 		"instance": node.Name,
