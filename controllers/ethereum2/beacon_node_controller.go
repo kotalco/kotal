@@ -46,15 +46,15 @@ func (r *BeaconNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 
 	r.updateLabels(&node)
 
-	if err = r.reconcileNodeDataPVC(ctx, &node); err != nil {
+	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeService(ctx, &node); err != nil {
+	if err = r.reconcileService(ctx, &node); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeStatefulset(ctx, &node); err != nil {
+	if err = r.reconcileStatefulset(ctx, &node); err != nil {
 		return
 	}
 
@@ -74,7 +74,8 @@ func (r *BeaconNodeReconciler) updateLabels(node *ethereum2v1alpha1.BeaconNode) 
 	node.Labels["instance"] = node.Name
 }
 
-func (r *BeaconNodeReconciler) reconcileNodeService(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
+// reconcileService reconciles beacon node service
+func (r *BeaconNodeReconciler) reconcileService(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
 	svc := corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -87,7 +88,7 @@ func (r *BeaconNodeReconciler) reconcileNodeService(ctx context.Context, node *e
 			return err
 		}
 
-		r.specNodeService(&svc, node)
+		r.specService(node, &svc)
 
 		return nil
 	})
@@ -95,7 +96,7 @@ func (r *BeaconNodeReconciler) reconcileNodeService(ctx context.Context, node *e
 	return err
 }
 
-func (r *BeaconNodeReconciler) specNodeService(svc *corev1.Service, node *ethereum2v1alpha1.BeaconNode) {
+func (r *BeaconNodeReconciler) specService(node *ethereum2v1alpha1.BeaconNode, svc *corev1.Service) {
 	labels := node.GetLabels()
 
 	svc.ObjectMeta.Labels = labels
@@ -144,7 +145,8 @@ func (r *BeaconNodeReconciler) specNodeService(svc *corev1.Service, node *ethere
 	svc.Spec.Selector = labels
 }
 
-func (r *BeaconNodeReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
+// reconcilePVC reconciles beacon node persistent volume claim
+func (r *BeaconNodeReconciler) reconcilePVC(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
 	pvc := corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -157,7 +159,7 @@ func (r *BeaconNodeReconciler) reconcileNodeDataPVC(ctx context.Context, node *e
 			return err
 		}
 
-		r.specNodeDataPVC(&pvc, node)
+		r.specPVC(node, &pvc)
 
 		return nil
 	})
@@ -165,8 +167,8 @@ func (r *BeaconNodeReconciler) reconcileNodeDataPVC(ctx context.Context, node *e
 	return err
 }
 
-// specNodeDataPVC updates node data PVC spec
-func (r *BeaconNodeReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereum2v1alpha1.BeaconNode) {
+// specPVC updates beacon node persistent volume claim spec
+func (r *BeaconNodeReconciler) specPVC(node *ethereum2v1alpha1.BeaconNode, pvc *corev1.PersistentVolumeClaim) {
 
 	request := corev1.ResourceList{
 		corev1.ResourceStorage: resource.MustParse(node.Spec.Resources.Storage),
@@ -191,8 +193,8 @@ func (r *BeaconNodeReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim
 	}
 }
 
-// reconcileNodeStatefulset reconcile Ethereum 2.0 node
-func (r *BeaconNodeReconciler) reconcileNodeStatefulset(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
+// reconcileStatefulset reconcile Ethereum 2.0 beacon node
+func (r *BeaconNodeReconciler) reconcileStatefulset(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
 	sts := appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -215,7 +217,7 @@ func (r *BeaconNodeReconciler) reconcileNodeStatefulset(ctx context.Context, nod
 		command := client.Command()
 		homeDir := client.HomeDir()
 
-		r.specNodeStatefulset(&sts, node, args, command, img, homeDir)
+		r.specStatefulset(node, &sts, args, command, img, homeDir)
 
 		return nil
 	})
@@ -223,8 +225,8 @@ func (r *BeaconNodeReconciler) reconcileNodeStatefulset(ctx context.Context, nod
 	return err
 }
 
-// specNodeStatefulset updates node statefulset spec
-func (r *BeaconNodeReconciler) specNodeStatefulset(sts *appsv1.StatefulSet, node *ethereum2v1alpha1.BeaconNode, args, command []string, img, homeDir string) {
+// specStatefulset updates beacon node statefulset spec
+func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNode, sts *appsv1.StatefulSet, args, command []string, img, homeDir string) {
 
 	sts.Labels = node.GetLabels()
 

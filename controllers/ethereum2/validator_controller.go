@@ -29,7 +29,7 @@ type ValidatorReconciler struct {
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
 // +kubebuilder:rbac:groups=core,resources=persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
-// Reconcile reconciles Ethereum 2.0 validator client node
+// Reconcile reconciles Ethereum 2.0 validator client
 func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var validator ethereum2v1alpha1.Validator
 
@@ -45,11 +45,11 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	r.updateLabels(&validator)
 
-	if err = r.reconcileValidatorDataPVC(ctx, &validator); err != nil {
+	if err = r.reconcilePVC(ctx, &validator); err != nil {
 		return
 	}
 
-	if err = r.reconcileValidatorStatefulset(ctx, &validator); err != nil {
+	if err = r.reconcileStatefulset(ctx, &validator); err != nil {
 		return
 	}
 
@@ -68,8 +68,8 @@ func (r *ValidatorReconciler) updateLabels(validator *ethereum2v1alpha1.Validato
 	validator.Labels["instance"] = validator.Name
 }
 
-// reconcileValidatorDataPVC reconciles node data persistent volume claim
-func (r *ValidatorReconciler) reconcileValidatorDataPVC(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
+// reconcilePVC reconciles validator persistent volume claim
+func (r *ValidatorReconciler) reconcilePVC(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
 	pvc := corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      validator.Name,
@@ -82,7 +82,7 @@ func (r *ValidatorReconciler) reconcileValidatorDataPVC(ctx context.Context, val
 			return err
 		}
 
-		r.specValidatorDataPVC(validator, &pvc)
+		r.specPVC(validator, &pvc)
 
 		return nil
 	})
@@ -90,8 +90,8 @@ func (r *ValidatorReconciler) reconcileValidatorDataPVC(ctx context.Context, val
 	return err
 }
 
-// specValidatorDataPVC updates node data PVC spec
-func (r *ValidatorReconciler) specValidatorDataPVC(validator *ethereum2v1alpha1.Validator, pvc *corev1.PersistentVolumeClaim) {
+// specPVC updates validator persistent volume claim spec
+func (r *ValidatorReconciler) specPVC(validator *ethereum2v1alpha1.Validator, pvc *corev1.PersistentVolumeClaim) {
 
 	request := corev1.ResourceList{
 		corev1.ResourceStorage: resource.MustParse(validator.Spec.Resources.Storage),
@@ -305,8 +305,8 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 	return
 }
 
-// specValidatorStatefulset updates node statefulset spec
-func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alpha1.Validator, sts *appsv1.StatefulSet, img string, command, args []string, homeDir string) {
+// specStatefulset updates vvalidator statefulset spec
+func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Validator, sts *appsv1.StatefulSet, img string, command, args []string, homeDir string) {
 
 	sts.Labels = validator.GetLabels()
 
@@ -434,8 +434,8 @@ func (r *ValidatorReconciler) specValidatorStatefulset(validator *ethereum2v1alp
 	}
 }
 
-// reconcileValidatorStatefulset reconciles node statefulset
-func (r *ValidatorReconciler) reconcileValidatorStatefulset(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
+// reconcileStatefulset reconciles validator statefulset
+func (r *ValidatorReconciler) reconcileStatefulset(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
 	sts := appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      validator.Name,
@@ -457,7 +457,7 @@ func (r *ValidatorReconciler) reconcileValidatorStatefulset(ctx context.Context,
 			return err
 		}
 
-		r.specValidatorStatefulset(validator, &sts, img, command, args, homeDir)
+		r.specStatefulset(validator, &sts, img, command, args, homeDir)
 
 		return nil
 	})
