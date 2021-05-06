@@ -12,7 +12,6 @@ import (
 	. "github.com/onsi/gomega"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -56,7 +55,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 	if useExistingCluster {
 		It("Should label all nodes with topology key", func() {
-			nodes := &v1.NodeList{}
+			nodes := &corev1.NodeList{}
 			Expect(k8sClient.List(context.Background(), nodes)).To(Succeed())
 			for i, node := range nodes.Items {
 				node.Labels[ethereumv1alpha1.DefaultTopologyKey] = fmt.Sprintf("zone-%d", i)
@@ -66,7 +65,7 @@ var _ = Describe("Ethereum network controller", func() {
 	}
 
 	Context("Joining Mainnet", func() {
-		ns := &v1.Namespace{
+		ns := &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "mainnet",
 			},
@@ -164,19 +163,19 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create configs (genesis, init scripts, static nodes ...) configmap", func() {
-			genesisConfig := &v1.ConfigMap{}
+			genesisConfig := &corev1.ConfigMap{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).Should(Succeed())
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
-			nodeSecret := &v1.Secret{}
+			nodeSecret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
 			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -214,14 +213,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to bootnode statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeCPURequest),
-					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeMemoryRequest),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeCPURequest),
+					corev1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeMemoryRequest),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeCPULimit),
-					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeMemoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeCPULimit),
+					corev1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeMemoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
@@ -229,10 +228,10 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create bootnode data persistent volume with correct resources", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultMainNetworkFullNodeStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultMainNetworkFullNodeStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodePVC)).To(Succeed())
@@ -279,7 +278,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		if useExistingCluster {
 			It("Should schedule node-1 and node-2 on different nodes", func() {
-				pods := &v1.PodList{}
+				pods := &corev1.PodList{}
 				matchingLabels := client.MatchingLabels{"name": "node"}
 				inNamespace := client.InNamespace(ns.Name)
 				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
@@ -316,14 +315,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to node-2 statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpu),
+					corev1.ResourceMemory: resource.MustParse(memory),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+					corev1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
@@ -331,10 +330,10 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-2 data persistent volume", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultMainNetworkFastNodeStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultMainNetworkFastNodeStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
@@ -343,12 +342,12 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should not create privatekey secret for node-2 (without nodekey and not importing account)", func() {
-			nodeSecret := &v1.Secret{}
+			nodeSecret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSecret)).ToNot(Succeed())
 		})
 
 		It("Should create node-2 service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -397,13 +396,13 @@ var _ = Describe("Ethereum network controller", func() {
 
 			It("Should delete node-2 data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node-2 service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
@@ -447,7 +446,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		if useExistingCluster {
 			It("Should schedule node-1 and node-3 on different nodes", func() {
-				pods := &v1.PodList{}
+				pods := &corev1.PodList{}
 				matchingLabels := client.MatchingLabels{"name": "node"}
 				inNamespace := client.InNamespace(ns.Name)
 				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
@@ -482,14 +481,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to node-3 statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpu),
+					corev1.ResourceMemory: resource.MustParse(memory),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+					corev1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
@@ -497,10 +496,10 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-3 data persistent volume", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultMainNetworkFastNodeStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultMainNetworkFastNodeStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
@@ -509,12 +508,12 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should not create privatekey secret for node-3 (without nodekey and not importing account)", func() {
-			nodeSecret := &v1.Secret{}
+			nodeSecret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSecret)).ToNot(Succeed())
 		})
 
 		It("Should create node-3 service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -563,13 +562,13 @@ var _ = Describe("Ethereum network controller", func() {
 
 			It("Should delete node-2 data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node-3 service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
@@ -599,18 +598,18 @@ var _ = Describe("Ethereum network controller", func() {
 
 			It("Should delete bootnode data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), bootnodeKey, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete bootnode privatekey secret", func() {
-				nodeSecret := &v1.Secret{}
+				nodeSecret := &corev1.Secret{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).ToNot(Succeed())
 			})
 
 			It("Should delete bootnode service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).ToNot(Succeed())
 			})
 		}
@@ -621,7 +620,7 @@ var _ = Describe("Ethereum network controller", func() {
 	})
 
 	Context("Joining Rinkeby", func() {
-		ns := &v1.Namespace{
+		ns := &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "rinkeby",
 			},
@@ -718,19 +717,19 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create configs (genesis, init scripts, static nodes ...) configmap", func() {
-			genesisConfig := &v1.ConfigMap{}
+			genesisConfig := &corev1.ConfigMap{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).Should(Succeed())
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
-			nodeSecret := &v1.Secret{}
+			nodeSecret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
 			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -767,14 +766,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to bootnode statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeCPURequest),
-					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeMemoryRequest),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeCPURequest),
+					corev1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeMemoryRequest),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeCPULimit),
-					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeMemoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeCPULimit),
+					corev1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPublicNetworkNodeMemoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
@@ -783,10 +782,10 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create bootnode data persistent volume with correct resources", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultTestNetworkStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultTestNetworkStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodePVC)).To(Succeed())
@@ -838,7 +837,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		if useExistingCluster {
 			It("Should schedule node-1 and node-2 on different nodes", func() {
-				pods := &v1.PodList{}
+				pods := &corev1.PodList{}
 				matchingLabels := client.MatchingLabels{"name": "node"}
 				inNamespace := client.InNamespace(ns.Name)
 				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
@@ -878,14 +877,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to node-2 statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpu),
+					corev1.ResourceMemory: resource.MustParse(memory),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+					corev1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
@@ -893,17 +892,17 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-2 imported account secret", func() {
-			secret := &v1.Secret{}
+			secret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), node2Key, secret)).To(Succeed())
 			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
 			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-2 data persistent volume", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultTestNetworkStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultTestNetworkStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
@@ -912,7 +911,7 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-2 service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -954,18 +953,18 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 
 			It("Should delete node-2 imported account secret", func() {
-				secret := &v1.Secret{}
+				secret := &corev1.Secret{}
 				Expect(k8sClient.Get(context.Background(), node2Key, secret)).ToNot(Succeed())
 			})
 
 			It("Should delete node-2 service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
 			})
 
 			It("Should delete node-2 data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
@@ -1015,7 +1014,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		if useExistingCluster {
 			It("Should schedule node-1 and node-3 on different nodes", func() {
-				pods := &v1.PodList{}
+				pods := &corev1.PodList{}
 				matchingLabels := client.MatchingLabels{"name": "node"}
 				inNamespace := client.InNamespace(ns.Name)
 				Expect(k8sClient.List(context.Background(), pods, matchingLabels, inNamespace)).To(Succeed())
@@ -1054,14 +1053,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to node-3 statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpu),
+					corev1.ResourceMemory: resource.MustParse(memory),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+					corev1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
@@ -1069,17 +1068,17 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-3 imported account secret", func() {
-			secret := &v1.Secret{}
+			secret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), node3Key, secret)).To(Succeed())
 			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
 			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-3 data persistent volume", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultTestNetworkStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultTestNetworkStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
@@ -1088,7 +1087,7 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-3 service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -1130,19 +1129,19 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 
 			It("Should delete node-3 imported account secret", func() {
-				secret := &v1.Secret{}
+				secret := &corev1.Secret{}
 				Expect(k8sClient.Get(context.Background(), node3Key, secret)).ToNot(Succeed())
 			})
 
 			It("Should delete node-3 data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node-3 service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
@@ -1172,18 +1171,18 @@ var _ = Describe("Ethereum network controller", func() {
 
 			It("Should delete bootnode data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), bootnodeKey, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete bootnode privatekey secret", func() {
-				nodeSecret := &v1.Secret{}
+				nodeSecret := &corev1.Secret{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).ToNot(Succeed())
 			})
 
 			It("Should delete bootnode service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).ToNot(Succeed())
 			})
 		}
@@ -1194,7 +1193,7 @@ var _ = Describe("Ethereum network controller", func() {
 	})
 
 	Context("private PoA network", func() {
-		ns := &v1.Namespace{
+		ns := &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "poa",
 			},
@@ -1299,14 +1298,14 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
-			nodeSecret := &v1.Secret{}
+			nodeSecret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
 			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -1343,7 +1342,7 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create bootnode genesis block configmap", func() {
-			genesisConfig := &v1.ConfigMap{}
+			genesisConfig := &corev1.ConfigMap{}
 			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
@@ -1351,14 +1350,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to bootnode statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPURequest),
-					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryRequest),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPURequest),
+					corev1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryRequest),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPULimit),
-					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPULimit),
+					corev1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
@@ -1366,10 +1365,10 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create bootnode data persistent volume with correct resources", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodePVC)).To(Succeed())
@@ -1421,7 +1420,7 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-2 genesis block and scripts configmap", func() {
-			genesisConfig := &v1.ConfigMap{}
+			genesisConfig := &corev1.ConfigMap{}
 			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 			Expect(k8sClient.Get(context.Background(), node2Key, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
@@ -1455,14 +1454,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to node-2 statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpu),
+					corev1.ResourceMemory: resource.MustParse(memory),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+					corev1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
@@ -1470,17 +1469,17 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-2 imported account secret", func() {
-			secret := &v1.Secret{}
+			secret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), node2Key, secret)).To(Succeed())
 			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
 			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-2 data persistent volume with correct resources", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(storage),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(storage),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
@@ -1489,7 +1488,7 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-2 service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -1531,19 +1530,19 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 
 			It("Should delete node-2 imported account secret", func() {
-				secret := &v1.Secret{}
+				secret := &corev1.Secret{}
 				Expect(k8sClient.Get(context.Background(), node2Key, secret)).ToNot(Succeed())
 			})
 
 			It("Should delete node-2 data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node-2 service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
@@ -1592,7 +1591,7 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-3 genesis block and scripts configmap", func() {
-			genesisConfig := &v1.ConfigMap{}
+			genesisConfig := &corev1.ConfigMap{}
 			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 			Expect(k8sClient.Get(context.Background(), node3Key, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
@@ -1624,14 +1623,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to node-3 statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpu),
+					corev1.ResourceMemory: resource.MustParse(memory),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+					corev1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
@@ -1639,17 +1638,17 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-3 imported account secret", func() {
-			secret := &v1.Secret{}
+			secret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), node3Key, secret)).To(Succeed())
 			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
 			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-3 data persistent volume with correct resources", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(storage),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(storage),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
@@ -1658,7 +1657,7 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-3 service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -1700,19 +1699,19 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 
 			It("Should delete node-3 imported account secret", func() {
-				secret := &v1.Secret{}
+				secret := &corev1.Secret{}
 				Expect(k8sClient.Get(context.Background(), node3Key, secret)).ToNot(Succeed())
 			})
 
 			It("Should delete node-3 data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node-3 service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
@@ -1742,23 +1741,23 @@ var _ = Describe("Ethereum network controller", func() {
 
 			It("Should delete bootnode data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), bootnodeKey, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete bootnode privatekey secret", func() {
-				nodeSecret := &v1.Secret{}
+				nodeSecret := &corev1.Secret{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).ToNot(Succeed())
 			})
 
 			It("Should delete bootnode service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).ToNot(Succeed())
 			})
 
 			It("Should delete besu genesis block configmap", func() {
-				genesisConfig := &v1.ConfigMap{}
+				genesisConfig := &corev1.ConfigMap{}
 				genesisKey := types.NamespacedName{
 					Name:      fmt.Sprintf("%s-besu", key.Name),
 					Namespace: key.Namespace,
@@ -1767,7 +1766,7 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 
 			It("Should delete geth genesis block configmap", func() {
-				genesisConfig := &v1.ConfigMap{}
+				genesisConfig := &corev1.ConfigMap{}
 				genesisKey := types.NamespacedName{
 					Name:      fmt.Sprintf("%s-geth", key.Name),
 					Namespace: key.Namespace,
@@ -1782,7 +1781,7 @@ var _ = Describe("Ethereum network controller", func() {
 	})
 
 	Context("private PoW network", func() {
-		ns := &v1.Namespace{
+		ns := &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "pow",
 			},
@@ -1883,19 +1882,19 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create bootnode genesis block configmap", func() {
-			genesisConfig := &v1.ConfigMap{}
+			genesisConfig := &corev1.ConfigMap{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).To(Succeed())
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
-			nodeSecret := &v1.Secret{}
+			nodeSecret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
 			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -1933,14 +1932,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to bootnode statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPURequest),
-					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryRequest),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPURequest),
+					corev1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryRequest),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPULimit),
-					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPULimit),
+					corev1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
@@ -1948,10 +1947,10 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create bootnode data persistent volume with correct resources", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodePVC)).To(Succeed())
@@ -2002,7 +2001,7 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-2 genesis and scripts block configmap", func() {
-			genesisConfig := &v1.ConfigMap{}
+			genesisConfig := &corev1.ConfigMap{}
 			Expect(k8sClient.Get(context.Background(), node2Key, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["init-genesis.sh"]).To(Equal(initGenesis))
 			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importGethAccount))
@@ -2034,14 +2033,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to node-2 statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpu),
+					corev1.ResourceMemory: resource.MustParse(memory),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+					corev1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
@@ -2049,17 +2048,17 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-2 imported account secret", func() {
-			secret := &v1.Secret{}
+			secret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), node2Key, secret)).To(Succeed())
 			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
 			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-2 data persistent volume with correct resources", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
@@ -2068,7 +2067,7 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-2 service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -2110,19 +2109,19 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 
 			It("Should delete node-2 imported account secret", func() {
-				secret := &v1.Secret{}
+				secret := &corev1.Secret{}
 				Expect(k8sClient.Get(context.Background(), node2Key, secret)).ToNot(Succeed())
 			})
 
 			It("Should delete node-2 data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node-2 service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
@@ -2164,7 +2163,7 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-3 genesis and scripts block configmap", func() {
-			genesisConfig := &v1.ConfigMap{}
+			genesisConfig := &corev1.ConfigMap{}
 			Expect(k8sClient.Get(context.Background(), node3Key, genesisConfig)).To(Succeed())
 		})
 
@@ -2185,14 +2184,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to node-3 statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpu),
+					corev1.ResourceMemory: resource.MustParse(memory),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpuLimit),
-					v1.ResourceMemory: resource.MustParse(memoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+					corev1.ResourceMemory: resource.MustParse(memoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
@@ -2200,15 +2199,15 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should not create node-2 secret (neither imported account nor node key)", func() {
-			secret := &v1.Secret{}
+			secret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), node3Key, secret)).ToNot(Succeed())
 		})
 
 		It("Should create node-2 data persistent volume with correct resources", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodePVC)).To(Succeed())
@@ -2217,7 +2216,7 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-3 service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -2260,13 +2259,13 @@ var _ = Describe("Ethereum network controller", func() {
 
 			It("Should delete node-3 data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node3Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node-3 service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), node3Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
@@ -2296,23 +2295,23 @@ var _ = Describe("Ethereum network controller", func() {
 
 			It("Should delete bootnode data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), bootnodeKey, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete bootnode privatekey secret", func() {
-				nodeSecret := &v1.Secret{}
+				nodeSecret := &corev1.Secret{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).ToNot(Succeed())
 			})
 
 			It("Should delete bootnode service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).ToNot(Succeed())
 			})
 
 			It("Should delete besu genesis block configmap", func() {
-				genesisConfig := &v1.ConfigMap{}
+				genesisConfig := &corev1.ConfigMap{}
 				genesisKey := types.NamespacedName{
 					Name:      fmt.Sprintf("%s-besu", key.Name),
 					Namespace: key.Namespace,
@@ -2321,7 +2320,7 @@ var _ = Describe("Ethereum network controller", func() {
 			})
 
 			It("Should delete geth genesis block configmap", func() {
-				genesisConfig := &v1.ConfigMap{}
+				genesisConfig := &corev1.ConfigMap{}
 				genesisKey := types.NamespacedName{
 					Name:      fmt.Sprintf("%s-geth", key.Name),
 					Namespace: key.Namespace,
@@ -2336,7 +2335,7 @@ var _ = Describe("Ethereum network controller", func() {
 	})
 
 	Context("private ibft2 network", func() {
-		ns := &v1.Namespace{
+		ns := &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "ibft2",
 			},
@@ -2437,21 +2436,21 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create bootnode genesis block configmap", func() {
-			genesisConfig := &v1.ConfigMap{}
+			genesisConfig := &corev1.ConfigMap{}
 			expectedExtraData := "0xf869a00000000000000000000000000000000000000000000000000000000000000000f83f94427e2c7cecd72bc4cdd4f7ebb8bb6e49789c804494d2c21213027cbf4d46c16b55fa98e5252b048706948e1f6c7c76a1d7f74eda342d330ca9749f31cc2b808400000000c0"
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
-			nodeSecret := &v1.Secret{}
+			nodeSecret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
 			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -2489,14 +2488,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to bootnode statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPURequest),
-					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryRequest),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPURequest),
+					corev1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryRequest),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPULimit),
-					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPULimit),
+					corev1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
@@ -2504,10 +2503,10 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create bootnode data persistent volume with correct resouces", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodePVC)).To(Succeed())
@@ -2568,14 +2567,14 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should allocate correct resources to node-2 statefulset", func() {
 			nodeSts := &appsv1.StatefulSet{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(cpu),
-					v1.ResourceMemory: resource.MustParse(memory),
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(cpu),
+					corev1.ResourceMemory: resource.MustParse(memory),
 				},
-				Limits: v1.ResourceList{
-					v1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPULimit),
-					v1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeCPULimit),
+					corev1.ResourceMemory: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeMemoryLimit),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
@@ -2583,10 +2582,10 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should create node-2 data persistent volume with correct resources", func() {
-			nodePVC := &v1.PersistentVolumeClaim{}
-			expectedResources := v1.ResourceRequirements{
-				Requests: v1.ResourceList{
-					v1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
+			nodePVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
 				},
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodePVC)).To(Succeed())
@@ -2595,12 +2594,12 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 
 		It("Should not create privatekey secret for node-2 (without nodekey)", func() {
-			nodeSecret := &v1.Secret{}
+			nodeSecret := &corev1.Secret{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSecret)).ToNot(Succeed())
 		})
 
 		It("Should create node-2 service", func() {
-			nodeSvc := &v1.Service{}
+			nodeSvc := &corev1.Service{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).To(Succeed())
 			Expect(nodeSvc.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSvc.Spec.Ports).To(ContainElements([]corev1.ServicePort{
@@ -2649,13 +2648,13 @@ var _ = Describe("Ethereum network controller", func() {
 
 			It("Should delete node-2 data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), node2Key, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node-2 service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), node2Key, nodeSvc)).ToNot(Succeed())
 			})
 		}
@@ -2685,23 +2684,23 @@ var _ = Describe("Ethereum network controller", func() {
 
 			It("Should delete bootnode data persistent volume", func() {
 				Eventually(func() error {
-					nodePVC := &v1.PersistentVolumeClaim{}
+					nodePVC := &corev1.PersistentVolumeClaim{}
 					return k8sClient.Get(context.Background(), bootnodeKey, nodePVC)
 				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete bootnode privatekey secret", func() {
-				nodeSecret := &v1.Secret{}
+				nodeSecret := &corev1.Secret{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).ToNot(Succeed())
 			})
 
 			It("Should delete bootnode service", func() {
-				nodeSvc := &v1.Service{}
+				nodeSvc := &corev1.Service{}
 				Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSvc)).ToNot(Succeed())
 			})
 
 			It("Should delete genesis block configmap", func() {
-				genesisConfig := &v1.ConfigMap{}
+				genesisConfig := &corev1.ConfigMap{}
 				genesisKey := types.NamespacedName{
 					Name:      fmt.Sprintf("%s-besu", key.Name),
 					Namespace: key.Namespace,

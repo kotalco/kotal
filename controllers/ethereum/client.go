@@ -24,6 +24,6 @@ func NewEthereumClient(name ethereumv1alpha1.EthereumClient) (EthereumClient, er
 	case ethereumv1alpha1.ParityClient:
 		return &ParityClient{}, nil
 	default:
-		return nil, fmt.Errorf("Client %s is not supported", name)
+		return nil, fmt.Errorf("client %s is not supported", name)
 	}
 }
