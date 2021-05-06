@@ -39,9 +39,11 @@ spec:
           spec:
             description: ValidatorSpec defines the desired state of Validator
             properties:
-              beaconEndpoint:
-                description: BeaconEndpoint is the beacon node endpoint
-                type: string
+              beaconEndpoints:
+                description: BeaconEndpoints is beacon node endpoints
+                items:
+                  type: string
+                type: array
               client:
                 description: Client is the Ethereum 2.0 client to use
                 enum:
@@ -103,7 +105,7 @@ spec:
                 description: WalletPasswordSecret is wallet password secret
                 type: string
             required:
-            - beaconEndpoint
+            - beaconEndpoints
             - keystores
             - network
             type: object
