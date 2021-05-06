@@ -50,20 +50,20 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	r.updateLabels(&node)
 	r.updateStaticNodes(&node)
 
-	if err = r.reconcileNodeDataPVC(ctx, &node); err != nil {
+	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeConfigmap(ctx, &node); err != nil {
+	if err = r.reconcileConfigmap(ctx, &node); err != nil {
 		return
 	}
 
-	ip, err := r.reconcileNodeService(ctx, &node)
+	ip, err := r.reconcileService(ctx, &node)
 	if err != nil {
 		return
 	}
 
-	if err = r.reconcileNodeStatefulSet(ctx, &node); err != nil {
+	if err = r.reconcileStatefulSet(ctx, &node); err != nil {
 		return
 	}
 
@@ -72,11 +72,11 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	}
 
 	var publicKey string
-	if publicKey, err = r.reconcileNodeSecret(ctx, &node); err != nil {
+	if publicKey, err = r.reconcileSecret(ctx, &node); err != nil {
 		return
 	}
 
-	if node.Spec.Bootnode != true {
+	if !node.Spec.Bootnode {
 		return
 	}
 
@@ -130,8 +130,8 @@ func (r *NodeReconciler) updateStaticNodes(node *ethereumv1alpha1.Node) {
 	}
 }
 
-// specNodeConfigmap updates genesis configmap spec
-func (r *NodeReconciler) specNodeConfigmap(client ethereumv1alpha1.EthereumClient, configmap *corev1.ConfigMap, genesis, initGenesisScript, importAccountScript, staticNodes string) {
+// specConfigmap updates genesis configmap spec
+func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *corev1.ConfigMap, genesis, initGenesisScript, importAccountScript, staticNodes string) {
 	if configmap.Data == nil {
 		configmap.Data = map[string]string{}
 	}
@@ -142,7 +142,7 @@ func (r *NodeReconciler) specNodeConfigmap(client ethereumv1alpha1.EthereumClien
 
 	var key string
 
-	switch client {
+	switch node.Spec.Client {
 	case ethereumv1alpha1.GethClient:
 		key = "config.toml"
 	case ethereumv1alpha1.BesuClient:
@@ -159,8 +159,8 @@ func (r *NodeReconciler) specNodeConfigmap(client ethereumv1alpha1.EthereumClien
 	}
 }
 
-// reconcileNodeConfigmap creates genesis config map if it doesn't exist or update it
-func (r *NodeReconciler) reconcileNodeConfigmap(ctx context.Context, node *ethereumv1alpha1.Node) error {
+// reconcileConfigmap creates genesis config map if it doesn't exist or update it
+func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv1alpha1.Node) error {
 
 	var genesis, initGenesisScript, importAccountScript string
 
@@ -210,7 +210,7 @@ func (r *NodeReconciler) reconcileNodeConfigmap(ctx context.Context, node *ether
 			return err
 		}
 
-		r.specNodeConfigmap(node.Spec.Client, configmap, genesis, initGenesisScript, importAccountScript, staticNodes)
+		r.specConfigmap(node, configmap, genesis, initGenesisScript, importAccountScript, staticNodes)
 
 		return nil
 	})
@@ -218,8 +218,8 @@ func (r *NodeReconciler) reconcileNodeConfigmap(ctx context.Context, node *ether
 	return err
 }
 
-// specNodeDataPVC update node data pvc spec
-func (r *NodeReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node *ethereumv1alpha1.Node) {
+// specPVC update node data pvc spec
+func (r *NodeReconciler) specPVC(node *ethereumv1alpha1.Node, pvc *corev1.PersistentVolumeClaim) {
 	request := corev1.ResourceList{
 		corev1.ResourceStorage: resource.MustParse(node.Spec.Resources.Storage),
 	}
@@ -242,8 +242,8 @@ func (r *NodeReconciler) specNodeDataPVC(pvc *corev1.PersistentVolumeClaim, node
 	}
 }
 
-// reconcileNodeDataPVC creates node data pvc if it doesn't exist
-func (r *NodeReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethereumv1alpha1.Node) error {
+// reconcilePVC creates node data pvc if it doesn't exist
+func (r *NodeReconciler) reconcilePVC(ctx context.Context, node *ethereumv1alpha1.Node) error {
 
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
@@ -256,7 +256,7 @@ func (r *NodeReconciler) reconcileNodeDataPVC(ctx context.Context, node *ethereu
 		if err := ctrl.SetControllerReference(node, pvc, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeDataPVC(pvc, node)
+		r.specPVC(node, pvc)
 		return nil
 	})
 
@@ -357,8 +357,8 @@ func (r *NodeReconciler) getNodeAffinity(node *ethereumv1alpha1.Node) *corev1.Af
 	return nil
 }
 
-// specNodeStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *ethereumv1alpha1.Node, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
+// specStatefulset updates node statefulset spec
+func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv1.StatefulSet, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
 	labels := node.GetLabels()
 	// used by geth to init genesis and import account(s)
 	initContainers := []corev1.Container{}
@@ -457,8 +457,8 @@ func (r *NodeReconciler) specNodeStatefulSet(sts *appsv1.StatefulSet, node *ethe
 	}
 }
 
-// reconcileNodeStatefulSet creates node statefulset if it doesn't exist, update it if it does exist
-func (r *NodeReconciler) reconcileNodeStatefulSet(ctx context.Context, node *ethereumv1alpha1.Node) error {
+// reconcileStatefulSet creates node statefulset if it doesn't exist, update it if it does exist
+func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereumv1alpha1.Node) error {
 
 	sts := &appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
@@ -480,14 +480,14 @@ func (r *NodeReconciler) reconcileNodeStatefulSet(ctx context.Context, node *eth
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specNodeStatefulSet(sts, node, args, volumes, mounts, affinity)
+		r.specStatefulset(node, sts, args, volumes, mounts, affinity)
 		return nil
 	})
 
 	return err
 }
 
-func (r *NodeReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1alpha1.Node) error {
+func (r *NodeReconciler) specSecret(node *ethereumv1alpha1.Node, secret *corev1.Secret) error {
 	secret.ObjectMeta.Labels = node.GetLabels()
 	data := map[string]string{}
 
@@ -515,8 +515,8 @@ func (r *NodeReconciler) specNodeSecret(secret *corev1.Secret, node *ethereumv1a
 	return nil
 }
 
-// reconcileNodeSecret creates node secret if it doesn't exist, update it if it exists
-func (r *NodeReconciler) reconcileNodeSecret(ctx context.Context, node *ethereumv1alpha1.Node) (publicKey string, err error) {
+// reconcileSecret creates node secret if it doesn't exist, update it if it exists
+func (r *NodeReconciler) reconcileSecret(ctx context.Context, node *ethereumv1alpha1.Node) (publicKey string, err error) {
 
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
@@ -539,14 +539,14 @@ func (r *NodeReconciler) reconcileNodeSecret(ctx context.Context, node *ethereum
 			return err
 		}
 
-		return r.specNodeSecret(secret, node)
+		return r.specSecret(node, secret)
 	})
 
 	return
 }
 
-// specNodeService updates node service spec
-func (r *NodeReconciler) specNodeService(svc *corev1.Service, node *ethereumv1alpha1.Node) {
+// specService updates node service spec
+func (r *NodeReconciler) specService(node *ethereumv1alpha1.Node, svc *corev1.Service) {
 	labels := node.GetLabels()
 	client := node.Spec.Client
 
@@ -600,8 +600,8 @@ func (r *NodeReconciler) specNodeService(svc *corev1.Service, node *ethereumv1al
 	svc.Spec.Selector = labels
 }
 
-// reconcileNodeService reconciles node service
-func (r *NodeReconciler) reconcileNodeService(ctx context.Context, node *ethereumv1alpha1.Node) (ip string, err error) {
+// reconcileService reconciles node service
+func (r *NodeReconciler) reconcileService(ctx context.Context, node *ethereumv1alpha1.Node) (ip string, err error) {
 
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
@@ -615,7 +615,7 @@ func (r *NodeReconciler) reconcileNodeService(ctx context.Context, node *ethereu
 			return err
 		}
 
-		r.specNodeService(svc, node)
+		r.specService(node, svc)
 
 		return nil
 	})

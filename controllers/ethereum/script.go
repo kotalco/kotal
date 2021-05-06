@@ -59,7 +59,7 @@ func generateImportAccountScript(client ethereumv1alpha1.EthereumClient) (script
 		return generateParityImportAccountScript()
 	}
 
-	err = fmt.Errorf("Generating init genesis for client %s is not supported", client)
+	err = fmt.Errorf("generating init genesis for client %s is not supported", client)
 	return
 }
 
