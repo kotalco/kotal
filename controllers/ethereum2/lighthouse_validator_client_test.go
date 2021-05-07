@@ -37,7 +37,6 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 			LighthouseGraffiti,
 			"Validated by Kotal",
 			LighthouseDisableAutoDiscover,
-			LighthouseInitSlashingProtection,
 		}))
 	})
 
