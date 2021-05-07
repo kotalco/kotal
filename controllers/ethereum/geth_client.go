@@ -34,6 +34,7 @@ func (g *GethClient) Args(node *ethereumv1alpha1.Node) (args []string) {
 
 	appendArg(GethLogging, g.LoggingArgFromVerbosity(node.Spec.Logging))
 
+	// config.toml holding static nodes
 	appendArg(GethConfig, fmt.Sprintf("%s/config.toml", PathConfig))
 
 	if node.Spec.ID != 0 {

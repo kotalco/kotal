@@ -36,6 +36,8 @@ func (b *BesuClient) Args(node *ethereumv1alpha1.Node) (args []string) {
 		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", PathSecrets))
 	}
 
+	appendArg(BesuStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", PathConfig))
+
 	if len(node.Spec.Bootnodes) != 0 {
 		bootnodes := []string{}
 		for _, bootnode := range node.Spec.Bootnodes {

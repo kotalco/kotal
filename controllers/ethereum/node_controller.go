@@ -413,18 +413,6 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 
 		nodeContainer.Image = GethImage()
 	} else if node.Spec.Client == ethereumv1alpha1.BesuClient {
-		linkStaticNodes := corev1.Container{
-			Name:    "link-static-nodes",
-			Image:   "busybox",
-			Command: []string{"/bin/ln"},
-			Args: []string{
-				"-sfn",
-				fmt.Sprintf("%s/static-nodes.json", PathConfig),
-				fmt.Sprintf("%s/static-nodes.json", PathBlockchainData),
-			},
-			VolumeMounts: volumeMounts,
-		}
-		initContainers = append(initContainers, linkStaticNodes)
 		initContainers = append(initContainers, dataDirPermissionFix)
 		nodeContainer.Image = BesuImage()
 	} else if node.Spec.Client == ethereumv1alpha1.ParityClient {

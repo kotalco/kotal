@@ -124,6 +124,8 @@ const (
 	BesuGraphQLHTTPCorsOrigins = "--graphql-http-cors-origins"
 	// BesuHostAllowlist is the argument used for whitelisting hosts
 	BesuHostAllowlist = "--host-allowlist"
+	// BesuStaticNodesFile is the argument used to locate static nodes file
+	BesuStaticNodesFile = "--static-nodes-file"
 )
 
 // Go ethereum client arguments
