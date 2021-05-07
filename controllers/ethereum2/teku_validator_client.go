@@ -39,8 +39,8 @@ func (t *TekuValidatorClient) Args() (args []string) {
 
 	args = append(args, TekuValidatorsKeystoreLockingEnabled, "false")
 
-	if validator.Spec.BeaconEndpoint != "" {
-		args = append(args, TekuBeaconNodeEndpoint, validator.Spec.BeaconEndpoint)
+	if len(validator.Spec.BeaconEndpoints) != 0 {
+		args = append(args, TekuBeaconNodeEndpoint, validator.Spec.BeaconEndpoints[0])
 	}
 
 	if validator.Spec.Graffiti != "" {

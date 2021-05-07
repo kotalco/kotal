@@ -41,8 +41,8 @@ func (t *PrysmValidatorClient) Args() (args []string) {
 
 	args = append(args, fmt.Sprintf("--%s", validator.Spec.Network))
 
-	if validator.Spec.BeaconEndpoint != "" {
-		args = append(args, PrysmBeaconRPCProvider, validator.Spec.BeaconEndpoint)
+	if len(validator.Spec.BeaconEndpoints) != 0 {
+		args = append(args, PrysmBeaconRPCProvider, validator.Spec.BeaconEndpoints[0])
 	}
 
 	if validator.Spec.Graffiti != "" {

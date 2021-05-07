@@ -101,8 +101,8 @@ const (
 	// LighthouseDiscoveryPort is the argument used for discovery udp port
 	LighthouseDiscoveryPort = "--discovery-port"
 
-	// LighthouseBeaconNodeEndpoint is the argument used for beacon node endpoint
-	LighthouseBeaconNodeEndpoint = "--beacon-node"
+	// LighthouseBeaconNodeEndpoints is the argument used for beacon node endpoint
+	LighthouseBeaconNodeEndpoints = "--beacon-nodes"
 	// LighthouseGraffiti is the argument used to include in proposed blocks
 	LighthouseGraffiti = "--graffiti"
 	// LighthouseDisableAutoDiscover is the argument used to disable auto validator keystores discovery

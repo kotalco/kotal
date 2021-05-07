@@ -40,7 +40,7 @@ func (t *NimbusValidatorClient) Args() (args []string) {
 
 	args = append(args, argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/kotal-validators/validator-secrets", shared.PathData(t.HomeDir()))))
 
-	endpoint := validator.Spec.BeaconEndpoint
+	endpoint := validator.Spec.BeaconEndpoints[0]
 
 	if endpoint != "" {
 		// TODO: validate endpoint is valid from webhook

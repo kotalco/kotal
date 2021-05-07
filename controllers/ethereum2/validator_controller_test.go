@@ -35,10 +35,10 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 		}
 
 		spec := ethereum2v1alpha1.ValidatorSpec{
-			Network:        "mainnet",
-			Client:         ethereum2v1alpha1.TekuClient,
-			BeaconEndpoint: "http://10.96.130.88:9999",
-			Graffiti:       "testing Kotal validator controller",
+			Network:         "mainnet",
+			Client:          ethereum2v1alpha1.TekuClient,
+			BeaconEndpoints: []string{"http://10.96.130.88:9999"},
+			Graffiti:        "testing Kotal validator controller",
 			Keystores: []ethereum2v1alpha1.Keystore{
 				{
 					SecretName: "my-validator",

@@ -14,10 +14,10 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 	It("Should generate correct client arguments", func() {
 		validator := &ethereum2v1alpha1.Validator{
 			Spec: ethereum2v1alpha1.ValidatorSpec{
-				Client:         ethereum2v1alpha1.NimbusClient,
-				Network:        "mainnet",
-				BeaconEndpoint: "http://10.0.0.11",
-				Graffiti:       "Validated by Kotal",
+				Client:          ethereum2v1alpha1.NimbusClient,
+				Network:         "mainnet",
+				BeaconEndpoints: []string{"http://10.0.0.11"},
+				Graffiti:        "Validated by Kotal",
 				Keystores: []ethereum2v1alpha1.Keystore{
 					{
 						SecretName: "my-validator",

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"os"
+	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -34,12 +35,11 @@ func (t *LighthouseValidatorClient) Args() (args []string) {
 
 	args = append(args, LighthouseNetwork, validator.Spec.Network)
 
+	// auto discovery is disabled because keystores has been loaded during initialization
 	args = append(args, LighthouseDisableAutoDiscover)
 
-	args = append(args, LighthouseInitSlashingProtection)
-
-	if validator.Spec.BeaconEndpoint != "" {
-		args = append(args, LighthouseBeaconNodeEndpoint, validator.Spec.BeaconEndpoint)
+	if len(validator.Spec.BeaconEndpoints) != 0 {
+		args = append(args, LighthouseBeaconNodeEndpoints, strings.Join(validator.Spec.BeaconEndpoints, ","))
 	}
 
 	if validator.Spec.Graffiti != "" {

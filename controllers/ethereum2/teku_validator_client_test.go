@@ -14,10 +14,10 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 	It("Should generate correct client arguments", func() {
 		validator := &ethereum2v1alpha1.Validator{
 			Spec: ethereum2v1alpha1.ValidatorSpec{
-				Client:         ethereum2v1alpha1.TekuClient,
-				Network:        "mainnet",
-				BeaconEndpoint: "http://localhost:9988",
-				Graffiti:       "Validated by Kotal",
+				Client:          ethereum2v1alpha1.TekuClient,
+				Network:         "mainnet",
+				BeaconEndpoints: []string{"http://localhost:9988"},
+				Graffiti:        "Validated by Kotal",
 				Keystores: []ethereum2v1alpha1.Keystore{
 					{
 						SecretName: "my-validator",
