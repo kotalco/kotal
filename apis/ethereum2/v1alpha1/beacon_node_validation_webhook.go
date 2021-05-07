@@ -45,9 +45,9 @@ func (r *BeaconNode) Validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
-	// eth1 endpoint is required by prysm
-	if r.Spec.Client == PrysmClient && len(r.Spec.Eth1Endpoints) == 0 {
-		err := field.Invalid(path.Child("eth1Endpoints"), "", fmt.Sprintf("required by %s client", r.Spec.Client))
+	// eth1 endpoint is required by prysm if network is not mainnet
+	if r.Spec.Client == PrysmClient && len(r.Spec.Eth1Endpoints) == 0 && r.Spec.Join != "mainnet" {
+		err := field.Invalid(path.Child("eth1Endpoints"), "", fmt.Sprintf("required by %s client if network is not mainnet", r.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
 	}
 

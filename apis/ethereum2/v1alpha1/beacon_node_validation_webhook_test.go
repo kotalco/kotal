@@ -128,7 +128,7 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Title: "Node #7",
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Join:   "mainnet",
+					Join:   "pyrmont",
 					Client: PrysmClient,
 					RPC:    true,
 				},
@@ -138,7 +138,7 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.eth1Endpoints",
 					BadValue: "",
-					Detail:   "required by prysm client",
+					Detail:   "required by prysm client if network is not mainnet",
 				},
 			},
 		},
