@@ -207,23 +207,6 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 		volumes = append(volumes, validatorSecretsVolume)
 	}
 
-	// lighthouse: validator_definitions.yml
-	if validator.Spec.Client == ethereum2v1alpha1.LighthouseClient {
-		validatorDefinitionsVolume := corev1.Volume{
-			// TODO: prepend validator name to avoid collision
-			Name: "validator-definitions",
-			VolumeSource: corev1.VolumeSource{
-				ConfigMap: &corev1.ConfigMapVolumeSource{
-					LocalObjectReference: corev1.LocalObjectReference{
-						Name: validator.Name,
-					},
-				},
-			},
-		}
-		volumes = append(volumes, validatorDefinitionsVolume)
-
-	}
-
 	// prysm: wallet password volume
 	if validator.Spec.Client == ethereum2v1alpha1.PrysmClient {
 		walletPasswordVolume := corev1.Volume{
@@ -272,15 +255,6 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 			MountPath: fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(homeDir), keystore.SecretName),
 		}
 		mounts = append(mounts, keystoreMount)
-	}
-
-	// Lighthouse validator_definitions.yml config
-	if validator.Spec.Client == ethereum2v1alpha1.LighthouseClient {
-		validatorDefinitionsMount := corev1.VolumeMount{
-			Name:      "validator-definitions",
-			MountPath: shared.PathConfig(homeDir),
-		}
-		mounts = append(mounts, validatorDefinitionsMount)
 	}
 
 	// prysm wallet password
