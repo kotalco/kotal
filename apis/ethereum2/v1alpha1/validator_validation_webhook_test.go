@@ -40,6 +40,28 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Validator #2",
+			Validator: &Validator{
+				Spec: ValidatorSpec{
+					Network:  "mainnet",
+					Client:   TekuClient,
+					Graffiti: "Kotal is amazing",
+					BeaconEndpoints: []string{
+						"http://10.96.130.88:9999",
+						"http://10.96.130.88:9988",
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.beaconEndpoints",
+					BadValue: "http://10.96.130.88:9999,http://10.96.130.88:9988",
+					Detail:   "multiple beacon node endpoints not supported by teku client",
+				},
+			},
+		},
 	}
 
 	updateCases := []struct {

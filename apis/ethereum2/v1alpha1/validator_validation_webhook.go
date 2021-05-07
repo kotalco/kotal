@@ -1,6 +1,9 @@
 package v1alpha1
 
 import (
+	"fmt"
+	"strings"
+
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -16,8 +19,17 @@ var _ webhook.Validator = &Validator{}
 func (r *Validator) Validate() field.ErrorList {
 	var validatorErrors field.ErrorList
 
+	// prysm requires wallet password
 	if r.Spec.Client == PrysmClient && r.Spec.WalletPasswordSecret == "" {
-		err := field.Invalid(field.NewPath("spec").Child("walletPasswordSecret"), r.Spec.WalletPasswordSecret, "must provide walletPasswordSecret if client is prysm")
+		msg := "must provide walletPasswordSecret if client is prysm"
+		err := field.Invalid(field.NewPath("spec").Child("walletPasswordSecret"), r.Spec.WalletPasswordSecret, msg)
+		validatorErrors = append(validatorErrors, err)
+	}
+
+	// lighthouse is the only client supporting multiple beacon endpoints
+	if r.Spec.Client != LighthouseClient && len(r.Spec.BeaconEndpoints) > 1 {
+		msg := fmt.Sprintf("multiple beacon node endpoints not supported by %s client", r.Spec.Client)
+		err := field.Invalid(field.NewPath("spec").Child("beaconEndpoints"), strings.Join(r.Spec.BeaconEndpoints, ","), msg)
 		validatorErrors = append(validatorErrors, err)
 	}
 
