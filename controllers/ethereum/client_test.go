@@ -10,9 +10,6 @@ import (
 
 var _ = Describe("Ethereum client arguments", func() {
 
-	besuClient, _ := NewEthereumClient(ethereumv1alpha1.BesuClient)
-	gethClient, _ := NewEthereumClient(ethereumv1alpha1.GethClient)
-	parityClient, _ := NewEthereumClient(ethereumv1alpha1.ParityClient)
 	coinbase := ethereumv1alpha1.EthereumAddress("0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d")
 	accountKey := ethereumv1alpha1.PrivateKey("0x5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd")
 	accountPassword := "secret"
@@ -43,7 +40,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuDataPath,
 				PathBlockchainData,
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
 				BesuBootnodes,
 				bootnode,
 			},
@@ -67,7 +63,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethDataDir,
 				PathBlockchainData,
 				GethLogging,
-				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
 				GethConfig,
 				GethBootnodes,
 				bootnode,
@@ -92,7 +87,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				ParityDataDir,
 				PathBlockchainData,
 				ParityLogging,
-				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
 				ParityDisableRPC,
 				ParityDisableWS,
 				ParityBootnodes,
@@ -119,7 +113,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuDataPath,
 				PathBlockchainData,
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.NoLogs),
 			},
 		},
 		{
@@ -141,7 +134,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethDataDir,
 				PathBlockchainData,
 				GethLogging,
-				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.AllLogs),
 				GethConfig,
 			},
 		},
@@ -165,7 +157,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				PathBlockchainData,
 				ParityNodeKey,
 				ParityLogging,
-				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 				ParityDisableRPC,
 				ParityDisableWS,
 			},
@@ -194,7 +185,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuRPCHTTPCorsOrigins,
 				BesuHostAllowlist,
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.FatalLogs),
 			},
 		},
 		{
@@ -218,7 +208,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				PathBlockchainData,
 				GethRPCHTTPEnabled,
 				GethLogging,
-				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 				GethConfig,
 				GethRPCHostWhitelist,
 				GethRPCHTTPCorsOrigins,
@@ -245,7 +234,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				PathBlockchainData,
 				ParityNodeKey,
 				ParityLogging,
-				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 				ParityDisableWS,
 				ParityRPCHostWhitelist,
 				ParityRPCHTTPCorsOrigins,
@@ -283,7 +271,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuRPCHTTPAPI,
 				"eth,web3,net",
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 				BesuHostAllowlist,
 				BesuRPCHTTPCorsOrigins,
 			},
@@ -319,7 +306,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethRPCHTTPAPI,
 				"eth,web3,net",
 				GethLogging,
-				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 				GethConfig,
 				GethRPCHostWhitelist,
 				GethRPCHTTPCorsOrigins,
@@ -356,7 +342,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				ParityRPCHTTPAPI,
 				"eth,web3,net",
 				ParityLogging,
-				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 				ParityDisableWS,
 				ParityRPCHostWhitelist,
 				ParityRPCHTTPCorsOrigins,
@@ -409,7 +394,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuRPCWSAPI,
 				"web3,eth",
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 				BesuHostAllowlist,
 				BesuRPCHTTPCorsOrigins,
 			},
@@ -460,7 +444,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethRPCWSAPI,
 				"web3,eth",
 				GethLogging,
-				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 				GethConfig,
 				GethRPCHostWhitelist,
 				GethRPCHTTPCorsOrigins,
@@ -512,7 +495,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				ParityRPCWSAPI,
 				"web3,eth",
 				ParityLogging,
-				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.TraceLogs),
 				ParityRPCHostWhitelist,
 				ParityRPCHTTPCorsOrigins,
 				ParityRPCWSWhitelist,
@@ -577,7 +559,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuGraphQLHTTPCorsOrigins,
 				"cors.example.com",
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.InfoLogs),
 				BesuHostAllowlist,
 			},
 		},
@@ -634,7 +615,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethGraphQLHTTPCorsOrigins,
 				"cors.example.com",
 				GethLogging,
-				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.InfoLogs),
 				GethConfig,
 				GethRPCHostWhitelist,
 				GethGraphQLHostWhitelist,
@@ -667,7 +647,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				BesuMinerCoinbase,
 				string(coinbase),
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 				BesuDiscoveryEnabled,
 				"false",
 			},
@@ -704,7 +683,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				GethPassword,
 				string(coinbase),
 				GethLogging,
-				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 				GethNoDiscovery,
 				GethConfig,
 			},
@@ -737,7 +715,6 @@ var _ = Describe("Ethereum client arguments", func() {
 				ParityUnlock,
 				ParityPassword,
 				ParityEngineSigner,
-				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.InfoLogs),
 				ParityDisableRPC,
 				ParityDisableWS,
 				ParityNoDiscovery,
@@ -750,9 +727,9 @@ var _ = Describe("Ethereum client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.node.Default()
-				client, err := NewEthereumClient(cc.node.Spec.Client)
+				client, err := NewEthereumClient(cc.node)
 				Expect(err).To(BeNil())
-				args := client.Args(cc.node)
+				args := client.Args()
 				Expect(args).To(ContainElements(cc.result))
 			})
 		}()

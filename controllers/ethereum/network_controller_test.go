@@ -35,9 +35,6 @@ var _ = Describe("Ethereum network controller", func() {
 
 	var (
 		useExistingCluster  = os.Getenv("USE_EXISTING_CLUSTER") == "true"
-		besuClient, _       = NewEthereumClient(ethereumv1alpha1.BesuClient)
-		gethClient, _       = NewEthereumClient(ethereumv1alpha1.GethClient)
-		parityClient, _     = NewEthereumClient(ethereumv1alpha1.ParityClient)
 		initGenesis         string
 		importGethAccount   string
 		importParityAccount string
@@ -207,7 +204,6 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuSyncMode,
 				string(ethereumv1alpha1.FullSynchronization),
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.NoLogs),
 			}))
 		})
 
@@ -306,7 +302,6 @@ var _ = Describe("Ethereum network controller", func() {
 				GethSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 				GethLogging,
-				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 				GethConfig,
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).ToNot(ContainElements([]string{
@@ -473,7 +468,6 @@ var _ = Describe("Ethereum network controller", func() {
 				ParitySyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 				ParityLogging,
-				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.ErrorLogs),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).ToNot(ContainElements([]string{
 				ethereumv1alpha1.MainNetwork,
@@ -761,7 +755,6 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuNodePrivateKey,
 				BesuSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.FatalLogs),
 			}))
 		})
 
@@ -871,7 +864,6 @@ var _ = Describe("Ethereum network controller", func() {
 				GethSyncMode,
 				string(ethereumv1alpha1.FullSynchronization),
 				GethLogging,
-				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 				GethConfig,
 			}))
 		})
@@ -1048,7 +1040,6 @@ var _ = Describe("Ethereum network controller", func() {
 				ParitySyncMode,
 				"archive",
 				ParityLogging,
-				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 			}))
 		})
 
@@ -1336,7 +1327,6 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuSyncMode,
 				string(ethereumv1alpha1.FullSynchronization),
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.DefaultLogging),
 				BesuDiscoveryEnabled,
 				"false",
 			}))
@@ -1447,7 +1437,6 @@ var _ = Describe("Ethereum network controller", func() {
 				GethSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 				GethLogging,
-				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 				GethNoDiscovery,
 				GethConfig,
 			}))
@@ -1617,7 +1606,6 @@ var _ = Describe("Ethereum network controller", func() {
 				ParityPassword,
 				ParityUnlock,
 				ParityEngineSigner,
-				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 				ParityNoDiscovery,
 			}))
 		})
@@ -1925,7 +1913,6 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuSyncMode,
 				string(ethereumv1alpha1.FullSynchronization),
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.TraceLogs),
 				BesuDiscoveryEnabled,
 				"false",
 			}))
@@ -2026,7 +2013,6 @@ var _ = Describe("Ethereum network controller", func() {
 				GethSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 				GethLogging,
-				gethClient.LoggingArgFromVerbosity(ethereumv1alpha1.AllLogs),
 				GethNoDiscovery,
 				GethConfig,
 			}))
@@ -2178,7 +2164,6 @@ var _ = Describe("Ethereum network controller", func() {
 				ParitySyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 				ParityLogging,
-				parityClient.LoggingArgFromVerbosity(ethereumv1alpha1.TraceLogs),
 				ParityNoDiscovery,
 			}))
 		})
@@ -2481,7 +2466,6 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuSyncMode,
 				string(ethereumv1alpha1.FullSynchronization),
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
 				BesuDiscoveryEnabled,
 				"false",
 			}))
@@ -2562,7 +2546,6 @@ var _ = Describe("Ethereum network controller", func() {
 				BesuSyncMode,
 				string(ethereumv1alpha1.FastSynchronization),
 				BesuLogging,
-				besuClient.LoggingArgFromVerbosity(ethereumv1alpha1.DebugLogs),
 			}))
 		})
 

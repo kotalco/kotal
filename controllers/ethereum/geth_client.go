@@ -9,7 +9,9 @@ import (
 )
 
 // GethClient is Go-Ethereum client
-type GethClient struct{}
+type GethClient struct {
+	node *ethereumv1alpha1.Node
+}
 
 // LoggingArgFromVerbosity returns logging argument from node verbosity level
 func (g *GethClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
@@ -26,7 +28,10 @@ func (g *GethClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLev
 }
 
 // Args returns command line arguments required for client run
-func (g *GethClient) Args(node *ethereumv1alpha1.Node) (args []string) {
+func (g *GethClient) Args() (args []string) {
+
+	node := g.node
+
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
 		args = append(args, arg...)
@@ -154,21 +159,22 @@ func (g *GethClient) Args(node *ethereumv1alpha1.Node) (args []string) {
 // EncodeStaticNodes returns the static nodes
 // [Node.P2P]
 // StaticNodes = [enodeURL1, enodeURL2 ...]
-func (g *GethClient) EncodeStaticNodes(node *ethereumv1alpha1.Node) string {
+func (g *GethClient) EncodeStaticNodes() string {
 
 	var encoded []byte
 
-	if len(node.Spec.StaticNodes) == 0 {
+	if len(g.node.Spec.StaticNodes) == 0 {
 		encoded = []byte("[]")
 	} else {
-		encoded, _ = json.Marshal(node.Spec.StaticNodes)
+		encoded, _ = json.Marshal(g.node.Spec.StaticNodes)
 	}
 
 	return fmt.Sprintf("[Node.P2P]\nStaticNodes = %s", string(encoded))
 }
 
 // Genesis returns genesis config parameter
-func (g *GethClient) Genesis(node *ethereumv1alpha1.Node) (content string, err error) {
+func (g *GethClient) Genesis() (content string, err error) {
+	node := g.node
 	genesis := node.Spec.Genesis
 	consensus := node.Spec.Consensus
 	mixHash := genesis.MixHash

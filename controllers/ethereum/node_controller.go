@@ -171,18 +171,18 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv
 		},
 	}
 
-	client, err := NewEthereumClient(node.Spec.Client)
+	client, err := NewEthereumClient(node)
 	if err != nil {
 		return err
 	}
 
-	staticNodes := client.EncodeStaticNodes(node)
+	staticNodes := client.EncodeStaticNodes()
 
 	// private network with custom genesis
 	if node.Spec.Genesis != nil {
 
 		// create client specific genesis configuration
-		if genesis, err = client.Genesis(node); err != nil {
+		if genesis, err = client.Genesis(); err != nil {
 			return err
 		}
 		// create init genesis script if client is geth
@@ -455,11 +455,11 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereu
 		},
 	}
 
-	client, err := NewEthereumClient(node.Spec.Client)
+	client, err := NewEthereumClient(node)
 	if err != nil {
 		return err
 	}
-	args := client.Args(node)
+	args := client.Args()
 	volumes := r.createNodeVolumes(node)
 	mounts := r.createNodeVolumeMounts(node)
 	affinity := r.getNodeAffinity(node)

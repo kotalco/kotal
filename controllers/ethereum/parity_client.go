@@ -15,7 +15,7 @@ import (
 
 // ParityClient is Go-Ethereum client
 type ParityClient struct {
-	NetworkID uint
+	node *ethereumv1alpha1.Node
 }
 
 // LoggingArgFromVerbosity returns logging argument from node verbosity level
@@ -33,7 +33,9 @@ func (p *ParityClient) PrunningArgFromSyncMode(mode ethereumv1alpha1.Synchroniza
 }
 
 // Args returns command line arguments required for client run
-func (p *ParityClient) Args(node *ethereumv1alpha1.Node) (args []string) {
+func (p *ParityClient) Args() (args []string) {
+	node := p.node
+
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
 		args = append(args, arg...)
@@ -156,7 +158,8 @@ func (p *ParityClient) NormalizeNonce(data string) string {
 }
 
 // Genesis returns genesis config parameter
-func (p *ParityClient) Genesis(node *ethereumv1alpha1.Node) (content string, err error) {
+func (p *ParityClient) Genesis() (content string, err error) {
+	node := p.node
 	genesis := node.Spec.Genesis
 	consensus := node.Spec.Consensus
 	extraData := "0x00"
@@ -306,9 +309,9 @@ func (p *ParityClient) Genesis(node *ethereumv1alpha1.Node) (content string, err
 }
 
 // EncodeStaticNodes returns the static nodes, one per line
-func (p *ParityClient) EncodeStaticNodes(node *ethereumv1alpha1.Node) string {
+func (p *ParityClient) EncodeStaticNodes() string {
 	nodes := []string{}
-	for _, s := range node.Spec.StaticNodes {
+	for _, s := range p.node.Spec.StaticNodes {
 		nodes = append(nodes, string(s))
 	}
 	return strings.Join(nodes, "\n")

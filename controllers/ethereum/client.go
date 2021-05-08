@@ -8,22 +8,22 @@ import (
 
 // EthereumClient is Ethereum client
 type EthereumClient interface {
-	Args(*ethereumv1alpha1.Node) []string
-	Genesis(*ethereumv1alpha1.Node) (string, error)
+	Args() []string
+	Genesis() (string, error)
 	LoggingArgFromVerbosity(ethereumv1alpha1.VerbosityLevel) string
-	EncodeStaticNodes(*ethereumv1alpha1.Node) string
+	EncodeStaticNodes() string
 }
 
 // NewEthereumClient returns an Ethereum client instance
-func NewEthereumClient(name ethereumv1alpha1.EthereumClient) (EthereumClient, error) {
-	switch name {
+func NewEthereumClient(node *ethereumv1alpha1.Node) (EthereumClient, error) {
+	switch node.Spec.Client {
 	case ethereumv1alpha1.BesuClient:
-		return &BesuClient{}, nil
+		return &BesuClient{node}, nil
 	case ethereumv1alpha1.GethClient:
-		return &GethClient{}, nil
+		return &GethClient{node}, nil
 	case ethereumv1alpha1.ParityClient:
-		return &ParityClient{}, nil
+		return &ParityClient{node}, nil
 	default:
-		return nil, fmt.Errorf("client %s is not supported", name)
+		return nil, fmt.Errorf("client %s is not supported", node.Spec.Client)
 	}
 }

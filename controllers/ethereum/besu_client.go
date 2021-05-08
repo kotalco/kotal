@@ -9,7 +9,9 @@ import (
 )
 
 // BesuClient is Hyperledger Besu client
-type BesuClient struct{}
+type BesuClient struct {
+	node *ethereumv1alpha1.Node
+}
 
 // LoggingArgFromVerbosity returns logging argument from node verbosity level
 func (b *BesuClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
@@ -17,7 +19,9 @@ func (b *BesuClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLev
 }
 
 // Args returns command line arguments required for client run
-func (b *BesuClient) Args(node *ethereumv1alpha1.Node) (args []string) {
+func (b *BesuClient) Args() (args []string) {
+
+	node := b.node
 
 	// appendArg appends argument with optional value to the arguments array
 	appendArg := func(arg ...string) {
@@ -139,7 +143,8 @@ func (b *BesuClient) Args(node *ethereumv1alpha1.Node) (args []string) {
 }
 
 // Genesis returns genesis config parameter
-func (b *BesuClient) Genesis(node *ethereumv1alpha1.Node) (content string, err error) {
+func (b *BesuClient) Genesis() (content string, err error) {
+	node := b.node
 	genesis := node.Spec.Genesis
 	consensus := node.Spec.Consensus
 	mixHash := genesis.MixHash
@@ -251,12 +256,12 @@ func (b *BesuClient) Genesis(node *ethereumv1alpha1.Node) (content string, err e
 }
 
 // EncodeStaticNodes returns the static nodes, one per line
-func (b *BesuClient) EncodeStaticNodes(node *ethereumv1alpha1.Node) string {
+func (b *BesuClient) EncodeStaticNodes() string {
 
-	if len(node.Spec.StaticNodes) == 0 {
+	if len(b.node.Spec.StaticNodes) == 0 {
 		return "[]"
 	}
 
-	encoded, _ := json.Marshal(node.Spec.StaticNodes)
+	encoded, _ := json.Marshal(b.node.Spec.StaticNodes)
 	return string(encoded)
 }
