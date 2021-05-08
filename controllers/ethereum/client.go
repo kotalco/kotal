@@ -10,6 +10,7 @@ import (
 type EthereumClient interface {
 	Image() string
 	Args() []string
+	HomeDir() string
 	Genesis() (string, error)
 	LoggingArgFromVerbosity(ethereumv1alpha1.VerbosityLevel) string
 	EncodeStaticNodes() string

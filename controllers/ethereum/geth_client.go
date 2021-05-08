@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // GethClient is Go-Ethereum client
@@ -19,7 +20,14 @@ const (
 	EnvGethImage = "GETH_IMAGE"
 	// DefaultGethImage is go-ethereum image
 	DefaultGethImage = "ethereum/client-go:v1.10.2"
+	// GethHomeDir is go-ethereum docker image home directory
+	GethHomeDir = "/root"
 )
+
+// HomeDir returns go-ethereum docker image home directory
+func (g *GethClient) HomeDir() string {
+	return GethHomeDir
+}
 
 // LoggingArgFromVerbosity returns logging argument from node verbosity level
 func (g *GethClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
@@ -48,14 +56,14 @@ func (g *GethClient) Args() (args []string) {
 	appendArg(GethLogging, g.LoggingArgFromVerbosity(node.Spec.Logging))
 
 	// config.toml holding static nodes
-	appendArg(GethConfig, fmt.Sprintf("%s/config.toml", PathConfig))
+	appendArg(GethConfig, fmt.Sprintf("%s/config.toml", shared.PathConfig(g.HomeDir())))
 
 	if node.Spec.ID != 0 {
 		appendArg(GethNetworkID, fmt.Sprintf("%d", node.Spec.ID))
 	}
 
 	if node.Spec.Nodekey != "" {
-		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", PathSecrets))
+		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(g.HomeDir())))
 	}
 
 	if len(node.Spec.Bootnodes) != 0 {
@@ -70,7 +78,7 @@ func (g *GethClient) Args() (args []string) {
 		appendArg(GethNoDiscovery)
 	}
 
-	appendArg(GethDataDir, PathBlockchainData)
+	appendArg(GethDataDir, shared.PathData(g.HomeDir()))
 
 	if node.Spec.Join != "" {
 		appendArg(fmt.Sprintf("--%s", node.Spec.Join))
@@ -91,7 +99,7 @@ func (g *GethClient) Args() (args []string) {
 	if node.Spec.Coinbase != "" {
 		appendArg(GethMinerCoinbase, string(node.Spec.Coinbase))
 		appendArg(GethUnlock, string(node.Spec.Coinbase))
-		appendArg(GethPassword, fmt.Sprintf("%s/account.password", PathSecrets))
+		appendArg(GethPassword, fmt.Sprintf("%s/account.password", shared.PathSecrets(g.HomeDir())))
 	}
 
 	if node.Spec.RPC {

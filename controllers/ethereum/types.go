@@ -4,14 +4,6 @@ const (
 	// staticNodesAnnotation is the annotation for static nodes
 	staticNodesAnnotation = "kotal.io/static-nodes"
 )
-const (
-	// PathConfig is the genesis file path
-	PathConfig = "/mnt/config"
-	// PathBlockchainData is the blockchain data path
-	PathBlockchainData = "/mnt/data"
-	// PathSecrets is the secrets (private keys, password ... etc) path
-	PathSecrets = "/mnt/secrets"
-)
 
 // Node settings
 const (

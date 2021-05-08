@@ -29,11 +29,11 @@ type InitGenesisInput struct {
 }
 
 // generateInitGenesisScript generates init genesis block script
-func generateInitGenesisScript() (script string, err error) {
+func generateInitGenesisScript(datadir, configdir string) (script string, err error) {
 
 	input := &InitGenesisInput{
-		DataDir:    PathBlockchainData,
-		GenesisDir: PathConfig,
+		DataDir:    datadir,
+		GenesisDir: configdir,
 	}
 
 	tmpl, err := template.New("master").Parse(initGenesisScriptTemplate)
@@ -51,12 +51,12 @@ func generateInitGenesisScript() (script string, err error) {
 	return
 }
 
-func generateImportAccountScript(client ethereumv1alpha1.EthereumClient) (script string, err error) {
+func generateImportAccountScript(client ethereumv1alpha1.EthereumClient, datadir, configdir, secretsdir string) (script string, err error) {
 	switch client {
 	case ethereumv1alpha1.GethClient:
-		return generateGethImportAccountScript()
+		return generateGethImportAccountScript(datadir, secretsdir)
 	case ethereumv1alpha1.ParityClient:
-		return generateParityImportAccountScript()
+		return generateParityImportAccountScript(datadir, configdir, secretsdir)
 	}
 
 	err = fmt.Errorf("generating init genesis for client %s is not supported", client)
@@ -84,11 +84,11 @@ type ImportGethAccountInput struct {
 }
 
 // generateGethImportAccountScript generates init genesis block script
-func generateGethImportAccountScript() (script string, err error) {
+func generateGethImportAccountScript(datadir, secretsdir string) (script string, err error) {
 
 	input := &ImportGethAccountInput{
-		DataDir:    PathBlockchainData,
-		SecretsDir: PathSecrets,
+		DataDir:    datadir,
+		SecretsDir: secretsdir,
 	}
 
 	tmpl, err := template.New("master").Parse(importGethAccountScriptTemplate)
@@ -128,12 +128,12 @@ type ImportParityAccountInput struct {
 }
 
 // generateParityImportAccountScript generates init genesis block script
-func generateParityImportAccountScript() (script string, err error) {
+func generateParityImportAccountScript(datadir, configdir, secretsdir string) (script string, err error) {
 
 	input := &ImportParityAccountInput{
-		ConfigDir:  PathConfig,
-		DataDir:    PathBlockchainData,
-		SecretsDir: PathSecrets,
+		DataDir:    datadir,
+		ConfigDir:  configdir,
+		SecretsDir: secretsdir,
 	}
 
 	tmpl, err := template.New("master").Parse(importParityAccountScriptTemplate)

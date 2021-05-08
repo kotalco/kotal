@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // BesuClient is Hyperledger Besu client
@@ -19,11 +20,18 @@ const (
 	EnvBesuImage = "BESU_IMAGE"
 	// DefaultBesuImage is hyperledger besu image
 	DefaultBesuImage = "hyperledger/besu:21.1.5"
+	// BesuHomeDir is besu docker image home directory
+	BesuHomeDir = "/opt/besu"
 )
 
 // LoggingArgFromVerbosity returns logging argument from node verbosity level
 func (b *BesuClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
 	return strings.ToUpper(string(level))
+}
+
+// HomeDir returns besu client home directory
+func (b *BesuClient) HomeDir() string {
+	return BesuHomeDir
 }
 
 // Args returns command line arguments required for client run
@@ -45,10 +53,10 @@ func (b *BesuClient) Args() (args []string) {
 	}
 
 	if node.Spec.Nodekey != "" {
-		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", PathSecrets))
+		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(b.HomeDir())))
 	}
 
-	appendArg(BesuStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", PathConfig))
+	appendArg(BesuStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(b.HomeDir())))
 
 	if len(node.Spec.Bootnodes) != 0 {
 		bootnodes := []string{}
@@ -59,10 +67,10 @@ func (b *BesuClient) Args() (args []string) {
 	}
 
 	if node.Spec.Genesis != nil {
-		appendArg(BesuGenesisFile, fmt.Sprintf("%s/genesis.json", PathConfig))
+		appendArg(BesuGenesisFile, fmt.Sprintf("%s/genesis.json", shared.PathConfig(b.HomeDir())))
 	}
 
-	appendArg(BesuDataPath, PathBlockchainData)
+	appendArg(BesuDataPath, shared.PathData(b.HomeDir()))
 
 	if node.Spec.Genesis == nil {
 		appendArg(BesuNetwork, node.Spec.Join)

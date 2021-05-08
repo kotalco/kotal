@@ -8,6 +8,7 @@ import (
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	"github.com/kotalco/kotal/apis/shared"
+	sharedController "github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	appsv1 "k8s.io/api/apps/v1"
@@ -34,21 +35,8 @@ var _ = Describe("Ethereum network controller", func() {
 	)
 
 	var (
-		useExistingCluster  = os.Getenv("USE_EXISTING_CLUSTER") == "true"
-		initGenesis         string
-		importGethAccount   string
-		importParityAccount string
+		useExistingCluster = os.Getenv("USE_EXISTING_CLUSTER") == "true"
 	)
-
-	It("Should generate init container scripts", func() {
-		var err error
-		initGenesis, err = generateInitGenesisScript()
-		Expect(err).To(BeNil())
-		importGethAccount, err = generateImportAccountScript(ethereumv1alpha1.GethClient)
-		Expect(err).To(BeNil())
-		importParityAccount, err = generateImportAccountScript(ethereumv1alpha1.ParityClient)
-		Expect(err).To(BeNil())
-	})
 
 	if useExistingCluster {
 		It("Should label all nodes with topology key", func() {
@@ -861,7 +849,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
-				fmt.Sprintf("%s/import-account.sh", PathConfig),
+				fmt.Sprintf("%s/import-account.sh", sharedController.PathConfig(node2Client.HomeDir())),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				"--rinkeby",
@@ -1038,7 +1026,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal("busybox"))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node3Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
-				fmt.Sprintf("%s/import-account.sh", PathConfig),
+				fmt.Sprintf("%s/import-account.sh", sharedController.PathConfig(node3Client.HomeDir())),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node3Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
@@ -1429,8 +1417,8 @@ var _ = Describe("Ethereum network controller", func() {
 			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 			Expect(k8sClient.Get(context.Background(), node2Key, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
-			Expect(genesisConfig.Data["init-genesis.sh"]).To(Equal(initGenesis))
-			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importGethAccount))
+			Expect(genesisConfig.Data).To(HaveKey("init-genesis.sh"))
+			Expect(genesisConfig.Data).To(HaveKey("import-account.sh"))
 		})
 
 		It("Should create node-2 statefulset with correct arguments", func() {
@@ -1440,11 +1428,11 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
-				fmt.Sprintf("%s/init-genesis.sh", PathConfig),
+				fmt.Sprintf("%s/init-genesis.sh", sharedController.PathConfig(node2Client.HomeDir())),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
-				fmt.Sprintf("%s/import-account.sh", PathConfig),
+				fmt.Sprintf("%s/import-account.sh", sharedController.PathConfig(node2Client.HomeDir())),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,
@@ -1600,7 +1588,7 @@ var _ = Describe("Ethereum network controller", func() {
 			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 			Expect(k8sClient.Get(context.Background(), node3Key, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
-			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importParityAccount))
+			Expect(genesisConfig.Data).To(HaveKey("import-account.sh"))
 		})
 
 		It("Should create node-3 statefulset with correct arguments", func() {
@@ -1610,7 +1598,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal("busybox"))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node3Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
-				fmt.Sprintf("%s/import-account.sh", PathConfig),
+				fmt.Sprintf("%s/import-account.sh", sharedController.PathConfig(node3Client.HomeDir())),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node3Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
@@ -2011,8 +1999,8 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-2 genesis and scripts block configmap", func() {
 			genesisConfig := &corev1.ConfigMap{}
 			Expect(k8sClient.Get(context.Background(), node2Key, genesisConfig)).To(Succeed())
-			Expect(genesisConfig.Data["init-genesis.sh"]).To(Equal(initGenesis))
-			Expect(genesisConfig.Data["import-account.sh"]).To(Equal(importGethAccount))
+			Expect(genesisConfig.Data).To(HaveKey("init-genesis.sh"))
+			Expect(genesisConfig.Data).To(HaveKey("import-account.sh"))
 		})
 
 		It("Should create node-2 statefulset with correct arguments", func() {
@@ -2022,11 +2010,11 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
-				fmt.Sprintf("%s/init-genesis.sh", PathConfig),
+				fmt.Sprintf("%s/init-genesis.sh", sharedController.PathConfig(node2Client.HomeDir())),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
-				fmt.Sprintf("%s/import-account.sh", PathConfig),
+				fmt.Sprintf("%s/import-account.sh", sharedController.PathConfig(node2Client.HomeDir())),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				GethDataDir,

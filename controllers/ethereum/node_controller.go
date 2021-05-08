@@ -187,7 +187,7 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv
 		}
 		// create init genesis script if client is geth
 		if node.Spec.Client == ethereumv1alpha1.GethClient {
-			initGenesisScript, err = generateInitGenesisScript()
+			initGenesisScript, err = generateInitGenesisScript(shared.PathData(client.HomeDir()), shared.PathConfig(client.HomeDir()))
 			if err != nil {
 				return err
 			}
@@ -198,7 +198,7 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv
 	// create import account script
 	if node.Spec.Import != nil {
 		var err error
-		importAccountScript, err = generateImportAccountScript(node.Spec.Client)
+		importAccountScript, err = generateImportAccountScript(node.Spec.Client, shared.PathData(client.HomeDir()), shared.PathConfig(client.HomeDir()), shared.PathSecrets(client.HomeDir()))
 		if err != nil {
 			return err
 		}
@@ -306,14 +306,14 @@ func (r *NodeReconciler) createNodeVolumes(node *ethereumv1alpha1.Node) []corev1
 }
 
 // createNodeVolumeMounts creates all required volume mounts for the node
-func (r *NodeReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node) []corev1.VolumeMount {
+func (r *NodeReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, homedir string) []corev1.VolumeMount {
 
 	volumeMounts := []corev1.VolumeMount{}
 
 	if node.Spec.Nodekey != "" || node.Spec.Import != nil {
 		nodekeyMount := corev1.VolumeMount{
 			Name:      "secrets",
-			MountPath: PathSecrets,
+			MountPath: shared.PathSecrets(homedir),
 			ReadOnly:  true,
 		}
 		volumeMounts = append(volumeMounts, nodekeyMount)
@@ -321,14 +321,14 @@ func (r *NodeReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node) []c
 
 	genesisMount := corev1.VolumeMount{
 		Name:      "config",
-		MountPath: PathConfig,
+		MountPath: shared.PathConfig(homedir),
 		ReadOnly:  true,
 	}
 	volumeMounts = append(volumeMounts, genesisMount)
 
 	dataMount := corev1.VolumeMount{
 		Name:      "data",
-		MountPath: PathBlockchainData,
+		MountPath: shared.PathData(homedir),
 	}
 	volumeMounts = append(volumeMounts, dataMount)
 
@@ -358,7 +358,7 @@ func (r *NodeReconciler) getNodeAffinity(node *ethereumv1alpha1.Node) *corev1.Af
 }
 
 // specStatefulset updates node statefulset spec
-func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv1.StatefulSet, img string, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
+func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv1.StatefulSet, img, homedir string, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
 	labels := node.GetLabels()
 	// used by geth to init genesis and import account(s)
 	initContainers := []corev1.Container{}
@@ -385,7 +385,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 		Name:         "data-dir-permission-fix",
 		Image:        "busybox",
 		Command:      []string{"/bin/chmod"},
-		Args:         []string{"-R", "777", PathBlockchainData},
+		Args:         []string{"-R", "777", shared.PathData(homedir)},
 		VolumeMounts: volumeMounts,
 	}
 
@@ -395,7 +395,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 				Name:         "init-genesis",
 				Image:        img,
 				Command:      []string{"/bin/sh"},
-				Args:         []string{fmt.Sprintf("%s/init-genesis.sh", PathConfig)},
+				Args:         []string{fmt.Sprintf("%s/init-genesis.sh", shared.PathConfig(homedir))},
 				VolumeMounts: volumeMounts,
 			}
 			initContainers = append(initContainers, initGenesis)
@@ -405,7 +405,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 				Name:         "import-account",
 				Image:        img,
 				Command:      []string{"/bin/sh"},
-				Args:         []string{fmt.Sprintf("%s/import-account.sh", PathConfig)},
+				Args:         []string{fmt.Sprintf("%s/import-account.sh", shared.PathConfig(homedir))},
 				VolumeMounts: volumeMounts,
 			}
 			initContainers = append(initContainers, importAccount)
@@ -422,7 +422,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 				Name:         "import-account",
 				Image:        img,
 				Command:      []string{"/bin/sh"},
-				Args:         []string{fmt.Sprintf("%s/import-account.sh", PathConfig)},
+				Args:         []string{fmt.Sprintf("%s/import-account.sh", shared.PathConfig(homedir))},
 				VolumeMounts: volumeMounts,
 			}
 			initContainers = append(initContainers, importAccount)
@@ -460,16 +460,17 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereu
 		return err
 	}
 	img := client.Image()
+	homedir := client.HomeDir()
 	args := client.Args()
 	volumes := r.createNodeVolumes(node)
-	mounts := r.createNodeVolumeMounts(node)
+	mounts := r.createNodeVolumeMounts(node, homedir)
 	affinity := r.getNodeAffinity(node)
 
 	_, err = ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specStatefulset(node, sts, img, args, volumes, mounts, affinity)
+		r.specStatefulset(node, sts, img, homedir, args, volumes, mounts, affinity)
 		return nil
 	})
 

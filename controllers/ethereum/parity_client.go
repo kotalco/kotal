@@ -11,6 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/crypto"
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // ParityClient is Go-Ethereum client
@@ -23,7 +24,14 @@ const (
 	EnvParityImage = "PARITY_IMAGE"
 	// DefaultParityImage is parity image
 	DefaultParityImage = "openethereum/openethereum:v3.2.4"
+	// ParityHomeDir is parity docker image home directory
+	ParityHomeDir = "/home/openethereum"
 )
+
+// HomeDir returns parity docker image home directory
+func (p *ParityClient) HomeDir() string {
+	return ParityHomeDir
+}
 
 // LoggingArgFromVerbosity returns logging argument from node verbosity level
 func (p *ParityClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
@@ -55,7 +63,7 @@ func (p *ParityClient) Args() (args []string) {
 	}
 
 	if node.Spec.Nodekey != "" {
-		appendArg(ParityNodeKey, fmt.Sprintf("%s/nodekey", PathSecrets))
+		appendArg(ParityNodeKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(p.HomeDir())))
 	}
 
 	if len(node.Spec.Bootnodes) != 0 {
@@ -66,16 +74,16 @@ func (p *ParityClient) Args() (args []string) {
 		appendArg(ParityBootnodes, strings.Join(bootnodes, ","))
 	}
 
-	appendArg(ParityDataDir, PathBlockchainData)
+	appendArg(ParityDataDir, shared.PathData(p.HomeDir()))
 
-	appendArg(ParityReservedPeers, fmt.Sprintf("%s/static-nodes", PathConfig))
+	appendArg(ParityReservedPeers, fmt.Sprintf("%s/static-nodes", shared.PathConfig(p.HomeDir())))
 
 	if node.Spec.Genesis == nil {
 		if node.Spec.Join != ethereumv1alpha1.MainNetwork {
 			appendArg(ParityNetwork, node.Spec.Join)
 		}
 	} else {
-		appendArg(ParityNetwork, fmt.Sprintf("%s/genesis.json", PathConfig))
+		appendArg(ParityNetwork, fmt.Sprintf("%s/genesis.json", shared.PathConfig(p.HomeDir())))
 		appendArg(ParityNoDiscovery)
 	}
 
@@ -90,7 +98,7 @@ func (p *ParityClient) Args() (args []string) {
 	if node.Spec.Coinbase != "" {
 		appendArg(ParityMinerCoinbase, string(node.Spec.Coinbase))
 		appendArg(ParityUnlock, string(node.Spec.Coinbase))
-		appendArg(ParityPassword, fmt.Sprintf("%s/account.password", PathSecrets))
+		appendArg(ParityPassword, fmt.Sprintf("%s/account.password", shared.PathSecrets(p.HomeDir())))
 		if node.Spec.Consensus == ethereumv1alpha1.ProofOfAuthority {
 			appendArg(ParityEngineSigner, string(node.Spec.Coinbase))
 		}
