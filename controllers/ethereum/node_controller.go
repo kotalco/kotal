@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
 	"strings"
 
@@ -26,6 +27,11 @@ type NodeReconciler struct {
 	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
+
+var (
+	//go:embed init_geth_genesis.sh
+	initGethGenesisScript string
+)
 
 // +kubebuilder:rbac:groups=ethereum.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ethereum.kotal.io,resources=nodes/status,verbs=get;update;patch
@@ -131,13 +137,13 @@ func (r *NodeReconciler) updateStaticNodes(node *ethereumv1alpha1.Node) {
 }
 
 // specConfigmap updates genesis configmap spec
-func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *corev1.ConfigMap, genesis, initGenesisScript, importAccountScript, staticNodes string) {
+func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *corev1.ConfigMap, genesis, importAccountScript, staticNodes string) {
 	if configmap.Data == nil {
 		configmap.Data = map[string]string{}
 	}
 
 	configmap.Data["genesis.json"] = genesis
-	configmap.Data["init-genesis.sh"] = initGenesisScript
+	configmap.Data["init-geth-genesis.sh"] = initGethGenesisScript
 	configmap.Data["import-account.sh"] = importAccountScript
 
 	var key string
@@ -162,7 +168,7 @@ func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *c
 // reconcileConfigmap creates genesis config map if it doesn't exist or update it
 func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv1alpha1.Node) error {
 
-	var genesis, initGenesisScript, importAccountScript string
+	var genesis, importAccountScript string
 
 	configmap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
@@ -185,13 +191,6 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv
 		if genesis, err = client.Genesis(); err != nil {
 			return err
 		}
-		// create init genesis script if client is geth
-		if node.Spec.Client == ethereumv1alpha1.GethClient {
-			initGenesisScript, err = generateInitGenesisScript(shared.PathData(client.HomeDir()), shared.PathConfig(client.HomeDir()))
-			if err != nil {
-				return err
-			}
-		}
 	}
 
 	// geth and parity
@@ -210,7 +209,7 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv
 			return err
 		}
 
-		r.specConfigmap(node, configmap, genesis, initGenesisScript, importAccountScript, staticNodes)
+		r.specConfigmap(node, configmap, genesis, importAccountScript, staticNodes)
 
 		return nil
 	})
@@ -392,10 +391,20 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 	if node.Spec.Client == ethereumv1alpha1.GethClient {
 		if node.Spec.Genesis != nil {
 			initGenesis := corev1.Container{
-				Name:         "init-genesis",
-				Image:        img,
+				Name:  "init-geth-genesis",
+				Image: img,
+				Env: []corev1.EnvVar{
+					{
+						Name:  EnvDataPath,
+						Value: shared.PathData(homedir),
+					},
+					{
+						Name:  EnvConfigPath,
+						Value: shared.PathConfig(homedir),
+					},
+				},
 				Command:      []string{"/bin/sh"},
-				Args:         []string{fmt.Sprintf("%s/init-genesis.sh", shared.PathConfig(homedir))},
+				Args:         []string{fmt.Sprintf("%s/init-geth-genesis.sh", shared.PathConfig(homedir))},
 				VolumeMounts: volumeMounts,
 			}
 			initContainers = append(initContainers, initGenesis)

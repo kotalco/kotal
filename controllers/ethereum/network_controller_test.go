@@ -1417,7 +1417,7 @@ var _ = Describe("Ethereum network controller", func() {
 			expectedExtraData := "0x0000000000000000000000000000000000000000000000000000000000000000d2c21213027cbf4d46c16b55fa98e5252b0487060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 			Expect(k8sClient.Get(context.Background(), node2Key, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
-			Expect(genesisConfig.Data).To(HaveKey("init-genesis.sh"))
+			Expect(genesisConfig.Data).To(HaveKey("init-geth-genesis.sh"))
 			Expect(genesisConfig.Data).To(HaveKey("import-account.sh"))
 		})
 
@@ -1428,7 +1428,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
-				fmt.Sprintf("%s/init-genesis.sh", sharedController.PathConfig(node2Client.HomeDir())),
+				fmt.Sprintf("%s/init-geth-genesis.sh", sharedController.PathConfig(node2Client.HomeDir())),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
@@ -1999,7 +1999,7 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create node-2 genesis and scripts block configmap", func() {
 			genesisConfig := &corev1.ConfigMap{}
 			Expect(k8sClient.Get(context.Background(), node2Key, genesisConfig)).To(Succeed())
-			Expect(genesisConfig.Data).To(HaveKey("init-genesis.sh"))
+			Expect(genesisConfig.Data).To(HaveKey("init-geth-genesis.sh"))
 			Expect(genesisConfig.Data).To(HaveKey("import-account.sh"))
 		})
 
@@ -2010,7 +2010,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
-				fmt.Sprintf("%s/init-genesis.sh", sharedController.PathConfig(node2Client.HomeDir())),
+				fmt.Sprintf("%s/init-geth-genesis.sh", sharedController.PathConfig(node2Client.HomeDir())),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
