@@ -358,7 +358,7 @@ func (r *NodeReconciler) getNodeAffinity(node *ethereumv1alpha1.Node) *corev1.Af
 }
 
 // specStatefulset updates node statefulset spec
-func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv1.StatefulSet, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
+func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv1.StatefulSet, img string, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
 	labels := node.GetLabels()
 	// used by geth to init genesis and import account(s)
 	initContainers := []corev1.Container{}
@@ -393,7 +393,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 		if node.Spec.Genesis != nil {
 			initGenesis := corev1.Container{
 				Name:         "init-genesis",
-				Image:        GethImage(),
+				Image:        img,
 				Command:      []string{"/bin/sh"},
 				Args:         []string{fmt.Sprintf("%s/init-genesis.sh", PathConfig)},
 				VolumeMounts: volumeMounts,
@@ -403,7 +403,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 		if node.Spec.Import != nil {
 			importAccount := corev1.Container{
 				Name:         "import-account",
-				Image:        GethImage(),
+				Image:        img,
 				Command:      []string{"/bin/sh"},
 				Args:         []string{fmt.Sprintf("%s/import-account.sh", PathConfig)},
 				VolumeMounts: volumeMounts,
@@ -411,23 +411,23 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 			initContainers = append(initContainers, importAccount)
 		}
 
-		nodeContainer.Image = GethImage()
+		nodeContainer.Image = img
 	} else if node.Spec.Client == ethereumv1alpha1.BesuClient {
 		initContainers = append(initContainers, dataDirPermissionFix)
-		nodeContainer.Image = BesuImage()
+		nodeContainer.Image = img
 	} else if node.Spec.Client == ethereumv1alpha1.ParityClient {
 		initContainers = append(initContainers, dataDirPermissionFix)
 		if node.Spec.Import != nil {
 			importAccount := corev1.Container{
 				Name:         "import-account",
-				Image:        ParityImage(),
+				Image:        img,
 				Command:      []string{"/bin/sh"},
 				Args:         []string{fmt.Sprintf("%s/import-account.sh", PathConfig)},
 				VolumeMounts: volumeMounts,
 			}
 			initContainers = append(initContainers, importAccount)
 		}
-		nodeContainer.Image = ParityImage()
+		nodeContainer.Image = img
 	}
 
 	sts.ObjectMeta.Labels = labels
@@ -459,6 +459,7 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereu
 	if err != nil {
 		return err
 	}
+	img := client.Image()
 	args := client.Args()
 	volumes := r.createNodeVolumes(node)
 	mounts := r.createNodeVolumeMounts(node)
@@ -468,7 +469,7 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereu
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specStatefulset(node, sts, args, volumes, mounts, affinity)
+		r.specStatefulset(node, sts, img, args, volumes, mounts, affinity)
 		return nil
 	})
 

@@ -92,6 +92,8 @@ var _ = Describe("Ethereum network controller", func() {
 			},
 		}
 
+		var bootnodeClient, node2Client, node3Client EthereumClient
+
 		toCreate := &ethereumv1alpha1.Network{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      key.Name,
@@ -157,6 +159,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, fetched)).To(Succeed())
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
+			bootnodeClient, _ = NewEthereumClient(fetched)
 		})
 
 		It("Should create configs (genesis, init scripts, static nodes ...) configmap", func() {
@@ -195,7 +198,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(bootnodeClient.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuNetwork,
 				"mainnet",
@@ -270,6 +273,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = node2Key.Name
+			node2Client, _ = NewEthereumClient(fetched)
 		})
 
 		if useExistingCluster {
@@ -292,7 +296,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				"--mainnet",
 				GethDataDir,
@@ -438,6 +442,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = node3Key.Name
+			node3Client, _ = NewEthereumClient(fetched)
 		})
 
 		if useExistingCluster {
@@ -460,7 +465,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node3Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
 				ParityRPCHTTPPort,
@@ -644,6 +649,8 @@ var _ = Describe("Ethereum network controller", func() {
 			},
 		}
 
+		var bootnodeClient, node2Client, node3Client EthereumClient
+
 		toCreate := &ethereumv1alpha1.Network{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      key.Name,
@@ -709,6 +716,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = bootnodeKey.Name
+			bootnodeClient, _ = NewEthereumClient(fetched)
 		})
 
 		It("Should create configs (genesis, init scripts, static nodes ...) configmap", func() {
@@ -747,7 +755,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(bootnodeClient.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuNetwork,
 				"rinkeby",
@@ -827,6 +835,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = node2Key.Name
+			node2Client, _ = NewEthereumClient(fetched)
 		})
 
 		if useExistingCluster {
@@ -849,8 +858,8 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node2Client.Image()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
@@ -1003,6 +1012,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = node3Key.Name
+			node3Client, _ = NewEthereumClient(fetched)
 		})
 
 		if useExistingCluster {
@@ -1026,11 +1036,11 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal("busybox"))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node3Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node3Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				"rinkeby",
 				ParityDataDir,
@@ -1255,6 +1265,8 @@ var _ = Describe("Ethereum network controller", func() {
 			Namespace: key.Namespace,
 		}
 
+		var bootnodeClient, node2Client, node3Client EthereumClient
+
 		cpu := "500m"
 		cpuLimit := "750m"
 		memory := "1500Mi"
@@ -1287,6 +1299,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = bootnodeKey.Name
+			bootnodeClient, _ = NewEthereumClient(fetched)
 		})
 
 		It("Should create bootnode privatekey secret with correct data", func() {
@@ -1320,7 +1333,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(bootnodeClient.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
@@ -1408,6 +1421,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = node2Key.Name
+			node2Client, _ = NewEthereumClient(fetched)
 		})
 
 		It("Should create node-2 genesis block and scripts configmap", func() {
@@ -1423,12 +1437,12 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node2Client.Image()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/init-genesis.sh", PathConfig),
 			}))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
@@ -1578,6 +1592,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = node3Key.Name
+			node3Client, _ = NewEthereumClient(fetched)
 		})
 
 		It("Should create node-3 genesis block and scripts configmap", func() {
@@ -1593,11 +1608,11 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal("busybox"))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node3Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node3Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
 				ParitySyncMode,
@@ -1837,6 +1852,9 @@ var _ = Describe("Ethereum network controller", func() {
 			Name:      fmt.Sprintf("%s-%s", toCreate.Name, "node-3"),
 			Namespace: key.Namespace,
 		}
+
+		var bootnodeClient, node2Client, node3Client EthereumClient
+
 		cpu := "1"
 		cpuLimit := "1500m"
 		memory := "1500Mi"
@@ -1868,6 +1886,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = bootnodeKey.Name
+			bootnodeClient, _ = NewEthereumClient(fetched)
 		})
 
 		It("Should create bootnode genesis block configmap", func() {
@@ -1906,7 +1925,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(bootnodeClient.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
@@ -1986,6 +2005,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = node2Key.Name
+			node2Client, _ = NewEthereumClient(fetched)
 		})
 
 		It("Should create node-2 genesis and scripts block configmap", func() {
@@ -1999,12 +2019,12 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(GethImage()))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node2Client.Image()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/init-genesis.sh", PathConfig),
 			}))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(GethImage()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", PathConfig),
 			}))
@@ -2147,6 +2167,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = node3Key.Name
+			node3Client, _ = NewEthereumClient(fetched)
 		})
 
 		It("Should create node-3 genesis and scripts block configmap", func() {
@@ -2158,7 +2179,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(ParityImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node3Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				ParityDataDir,
 				ParitySyncMode,
@@ -2393,6 +2414,8 @@ var _ = Describe("Ethereum network controller", func() {
 			Namespace: key.Namespace,
 		}
 
+		var bootnodeClient, node2Client EthereumClient
+
 		It(fmt.Sprintf("should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
 		})
@@ -2419,6 +2442,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = bootnodeKey.Name
+			bootnodeClient, _ = NewEthereumClient(fetched)
 		})
 
 		It("Should create bootnode genesis block configmap", func() {
@@ -2459,7 +2483,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(bootnodeClient.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuNodePrivateKey,
@@ -2532,13 +2556,14 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.GetOwnerReferences()).To(ContainElement(networkOwnerReference))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = node2Key.Name
+			node2Client, _ = NewEthereumClient(fetched)
 		})
 
 		It("Should create node-2 statefulset with correct arguments", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(BesuImage()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node2Client.Image()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
 				BesuDataPath,
 				BesuRPCHTTPEnabled,

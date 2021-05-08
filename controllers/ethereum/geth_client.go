@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
@@ -12,6 +13,13 @@ import (
 type GethClient struct {
 	node *ethereumv1alpha1.Node
 }
+
+const (
+	// EnvGethImage is the environment variable used for go ethereum image
+	EnvGethImage = "GETH_IMAGE"
+	// DefaultGethImage is go-ethereum image
+	DefaultGethImage = "ethereum/client-go:v1.10.2"
+)
 
 // LoggingArgFromVerbosity returns logging argument from node verbosity level
 func (g *GethClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
@@ -257,4 +265,12 @@ func (g *GethClient) Genesis() (content string, err error) {
 	content = string(data)
 
 	return
+}
+
+// Image returns geth docker image
+func (g *GethClient) Image() string {
+	if os.Getenv(EnvGethImage) == "" {
+		return DefaultGethImage
+	}
+	return os.Getenv(EnvGethImage)
 }

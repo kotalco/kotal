@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
@@ -12,6 +13,13 @@ import (
 type BesuClient struct {
 	node *ethereumv1alpha1.Node
 }
+
+const (
+	// EnvBesuImage is the environment variable used for hyperledger besu image
+	EnvBesuImage = "BESU_IMAGE"
+	// DefaultBesuImage is hyperledger besu image
+	DefaultBesuImage = "hyperledger/besu:21.1.5"
+)
 
 // LoggingArgFromVerbosity returns logging argument from node verbosity level
 func (b *BesuClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
@@ -264,4 +272,12 @@ func (b *BesuClient) EncodeStaticNodes() string {
 
 	encoded, _ := json.Marshal(b.node.Spec.StaticNodes)
 	return string(encoded)
+}
+
+// Image returns besu docker image
+func (b *BesuClient) Image() string {
+	if os.Getenv(EnvBesuImage) == "" {
+		return DefaultBesuImage
+	}
+	return os.Getenv(EnvBesuImage)
 }

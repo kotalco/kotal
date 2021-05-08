@@ -1,7 +1,5 @@
 package controllers
 
-import "os"
-
 const (
 	// staticNodesAnnotation is the annotation for static nodes
 	staticNodesAnnotation = "kotal.io/static-nodes"
@@ -15,16 +13,6 @@ const (
 	PathSecrets = "/mnt/secrets"
 )
 
-// Images
-const (
-	// DefaultBesuImage is hyperledger besu image
-	DefaultBesuImage = "hyperledger/besu:21.1.5"
-	// DefaultGethImage is go-ethereum image
-	DefaultGethImage = "ethereum/client-go:v1.10.2"
-	// DefaultParityImage is parity image
-	DefaultParityImage = "openethereum/openethereum:v3.2.4"
-)
-
 // Node settings
 const (
 	// DefaultHost is the host address used by rpc, ws and graphql server
@@ -34,39 +22,6 @@ const (
 	// in most use cases the value 0.0.0.0 makes most sense.
 	DefaultHost = "0.0.0.0"
 )
-
-const (
-	// EnvBesuImage is the environment variable used for hyperledger besu image
-	EnvBesuImage = "BESU_IMAGE"
-	// EnvGethImage is the environment variable used for go ethereum image
-	EnvGethImage = "GETH_IMAGE"
-	// EnvParityImage is the environment variable used for parity (OpenEthereum)
-	EnvParityImage = "PARITY_IMAGE"
-)
-
-// GethImage returns geth docker image
-func GethImage() string {
-	if os.Getenv(EnvGethImage) == "" {
-		return DefaultGethImage
-	}
-	return os.Getenv(EnvGethImage)
-}
-
-// BesuImage returns besu docker image
-func BesuImage() string {
-	if os.Getenv(EnvBesuImage) == "" {
-		return DefaultBesuImage
-	}
-	return os.Getenv(EnvBesuImage)
-}
-
-// ParityImage returns parity docker image
-func ParityImage() string {
-	if os.Getenv(EnvParityImage) == "" {
-		return DefaultParityImage
-	}
-	return os.Getenv(EnvParityImage)
-}
 
 // Hyperledger Besu client arguments
 const (

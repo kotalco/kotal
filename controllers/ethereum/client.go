@@ -8,6 +8,7 @@ import (
 
 // EthereumClient is Ethereum client
 type EthereumClient interface {
+	Image() string
 	Args() []string
 	Genesis() (string, error)
 	LoggingArgFromVerbosity(ethereumv1alpha1.VerbosityLevel) string

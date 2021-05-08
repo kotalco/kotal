@@ -18,6 +18,13 @@ type ParityClient struct {
 	node *ethereumv1alpha1.Node
 }
 
+const (
+	// EnvParityImage is the environment variable used for parity (OpenEthereum)
+	EnvParityImage = "PARITY_IMAGE"
+	// DefaultParityImage is parity image
+	DefaultParityImage = "openethereum/openethereum:v3.2.4"
+)
+
 // LoggingArgFromVerbosity returns logging argument from node verbosity level
 func (p *ParityClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
 	return string(level)
@@ -315,6 +322,14 @@ func (p *ParityClient) EncodeStaticNodes() string {
 		nodes = append(nodes, string(s))
 	}
 	return strings.Join(nodes, "\n")
+}
+
+// Image returns parity docker image
+func (p *ParityClient) Image() string {
+	if os.Getenv(EnvParityImage) == "" {
+		return DefaultParityImage
+	}
+	return os.Getenv(EnvParityImage)
 }
 
 // KeyStoreFromPrivatekey generates key store from private key (hex without 0x)
