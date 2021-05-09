@@ -31,6 +31,10 @@ type NodeReconciler struct {
 var (
 	//go:embed init_geth_genesis.sh
 	initGethGenesisScript string
+	//go:embed geth_import_account.sh
+	gethImportAccountScript string
+	//go:embed parity_import_account.sh
+	parityImportAccountScript string
 )
 
 // +kubebuilder:rbac:groups=ethereum.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
@@ -137,9 +141,18 @@ func (r *NodeReconciler) updateStaticNodes(node *ethereumv1alpha1.Node) {
 }
 
 // specConfigmap updates genesis configmap spec
-func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *corev1.ConfigMap, genesis, importAccountScript, staticNodes string) {
+func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *corev1.ConfigMap, genesis, staticNodes string) {
 	if configmap.Data == nil {
 		configmap.Data = map[string]string{}
+	}
+
+	var importAccountScript string
+
+	switch node.Spec.Client {
+	case ethereumv1alpha1.GethClient:
+		importAccountScript = gethImportAccountScript
+	case ethereumv1alpha1.ParityClient:
+		importAccountScript = parityImportAccountScript
 	}
 
 	configmap.Data["genesis.json"] = genesis
@@ -168,7 +181,7 @@ func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *c
 // reconcileConfigmap creates genesis config map if it doesn't exist or update it
 func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv1alpha1.Node) error {
 
-	var genesis, importAccountScript string
+	var genesis string
 
 	configmap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
@@ -193,23 +206,13 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv
 		}
 	}
 
-	// geth and parity
-	// create import account script
-	if node.Spec.Import != nil {
-		var err error
-		importAccountScript, err = generateImportAccountScript(node.Spec.Client, shared.PathData(client.HomeDir()), shared.PathConfig(client.HomeDir()), shared.PathSecrets(client.HomeDir()))
-		if err != nil {
-			return err
-		}
-	}
-
 	_, err = ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
 		if err := ctrl.SetControllerReference(node, configmap, r.Scheme); err != nil {
 			r.Log.Error(err, "Unable to set controller reference on genesis configmap")
 			return err
 		}
 
-		r.specConfigmap(node, configmap, genesis, importAccountScript, staticNodes)
+		r.specConfigmap(node, configmap, genesis, staticNodes)
 
 		return nil
 	})
@@ -411,8 +414,18 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 		}
 		if node.Spec.Import != nil {
 			importAccount := corev1.Container{
-				Name:         "import-account",
-				Image:        img,
+				Name:  "import-account",
+				Image: img,
+				Env: []corev1.EnvVar{
+					{
+						Name:  EnvDataPath,
+						Value: shared.PathData(homedir),
+					},
+					{
+						Name:  EnvSecretsPath,
+						Value: shared.PathSecrets(homedir),
+					},
+				},
 				Command:      []string{"/bin/sh"},
 				Args:         []string{fmt.Sprintf("%s/import-account.sh", shared.PathConfig(homedir))},
 				VolumeMounts: volumeMounts,
@@ -428,8 +441,22 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 		initContainers = append(initContainers, dataDirPermissionFix)
 		if node.Spec.Import != nil {
 			importAccount := corev1.Container{
-				Name:         "import-account",
-				Image:        img,
+				Name:  "import-account",
+				Image: img,
+				Env: []corev1.EnvVar{
+					{
+						Name:  EnvDataPath,
+						Value: shared.PathData(homedir),
+					},
+					{
+						Name:  EnvConfigPath,
+						Value: shared.PathConfig(homedir),
+					},
+					{
+						Name:  EnvSecretsPath,
+						Value: shared.PathSecrets(homedir),
+					},
+				},
 				Command:      []string{"/bin/sh"},
 				Args:         []string{fmt.Sprintf("%s/import-account.sh", shared.PathConfig(homedir))},
 				VolumeMounts: volumeMounts,
