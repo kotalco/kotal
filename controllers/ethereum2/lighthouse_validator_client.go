@@ -18,7 +18,7 @@ const (
 	// EnvLighthouseValidatorImage is the environment variable used for SigmaPrime Ethereum 2.0 validator client image
 	EnvLighthouseValidatorImage = "LIGHTHOUSE_VALIDATOR_CLIENT_IMAGE"
 	// DefaultLighthouseValidatorImage is the default SigmaPrime Ethereum 2.0 validator client image
-	DefaultLighthouseValidatorImage = "sigp/lighthouse:v1.3.0"
+	DefaultLighthouseValidatorImage = "kotalco/lighthouse:v1.3.0"
 )
 
 // HomeDir returns container home directory
@@ -34,9 +34,6 @@ func (t *LighthouseValidatorClient) Args() (args []string) {
 	args = append(args, LighthouseDataDir, shared.PathData(t.HomeDir()))
 
 	args = append(args, LighthouseNetwork, validator.Spec.Network)
-
-	// auto discovery is disabled because keystores has been loaded during initialization
-	args = append(args, LighthouseDisableAutoDiscover)
 
 	if len(validator.Spec.BeaconEndpoints) != 0 {
 		args = append(args, LighthouseBeaconNodeEndpoints, strings.Join(validator.Spec.BeaconEndpoints, ","))

@@ -381,16 +381,6 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 		VolumeMounts: volumeMounts,
 	}
 
-	// besu starts non root user
-	// digital ocean doesn't support kubernetes securityContext:{runAsUser, fsGroup}
-	dataDirPermissionFix := corev1.Container{
-		Name:         "data-dir-permission-fix",
-		Image:        "busybox",
-		Command:      []string{"/bin/chmod"},
-		Args:         []string{"-R", "777", shared.PathData(homedir)},
-		VolumeMounts: volumeMounts,
-	}
-
 	if node.Spec.Client == ethereumv1alpha1.GethClient {
 		if node.Spec.Genesis != nil {
 			initGenesis := corev1.Container{
@@ -435,10 +425,8 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 
 		nodeContainer.Image = img
 	} else if node.Spec.Client == ethereumv1alpha1.BesuClient {
-		initContainers = append(initContainers, dataDirPermissionFix)
 		nodeContainer.Image = img
 	} else if node.Spec.Client == ethereumv1alpha1.ParityClient {
-		initContainers = append(initContainers, dataDirPermissionFix)
 		if node.Spec.Import != nil {
 			importAccount := corev1.Container{
 				Name:  "import-account",
@@ -474,10 +462,11 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 	sts.Spec.Selector.MatchLabels = labels
 	sts.Spec.Template.ObjectMeta.Labels = labels
 	sts.Spec.Template.Spec = corev1.PodSpec{
-		Volumes:        volumes,
-		InitContainers: initContainers,
-		Containers:     []corev1.Container{nodeContainer},
-		Affinity:       affinity,
+		SecurityContext: shared.SecurityContext(),
+		Volumes:         volumes,
+		InitContainers:  initContainers,
+		Containers:      []corev1.Container{nodeContainer},
+		Affinity:        affinity,
 	}
 }
 

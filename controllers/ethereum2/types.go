@@ -9,7 +9,7 @@ const (
 	// NimbusHomeDir is nimbus home directory
 	NimbusHomeDir = "/home/user"
 	// LighthouseHomeDir is lighthouse home directory
-	LighthouseHomeDir = "/root"
+	LighthouseHomeDir = "/home/lighthouse"
 )
 
 // Teku client arguments

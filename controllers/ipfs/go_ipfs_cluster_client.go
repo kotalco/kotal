@@ -19,7 +19,7 @@ const (
 	// DefaultGoIPFSClusterImage is the default go ipfs cluster client image
 	DefaultGoIPFSClusterImage = "ipfs/ipfs-cluster:v0.13.2"
 	//  GoIPFSClusterHomeDir is go ipfs cluster image home dir
-	GoIPFSClusterHomeDir = "/root"
+	GoIPFSClusterHomeDir = "/data/ipfs-cluster"
 )
 
 // Image returns go ipfs cluster image

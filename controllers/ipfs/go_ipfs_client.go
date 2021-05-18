@@ -19,7 +19,7 @@ const (
 	// DefaultGoIPFSImage is the default go ipfs client image
 	DefaultGoIPFSImage = "ipfs/go-ipfs:v0.8.0"
 	//  GoIPFSHomeDir is go ipfs image home dir
-	GoIPFSHomeDir = "/root"
+	GoIPFSHomeDir = "/data/ipfs"
 )
 
 // Image returns go-ipfs image

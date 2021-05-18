@@ -418,7 +418,8 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 				Labels: labels,
 			},
 			Spec: corev1.PodSpec{
-				InitContainers: initContainers,
+				SecurityContext: shared.SecurityContext(),
+				InitContainers:  initContainers,
 				Containers: []corev1.Container{
 					{
 						Name:  "peer",

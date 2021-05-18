@@ -277,6 +277,8 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 				Labels: node.GetLabels(),
 			},
 			Spec: corev1.PodSpec{
+				SecurityContext: shared.SecurityContext(),
+				InitContainers:  initContainers,
 				Containers: []corev1.Container{
 					{
 						Name:         "node",
@@ -296,7 +298,6 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 						},
 					},
 				},
-				InitContainers: initContainers,
 				Volumes: []corev1.Volume{
 					{
 						Name: "data",

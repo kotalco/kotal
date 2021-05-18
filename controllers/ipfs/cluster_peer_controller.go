@@ -351,6 +351,7 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 				Labels: labels,
 			},
 			Spec: corev1.PodSpec{
+				SecurityContext: shared.SecurityContext(),
 				InitContainers: []corev1.Container{
 					{
 						Name:    "init-cluster-peer",

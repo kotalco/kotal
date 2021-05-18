@@ -361,8 +361,8 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 			Args: []string{
 				fmt.Sprintf(`
 					mkdir -p %s
-					cp -RL %s/validator-keys/ %s/validator-keys &&
-					cp -RL %s/validator-secrets/ %s/validator-secrets`,
+					cp -RL %s/validator-keys %s &&
+					cp -RL %s/validator-secrets %s`,
 					validatorsPath,
 					shared.PathSecrets(homeDir), validatorsPath,
 					shared.PathSecrets(homeDir), validatorsPath,
@@ -382,6 +382,7 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 				Labels: validator.GetLabels(),
 			},
 			Spec: corev1.PodSpec{
+				SecurityContext: shared.SecurityContext(),
 				Containers: []corev1.Container{
 					{
 						Name:         "validator",

@@ -19,9 +19,9 @@ const (
 	// EnvGethImage is the environment variable used for go ethereum image
 	EnvGethImage = "GETH_IMAGE"
 	// DefaultGethImage is go-ethereum image
-	DefaultGethImage = "ethereum/client-go:v1.10.2"
+	DefaultGethImage = "kotalco/geth:v1.10.3"
 	// GethHomeDir is go-ethereum docker image home directory
-	GethHomeDir = "/root"
+	GethHomeDir = "/home/ethereum"
 )
 
 // HomeDir returns go-ethereum docker image home directory

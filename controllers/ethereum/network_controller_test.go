@@ -1023,9 +1023,8 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal("busybox"))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node3Client.Image()))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(node3Client.Image()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", sharedController.PathConfig(node3Client.HomeDir())),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node3Client.Image()))
@@ -1595,9 +1594,8 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal("busybox"))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Image).To(Equal(node3Client.Image()))
-			Expect(nodeSts.Spec.Template.Spec.InitContainers[1].Args).To(ContainElements([]string{
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(node3Client.Image()))
+			Expect(nodeSts.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements([]string{
 				fmt.Sprintf("%s/import-account.sh", sharedController.PathConfig(node3Client.HomeDir())),
 			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(node3Client.Image()))
