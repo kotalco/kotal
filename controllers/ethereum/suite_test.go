@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -41,8 +42,15 @@ var _ = BeforeSuite(func(done Done) {
 
 	By("bootstrapping test environment")
 	// create new test environment
-	testEnv = &envtest.Environment{
-		CRDDirectoryPaths: []string{filepath.Join("..", "..", "config", "crd", "bases")},
+	if os.Getenv("USE_EXISTING_CLUSTER") == "true" {
+		t := true
+		testEnv = &envtest.Environment{
+			UseExistingCluster: &t,
+		}
+	} else {
+		testEnv = &envtest.Environment{
+			CRDDirectoryPaths: []string{filepath.Join("..", "..", "config", "crd", "bases")},
+		}
 	}
 
 	var err error
