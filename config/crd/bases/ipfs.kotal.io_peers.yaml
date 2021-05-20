@@ -64,6 +64,22 @@ spec:
                   - lowpower
                   type: string
                 type: array
+              profiles:
+                description: Profiles is the configuration profiles to apply after peer initialization
+                items:
+                  description: Profile is ipfs configuration
+                  enum:
+                  - server
+                  - randomports
+                  - default-datastore
+                  - local-discovery
+                  - test
+                  - default-networking
+                  - flatfs
+                  - badgerds
+                  - lowpower
+                  type: string
+                type: array
               resources:
                 description: Resources is node compute and storage resources
                 properties:

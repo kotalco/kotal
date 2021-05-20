@@ -9,6 +9,8 @@ import (
 type PeerSpec struct {
 	// InitProfiles is the intial profiles to apply during
 	InitProfiles []Profile `json:"initProfiles,omitempty"`
+	// Profiles is the configuration profiles to apply after peer initialization
+	Profiles []Profile `json:"profiles,omitempty"`
 	// APIPort is api server port
 	APIPort uint `json:"apiPort,omitempty"`
 	// APIHost is api server host

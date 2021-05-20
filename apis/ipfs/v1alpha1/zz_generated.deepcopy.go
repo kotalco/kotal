@@ -196,6 +196,11 @@ func (in *PeerSpec) DeepCopyInto(out *PeerSpec) {
 		*out = make([]Profile, len(*in))
 		copy(*out, *in)
 	}
+	if in.Profiles != nil {
+		in, out := &in.Profiles, &out.Profiles
+		*out = make([]Profile, len(*in))
+		copy(*out, *in)
+	}
 	in.Resources.DeepCopyInto(&out.Resources)
 }
 
