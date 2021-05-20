@@ -15,6 +15,8 @@ const (
 	EnvIPFSGatewayHost = "IPFS_GATEWAY_HOST"
 	// EnvIPFSInitProfiles is the environment variables used for initial profiles
 	EnvIPFSInitProfiles = "IPFS_INIT_PROFILES"
+	// EnvIPFSProfiles is the environment variables used for configuration profiles after peer intialization
+	EnvIPFSProfiles = "IPFS_PROFILES"
 
 	// EnvIPFSClusterPath is the environment variables used for ipfs-cluster-service path
 	EnvIPFSClusterPath = "IPFS_CLUSTER_PATH"

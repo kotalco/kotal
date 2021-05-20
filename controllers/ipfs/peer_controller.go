@@ -29,11 +29,11 @@ type PeerReconciler struct {
 
 var (
 	//go:embed init_ipfs_config.sh
-	initIPFSConfig string
+	initIPFSConfigScript string
 	//go:embed copy_swarm_key.sh
-	copySwarmKey string
+	copySwarmKeyScript string
 	//go:embed config_ipfs.sh
-	configIPFS string
+	configIPFSScript string
 )
 
 // +kubebuilder:rbac:groups=ipfs.kotal.io,resources=peers,verbs=get;list;watch;create;update;patch;delete
@@ -192,9 +192,9 @@ func (r *PeerReconciler) specConfigmap(peer *ipfsv1alpha1.Peer, config *corev1.C
 	if config.Data == nil {
 		config.Data = make(map[string]string)
 	}
-	config.Data["init_ipfs_config.sh"] = initIPFSConfig
-	config.Data["copy_swarm_key.sh"] = copySwarmKey
-	config.Data["config_ipfs.sh"] = configIPFS
+	config.Data["init_ipfs_config.sh"] = initIPFSConfigScript
+	config.Data["copy_swarm_key.sh"] = copySwarmKeyScript
+	config.Data["config_ipfs.sh"] = configIPFSScript
 }
 
 // reconcilePVC reconciles ipfs peer persistent volume claim
@@ -376,6 +376,11 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 		VolumeMounts: volumeMounts,
 	})
 
+	// init ipfs config
+	profiles := []string{}
+	for _, profile := range peer.Spec.Profiles {
+		profiles = append(profiles, string(profile))
+	}
 	// config ipfs
 	initContainers = append(initContainers, corev1.Container{
 		Name:  "config-ipfs",
@@ -400,6 +405,10 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 			{
 				Name:  EnvIPFSGatewayHost,
 				Value: peer.Spec.GatewayHost,
+			},
+			{
+				Name:  EnvIPFSProfiles,
+				Value: strings.Join(profiles, ";"),
 			},
 		},
 		Command: []string{"/bin/sh"},
