@@ -429,16 +429,15 @@ spec:
                     import:
                       description: import is account to import
                       properties:
-                        password:
-                          description: Password is the password used to encrypt account private key
+                        passwordSecretName:
+                          description: PasswordSecretName is the secret holding password used to encrypt account private key
                           type: string
-                        privatekey:
-                          description: Privatekey is the account private key
-                          pattern: ^0[xX][0-9a-fA-F]{64}$
+                        privatekeySecretName:
+                          description: PrivateKeySecretName is the secret name holding account private key
                           type: string
                       required:
-                      - password
-                      - privatekey
+                      - passwordSecretName
+                      - privatekeySecretName
                       type: object
                     join:
                       description: Join specifies the network to join
@@ -460,9 +459,8 @@ spec:
                       type: boolean
                     name:
                       type: string
-                    nodekey:
-                      description: Nodekey is the node private key
-                      pattern: ^0[xX][0-9a-fA-F]{64}$
+                    nodekeySecretName:
+                      description: NodekeySecretName is the secret name holding node private key
                       type: string
                     p2pPort:
                       description: P2PPort is port used for peer to peer communication

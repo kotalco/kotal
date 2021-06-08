@@ -58,10 +58,6 @@ type EthereumAddress string
 // +kubebuilder:validation:Pattern="^0[xX][0-9a-fA-F]{64}$"
 type Hash string
 
-// PrivateKey is a private key
-// +kubebuilder:validation:Pattern="^0[xX][0-9a-fA-F]{64}$"
-type PrivateKey string
-
 // NetworkStatus defines the observed state of Network
 type NetworkStatus struct {
 
