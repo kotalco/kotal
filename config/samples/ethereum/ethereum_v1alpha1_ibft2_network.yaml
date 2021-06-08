@@ -39,7 +39,8 @@ spec:
     - name: node-1
       bootnode: true
       rpc: true
-      nodekey: "0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e"
+      # kubectl create secret generic node1key --from-literal=key=608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
+      nodekeySecretName: node1key
       rpcPort: 8599
       corsDomains:
         - all
@@ -50,10 +51,20 @@ spec:
         - net
         - eth
         - ibft
+      resources: &res
+        cpu: "1"
+        cpuLimit: "1"
+        memory: "1Gi"
+        memoryLimit: "2Gi"
     - name: node-2
-      nodekey: "0xb4c6097d5db1fabb037f71e21229d59a0161e0f8d407d787f3ba92f25bd39eaf"
+      # kubectl create secret generic node2key --from-literal=key=b4c6097d5db1fabb037f71e21229d59a0161e0f8d407d787f3ba92f25bd39eaf
+      nodekeySecretName: node2key
+      resources: *res
     - name: node-3
-      nodekey: "0xcb9db0b0927a3095eb2dcd82666c6a602e03379e09ac115260091cb68ca5b075"
+      # kubectl create secret generic node3key --from-literal=key=cb9db0b0927a3095eb2dcd82666c6a602e03379e09ac115260091cb68ca5b075
+      nodekeySecretName: node3key
+      resources: *res
     - name: node-4
+      resources: *res
     - name: node-5
-
+      resources: *res

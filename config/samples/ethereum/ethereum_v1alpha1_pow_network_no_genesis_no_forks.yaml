@@ -17,7 +17,8 @@ spec:
       miner: true
       coinbase: "0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c"
       bootnode: true
-      nodekey: "0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e"
+      # kubectl create secret generic node1key --from-literal=key=608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
+      nodekeySecretName: node1key
       rpc: true
       rpcPort: 8599
       corsDomains:
@@ -38,8 +39,10 @@ spec:
       miner: true
       coinbase: "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
       import:
-        privatekey: "0x5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd"
-        password: "secret"
+        # kubectl create secret generic my-account-privatekey --from-literal=key=5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
+        privatekeySecretName: my-account-privatekey
+        # kubectl create secret generic my-account-password --from-literal=password=secret
+        passwordSecretName: my-account-password
       resources: *resources
     - name: node-3
       client: parity

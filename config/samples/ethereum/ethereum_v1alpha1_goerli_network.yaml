@@ -8,7 +8,8 @@ spec:
     - name: node-1
       client: besu
       bootnode: true
-      nodekey: "0x5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd"
+      # kubectl create secret generic nodekey --from-literal=key=5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
+      nodekeySecretName: nodekey
       rpc: true
       rpcPort: 8599
       corsDomains:

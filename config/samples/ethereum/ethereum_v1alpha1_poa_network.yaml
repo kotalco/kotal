@@ -38,7 +38,8 @@ spec:
       client: besu
       bootnode: true
       rpc: true
-      nodekey: "0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e"
+      # kubectl create secret generic nodekey --from-literal=key=608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
+      nodekeySecretName: nodekey
       rpcPort: 8599
       corsDomains:
         - all
@@ -59,12 +60,18 @@ spec:
       miner: true
       coinbase: "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
       import:
-        privatekey: "0x5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd"
-        password: "secret"
+        # kubectl create secret generic my-account-privatekey --from-literal=key=5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
+        # kubectl create secret generic my-account-password --from-literal=password=secret
+        privatekeySecretName: my-account-privatekey
+        passwordSecretName: my-account-password
       resources: *resources
     - name: node-3
       client: parity
+      miner: true
+      coinbase: "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
+      import:
+        # kubectl create secret generic my-account-privatekey --from-literal=key=5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
+        # kubectl create secret generic my-account-password --from-literal=password=secret
+        privatekeySecretName: my-account-privatekey
+        passwordSecretName: my-account-password
       resources: *resources
-
-
-
