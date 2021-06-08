@@ -62,7 +62,7 @@ func (g *GethClient) Args() (args []string) {
 		appendArg(GethNetworkID, fmt.Sprintf("%d", node.Spec.ID))
 	}
 
-	if node.Spec.Nodekey != "" {
+	if node.Spec.NodekeySecretName != "" {
 		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(g.HomeDir())))
 	}
 

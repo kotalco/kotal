@@ -11,10 +11,7 @@ import (
 var _ = Describe("Ethereum client arguments", func() {
 
 	coinbase := ethereumv1alpha1.EthereumAddress("0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d")
-	accountKey := ethereumv1alpha1.PrivateKey("0x5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd")
-	accountPassword := "secret"
 	rinkeby := "rinkeby"
-	nodekey := ethereumv1alpha1.PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
 	bootnode := "enode://6f8a80d14311c39f35f516fa664deaaaa13e85b2f7493f37f6144d86991ec012937307647bd3b9a82abe2974e1407241d54947bbb39763a4cac9f77166ad92a0@10.3.58.6:30303"
 	bootnodes := []ethereumv1alpha1.Enode{ethereumv1alpha1.Enode(bootnode)}
 
@@ -50,10 +47,10 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:    ethereumv1alpha1.GethClient,
-					Bootnode:  true,
-					Nodekey:   nodekey,
-					Bootnodes: bootnodes,
+					Client:            ethereumv1alpha1.GethClient,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					Bootnodes:         bootnodes,
 				},
 			},
 			[]string{
@@ -73,10 +70,10 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:    ethereumv1alpha1.ParityClient,
-					Bootnode:  true,
-					Nodekey:   nodekey,
-					Bootnodes: bootnodes,
+					Client:            ethereumv1alpha1.ParityClient,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					Bootnodes:         bootnodes,
 				},
 			},
 			[]string{
@@ -97,9 +94,9 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Bootnode: true,
-					Nodekey:  nodekey,
-					Logging:  ethereumv1alpha1.NoLogs,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					Logging:           ethereumv1alpha1.NoLogs,
 				},
 			},
 			[]string{
@@ -118,10 +115,10 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:   ethereumv1alpha1.GethClient,
-					Bootnode: true,
-					Nodekey:  nodekey,
-					Logging:  ethereumv1alpha1.AllLogs,
+					Client:            ethereumv1alpha1.GethClient,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					Logging:           ethereumv1alpha1.AllLogs,
 				},
 			},
 			[]string{
@@ -139,10 +136,10 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:   ethereumv1alpha1.ParityClient,
-					Bootnode: true,
-					Nodekey:  nodekey,
-					Logging:  ethereumv1alpha1.ErrorLogs,
+					Client:            ethereumv1alpha1.ParityClient,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					Logging:           ethereumv1alpha1.ErrorLogs,
 				},
 			},
 			[]string{
@@ -162,10 +159,10 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Bootnode: true,
-					Nodekey:  nodekey,
-					RPC:      true,
-					Logging:  ethereumv1alpha1.FatalLogs,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					RPC:               true,
+					Logging:           ethereumv1alpha1.FatalLogs,
 				},
 			},
 			[]string{
@@ -187,11 +184,11 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:   ethereumv1alpha1.GethClient,
-					Bootnode: true,
-					Nodekey:  nodekey,
-					RPC:      true,
-					Logging:  ethereumv1alpha1.WarnLogs,
+					Client:            ethereumv1alpha1.GethClient,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					RPC:               true,
+					Logging:           ethereumv1alpha1.WarnLogs,
 				},
 			},
 			[]string{
@@ -212,11 +209,11 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:   ethereumv1alpha1.ParityClient,
-					Bootnode: true,
-					Nodekey:  nodekey,
-					RPC:      true,
-					Logging:  ethereumv1alpha1.WarnLogs,
+					Client:            ethereumv1alpha1.ParityClient,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					RPC:               true,
+					Logging:           ethereumv1alpha1.WarnLogs,
 				},
 			},
 			[]string{
@@ -237,10 +234,10 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Bootnode: true,
-					Nodekey:  nodekey,
-					RPC:      true,
-					RPCPort:  8599,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					RPC:               true,
+					RPCPort:           8599,
 					RPCAPI: []ethereumv1alpha1.API{
 						ethereumv1alpha1.ETHAPI,
 						ethereumv1alpha1.Web3API,
@@ -272,11 +269,11 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:   ethereumv1alpha1.GethClient,
-					Bootnode: true,
-					Nodekey:  nodekey,
-					RPC:      true,
-					RPCPort:  8599,
+					Client:            ethereumv1alpha1.GethClient,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					RPC:               true,
+					RPCPort:           8599,
 					RPCAPI: []ethereumv1alpha1.API{
 						ethereumv1alpha1.ETHAPI,
 						ethereumv1alpha1.Web3API,
@@ -307,11 +304,11 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:   ethereumv1alpha1.ParityClient,
-					Bootnode: true,
-					Nodekey:  nodekey,
-					RPC:      true,
-					RPCPort:  8599,
+					Client:            ethereumv1alpha1.ParityClient,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					RPC:               true,
+					RPCPort:           8599,
 					RPCAPI: []ethereumv1alpha1.API{
 						ethereumv1alpha1.ETHAPI,
 						ethereumv1alpha1.Web3API,
@@ -342,10 +339,10 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Bootnode: true,
-					Nodekey:  nodekey,
-					RPC:      true,
-					RPCPort:  8599,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					RPC:               true,
+					RPCPort:           8599,
 					RPCAPI: []ethereumv1alpha1.API{
 						ethereumv1alpha1.ETHAPI,
 						ethereumv1alpha1.Web3API,
@@ -392,11 +389,11 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:   ethereumv1alpha1.GethClient,
-					Bootnode: true,
-					Nodekey:  nodekey,
-					RPC:      true,
-					RPCPort:  8599,
+					Client:            ethereumv1alpha1.GethClient,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					RPC:               true,
+					RPCPort:           8599,
 					RPCAPI: []ethereumv1alpha1.API{
 						ethereumv1alpha1.ETHAPI,
 						ethereumv1alpha1.Web3API,
@@ -443,11 +440,11 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:   ethereumv1alpha1.ParityClient,
-					Bootnode: true,
-					Nodekey:  nodekey,
-					RPC:      true,
-					RPCPort:  8599,
+					Client:            ethereumv1alpha1.ParityClient,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					RPC:               true,
+					RPCPort:           8599,
 					RPCAPI: []ethereumv1alpha1.API{
 						ethereumv1alpha1.ETHAPI,
 						ethereumv1alpha1.Web3API,
@@ -493,10 +490,10 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Bootnode: true,
-					Nodekey:  nodekey,
-					RPC:      true,
-					RPCPort:  8599,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					RPC:               true,
+					RPCPort:           8599,
 					RPCAPI: []ethereumv1alpha1.API{
 						ethereumv1alpha1.ETHAPI,
 						ethereumv1alpha1.Web3API,
@@ -553,11 +550,11 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Client:   ethereumv1alpha1.GethClient,
-					Bootnode: true,
-					Nodekey:  nodekey,
-					RPC:      true,
-					RPCPort:  8599,
+					Client:            ethereumv1alpha1.GethClient,
+					Bootnode:          true,
+					NodekeySecretName: "nodekey",
+					RPC:               true,
+					RPCPort:           8599,
 					RPCAPI: []ethereumv1alpha1.API{
 						ethereumv1alpha1.ETHAPI,
 						ethereumv1alpha1.Web3API,
@@ -648,8 +645,8 @@ var _ = Describe("Ethereum client arguments", func() {
 					Miner:    true,
 					Coinbase: coinbase,
 					Import: &ethereumv1alpha1.ImportedAccount{
-						PrivateKey: accountKey,
-						Password:   accountPassword,
+						PrivateKeySecretName: "my-account-privatekey",
+						PasswordSecretName:   "my-account-password",
 					},
 					Logging: ethereumv1alpha1.DebugLogs,
 				},

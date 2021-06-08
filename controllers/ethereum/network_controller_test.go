@@ -23,13 +23,14 @@ import (
 var _ = Describe("Ethereum network controller", func() {
 
 	const (
-		sleepTime  = 5 * time.Second
-		interval   = 2 * time.Second
-		timeout    = 2 * time.Minute
-		networkID  = 7777
-		privatekey = ethereumv1alpha1.PrivateKey("0x608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e")
+		sleepTime = 5 * time.Second
+		interval  = 2 * time.Second
+		timeout   = 2 * time.Minute
+		networkID = 7777
+		// node private key
+		privatekey = "608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e"
 		// imported account
-		accountKey      = ethereumv1alpha1.PrivateKey("0x5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd")
+		accountKey      = "5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd"
 		accountAddress  = ethereumv1alpha1.EthereumAddress("0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d")
 		accountPassword = "secret"
 	)
@@ -71,10 +72,10 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name: "node-1",
 					NodeSpec: ethereumv1alpha1.NodeSpec{
-						Bootnode: true,
-						Nodekey:  privatekey,
-						SyncMode: ethereumv1alpha1.FullSynchronization,
-						Logging:  ethereumv1alpha1.NoLogs,
+						Bootnode:          true,
+						NodekeySecretName: "nodekey",
+						SyncMode:          ethereumv1alpha1.FullSynchronization,
+						Logging:           ethereumv1alpha1.NoLogs,
 					},
 				},
 			},
@@ -126,6 +127,19 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
 		})
 
+		It("Should create nodekey secret", func() {
+			secret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "nodekey",
+					Namespace: ns.Name,
+				},
+				StringData: map[string]string{
+					"key": privatekey,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), &secret)).To(Succeed())
+		})
+
 		It("Should create the network", func() {
 			if !useExistingCluster {
 				toCreate.Default()
@@ -153,13 +167,6 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create configs (genesis, init scripts, static nodes ...) configmap", func() {
 			genesisConfig := &corev1.ConfigMap{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).Should(Succeed())
-		})
-
-		It("Should create bootnode privatekey secret with correct data", func() {
-			nodeSecret := &corev1.Secret{}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
-			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
@@ -629,9 +636,9 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name: "node-1",
 					NodeSpec: ethereumv1alpha1.NodeSpec{
-						Bootnode: true,
-						Nodekey:  privatekey,
-						Logging:  ethereumv1alpha1.FatalLogs,
+						Bootnode:          true,
+						NodekeySecretName: "nodekey",
+						Logging:           ethereumv1alpha1.FatalLogs,
 					},
 				},
 			},
@@ -682,6 +689,43 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
 		})
 
+		It("Should create nodekey secret", func() {
+			secret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "nodekey",
+					Namespace: ns.Name,
+				},
+				StringData: map[string]string{
+					"key": privatekey,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), &secret)).To(Succeed())
+		})
+
+		It("Should create account private key and password secrets", func() {
+			accountPrivateKeySecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-account-privatekey",
+					Namespace: ns.Name,
+				},
+				StringData: map[string]string{
+					"key": accountKey,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), &accountPrivateKeySecret)).To(Succeed())
+
+			accountPasswordSecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-account-password",
+					Namespace: ns.Name,
+				},
+				StringData: map[string]string{
+					"password": accountPassword,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), &accountPasswordSecret)).To(Succeed())
+		})
+
 		It("Should create the network", func() {
 			if !useExistingCluster {
 				toCreate.Default()
@@ -710,13 +754,6 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create configs (genesis, init scripts, static nodes ...) configmap", func() {
 			genesisConfig := &corev1.ConfigMap{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).Should(Succeed())
-		})
-
-		It("Should create bootnode privatekey secret with correct data", func() {
-			nodeSecret := &corev1.Secret{}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
-			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
@@ -794,8 +831,8 @@ var _ = Describe("Ethereum network controller", func() {
 					Coinbase: accountAddress,
 					SyncMode: ethereumv1alpha1.FullSynchronization,
 					Import: &ethereumv1alpha1.ImportedAccount{
-						PrivateKey: accountKey,
-						Password:   accountPassword,
+						PrivateKeySecretName: "my-account-privatekey",
+						PasswordSecretName:   "my-account-password",
 					},
 					Resources: shared.Resources{
 						CPU:         cpu,
@@ -881,13 +918,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
 		})
 
-		It("Should create node-2 imported account secret", func() {
-			secret := &corev1.Secret{}
-			Expect(k8sClient.Get(context.Background(), node2Key, secret)).To(Succeed())
-			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
-			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
-		})
-
 		It("Should create node-2 data persistent volume", func() {
 			nodePVC := &corev1.PersistentVolumeClaim{}
 			expectedResources := corev1.ResourceRequirements{
@@ -971,8 +1001,8 @@ var _ = Describe("Ethereum network controller", func() {
 					Coinbase: accountAddress,
 					SyncMode: ethereumv1alpha1.FullSynchronization,
 					Import: &ethereumv1alpha1.ImportedAccount{
-						PrivateKey: accountKey,
-						Password:   accountPassword,
+						PrivateKeySecretName: "my-account-privatekey",
+						PasswordSecretName:   "my-account-password",
 					},
 					Resources: shared.Resources{
 						CPU:         cpu,
@@ -1054,13 +1084,6 @@ var _ = Describe("Ethereum network controller", func() {
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
-		})
-
-		It("Should create node-3 imported account secret", func() {
-			secret := &corev1.Secret{}
-			Expect(k8sClient.Get(context.Background(), node3Key, secret)).To(Succeed())
-			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
-			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-3 data persistent volume", func() {
@@ -1209,8 +1232,8 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name: "node-1",
 					NodeSpec: ethereumv1alpha1.NodeSpec{
-						Bootnode: true,
-						Nodekey:  privatekey,
+						Bootnode:          true,
+						NodekeySecretName: "nodekey",
 					},
 				},
 			},
@@ -1264,6 +1287,43 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
 		})
 
+		It("Should create nodekey secret", func() {
+			secret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "nodekey",
+					Namespace: ns.Name,
+				},
+				StringData: map[string]string{
+					"key": privatekey,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), &secret)).To(Succeed())
+		})
+
+		It("Should create account private key and password secrets", func() {
+			accountPrivateKeySecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-account-privatekey",
+					Namespace: ns.Name,
+				},
+				StringData: map[string]string{
+					"key": accountKey,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), &accountPrivateKeySecret)).To(Succeed())
+
+			accountPasswordSecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-account-password",
+					Namespace: ns.Name,
+				},
+				StringData: map[string]string{
+					"password": accountPassword,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), &accountPasswordSecret)).To(Succeed())
+		})
+
 		It("Should create the network", func() {
 			if !useExistingCluster {
 				toCreate.Default()
@@ -1287,13 +1347,6 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = bootnodeKey.Name
 			bootnodeClient, _ = NewEthereumClient(fetched)
-		})
-
-		It("Should create bootnode privatekey secret with correct data", func() {
-			nodeSecret := &corev1.Secret{}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
-			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
@@ -1377,8 +1430,8 @@ var _ = Describe("Ethereum network controller", func() {
 					Miner:    true,
 					Coinbase: accountAddress,
 					Import: &ethereumv1alpha1.ImportedAccount{
-						PrivateKey: accountKey,
-						Password:   accountPassword,
+						PrivateKeySecretName: "my-account-privatekey",
+						PasswordSecretName:   "my-account-password",
 					},
 					SyncMode: ethereumv1alpha1.FastSynchronization,
 					Resources: shared.Resources{
@@ -1457,13 +1510,6 @@ var _ = Describe("Ethereum network controller", func() {
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
-		})
-
-		It("Should create node-2 imported account secret", func() {
-			secret := &corev1.Secret{}
-			Expect(k8sClient.Get(context.Background(), node2Key, secret)).To(Succeed())
-			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
-			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-2 data persistent volume with correct resources", func() {
@@ -1548,8 +1594,8 @@ var _ = Describe("Ethereum network controller", func() {
 					Miner:    true,
 					Coinbase: accountAddress,
 					Import: &ethereumv1alpha1.ImportedAccount{
-						PrivateKey: accountKey,
-						Password:   accountPassword,
+						PrivateKeySecretName: "my-account-privatekey",
+						PasswordSecretName:   "my-account-password",
 					},
 					SyncMode: ethereumv1alpha1.FastSynchronization,
 					Resources: shared.Resources{
@@ -1625,13 +1671,6 @@ var _ = Describe("Ethereum network controller", func() {
 			}
 			Expect(k8sClient.Get(context.Background(), node3Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
-		})
-
-		It("Should create node-3 imported account secret", func() {
-			secret := &corev1.Secret{}
-			Expect(k8sClient.Get(context.Background(), node3Key, secret)).To(Succeed())
-			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
-			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-3 data persistent volume with correct resources", func() {
@@ -1794,9 +1833,9 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name: "node-1",
 					NodeSpec: ethereumv1alpha1.NodeSpec{
-						Bootnode: true,
-						Nodekey:  privatekey,
-						Logging:  ethereumv1alpha1.TraceLogs,
+						Bootnode:          true,
+						NodekeySecretName: "nodekey",
+						Logging:           ethereumv1alpha1.TraceLogs,
 					},
 				},
 			},
@@ -1850,6 +1889,43 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
 		})
 
+		It("Should create nodekey secret", func() {
+			secret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "nodekey",
+					Namespace: ns.Name,
+				},
+				StringData: map[string]string{
+					"key": privatekey,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), &secret)).To(Succeed())
+		})
+
+		It("Should create account private key and password secrets", func() {
+			accountPrivateKeySecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-account-privatekey",
+					Namespace: ns.Name,
+				},
+				StringData: map[string]string{
+					"key": accountKey,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), &accountPrivateKeySecret)).To(Succeed())
+
+			accountPasswordSecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "my-account-password",
+					Namespace: ns.Name,
+				},
+				StringData: map[string]string{
+					"password": accountPassword,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), &accountPasswordSecret)).To(Succeed())
+		})
+
 		It("Should create the network", func() {
 			if !useExistingCluster {
 				toCreate.Default()
@@ -1878,13 +1954,6 @@ var _ = Describe("Ethereum network controller", func() {
 		It("Should create bootnode genesis block configmap", func() {
 			genesisConfig := &corev1.ConfigMap{}
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).To(Succeed())
-		})
-
-		It("Should create bootnode privatekey secret with correct data", func() {
-			nodeSecret := &corev1.Secret{}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
-			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {
@@ -1961,8 +2030,8 @@ var _ = Describe("Ethereum network controller", func() {
 					Miner:    true,
 					Coinbase: accountAddress,
 					Import: &ethereumv1alpha1.ImportedAccount{
-						PrivateKey: accountKey,
-						Password:   accountPassword,
+						PrivateKeySecretName: "my-account-privatekey",
+						PasswordSecretName:   "my-account-password",
 					},
 					SyncMode: ethereumv1alpha1.FastSynchronization,
 					Resources: shared.Resources{
@@ -2038,13 +2107,6 @@ var _ = Describe("Ethereum network controller", func() {
 			}
 			Expect(k8sClient.Get(context.Background(), node2Key, nodeSts)).To(Succeed())
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
-		})
-
-		It("Should create node-2 imported account secret", func() {
-			secret := &corev1.Secret{}
-			Expect(k8sClient.Get(context.Background(), node2Key, secret)).To(Succeed())
-			Expect(string(secret.Data["account.key"])).To(Equal(string(accountKey)[2:]))
-			Expect(string(secret.Data["account.password"])).To(Equal(accountPassword))
 		})
 
 		It("Should create node-2 data persistent volume with correct resources", func() {
@@ -2357,9 +2419,9 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name: "node-1",
 					NodeSpec: ethereumv1alpha1.NodeSpec{
-						Bootnode: true,
-						Nodekey:  privatekey,
-						Logging:  ethereumv1alpha1.WarnLogs,
+						Bootnode:          true,
+						NodekeySecretName: "nodekey",
+						Logging:           ethereumv1alpha1.WarnLogs,
 					},
 				},
 			},
@@ -2406,6 +2468,19 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
 		})
 
+		It("Should create nodekey secret", func() {
+			secret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "nodekey",
+					Namespace: ns.Name,
+				},
+				StringData: map[string]string{
+					"key": privatekey,
+				},
+			}
+			Expect(k8sClient.Create(context.Background(), &secret)).To(Succeed())
+		})
+
 		It("Should create the network", func() {
 			if !useExistingCluster {
 				toCreate.Default()
@@ -2436,13 +2511,6 @@ var _ = Describe("Ethereum network controller", func() {
 			expectedExtraData := "0xf869a00000000000000000000000000000000000000000000000000000000000000000f83f94427e2c7cecd72bc4cdd4f7ebb8bb6e49789c804494d2c21213027cbf4d46c16b55fa98e5252b048706948e1f6c7c76a1d7f74eda342d330ca9749f31cc2b808400000000c0"
 			Expect(k8sClient.Get(context.Background(), bootnodeKey, genesisConfig)).To(Succeed())
 			Expect(genesisConfig.Data["genesis.json"]).To(ContainSubstring(expectedExtraData))
-		})
-
-		It("Should create bootnode privatekey secret with correct data", func() {
-			nodeSecret := &corev1.Secret{}
-			Expect(k8sClient.Get(context.Background(), bootnodeKey, nodeSecret)).To(Succeed())
-			Expect(nodeSecret.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(string(nodeSecret.Data["nodekey"])).To(Equal(string(privatekey)[2:]))
 		})
 
 		It("Should create bootnode service", func() {

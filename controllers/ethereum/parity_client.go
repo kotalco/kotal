@@ -62,7 +62,7 @@ func (p *ParityClient) Args() (args []string) {
 		appendArg(ParityNetworkID, fmt.Sprintf("%d", node.Spec.ID))
 	}
 
-	if node.Spec.Nodekey != "" {
+	if node.Spec.NodekeySecretName != "" {
 		appendArg(ParityNodeKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(p.HomeDir())))
 	}
 

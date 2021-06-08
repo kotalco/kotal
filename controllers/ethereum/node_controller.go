@@ -12,6 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -77,7 +78,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
-	if node.Spec.Nodekey == "" && node.Spec.Import == nil {
+	if node.Spec.NodekeySecretName == "" && node.Spec.Import == nil {
 		return
 	}
 
@@ -269,13 +270,79 @@ func (r *NodeReconciler) reconcilePVC(ctx context.Context, node *ethereumv1alpha
 func (r *NodeReconciler) createNodeVolumes(node *ethereumv1alpha1.Node) []corev1.Volume {
 
 	volumes := []corev1.Volume{}
+	projections := []corev1.VolumeProjection{}
 
-	if node.Spec.Nodekey != "" || node.Spec.Import != nil {
+	// nodekey (node private key) projection
+	if node.Spec.NodekeySecretName != "" {
+		nodekeyProjection := corev1.VolumeProjection{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.NodekeySecretName,
+				},
+				Items: []corev1.KeyToPath{
+					{
+						Key:  "key",
+						Path: "nodekey",
+					},
+				},
+			},
+		}
+		projections = append(projections, nodekeyProjection)
+	}
+
+	// importing ethereum account
+	if node.Spec.Import != nil {
+		// account private key projection
+		privateKeyProjection := corev1.VolumeProjection{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.Import.PrivateKeySecretName,
+				},
+				Items: []corev1.KeyToPath{
+					{
+						Key:  "key",
+						Path: "account.key",
+					},
+				},
+			},
+		}
+		projections = append(projections, privateKeyProjection)
+
+		// account password projection
+		passwordProjection := corev1.VolumeProjection{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.Import.PasswordSecretName,
+				},
+				Items: []corev1.KeyToPath{
+					{
+						Key:  "password",
+						Path: "account.password",
+					},
+				},
+			},
+		}
+		projections = append(projections, passwordProjection)
+
+		// parity: account keystore
+		if node.Spec.Client == ethereumv1alpha1.ParityClient {
+			accountKeystoreProjection := corev1.VolumeProjection{
+				Secret: &corev1.SecretProjection{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: node.Name,
+					},
+				},
+			}
+			projections = append(projections, accountKeystoreProjection)
+		}
+	}
+
+	if len(projections) != 0 {
 		secretsVolume := corev1.Volume{
 			Name: "secrets",
 			VolumeSource: corev1.VolumeSource{
-				Secret: &corev1.SecretVolumeSource{
-					SecretName: node.Name,
+				Projected: &corev1.ProjectedVolumeSource{
+					Sources: projections,
 				},
 			},
 		}
@@ -312,7 +379,7 @@ func (r *NodeReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, hom
 
 	volumeMounts := []corev1.VolumeMount{}
 
-	if node.Spec.Nodekey != "" || node.Spec.Import != nil {
+	if node.Spec.NodekeySecretName != "" || node.Spec.Import != nil {
 		nodekeyMount := corev1.VolumeMount{
 			Name:      "secrets",
 			MountPath: shared.PathSecrets(homedir),
@@ -502,30 +569,52 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereu
 	return err
 }
 
-func (r *NodeReconciler) specSecret(node *ethereumv1alpha1.Node, secret *corev1.Secret) error {
-	secret.ObjectMeta.Labels = node.GetLabels()
-	data := map[string]string{}
+func (r *NodeReconciler) getSecret(ctx context.Context, name types.NamespacedName, key string) (value string, err error) {
+	secret := &corev1.Secret{}
 
-	if node.Spec.Nodekey != "" {
-		data["nodekey"] = string(node.Spec.Nodekey)[2:]
+	if err = r.Client.Get(ctx, name, secret); err != nil {
+		return
 	}
 
-	if node.Spec.Import != nil {
-		if node.Spec.Client == ethereumv1alpha1.ParityClient {
-			account, err := KeyStoreFromPrivatekey(string(node.Spec.Import.PrivateKey)[2:], node.Spec.Import.Password)
-			if err != nil {
-				return err
-			}
-			secret.Data = map[string][]byte{
-				"account": account,
-			}
+	value = string(secret.Data[key])
+
+	return
+}
+
+// specSecret creates keystore from account private key for parity client
+func (r *NodeReconciler) specSecret(ctx context.Context, node *ethereumv1alpha1.Node, secret *corev1.Secret) error {
+	secret.ObjectMeta.Labels = node.GetLabels()
+
+	if node.Spec.Import != nil && node.Spec.Client == ethereumv1alpha1.ParityClient {
+		key := types.NamespacedName{
+			Name:      node.Spec.Import.PrivateKeySecretName,
+			Namespace: node.Namespace,
 		}
 
-		data["account.key"] = string(node.Spec.Import.PrivateKey)[2:]
-		data["account.password"] = node.Spec.Import.Password
-	}
+		privateKey, err := r.getSecret(ctx, key, "key")
+		if err != nil {
+			return err
+		}
 
-	secret.StringData = data
+		key = types.NamespacedName{
+			Name:      node.Spec.Import.PasswordSecretName,
+			Namespace: node.Namespace,
+		}
+
+		password, err := r.getSecret(ctx, key, "password")
+		if err != nil {
+			return err
+		}
+
+		account, err := KeyStoreFromPrivatekey(privateKey, password)
+		if err != nil {
+			return err
+		}
+
+		secret.Data = map[string][]byte{
+			"account": account,
+		}
+	}
 
 	return nil
 }
@@ -540,10 +629,23 @@ func (r *NodeReconciler) reconcileSecret(ctx context.Context, node *ethereumv1al
 		},
 	}
 
-	if node.Spec.Nodekey != "" {
+	// pubkey is required by the caller
+	// 1. read the private key secret content
+	// 2. derive public key from the private key
+	if node.Spec.NodekeySecretName != "" {
+		key := types.NamespacedName{
+			Name:      node.Spec.NodekeySecretName,
+			Namespace: node.Namespace,
+		}
+
+		var nodekey string
+		nodekey, err = r.getSecret(ctx, key, "key")
+		if err != nil {
+			return
+		}
+
 		// hex private key without the leading 0x
-		privateKey := string(node.Spec.Nodekey)[2:]
-		publicKey, err = helpers.DerivePublicKey(privateKey)
+		publicKey, err = helpers.DerivePublicKey(nodekey)
 		if err != nil {
 			return
 		}
@@ -554,7 +656,7 @@ func (r *NodeReconciler) reconcileSecret(ctx context.Context, node *ethereumv1al
 			return err
 		}
 
-		return r.specSecret(node, secret)
+		return r.specSecret(ctx, node, secret)
 	})
 
 	return

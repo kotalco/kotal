@@ -52,7 +52,7 @@ func (b *BesuClient) Args() (args []string) {
 		appendArg(BesuNetworkID, fmt.Sprintf("%d", node.Spec.ID))
 	}
 
-	if node.Spec.Nodekey != "" {
+	if node.Spec.NodekeySecretName != "" {
 		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(b.HomeDir())))
 	}
 
