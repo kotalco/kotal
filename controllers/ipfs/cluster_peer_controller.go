@@ -248,6 +248,7 @@ func (r *ClusterPeerReconciler) specPVC(peer *ipfsv1alpha1.ClusterPeer, pvc *cor
 		Resources: corev1.ResourceRequirements{
 			Requests: request,
 		},
+		StorageClassName: peer.Spec.Resources.StorageClass,
 	}
 }
 
