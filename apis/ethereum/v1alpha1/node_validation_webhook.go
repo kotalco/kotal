@@ -2,9 +2,7 @@ package v1alpha1
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/kotalco/kotal/helpers"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -28,8 +26,8 @@ func (n *Node) Validate(path *field.Path, validateNetworkConfig bool) field.Erro
 	}
 
 	// validate nodekey is provided if node is bootnode
-	if n.Spec.Bootnode == true && n.Spec.Nodekey == "" {
-		err := field.Invalid(path.Child("nodekey"), n.Spec.Nodekey, "must provide nodekey if bootnode is true")
+	if n.Spec.Bootnode && n.Spec.NodekeySecretName == "" {
+		err := field.Invalid(path.Child("nodekey"), n.Spec.NodekeySecretName, "must provide nodekeySecretName if bootnode is true")
 		nodeErrors = append(nodeErrors, err)
 	}
 
@@ -76,7 +74,7 @@ func (n *Node) Validate(path *field.Path, validateNetworkConfig bool) field.Erro
 	}
 
 	// validate coinbase can't be set if miner is not set explicitly as true
-	if n.Spec.Coinbase != "" && n.Spec.Miner == false {
+	if n.Spec.Coinbase != "" && !n.Spec.Miner {
 		err := field.Invalid(path.Child("miner"), false, "must set miner to true if coinbase is provided")
 		nodeErrors = append(nodeErrors, err)
 	}
@@ -127,22 +125,6 @@ func (n *Node) Validate(path *field.Path, validateNetworkConfig bool) field.Erro
 	if n.Spec.Client == ParityClient && n.Spec.Consensus == ProofOfWork && n.Spec.Miner {
 		err := field.Invalid(path.Child("client"), n.Spec.Client, "client doesn't support mining")
 		nodeErrors = append(nodeErrors, err)
-	}
-
-	// validate imported account private key is valid and coinbase account is derived from it
-	// TODO: cache private address -> address results
-	if n.Spec.Client != BesuClient && n.Spec.Coinbase != "" && n.Spec.Import != nil {
-		privateKey := n.Spec.Import.PrivateKey[2:]
-		address, err := helpers.DeriveAddress(string(privateKey))
-		if err != nil {
-			err := field.Invalid(path.Child("import").Child("privatekey"), "<private key>", "invalid private key")
-			nodeErrors = append(nodeErrors, err)
-		}
-
-		if strings.ToLower(string(n.Spec.Coinbase)) != strings.ToLower(address) {
-			err := field.Invalid(path.Child("import").Child("privatekey"), "<private key>", "private key doesn't correspond to the coinbase address")
-			nodeErrors = append(nodeErrors, err)
-		}
 	}
 
 	// validate rpc can't be enabled for node with imported account
