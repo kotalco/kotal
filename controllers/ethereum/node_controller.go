@@ -147,29 +147,22 @@ func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *c
 		configmap.Data = map[string]string{}
 	}
 
-	var importAccountScript string
+	var key, importAccountScript string
 
 	switch node.Spec.Client {
 	case ethereumv1alpha1.GethClient:
+		key = "config.toml"
 		importAccountScript = gethImportAccountScript
+	case ethereumv1alpha1.BesuClient:
+		key = "static-nodes.json"
 	case ethereumv1alpha1.ParityClient:
+		key = "static-nodes"
 		importAccountScript = parityImportAccountScript
 	}
 
 	configmap.Data["genesis.json"] = genesis
 	configmap.Data["init-geth-genesis.sh"] = initGethGenesisScript
 	configmap.Data["import-account.sh"] = importAccountScript
-
-	var key string
-
-	switch node.Spec.Client {
-	case ethereumv1alpha1.GethClient:
-		key = "config.toml"
-	case ethereumv1alpha1.BesuClient:
-		key = "static-nodes.json"
-	case ethereumv1alpha1.ParityClient:
-		key = "static-nodes"
-	}
 
 	currentStaticNodes := configmap.Data[key]
 	// update static nodes config if it's empty
