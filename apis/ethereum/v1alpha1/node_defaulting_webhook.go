@@ -22,10 +22,6 @@ func (n *Node) Default() {
 		n.Spec.Genesis.Default(n.Spec.Consensus)
 	}
 
-	if n.Spec.Client == "" {
-		n.Spec.Client = DefaultClient
-	}
-
 	if n.Spec.P2PPort == 0 {
 		n.Spec.P2PPort = DefaultP2PPort
 	}

@@ -16,8 +16,6 @@ const (
 const (
 	// DefaultLogging is the default logging verbosity level
 	DefaultLogging = InfoLogs
-	// DefaultClient is the default ethereum client
-	DefaultClient = BesuClient
 	// DefaultP2PPort is the default p2p port
 	DefaultP2PPort uint = 30303
 	// DefaultPublicNetworkSyncMode is the default sync mode for public networks

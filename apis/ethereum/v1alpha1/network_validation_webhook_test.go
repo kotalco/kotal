@@ -35,6 +35,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -61,6 +64,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -81,6 +87,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -107,6 +116,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -134,6 +146,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -161,6 +176,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -188,6 +206,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -214,9 +235,15 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 						{
 							Name: "node-2",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -245,10 +272,14 @@ var _ = Describe("Ethereum network validation", func() {
 							Name: "node-1",
 							NodeSpec: NodeSpec{
 								Bootnode: true,
+								Client:   BesuClient,
 							},
 						},
 						{
 							Name: "node-2",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -276,7 +307,8 @@ var _ = Describe("Ethereum network validation", func() {
 						{
 							Name: "node-1",
 							NodeSpec: NodeSpec{
-								Miner: true,
+								Miner:  true,
+								Client: BesuClient,
 							},
 						},
 					},
@@ -306,6 +338,7 @@ var _ = Describe("Ethereum network validation", func() {
 							Name: "node-1",
 							NodeSpec: NodeSpec{
 								Coinbase: EthereumAddress("0x676aEda2E67D24eb304cFf75A5190824831E3399"),
+								Client:   BesuClient,
 							},
 						},
 					},
@@ -332,6 +365,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -362,6 +398,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -386,6 +425,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -412,6 +454,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -472,6 +517,7 @@ var _ = Describe("Ethereum network validation", func() {
 						{
 							Name: "node-1",
 							NodeSpec: NodeSpec{
+								Client:   BesuClient,
 								Miner:    true,
 								Coinbase: coinbase,
 								Import: &ImportedAccount{
@@ -1051,6 +1097,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -1063,6 +1112,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -1089,6 +1141,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -1104,6 +1159,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -1130,6 +1188,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: GethClient,
+							},
 						},
 					},
 				},
@@ -1145,6 +1206,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: GethClient,
+							},
 						},
 					},
 				},
@@ -1171,6 +1235,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -1186,6 +1253,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-2",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -1213,6 +1283,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},
@@ -1229,6 +1302,9 @@ var _ = Describe("Ethereum network validation", func() {
 					Nodes: []NetworkNodeSpec{
 						{
 							Name: "node-1",
+							NodeSpec: NodeSpec{
+								Client: BesuClient,
+							},
 						},
 					},
 				},

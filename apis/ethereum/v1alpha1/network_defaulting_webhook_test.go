@@ -35,7 +35,6 @@ var _ = Describe("Ethereum defaulting", func() {
 		// node1 defaulting
 		Expect(node1.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node1.SyncMode).To(Equal(DefaultPublicNetworkSyncMode))
-		Expect(node1.Client).To(Equal(DefaultClient))
 		Expect(node1.Resources.CPU).To(Equal(DefaultPublicNetworkNodeCPURequest))
 		Expect(node1.Resources.CPULimit).To(Equal(DefaultPublicNetworkNodeCPULimit))
 		Expect(node1.Resources.Memory).To(Equal(DefaultPublicNetworkNodeMemoryRequest))
@@ -45,7 +44,6 @@ var _ = Describe("Ethereum defaulting", func() {
 		// node2 defaulting
 		Expect(node2.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node2.SyncMode).To(Equal(FullSynchronization))
-		Expect(node2.Client).To(Equal(DefaultClient))
 		Expect(node2.Resources.CPU).To(Equal(DefaultPublicNetworkNodeCPURequest))
 		Expect(node2.Resources.CPULimit).To(Equal(DefaultPublicNetworkNodeCPULimit))
 		Expect(node2.Resources.Memory).To(Equal(DefaultPublicNetworkNodeMemoryRequest))
@@ -76,7 +74,6 @@ var _ = Describe("Ethereum defaulting", func() {
 		node := network.Spec.Nodes[0]
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.SyncMode).To(Equal(DefaultPublicNetworkSyncMode))
-		Expect(node.Client).To(Equal(DefaultClient))
 		Expect(node.Resources.CPU).To(Equal(DefaultPublicNetworkNodeCPURequest))
 		Expect(node.Resources.CPULimit).To(Equal(DefaultPublicNetworkNodeCPULimit))
 		Expect(node.Resources.Memory).To(Equal(DefaultPublicNetworkNodeMemoryRequest))
@@ -107,7 +104,6 @@ var _ = Describe("Ethereum defaulting", func() {
 		var block0 uint = 0
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.SyncMode).To(Equal(DefaultPrivateNetworkSyncMode))
-		Expect(node.Client).To(Equal(DefaultClient))
 		Expect(node.Resources.CPU).To(Equal(DefaultPrivateNetworkNodeCPURequest))
 		Expect(node.Resources.CPULimit).To(Equal(DefaultPrivateNetworkNodeCPULimit))
 		Expect(node.Resources.Memory).To(Equal(DefaultPrivateNetworkNodeMemoryRequest))
@@ -157,7 +153,6 @@ var _ = Describe("Ethereum defaulting", func() {
 		// node defaulting
 		node := network.Spec.Nodes[0]
 		var block0 uint = 0
-		Expect(node.Client).To(Equal(DefaultClient))
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.SyncMode).To(Equal(DefaultPrivateNetworkSyncMode))
 		Expect(node.Hosts).To(Equal(DefaultOrigins))
@@ -217,7 +212,6 @@ var _ = Describe("Ethereum defaulting", func() {
 		// node defaulting
 		node := network.Spec.Nodes[0]
 		var block0 uint = 0
-		Expect(node.Client).To(Equal(DefaultClient))
 		Expect(node.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.SyncMode).To(Equal(DefaultPrivateNetworkSyncMode))
 		Expect(node.Hosts).To(Equal(DefaultOrigins))
