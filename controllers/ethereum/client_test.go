@@ -24,6 +24,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			"node joining rinkeby",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
+					Client: ethereumv1alpha1.BesuClient,
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
@@ -91,6 +92,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			"bootnode joining rinkeby",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
+					Client: ethereumv1alpha1.BesuClient,
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
@@ -156,6 +158,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			"bootnode joining rinkeby with rpc",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
+					Client: ethereumv1alpha1.BesuClient,
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
@@ -234,6 +237,7 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
+					Client:            ethereumv1alpha1.BesuClient,
 					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
@@ -339,6 +343,7 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
+					Client:            ethereumv1alpha1.BesuClient,
 					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
@@ -490,6 +495,7 @@ var _ = Describe("Ethereum client arguments", func() {
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
+					Client:            ethereumv1alpha1.BesuClient,
 					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
@@ -612,6 +618,7 @@ var _ = Describe("Ethereum client arguments", func() {
 							ChainID: 5555,
 						},
 					},
+					Client:   ethereumv1alpha1.BesuClient,
 					Miner:    true,
 					Coinbase: coinbase,
 					Logging:  ethereumv1alpha1.DebugLogs,

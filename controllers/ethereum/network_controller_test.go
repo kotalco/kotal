@@ -72,6 +72,7 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name: "node-1",
 					NodeSpec: ethereumv1alpha1.NodeSpec{
+						Client:            ethereumv1alpha1.BesuClient,
 						Bootnode:          true,
 						NodekeySecretName: "nodekey",
 						SyncMode:          ethereumv1alpha1.FullSynchronization,
@@ -636,6 +637,7 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name: "node-1",
 					NodeSpec: ethereumv1alpha1.NodeSpec{
+						Client:            ethereumv1alpha1.BesuClient,
 						Bootnode:          true,
 						NodekeySecretName: "nodekey",
 						Logging:           ethereumv1alpha1.FatalLogs,
@@ -1232,6 +1234,7 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name: "node-1",
 					NodeSpec: ethereumv1alpha1.NodeSpec{
+						Client:            ethereumv1alpha1.BesuClient,
 						Bootnode:          true,
 						NodekeySecretName: "nodekey",
 					},
@@ -1833,6 +1836,7 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name: "node-1",
 					NodeSpec: ethereumv1alpha1.NodeSpec{
+						Client:            ethereumv1alpha1.BesuClient,
 						Bootnode:          true,
 						NodekeySecretName: "nodekey",
 						Logging:           ethereumv1alpha1.TraceLogs,
@@ -2419,6 +2423,7 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name: "node-1",
 					NodeSpec: ethereumv1alpha1.NodeSpec{
+						Client:            ethereumv1alpha1.BesuClient,
 						Bootnode:          true,
 						NodekeySecretName: "nodekey",
 						Logging:           ethereumv1alpha1.WarnLogs,
@@ -2583,6 +2588,7 @@ var _ = Describe("Ethereum network controller", func() {
 			newNode := ethereumv1alpha1.NetworkNodeSpec{
 				Name: "node-2",
 				NodeSpec: ethereumv1alpha1.NodeSpec{
+					Client:  ethereumv1alpha1.BesuClient,
 					RPC:     true,
 					RPCPort: 8547,
 					Resources: shared.Resources{
