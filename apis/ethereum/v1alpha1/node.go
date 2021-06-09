@@ -43,7 +43,7 @@ type NodeSpec struct {
 	AvailabilityConfig `json:",inline"`
 
 	// Client is ethereum client running on the node
-	Client EthereumClient `json:"client,omitempty"`
+	Client EthereumClient `json:"client"`
 
 	// import is account to import
 	Import *ImportedAccount `json:"import,omitempty"`

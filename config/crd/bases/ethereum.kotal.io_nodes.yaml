@@ -381,6 +381,8 @@ spec:
               wsPort:
                 description: WSPort is the web socket server listening port
                 type: integer
+            required:
+            - client
             type: object
           status:
             description: NodeStatus defines the observed state of Node

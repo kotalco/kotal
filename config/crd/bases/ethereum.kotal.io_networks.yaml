@@ -558,6 +558,7 @@ spec:
                       description: WSPort is the web socket server listening port
                       type: integer
                   required:
+                  - client
                   - name
                   type: object
                 minItems: 1
