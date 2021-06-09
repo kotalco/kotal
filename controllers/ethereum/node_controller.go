@@ -426,8 +426,9 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 	initContainers := []corev1.Container{}
 	// node client container
 	nodeContainer := corev1.Container{
-		Name: "node",
-		Args: args,
+		Name:  "node",
+		Image: img,
+		Args:  args,
 		Resources: corev1.ResourceRequirements{
 			Requests: corev1.ResourceList{
 				corev1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPU),
@@ -483,9 +484,6 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 			initContainers = append(initContainers, importAccount)
 		}
 
-		nodeContainer.Image = img
-	} else if node.Spec.Client == ethereumv1alpha1.BesuClient {
-		nodeContainer.Image = img
 	} else if node.Spec.Client == ethereumv1alpha1.ParityClient {
 		if node.Spec.Import != nil {
 			importAccount := corev1.Container{
@@ -511,7 +509,6 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 			}
 			initContainers = append(initContainers, importAccount)
 		}
-		nodeContainer.Image = img
 	}
 
 	sts.ObjectMeta.Labels = labels
