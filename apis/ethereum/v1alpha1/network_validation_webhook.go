@@ -33,7 +33,7 @@ func (n *Network) ValidateMissingBootnodes() *field.Error {
 		return nil
 	}
 
-	if n.Spec.Nodes[0].Bootnode != true {
+	if !n.Spec.Nodes[0].Bootnode {
 		msg := "first node must be a bootnode if network has multiple nodes"
 		return field.Invalid(field.NewPath("spec").Child("nodes").Index(0).Child("bootnode"), false, msg)
 	}
