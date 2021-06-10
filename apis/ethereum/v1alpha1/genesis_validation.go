@@ -6,6 +6,20 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
+var (
+	// ChainByID is public chains indexed by ID
+	ChainByID = map[uint]string{
+		1:    MainNetwork,
+		3:    RopstenNetwork,
+		4:    RinkebyNetwork,
+		5:    GoerliNetwork,
+		6:    KottiNetwork,
+		61:   ClassicNetwork,
+		63:   MordorNetwork,
+		2018: DevNetwork,
+	}
+)
+
 // Validate validates network genesis block spec
 func (g *Genesis) Validate(networkConfig *NetworkConfig) field.ErrorList {
 
