@@ -2,9 +2,6 @@ domain: kotal.io
 multigroup: true
 repo: github.com/kotalco/kotal
 resources:
-- group: ethereum
-  kind: Network
-  version: v1alpha1
 - group: ipfs
   kind: Swarm
   version: v1alpha1
