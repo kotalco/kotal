@@ -67,6 +67,7 @@ func (r *BeaconNode) ValidateCreate() error {
 	nodelog.Info("validate create", "name", r.Name)
 
 	allErrors = append(allErrors, r.Validate()...)
+	allErrors = append(allErrors, r.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
 		return nil
@@ -85,6 +86,7 @@ func (r *BeaconNode) ValidateUpdate(old runtime.Object) error {
 	nodelog.Info("validate update", "name", r.Name)
 
 	allErrors = append(allErrors, r.Validate()...)
+	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
 	if oldNode.Spec.Join != r.Spec.Join {
 		err := field.Invalid(path.Child("join"), r.Spec.Join, "field is immutable")

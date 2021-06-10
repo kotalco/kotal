@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -41,30 +40,6 @@ func (n *Node) Validate(path *field.Path, validateNetworkConfig bool) field.Erro
 	if n.Spec.Client == ParityClient && (n.Spec.Logging == NoLogs || n.Spec.Logging == FatalLogs || n.Spec.Logging == AllLogs) {
 		err := field.Invalid(path.Child("logging"), n.Spec.Logging, fmt.Sprintf("not supported by client %s", n.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
-	}
-
-	// if cpu and cpulimit are string equal, no need to compare quantity
-	if n.Spec.Resources.CPU != n.Spec.Resources.CPULimit {
-		cpu := resource.MustParse(n.Spec.Resources.CPU)
-		cpuLimit := resource.MustParse(n.Spec.Resources.CPULimit)
-
-		// validate cpuLimit can't be less than cpu request
-		if cpuLimit.Cmp(cpu) == -1 {
-			err := field.Invalid(path.Child("resources").Child("cpuLimit"), n.Spec.Resources.CPULimit, fmt.Sprintf("must be greater than or equal to cpu %s", string(n.Spec.Resources.CPU)))
-			nodeErrors = append(nodeErrors, err)
-		}
-	}
-
-	// if memory and memoryLimit are string equal, no need to compare quantity
-	if n.Spec.Resources.Memory != n.Spec.Resources.MemoryLimit {
-		memory := resource.MustParse(n.Spec.Resources.Memory)
-		memoryLimit := resource.MustParse(n.Spec.Resources.MemoryLimit)
-
-		// validate memoryLimit can't be less than memory request
-		if memoryLimit.Cmp(memory) == -1 {
-			err := field.Invalid(path.Child("resources").Child("memoryLimit"), n.Spec.Resources.MemoryLimit, fmt.Sprintf("must be greater than or equal to memory %s", string(n.Spec.Resources.Memory)))
-			nodeErrors = append(nodeErrors, err)
-		}
 	}
 
 	// validate coinbase is provided if node is miner
@@ -155,6 +130,7 @@ func (n *Node) ValidateCreate() error {
 	nodelog.Info("validate create", "name", n.Name)
 
 	allErrors = append(allErrors, n.Validate(field.NewPath("spec"), true)...)
+	allErrors = append(allErrors, n.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
 		return nil
@@ -176,6 +152,7 @@ func (n *Node) ValidateUpdate(old runtime.Object) error {
 	}
 
 	allErrors = append(allErrors, n.Validate(field.NewPath("spec"), true)...)
+	allErrors = append(allErrors, n.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
 	if len(allErrors) == 0 {
 		return nil

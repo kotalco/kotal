@@ -43,6 +43,7 @@ func (r *Validator) ValidateCreate() error {
 	validatorlog.Info("validate create", "name", r.Name)
 
 	allErrors = append(allErrors, r.Validate()...)
+	allErrors = append(allErrors, r.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
 		return nil
@@ -54,17 +55,19 @@ func (r *Validator) ValidateCreate() error {
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
 func (r *Validator) ValidateUpdate(old runtime.Object) error {
 	var allErrors field.ErrorList
+	oldValidator := old.(*Validator)
 
 	validatorlog.Info("validate update", "name", r.Name)
 
 	allErrors = append(allErrors, r.Validate()...)
-
-	oldValidator := old.(*Validator)
+	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldValidator.Spec.Resources)...)
 
 	if oldValidator.Spec.Network != r.Spec.Network {
 		err := field.Invalid(field.NewPath("spec").Child("network"), r.Spec.Network, "field is immutable")
 		allErrors = append(allErrors, err)
 	}
+
+	allErrors = append(allErrors, r.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
 		return nil
