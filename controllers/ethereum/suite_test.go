@@ -26,7 +26,6 @@ import (
 var cfg *rest.Config
 var k8sClient client.Client
 var testEnv *envtest.Environment
-var networkReconciler *NetworkReconciler
 var nodeReconciler *NodeReconciler
 
 func TestAPIs(t *testing.T) {
@@ -74,15 +73,6 @@ var _ = BeforeSuite(func(done Done) {
 	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
 	Expect(err).ToNot(HaveOccurred())
 	Expect(k8sClient).ToNot(BeNil())
-
-	// start network reconciler
-	networkReconciler = &NetworkReconciler{
-		Client: k8sManager.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("network"),
-		Scheme: scheme.Scheme,
-	}
-	networkReconciler.SetupWithManager(k8sManager)
-	Expect(err).ToNot(HaveOccurred())
 
 	// start node reconciler
 	nodeReconciler = &NodeReconciler{
