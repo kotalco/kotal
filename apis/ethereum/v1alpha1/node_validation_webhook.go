@@ -14,15 +14,13 @@ import (
 
 var _ webhook.Validator = &Node{}
 
-// Validate validates a node with a given path
-func (n *Node) Validate(path *field.Path, validateNetworkConfig bool) field.ErrorList {
+// validate validates a node with a given path
+func (n *Node) validate() field.ErrorList {
 	var nodeErrors field.ErrorList
 
 	privateNetwork := n.Spec.Genesis != nil
 
-	if validateNetworkConfig {
-		nodeErrors = append(nodeErrors, n.Spec.NetworkConfig.Validate()...)
-	}
+	path := field.NewPath("spec")
 
 	// validate nodekey is provided if node is bootnode
 	if n.Spec.Bootnode && n.Spec.NodekeySecretName == "" {
@@ -129,7 +127,8 @@ func (n *Node) ValidateCreate() error {
 
 	nodelog.Info("validate create", "name", n.Name)
 
-	allErrors = append(allErrors, n.Validate(field.NewPath("spec"), true)...)
+	allErrors = append(allErrors, n.validate()...)
+	allErrors = append(allErrors, n.Spec.NetworkConfig.ValidateCreate()...)
 	allErrors = append(allErrors, n.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
@@ -151,7 +150,8 @@ func (n *Node) ValidateUpdate(old runtime.Object) error {
 		allErrors = append(allErrors, err)
 	}
 
-	allErrors = append(allErrors, n.Validate(field.NewPath("spec"), true)...)
+	allErrors = append(allErrors, n.validate()...)
+	allErrors = append(allErrors, n.Spec.NetworkConfig.ValidateUpdate(&oldNode.Spec.NetworkConfig)...)
 	allErrors = append(allErrors, n.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
 	if len(allErrors) == 0 {

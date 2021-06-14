@@ -661,7 +661,7 @@ var _ = Describe("Ethereum node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.resources.memoryLimit",
 					BadValue: "1Gi",
-					Detail:   "must be greater than or equal to memory 2Gi",
+					Detail:   "must be greater than memory 2Gi",
 				},
 			},
 		},
@@ -1088,6 +1088,7 @@ var _ = Describe("Ethereum node validation", func() {
 			func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
+					cc.OldNode.Default()
 					cc.NewNode.Default()
 					err := cc.NewNode.ValidateUpdate(cc.OldNode)
 

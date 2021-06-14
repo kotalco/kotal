@@ -15,8 +15,8 @@ import (
 
 var _ webhook.Validator = &BeaconNode{}
 
-// Validate is the shared validate create and update logic
-func (r *BeaconNode) Validate() field.ErrorList {
+// validate is the shared validate create and update logic
+func (r *BeaconNode) validate() field.ErrorList {
 	var nodeErrors field.ErrorList
 
 	path := field.NewPath("spec")
@@ -66,7 +66,7 @@ func (r *BeaconNode) ValidateCreate() error {
 
 	nodelog.Info("validate create", "name", r.Name)
 
-	allErrors = append(allErrors, r.Validate()...)
+	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
@@ -85,7 +85,7 @@ func (r *BeaconNode) ValidateUpdate(old runtime.Object) error {
 
 	nodelog.Info("validate update", "name", r.Name)
 
-	allErrors = append(allErrors, r.Validate()...)
+	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
 	if oldNode.Spec.Join != r.Spec.Join {

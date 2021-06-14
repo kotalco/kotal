@@ -36,25 +36,6 @@ var _ = Describe("IPFS peer validation", func() {
 			},
 		},
 		{
-			Title: "Peer #2",
-			Peer: &Peer{
-				Spec: PeerSpec{
-					Resources: shared.Resources{
-						Memory:      "1Gi",
-						MemoryLimit: "1Gi",
-					},
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.resources.memoryLimit",
-					BadValue: "1Gi",
-					Detail:   "must be greater than memory 1Gi",
-				},
-			},
-		},
-		{
 			Title: "Peer #3",
 			Peer: &Peer{
 				Spec: PeerSpec{
@@ -105,33 +86,6 @@ var _ = Describe("IPFS peer validation", func() {
 					Field:    "spec.resources.cpuLimit",
 					BadValue: "1",
 					Detail:   "must be greater than or equal to cpu 2",
-				},
-			},
-		},
-		{
-			Title: "Peer #2",
-			Peer: &Peer{
-				Spec: PeerSpec{
-					Resources: shared.Resources{
-						Memory:      "1Gi",
-						MemoryLimit: "2Gi",
-					},
-				},
-			},
-			NewPeer: &Peer{
-				Spec: PeerSpec{
-					Resources: shared.Resources{
-						Memory:      "1Gi",
-						MemoryLimit: "1Gi",
-					},
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.resources.memoryLimit",
-					BadValue: "1Gi",
-					Detail:   "must be greater than memory 1Gi",
 				},
 			},
 		},

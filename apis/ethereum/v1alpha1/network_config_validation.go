@@ -7,8 +7,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
-// Validate validates network config
-func (n *NetworkConfig) Validate() field.ErrorList {
+// validate validates network config
+func (n *NetworkConfig) validate() field.ErrorList {
 	var validateErrors field.ErrorList
 
 	// consensus: can't specify consensus while joining existing network
@@ -49,9 +49,20 @@ func (n *NetworkConfig) Validate() field.ErrorList {
 	return validateErrors
 }
 
+// ValidateCreate validates network config
+func (n *NetworkConfig) ValidateCreate() field.ErrorList {
+	var errors field.ErrorList
+
+	errors = append(errors, n.validate()...)
+
+	return errors
+}
+
 // ValidateUpdate validates network config update
 func (n *NetworkConfig) ValidateUpdate(oldConfig *NetworkConfig) field.ErrorList {
 	var updateErrors field.ErrorList
+
+	updateErrors = append(updateErrors, n.validate()...)
 
 	if oldConfig.ID != n.ID {
 		err := field.Invalid(field.NewPath("spec").Child("id"), fmt.Sprintf("%d", n.ID), "field is immutable")

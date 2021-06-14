@@ -49,11 +49,7 @@ func (r *Resources) validate() (errors field.ErrorList) {
 	memoryLimit := r.MemoryLimit
 
 	// validate memory and memory limit can't be equal
-	if memory == memoryLimit {
-		msg := fmt.Sprintf("must be greater than memory %s", string(memory))
-		err := field.Invalid(field.NewPath("spec").Child("resources").Child("memoryLimit"), memoryLimit, msg)
-		errors = append(errors, err)
-	} else {
+	if memory != memoryLimit {
 		// validate memoryLimit can't be less than memory request
 		memoryQuantity := resource.MustParse(memory)
 		memoryLimitQuantity := resource.MustParse(memoryLimit)

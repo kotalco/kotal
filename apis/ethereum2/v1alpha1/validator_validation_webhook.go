@@ -15,8 +15,8 @@ import (
 
 var _ webhook.Validator = &Validator{}
 
-// Validate validates an Ethereum 2.0 validator client
-func (r *Validator) Validate() field.ErrorList {
+// validate validates an Ethereum 2.0 validator client
+func (r *Validator) validate() field.ErrorList {
 	var validatorErrors field.ErrorList
 
 	// prysm requires wallet password
@@ -42,7 +42,7 @@ func (r *Validator) ValidateCreate() error {
 
 	validatorlog.Info("validate create", "name", r.Name)
 
-	allErrors = append(allErrors, r.Validate()...)
+	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
@@ -59,7 +59,7 @@ func (r *Validator) ValidateUpdate(old runtime.Object) error {
 
 	validatorlog.Info("validate update", "name", r.Name)
 
-	allErrors = append(allErrors, r.Validate()...)
+	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldValidator.Spec.Resources)...)
 
 	if oldValidator.Spec.Network != r.Spec.Network {
