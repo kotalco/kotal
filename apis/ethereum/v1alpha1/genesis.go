@@ -119,6 +119,9 @@ type Forks struct {
 
 	// MuirGlacier fork
 	MuirGlacier uint `json:"muirglacier,omitempty"`
+
+	// Berlin fork
+	Berlin uint `json:"berlin,omitempty"`
 }
 
 // Account is Ethereum account

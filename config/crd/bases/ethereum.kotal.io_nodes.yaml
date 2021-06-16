@@ -149,6 +149,9 @@ spec:
                   forks:
                     description: Forks is supported forks (network upgrade) and corresponding block number
                     properties:
+                      berlin:
+                        description: Berlin fork
+                        type: integer
                       byzantium:
                         description: Byzantium fork
                         type: integer
