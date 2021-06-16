@@ -4,7 +4,6 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
-	"strings"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -59,7 +58,6 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	}
 
 	r.updateLabels(&node)
-	r.updateStaticNodes(&node)
 
 	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return
@@ -126,19 +124,6 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha
 	}
 
 	return nil
-}
-
-// updateStaticNodes updates node static nodes with passed static nodes through annotations
-// when node is part of network, static nodes are passed through annotations
-func (r *NodeReconciler) updateStaticNodes(node *ethereumv1alpha1.Node) {
-	if node.Annotations[staticNodesAnnotation] == "" {
-		return
-	}
-	staticNodes := strings.Split(node.Annotations[staticNodesAnnotation], ";")
-
-	for i := range staticNodes {
-		node.Spec.StaticNodes = append(node.Spec.StaticNodes, ethereumv1alpha1.Enode(staticNodes[i]))
-	}
 }
 
 // specConfigmap updates genesis configmap spec

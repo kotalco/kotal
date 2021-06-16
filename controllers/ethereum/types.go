@@ -1,10 +1,5 @@
 package controllers
 
-const (
-	// staticNodesAnnotation is the annotation for static nodes
-	staticNodesAnnotation = "kotal.io/static-nodes"
-)
-
 // Node settings
 const (
 	// DefaultHost is the host address used by rpc, ws and graphql server
