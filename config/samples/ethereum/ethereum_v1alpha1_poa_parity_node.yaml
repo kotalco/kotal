@@ -1,0 +1,48 @@
+apiVersion: ethereum.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: poa-parity-node
+spec:
+  consensus: poa
+  id: 20189
+  ########### Genesis block spec ###########
+  genesis:
+    chainId: 20189
+    clique:
+      blockPeriod: 15
+      epochLength: 100
+      signers:
+        - "0xd2c21213027cbf4d46c16b55fa98e5252b048706"
+        - "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
+    forks:
+      homestead: 0
+      eip150: 0
+      eip155: 0
+      eip158: 0
+      byzantium: 0
+      constantinople: 0
+      petersburg: 0
+      istanbul: 0
+      muirglacier: 0
+    coinbase: "0x071E2c1067c24607fF00cEEBbe83a38063BDEDd8"
+    difficulty: "0xfff"
+    gasLimit: "0x47b760"
+    nonce: "0x0"
+    timestamp: "0x0"
+    accounts:
+      - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"
+        balance: "0xffffffffffffffffffff"
+  ########### node spec ###########
+  client: parity
+  miner: true
+  coinbase: "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
+  import:
+    # kubectl create secret generic my-account-privatekey --from-literal=key=5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
+    # kubectl create secret generic my-account-password --from-literal=password=secret
+    privatekeySecretName: my-account-privatekey
+    passwordSecretName: my-account-password
+  resources:
+    cpu: "1"
+    cpuLimit: "1"
+    memory: "1Gi"
+    memoryLimit: "2Gi"

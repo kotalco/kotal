@@ -1,0 +1,21 @@
+apiVersion: ethereum.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: pow-parity-node
+spec:
+  consensus: pow
+  id: 11
+  ########### Genesis block spec ###########
+  genesis:
+    chainId: 9999
+    accounts:
+      - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"
+        balance: "0xffffffffffffffffffff"
+  ########### node spec ###########
+  client: parity
+  rpc: true
+  resources:
+    cpu: "1"
+    cpuLimit: "1"
+    memory: "1Gi"
+    memoryLimit: "2Gi"

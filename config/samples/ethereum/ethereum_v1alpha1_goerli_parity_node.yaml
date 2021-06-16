@@ -1,0 +1,24 @@
+apiVersion: ethereum.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: goerli-parity-node
+spec:
+  join: goerli
+  client: parity
+  # kubectl create secret generic nodekey --from-literal=key=5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
+  nodekeySecretName: nodekey
+  rpc: true
+  rpcPort: 8599
+  corsDomains:
+    - example.kotal.io
+  rpcAPI:
+    - web3
+    - net
+    - eth
+  graphql: true
+  graphqlPort: 8777
+  resources:
+    cpu: "1"
+    cpuLimit: "1"
+    memory: "1Gi"
+    memoryLimit: "2Gi"

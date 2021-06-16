@@ -1,0 +1,33 @@
+apiVersion: ethereum.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: ibft2-besu-node
+spec:
+  consensus: ibft2
+  id: 11
+  ########### Genesis block spec ###########
+  genesis:
+    chainId: 20189
+    ibft2:
+      validators:
+        - "0x427e2c7cecd72bc4cdd4f7ebb8bb6e49789c8044"
+        - "0xd2c21213027cbf4d46c16b55fa98e5252b048706"
+        - "0x8e1f6c7c76a1d7f74eda342d330ca9749f31cc2b"
+    accounts:
+      - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"
+        balance: "0xffffffffffffffffffff"
+  ########### network spec ###########
+  client: besu
+  rpc: true
+  # kubectl create secret generic node1key --from-literal=key=608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
+  nodekeySecretName: node1key
+  rpcPort: 8599
+  corsDomains:
+    - all
+  hosts:
+    - all
+  rpcAPI:
+    - web3
+    - net
+    - eth
+    - ibft
