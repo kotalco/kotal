@@ -22,12 +22,6 @@ func (n *Node) validate() field.ErrorList {
 
 	path := field.NewPath("spec")
 
-	// validate nodekey is provided if node is bootnode
-	if n.Spec.Bootnode && n.Spec.NodekeySecretName == "" {
-		err := field.Invalid(path.Child("nodekey"), n.Spec.NodekeySecretName, "must provide nodekeySecretName if bootnode is true")
-		nodeErrors = append(nodeErrors, err)
-	}
-
 	// validate fatal and trace logging not supported by geth
 	if n.Spec.Client == GethClient && (n.Spec.Logging == FatalLogs || n.Spec.Logging == TraceLogs) {
 		err := field.Invalid(path.Child("logging"), n.Spec.Logging, fmt.Sprintf("not supported by client %s", n.Spec.Client))

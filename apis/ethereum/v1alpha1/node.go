@@ -48,9 +48,6 @@ type NodeSpec struct {
 	// import is account to import
 	Import *ImportedAccount `json:"import,omitempty"`
 
-	// Bootnode is whether node is bootnode or no
-	Bootnode bool `json:"bootnode,omitempty"`
-
 	// Bootnodes is set of ethereum node URLS for p2p discovery bootstrap
 	Bootnodes []Enode `json:"bootnodes,omitempty"`
 

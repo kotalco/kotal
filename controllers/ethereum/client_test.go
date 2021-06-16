@@ -42,14 +42,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"geth bootnode joining rinkeby",
+			"geth node joining rinkeby",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					Bootnodes:         bootnodes,
 				},
@@ -65,14 +64,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"parity bootnode joining rinkeby",
+			"parity joining rinkeby",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.ParityClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					Bootnodes:         bootnodes,
 				},
@@ -89,14 +87,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"bootnode joining rinkeby",
+			"besu node joining rinkeby",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					Client: ethereumv1alpha1.BesuClient,
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					Logging:           ethereumv1alpha1.NoLogs,
 				},
@@ -111,14 +108,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"geth bootnode joining rinkeby",
+			"geth node joining rinkeby",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					Logging:           ethereumv1alpha1.AllLogs,
 				},
@@ -132,14 +128,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"parity bootnode joining rinkeby",
+			"parity joining rinkeby",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.ParityClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					Logging:           ethereumv1alpha1.ErrorLogs,
 				},
@@ -155,14 +150,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"bootnode joining rinkeby with rpc",
+			"besu node joining rinkeby with rpc",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					Client: ethereumv1alpha1.BesuClient,
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
 					Logging:           ethereumv1alpha1.FatalLogs,
@@ -181,14 +175,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"geth bootnode joining rinkeby with rpc",
+			"geth node joining rinkeby with rpc",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
 					Logging:           ethereumv1alpha1.WarnLogs,
@@ -206,14 +199,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"parity bootnode joining rinkeby with rpc",
+			"parity joining rinkeby with rpc",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.ParityClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
 					Logging:           ethereumv1alpha1.WarnLogs,
@@ -231,14 +223,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"bootnode joining rinkeby with rpc settings",
+			"besu node joining rinkeby with rpc settings",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.BesuClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
 					RPCPort:           8599,
@@ -267,14 +258,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"geth bootnode joining rinkeby with rpc settings",
+			"geth node joining rinkeby with rpc settings",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
 					RPCPort:           8599,
@@ -302,14 +292,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"parity bootnode joining rinkeby with rpc settings",
+			"parity joining rinkeby with rpc settings",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.ParityClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
 					RPCPort:           8599,
@@ -337,14 +326,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"bootnode joining rinkeby with rpc, ws settings",
+			"besu node joining rinkeby with rpc, ws settings",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.BesuClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
 					RPCPort:           8599,
@@ -388,14 +376,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"geth bootnode joining rinkeby with rpc, ws settings",
+			"geth node joining rinkeby with rpc, ws settings",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
 					RPCPort:           8599,
@@ -439,14 +426,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"parity bootnode joining rinkeby with rpc, ws settings",
+			"parity joining rinkeby with rpc, ws settings",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.ParityClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
 					RPCPort:           8599,
@@ -489,14 +475,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"bootnode joining rinkeby with rpc, ws, graphql settings and cors domains",
+			"besu node joining rinkeby with rpc, ws, graphql settings and cors domains",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.BesuClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
 					RPCPort:           8599,
@@ -550,14 +535,13 @@ var _ = Describe("Ethereum client arguments", func() {
 			},
 		},
 		{
-			"geth bootnode joining rinkeby with rpc, ws, graphql settings and cors domains",
+			"geth node joining rinkeby with rpc, ws, graphql settings and cors domains",
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
 						Join: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
-					Bootnode:          true,
 					NodekeySecretName: "nodekey",
 					RPC:               true,
 					RPCPort:           8599,

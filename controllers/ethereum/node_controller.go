@@ -85,10 +85,6 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
-	if !node.Spec.Bootnode {
-		return
-	}
-
 	enodeURL := fmt.Sprintf("enode://%s@%s:%d", publicKey, ip, node.Spec.P2PPort)
 
 	if err = r.updateStatus(ctx, &node, enodeURL); err != nil {

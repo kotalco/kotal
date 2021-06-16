@@ -63,7 +63,6 @@ var _ = Describe("Ethereum network controller", func() {
 				Join: "mainnet",
 			},
 			Client:            ethereumv1alpha1.BesuClient,
-			Bootnode:          true,
 			NodekeySecretName: "nodekey",
 			SyncMode:          ethereumv1alpha1.FullSynchronization,
 			Logging:           ethereumv1alpha1.NoLogs,
@@ -244,7 +243,6 @@ var _ = Describe("Ethereum network controller", func() {
 				Join: "rinkeby",
 			},
 			Client:            ethereumv1alpha1.BesuClient,
-			Bootnode:          true,
 			NodekeySecretName: "nodekey",
 			Logging:           ethereumv1alpha1.FatalLogs,
 		}
@@ -460,7 +458,6 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			},
 			Client:            ethereumv1alpha1.BesuClient,
-			Bootnode:          true,
 			NodekeySecretName: "nodekey",
 		}
 
@@ -677,7 +674,6 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			},
 			Client:            ethereumv1alpha1.BesuClient,
-			Bootnode:          true,
 			NodekeySecretName: "nodekey",
 			Logging:           ethereumv1alpha1.TraceLogs,
 		}
@@ -900,7 +896,6 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			},
 			Client:            ethereumv1alpha1.BesuClient,
-			Bootnode:          true,
 			NodekeySecretName: "nodekey",
 			Logging:           ethereumv1alpha1.WarnLogs,
 		}

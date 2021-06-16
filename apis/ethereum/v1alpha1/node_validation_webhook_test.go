@@ -196,32 +196,6 @@ var _ = Describe("Ethereum node validation", func() {
 			},
 		},
 		{
-			Title: "node #9",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: IstanbulBFT,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
-					},
-					Bootnode: true,
-					Client:   BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.nodekey",
-					BadValue: "",
-					Detail:   "must provide nodekeySecretName if bootnode is true",
-				},
-			},
-		},
-		{
 			Title: "node #10",
 			Node: &Node{
 				ObjectMeta: metav1.ObjectMeta{
