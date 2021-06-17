@@ -24,6 +24,7 @@ spec:
       petersburg: 0
       istanbul: 0
       muirglacier: 0
+      berlin: 0
     coinbase: "0x071E2c1067c24607fF00cEEBbe83a38063BDEDd8"
     difficulty: "0xfff"
     gasLimit: "0x47b760"
