@@ -18,7 +18,7 @@ Kotal extended kubernetes with custom resources in different API groups.
 
 | Group            | Description                                  | API Group                   | Status               |
 | ---------------- | -------------------------------------------- | --------------------------- | -------------------- |
-| **Ethereum**     | Deploy ethereum nodes and networks           | ethereum.kotal.io/v1alpha1  | alpha                |
+| **Ethereum**     | Deploy ethereum nodes                        | ethereum.kotal.io/v1alpha1  | alpha                |
 | **IPFS**         | Deploy IPFS peers, cluster peers, and swarms | ipfs.kotal.io/v1alpha1      | alpha                |
 | **Filecoin**     | Deploy Filecoin nodes                        | filecoin.kotal.io/v1alpha1  | alpha                |
 | **Ethereum 2.0** | Deploy validator and beacon chain nodes      | ethereum2.kotal.io/v1alpha1 | alpha                |
