@@ -107,11 +107,21 @@ func identity() map[string]interface{} {
 // modexp is modular exponentiaiton function
 func modexp() map[string]interface{} {
 	return map[string]interface{}{
-		"name":        "modexp",
-		"activate_at": "0x0",
+		"name": "modexp",
 		"pricing": map[string]interface{}{
-			"modexp": map[string]int{
-				"divisor": 20,
+			"0x0": map[string]interface{}{
+				"info": "EIP-198: Big integer modular exponentiation. Byzantium hardfork (4_370_000)",
+				"price": map[string]interface{}{
+					"modexp": map[string]uint{
+						"divisor": 20,
+					},
+				},
+			},
+			"0xbad420": map[string]interface{}{
+				"info": "EIP-2565: ModExp Gas Cost. Berlin hardfork (12_244_000)",
+				"price": map[string]interface{}{
+					"modexp2565": map[string]interface{}{},
+				},
 			},
 		},
 	}

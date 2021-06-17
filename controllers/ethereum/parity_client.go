@@ -204,6 +204,7 @@ func (p *ParityClient) Genesis() (content string, err error) {
 	constantinopleBlock := hex(genesis.Forks.Constantinople)
 	istanbulBlock := hex(genesis.Forks.Istanbul)
 	muirGlacierBlock := hex(genesis.Forks.MuirGlacier)
+	berlinBlock := hex(genesis.Forks.Berlin)
 
 	// ethash PoW settings
 	if consensus == ethereumv1alpha1.ProofOfWork {
@@ -286,6 +287,10 @@ func (p *ParityClient) Genesis() (content string, err error) {
 		"eip1706Transition":         istanbulBlock,
 		"eip1884Transition":         istanbulBlock,
 		"eip2028Transition":         istanbulBlock,
+		// Berlin
+		"eip2315Transition": berlinBlock, // Simple Subroutines for the EVM
+		"eip2929Transition": berlinBlock, // Gas cost increases for state access opcodes
+		"eip2930Transition": berlinBlock, // Access lists. Requires eips 2718 (Typed Transaction Envelope), and 2929
 	}
 
 	alloc := genesisAccounts(true)
