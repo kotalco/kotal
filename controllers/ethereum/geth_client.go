@@ -247,7 +247,7 @@ func (g *GethClient) Genesis() (content string, err error) {
 	result["mixHash"] = mixHash
 	result["extraData"] = extraData
 
-	alloc := genesisAccounts(false)
+	alloc := genesisAccounts(false, genesis.Forks)
 	for _, account := range genesis.Accounts {
 		m := map[string]interface{}{
 			"balance": account.Balance,

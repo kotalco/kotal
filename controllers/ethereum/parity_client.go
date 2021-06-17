@@ -293,7 +293,7 @@ func (p *ParityClient) Genesis() (content string, err error) {
 		"eip2930Transition": berlinBlock, // Access lists. Requires eips 2718 (Typed Transaction Envelope), and 2929
 	}
 
-	alloc := genesisAccounts(true)
+	alloc := genesisAccounts(true, genesis.Forks)
 	for _, account := range genesis.Accounts {
 		m := map[string]interface{}{
 			"balance": account.Balance,
