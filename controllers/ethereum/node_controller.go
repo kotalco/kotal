@@ -76,10 +76,6 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
-	if node.Spec.NodekeySecretName == "" && node.Spec.Import == nil {
-		return
-	}
-
 	var publicKey string
 	if publicKey, err = r.reconcileSecret(ctx, &node); err != nil {
 		return
@@ -112,6 +108,18 @@ func (r *NodeReconciler) updateLabels(node *ethereumv1alpha1.Node) {
 
 // updateStatus updates network status
 func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha1.Node, enodeURL string) error {
+
+	if node.Spec.NodekeySecretName == "" {
+		switch node.Spec.Client {
+		case ethereumv1alpha1.BesuClient:
+			enodeURL = "call net_enode JSON-RPC method"
+		case ethereumv1alpha1.GethClient:
+			enodeURL = "call admin_nodeInfo JSON-RPC method"
+		case ethereumv1alpha1.ParityClient:
+			enodeURL = "call parity_enode JSON-RPC method"
+		}
+	}
+
 	node.Status.EnodeURL = enodeURL
 
 	if err := r.Status().Update(ctx, node); err != nil {
