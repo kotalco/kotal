@@ -3,7 +3,7 @@ kind: Node
 metadata:
   name: mainnet-besu-node
 spec:
-  join: mainnet
+  network: mainnet
   client: besu
   # kubectl create secret generic node1key --from-literal=key=5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
   nodekeySecretName: node1key

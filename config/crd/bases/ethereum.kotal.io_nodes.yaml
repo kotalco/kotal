@@ -265,9 +265,6 @@ spec:
                 - passwordSecretName
                 - privatekeySecretName
                 type: object
-              join:
-                description: Join specifies the network to join
-                type: string
               logging:
                 description: Logging is logging verboisty level
                 enum:
@@ -283,6 +280,9 @@ spec:
               miner:
                 description: Miner is whether node is mining/validating blocks or no
                 type: boolean
+              network:
+                description: Network specifies the network to join
+                type: string
               nodekeySecretName:
                 description: NodekeySecretName is the secret name holding node private key
                 type: string
