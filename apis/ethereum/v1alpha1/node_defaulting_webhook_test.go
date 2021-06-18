@@ -143,6 +143,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node.Spec.NetworkConfig.Genesis.Forks.Istanbul).To(Equal(block0))
 		Expect(node.Spec.NetworkConfig.Genesis.Forks.MuirGlacier).To(Equal(block0))
 		Expect(node.Spec.NetworkConfig.Genesis.Forks.Berlin).To(Equal(block0))
+		Expect(node.Spec.NetworkConfig.Genesis.Forks.London).To(Equal(block0))
 	})
 
 	It("Should default nodes joining network with poa consensus", func() {
@@ -196,6 +197,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node.Spec.NetworkConfig.Genesis.Forks.Istanbul).To(Equal(block0))
 		Expect(node.Spec.NetworkConfig.Genesis.Forks.MuirGlacier).To(Equal(block0))
 		Expect(node.Spec.NetworkConfig.Genesis.Forks.Berlin).To(Equal(block0))
+		Expect(node.Spec.NetworkConfig.Genesis.Forks.London).To(Equal(block0))
 		// clique defaulting
 		Expect(node.Spec.NetworkConfig.Genesis.Clique.BlockPeriod).To(Equal(DefaultCliqueBlockPeriod))
 		Expect(node.Spec.NetworkConfig.Genesis.Clique.EpochLength).To(Equal(DefaultCliqueEpochLength))
@@ -254,6 +256,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node.Spec.NetworkConfig.Genesis.Forks.Istanbul).To(Equal(block0))
 		Expect(node.Spec.NetworkConfig.Genesis.Forks.MuirGlacier).To(Equal(block0))
 		Expect(node.Spec.NetworkConfig.Genesis.Forks.Berlin).To(Equal(block0))
+		Expect(node.Spec.NetworkConfig.Genesis.Forks.London).To(Equal(block0))
 		// IBFT2 defaulting
 		Expect(node.Spec.NetworkConfig.Genesis.IBFT2.BlockPeriod).To(Equal(DefaultIBFT2BlockPeriod))
 		Expect(node.Spec.NetworkConfig.Genesis.IBFT2.EpochLength).To(Equal(DefaultIBFT2EpochLength))
