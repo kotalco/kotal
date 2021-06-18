@@ -79,8 +79,8 @@ func (p *ParityClient) Args() (args []string) {
 	appendArg(ParityReservedPeers, fmt.Sprintf("%s/static-nodes", shared.PathConfig(p.HomeDir())))
 
 	if node.Spec.Genesis == nil {
-		if node.Spec.Join != ethereumv1alpha1.MainNetwork {
-			appendArg(ParityNetwork, node.Spec.Join)
+		if node.Spec.Network != ethereumv1alpha1.MainNetwork {
+			appendArg(ParityNetwork, node.Spec.Network)
 		}
 	} else {
 		appendArg(ParityNetwork, fmt.Sprintf("%s/genesis.json", shared.PathConfig(p.HomeDir())))

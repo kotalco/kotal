@@ -73,7 +73,7 @@ func (b *BesuClient) Args() (args []string) {
 	appendArg(BesuDataPath, shared.PathData(b.HomeDir()))
 
 	if node.Spec.Genesis == nil {
-		appendArg(BesuNetwork, node.Spec.Join)
+		appendArg(BesuNetwork, node.Spec.Network)
 	} else {
 		appendArg(BesuDiscoveryEnabled, "false")
 	}

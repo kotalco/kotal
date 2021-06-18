@@ -60,7 +60,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		spec := ethereumv1alpha1.NodeSpec{
 			NetworkConfig: ethereumv1alpha1.NetworkConfig{
-				Join: "mainnet",
+				Network: "mainnet",
 			},
 			Client:            ethereumv1alpha1.BesuClient,
 			NodekeySecretName: "nodekey",
@@ -240,7 +240,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		spec := ethereumv1alpha1.NodeSpec{
 			NetworkConfig: ethereumv1alpha1.NetworkConfig{
-				Join: "rinkeby",
+				Network: "rinkeby",
 			},
 			Client:            ethereumv1alpha1.BesuClient,
 			NodekeySecretName: "nodekey",

@@ -80,8 +80,8 @@ func (g *GethClient) Args() (args []string) {
 
 	appendArg(GethDataDir, shared.PathData(g.HomeDir()))
 
-	if node.Spec.Join != "" {
-		appendArg(fmt.Sprintf("--%s", node.Spec.Join))
+	if node.Spec.Network != "" {
+		appendArg(fmt.Sprintf("--%s", node.Spec.Network))
 	}
 
 	if node.Spec.P2PPort != 0 {

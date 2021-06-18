@@ -26,7 +26,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				Spec: ethereumv1alpha1.NodeSpec{
 					Client: ethereumv1alpha1.BesuClient,
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Bootnodes: bootnodes,
 				},
@@ -46,7 +46,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
 					NodekeySecretName: "nodekey",
@@ -68,7 +68,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.ParityClient,
 					NodekeySecretName: "nodekey",
@@ -92,7 +92,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				Spec: ethereumv1alpha1.NodeSpec{
 					Client: ethereumv1alpha1.BesuClient,
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					NodekeySecretName: "nodekey",
 					Logging:           ethereumv1alpha1.NoLogs,
@@ -112,7 +112,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
 					NodekeySecretName: "nodekey",
@@ -132,7 +132,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.ParityClient,
 					NodekeySecretName: "nodekey",
@@ -155,7 +155,7 @@ var _ = Describe("Ethereum client arguments", func() {
 				Spec: ethereumv1alpha1.NodeSpec{
 					Client: ethereumv1alpha1.BesuClient,
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					NodekeySecretName: "nodekey",
 					RPC:               true,
@@ -179,7 +179,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
 					NodekeySecretName: "nodekey",
@@ -203,7 +203,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.ParityClient,
 					NodekeySecretName: "nodekey",
@@ -227,7 +227,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.BesuClient,
 					NodekeySecretName: "nodekey",
@@ -262,7 +262,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
 					NodekeySecretName: "nodekey",
@@ -296,7 +296,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.ParityClient,
 					NodekeySecretName: "nodekey",
@@ -330,7 +330,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.BesuClient,
 					NodekeySecretName: "nodekey",
@@ -380,7 +380,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
 					NodekeySecretName: "nodekey",
@@ -430,7 +430,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.ParityClient,
 					NodekeySecretName: "nodekey",
@@ -479,7 +479,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.BesuClient,
 					NodekeySecretName: "nodekey",
@@ -539,7 +539,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			&ethereumv1alpha1.Node{
 				Spec: ethereumv1alpha1.NodeSpec{
 					NetworkConfig: ethereumv1alpha1.NetworkConfig{
-						Join: rinkeby,
+						Network: rinkeby,
 					},
 					Client:            ethereumv1alpha1.GethClient,
 					NodekeySecretName: "nodekey",
