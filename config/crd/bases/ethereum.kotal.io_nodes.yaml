@@ -176,6 +176,9 @@ spec:
                       istanbul:
                         description: Istanbul fork
                         type: integer
+                      london:
+                        description: London fork
+                        type: integer
                       muirglacier:
                         description: MuirGlacier fork
                         type: integer
