@@ -69,7 +69,7 @@ metadata:
   name: ethereum-node
 spec:
   client: besu
-  join: rinkeby
+  network: rinkeby
   rpc: true
 ```
 
