@@ -12,26 +12,26 @@ func (n *NetworkConfig) validate() field.ErrorList {
 	var validateErrors field.ErrorList
 
 	// consensus: can't specify consensus while joining existing network
-	if n.Join != "" && n.Consensus != "" {
+	if n.Network != "" && n.Consensus != "" {
 		err := field.Invalid(field.NewPath("spec").Child("consensus"), n.Consensus, "must be none while joining a network")
 		validateErrors = append(validateErrors, err)
 	}
 
 	// genesis: must specify genesis if there's no network to join
-	if n.Join == "" && n.Genesis == nil {
-		err := field.Invalid(field.NewPath("spec").Child("genesis"), "", "must be specified if spec.join is none")
+	if n.Network == "" && n.Genesis == nil {
+		err := field.Invalid(field.NewPath("spec").Child("genesis"), "", "must be specified if spec.network is none")
 		validateErrors = append(validateErrors, err)
 	}
 
 	// id: must be provided if join is none
-	if n.Join == "" && n.ID == 0 {
-		err := field.Invalid(field.NewPath("spec").Child("id"), "", "must be specified if spec.join is none")
+	if n.Network == "" && n.ID == 0 {
+		err := field.Invalid(field.NewPath("spec").Child("id"), "", "must be specified if spec.network is none")
 		validateErrors = append(validateErrors, err)
 	}
 
-	// id: must be none if join is provided
-	if n.Join != "" && n.ID != 0 {
-		err := field.Invalid(field.NewPath("spec").Child("id"), fmt.Sprintf("%d", n.ID), "must be none if spec.join is provided")
+	// id: must be none if network is provided
+	if n.Network != "" && n.ID != 0 {
+		err := field.Invalid(field.NewPath("spec").Child("id"), fmt.Sprintf("%d", n.ID), "must be none if spec.network is provided")
 		validateErrors = append(validateErrors, err)
 	}
 
@@ -69,8 +69,8 @@ func (n *NetworkConfig) ValidateUpdate(oldConfig *NetworkConfig) field.ErrorList
 		updateErrors = append(updateErrors, err)
 	}
 
-	if oldConfig.Join != n.Join {
-		err := field.Invalid(field.NewPath("spec").Child("join"), n.Join, "field is immutable")
+	if oldConfig.Network != n.Network {
+		err := field.Invalid(field.NewPath("spec").Child("network"), n.Network, "field is immutable")
 		updateErrors = append(updateErrors, err)
 	}
 

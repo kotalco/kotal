@@ -25,9 +25,9 @@ func (g *Genesis) Validate(networkConfig *NetworkConfig) field.ErrorList {
 
 	var allErrors field.ErrorList
 
-	// join: can't specifiy genesis while joining existing network
-	if networkConfig.Join != "" {
-		err := field.Invalid(field.NewPath("spec").Child("join"), networkConfig.Join, "must be none if spec.genesis is specified")
+	// network: can't specifiy genesis while joining existing network
+	if networkConfig.Network != "" {
+		err := field.Invalid(field.NewPath("spec").Child("network"), networkConfig.Network, "must be none if spec.genesis is specified")
 		allErrors = append(allErrors, err)
 	}
 

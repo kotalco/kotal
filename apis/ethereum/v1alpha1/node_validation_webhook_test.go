@@ -33,7 +33,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join:      RinkebyNetwork,
+						Network:   RinkebyNetwork,
 						Consensus: ProofOfWork,
 					},
 					Client: BesuClient,
@@ -56,7 +56,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 						Genesis: &Genesis{
 							ChainID: 444,
 						},
@@ -67,7 +67,7 @@ var _ = Describe("Ethereum node validation", func() {
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.join",
+					Field:    "spec.network",
 					BadValue: RinkebyNetwork,
 					Detail:   "must be none if spec.genesis is specified",
 				},
@@ -88,7 +88,7 @@ var _ = Describe("Ethereum node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.genesis",
 					BadValue: "",
-					Detail:   "must be specified if spec.join is none",
+					Detail:   "must be specified if spec.network is none",
 				},
 			},
 		},
@@ -308,8 +308,8 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						ID:   networkID,
-						Join: RinkebyNetwork,
+						ID:      networkID,
+						Network: RinkebyNetwork,
 					},
 					Client: BesuClient,
 				},
@@ -319,7 +319,7 @@ var _ = Describe("Ethereum node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.id",
 					BadValue: fmt.Sprintf("%d", networkID),
-					Detail:   "must be none if spec.join is provided",
+					Detail:   "must be none if spec.network is provided",
 				},
 			},
 		},
@@ -344,7 +344,7 @@ var _ = Describe("Ethereum node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.id",
 					BadValue: "",
-					Detail:   "must be specified if spec.join is none",
+					Detail:   "must be specified if spec.network is none",
 				},
 			},
 		},
@@ -570,7 +570,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client:   BesuClient,
 					SyncMode: LightSynchronization,
@@ -593,7 +593,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client: BesuClient,
 					Resources: shared.Resources{
@@ -619,7 +619,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client: BesuClient,
 					Resources: shared.Resources{
@@ -647,7 +647,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client:  GethClient,
 					Logging: FatalLogs,
@@ -670,7 +670,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client:  GethClient,
 					Logging: TraceLogs,
@@ -693,7 +693,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client:  ParityClient,
 					Logging: NoLogs,
@@ -716,7 +716,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client:  ParityClient,
 					Logging: FatalLogs,
@@ -739,7 +739,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client:  ParityClient,
 					Logging: AllLogs,
@@ -762,7 +762,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client:  ParityClient,
 					GraphQL: true,
@@ -811,7 +811,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client:   ParityClient,
 					SyncMode: LightSynchronization,
@@ -862,7 +862,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client:  GethClient,
 					GraphQL: true,
@@ -893,7 +893,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RinkebyNetwork,
+						Network: RinkebyNetwork,
 					},
 					Client: BesuClient,
 				},
@@ -904,7 +904,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					NetworkConfig: NetworkConfig{
-						Join: RopstenNetwork,
+						Network: RopstenNetwork,
 					},
 					Client: BesuClient,
 				},
@@ -912,7 +912,7 @@ var _ = Describe("Ethereum node validation", func() {
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.join",
+					Field:    "spec.network",
 					BadValue: RopstenNetwork,
 					Detail:   "field is immutable",
 				},

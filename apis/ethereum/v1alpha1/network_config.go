@@ -23,8 +23,8 @@ type NetworkConfig struct {
 	// ID is network id
 	ID uint `json:"id,omitempty"`
 
-	// Join specifies the network to join
-	Join string `json:"join,omitempty"`
+	// Network specifies the network to join
+	Network string `json:"network,omitempty"`
 
 	// Consensus is the consensus algorithm to be used by the network nodes to reach consensus
 	Consensus ConsensusAlgorithm `json:"consensus,omitempty"`

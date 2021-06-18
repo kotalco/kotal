@@ -84,7 +84,7 @@ func (n *Node) Default() {
 func (n *Node) DefaultNodeResources() {
 	var cpu, cpuLimit, memory, memoryLimit, storage string
 	privateNetwork := n.Spec.Genesis != nil
-	join := n.Spec.Join
+	network := n.Spec.Network
 
 	if n.Spec.Resources.CPU == "" {
 		if privateNetwork {
@@ -129,9 +129,9 @@ func (n *Node) DefaultNodeResources() {
 	if n.Spec.Resources.Storage == "" {
 		if privateNetwork {
 			storage = DefaultPrivateNetworkNodeStorageRequest
-		} else if join == MainNetwork && n.Spec.SyncMode == FastSynchronization {
+		} else if network == MainNetwork && n.Spec.SyncMode == FastSynchronization {
 			storage = DefaultMainNetworkFastNodeStorageRequest
-		} else if join == MainNetwork && n.Spec.SyncMode == FullSynchronization {
+		} else if network == MainNetwork && n.Spec.SyncMode == FullSynchronization {
 			storage = DefaultMainNetworkFullNodeStorageRequest
 		} else {
 			storage = DefaultTestNetworkStorageRequest

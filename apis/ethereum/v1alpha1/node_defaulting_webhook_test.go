@@ -9,7 +9,7 @@ import (
 var _ = Describe("Ethereum defaulting", func() {
 	It("Should default nodes joining mainnet", func() {
 		networkConfig := NetworkConfig{
-			Join: MainNetwork,
+			Network: MainNetwork,
 		}
 		availabilityConfig := AvailabilityConfig{
 			HighlyAvailable: true,
@@ -67,7 +67,7 @@ var _ = Describe("Ethereum defaulting", func() {
 	It("Should default nodes joining rinkeby", func() {
 
 		networkConfig := NetworkConfig{
-			Join: RinkebyNetwork,
+			Network: RinkebyNetwork,
 		}
 		availabilityConfig := AvailabilityConfig{
 			HighlyAvailable: true,
