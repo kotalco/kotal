@@ -202,6 +202,7 @@ func (p *ParityClient) Genesis() (content string, err error) {
 	homesteadBlock := hex(genesis.Forks.Homestead)
 	byzantiumBlock := hex(genesis.Forks.Byzantium)
 	constantinopleBlock := hex(genesis.Forks.Constantinople)
+	petersburgBlock := hex(genesis.Forks.Petersburg)
 	istanbulBlock := hex(genesis.Forks.Istanbul)
 	muirGlacierBlock := hex(genesis.Forks.MuirGlacier)
 	berlinBlock := hex(genesis.Forks.Berlin)
@@ -282,7 +283,7 @@ func (p *ParityClient) Genesis() (content string, err error) {
 		"eip1052Transition": constantinopleBlock,
 		"eip1283Transition": constantinopleBlock,
 		// PetersBurg
-		"eip1283DisableTransition": genesis.Forks.Petersburg,
+		"eip1283DisableTransition": petersburgBlock,
 		// Istanbul
 		"eip1283ReenableTransition": istanbulBlock,
 		"eip1344Transition":         istanbulBlock,
