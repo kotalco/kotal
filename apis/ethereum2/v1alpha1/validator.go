@@ -12,10 +12,12 @@ type ValidatorSpec struct {
 	// Client is the Ethereum 2.0 client to use
 	Client Ethereum2Client `json:"client,omitempty"`
 	// BeaconEndpoints is beacon node endpoints
+	// +kubebuilder:validation:MinItems=1
 	BeaconEndpoints []string `json:"beaconEndpoints"`
 	// Graffiti is the text to include in proposed blocks
 	Graffiti string `json:"graffiti,omitempty"`
 	// Keystores is a list of Validator keystores
+	// +kubebuilder:validation:MinItems=1
 	Keystores []Keystore `json:"keystores"`
 	// WalletPasswordSecret is wallet password secret
 	WalletPasswordSecret string `json:"walletPasswordSecret,omitempty"`

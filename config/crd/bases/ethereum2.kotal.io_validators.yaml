@@ -43,6 +43,7 @@ spec:
                 description: BeaconEndpoints is beacon node endpoints
                 items:
                   type: string
+                minItems: 1
                 type: array
               client:
                 description: Client is the Ethereum 2.0 client to use
@@ -70,6 +71,7 @@ spec:
                   required:
                   - secretName
                   type: object
+                minItems: 1
                 type: array
               network:
                 description: Network is the network this validator is validating blocks for
