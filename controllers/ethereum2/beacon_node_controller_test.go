@@ -36,8 +36,8 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 		}
 
 		spec := ethereum2v1alpha1.BeaconNodeSpec{
-			Client: ethereum2v1alpha1.TekuClient,
-			Join:   "mainnet",
+			Client:  ethereum2v1alpha1.TekuClient,
+			Network: "mainnet",
 		}
 
 		toCreate := &ethereum2v1alpha1.BeaconNode{

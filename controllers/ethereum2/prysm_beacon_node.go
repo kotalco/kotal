@@ -42,7 +42,7 @@ func (t *PrysmBeaconNode) Args() (args []string) {
 		}
 	}
 
-	args = append(args, fmt.Sprintf("--%s", node.Spec.Join))
+	args = append(args, fmt.Sprintf("--%s", node.Spec.Network))
 
 	if node.Spec.RPCPort != 0 {
 		args = append(args, PrysmRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort))

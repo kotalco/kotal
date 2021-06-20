@@ -33,7 +33,7 @@ func (t *TekuBeaconNode) Args() (args []string) {
 
 	args = append(args, TekuDataPath, shared.PathData(t.HomeDir()))
 
-	args = append(args, TekuNetwork, node.Spec.Join)
+	args = append(args, TekuNetwork, node.Spec.Network)
 
 	if len(node.Spec.Eth1Endpoints) != 0 {
 		args = append(args, TekuEth1Endpoints, strings.Join(node.Spec.Eth1Endpoints, ","))

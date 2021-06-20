@@ -34,7 +34,7 @@ func (t *LighthouseBeaconNode) Args() (args []string) {
 
 	args = append(args, LighthouseDataDir, shared.PathData(t.HomeDir()))
 
-	args = append(args, LighthouseNetwork, node.Spec.Join)
+	args = append(args, LighthouseNetwork, node.Spec.Network)
 
 	if len(node.Spec.Eth1Endpoints) != 0 {
 		args = append(args, LighthouseEth1)

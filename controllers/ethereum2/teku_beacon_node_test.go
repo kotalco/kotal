@@ -19,8 +19,8 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client: ethereum2v1alpha1.TekuClient,
-					Join:   "mainnet",
+					Client:  ethereum2v1alpha1.TekuClient,
+					Network: "mainnet",
 				},
 			},
 			result: []string{
@@ -33,8 +33,8 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with multiple eth1 endpoints",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client: ethereum2v1alpha1.TekuClient,
-					Join:   "mainnet",
+					Client:  ethereum2v1alpha1.TekuClient,
+					Network: "mainnet",
 					Eth1Endpoints: []string{
 						"https://localhost:8545",
 						"https://localhost:8546",
@@ -54,7 +54,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.TekuClient,
-					Join:          "mainnet",
+					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 					REST:          true,
 				},
@@ -73,7 +73,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.TekuClient,
-					Join:          "mainnet",
+					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 					REST:          true,
 					RESTPort:      3333,
@@ -94,8 +94,8 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with multiple eth1 endpoints and http enabled with port and host",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client: ethereum2v1alpha1.TekuClient,
-					Join:   "mainnet",
+					Client:  ethereum2v1alpha1.TekuClient,
+					Network: "mainnet",
 					Eth1Endpoints: []string{
 						"https://localhost:8545",
 						"https://localhost:8546",
@@ -124,7 +124,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.TekuClient,
 					P2PPort:       7891,
-					Join:          "mainnet",
+					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 					REST:          true,
 					RESTPort:      3333,

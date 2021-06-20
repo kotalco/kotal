@@ -20,9 +20,9 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client: ethereum2v1alpha1.PrysmClient,
-					Join:   "mainnet",
-					RPC:    true,
+					Client:  ethereum2v1alpha1.PrysmClient,
+					Network: "mainnet",
+					RPC:     true,
 				},
 			},
 			result: []string{
@@ -36,7 +36,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.PrysmClient,
-					Join:          "mainnet",
+					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 					RPC:           true,
 				},
@@ -54,7 +54,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.PrysmClient,
-					Join:          "mainnet",
+					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 					RPC:           true,
 					RPCPort:       9976,
@@ -75,7 +75,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.PrysmClient,
-					Join:          "mainnet",
+					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 					RPC:           true,
 					RPCPort:       9976,
@@ -99,7 +99,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.PrysmClient,
-					Join:          "mainnet",
+					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 				},
 			},
@@ -116,8 +116,8 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint and grpc with port",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client: ethereum2v1alpha1.PrysmClient,
-					Join:   "mainnet",
+					Client:  ethereum2v1alpha1.PrysmClient,
+					Network: "mainnet",
 					Eth1Endpoints: []string{
 						"https://localhost:8545",
 						"https://localhost:8546",
@@ -145,8 +145,8 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint and grpc with port and host",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client: ethereum2v1alpha1.PrysmClient,
-					Join:   "mainnet",
+					Client:  ethereum2v1alpha1.PrysmClient,
+					Network: "mainnet",
 					Eth1Endpoints: []string{
 						"https://localhost:8545",
 						"https://localhost:8546",
@@ -176,7 +176,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:  ethereum2v1alpha1.PrysmClient,
 					P2PPort: 7891,
-					Join:    "mainnet",
+					Network: "mainnet",
 					Eth1Endpoints: []string{
 						"https://localhost:8545",
 						"https://localhost:8546",

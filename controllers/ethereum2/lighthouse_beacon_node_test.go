@@ -20,8 +20,8 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client: ethereum2v1alpha1.LighthouseClient,
-					Join:   "mainnet",
+					Client:  ethereum2v1alpha1.LighthouseClient,
+					Network: "mainnet",
 				},
 			},
 			result: []string{
@@ -35,7 +35,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.LighthouseClient,
-					Join:          "mainnet",
+					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 				},
 			},
@@ -52,7 +52,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.LighthouseClient,
-					Join:          "mainnet",
+					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 					REST:          true,
 				},
@@ -71,7 +71,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:        ethereum2v1alpha1.LighthouseClient,
-					Join:          "mainnet",
+					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 					REST:          true,
 					RESTPort:      4444,
@@ -92,8 +92,8 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with eth1 endpoint and http enabled with port and host",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client: ethereum2v1alpha1.LighthouseClient,
-					Join:   "mainnet",
+					Client:  ethereum2v1alpha1.LighthouseClient,
+					Network: "mainnet",
 					Eth1Endpoints: []string{
 						"https://localhost:8545",
 						"https://localhost:8546",
@@ -122,7 +122,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:  ethereum2v1alpha1.LighthouseClient,
 					P2PPort: 7891,
-					Join:    "mainnet",
+					Network: "mainnet",
 					Eth1Endpoints: []string{
 						"https://localhost:8545",
 						"https://localhost:8546",
