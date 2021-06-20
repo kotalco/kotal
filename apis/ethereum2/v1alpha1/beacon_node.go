@@ -7,8 +7,8 @@ import (
 
 // BeaconNodeSpec defines the desired state of BeaconNode
 type BeaconNodeSpec struct {
-	// Join is the network to join
-	Join string `json:"join"`
+	// Network is the network to join
+	Network string `json:"network"`
 	// Client is the Ethereum 2.0 client to use
 	Client Ethereum2Client `json:"client,omitempty"`
 	// Eth1Endpoints is Ethereum 1 endpoints

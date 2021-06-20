@@ -61,8 +61,8 @@ spec:
               grpcPort:
                 description: GRPCPort is GRPC gateway server port
                 type: integer
-              join:
-                description: Join is the network to join
+              network:
+                description: Network is the network to join
                 type: string
               p2pPort:
                 description: P2PPort is p2p and discovery port
@@ -113,7 +113,7 @@ spec:
                 description: RPCPort is RPC server port
                 type: integer
             required:
-            - join
+            - network
             type: object
           status:
             description: BeaconNodeStatus defines the observed state of BeaconNode
