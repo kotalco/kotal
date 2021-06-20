@@ -11,10 +11,10 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		node := BeaconNode{
 			Spec: BeaconNodeSpec{
 				Network: "mainnet",
+				Client:  TekuClient,
 			},
 		}
 		node.Default()
-		Expect(node.Spec.Client).To(Equal(DefaultClient))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
 	})
 
@@ -22,6 +22,7 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		node := BeaconNode{
 			Spec: BeaconNodeSpec{
 				Network: "mainnet",
+				Client:  TekuClient,
 			},
 		}
 		node.Default()
@@ -36,11 +37,11 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		node := BeaconNode{
 			Spec: BeaconNodeSpec{
 				Network: "mainnet",
+				Client:  TekuClient,
 				REST:    true,
 			},
 		}
 		node.Default()
-		Expect(node.Spec.Client).To(Equal(DefaultClient))
 		Expect(node.Spec.RESTPort).To(Equal(DefaultRestPort))
 		Expect(node.Spec.RESTHost).To(Equal(DefaultRestHost))
 	})
@@ -48,8 +49,8 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 	It("Should default beacon node with missing rpc port and host", func() {
 		node := BeaconNode{
 			Spec: BeaconNodeSpec{
-				Client:  PrysmClient,
 				Network: "mainnet",
+				Client:  TekuClient,
 				RPC:     true,
 			},
 		}

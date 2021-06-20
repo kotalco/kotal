@@ -10,10 +10,6 @@ var _ webhook.Defaulter = &BeaconNode{}
 func (r *BeaconNode) Default() {
 	nodelog.Info("default", "name", r.Name)
 
-	if r.Spec.Client == "" {
-		r.Spec.Client = DefaultClient
-	}
-
 	if r.Spec.P2PPort == 0 {
 		r.Spec.P2PPort = DefaultP2PPort
 	}
