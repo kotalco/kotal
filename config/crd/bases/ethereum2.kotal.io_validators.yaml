@@ -108,6 +108,7 @@ spec:
                 type: string
             required:
             - beaconEndpoints
+            - client
             - keystores
             - network
             type: object

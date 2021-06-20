@@ -10,7 +10,7 @@ type ValidatorSpec struct {
 	// Network is the network this validator is validating blocks for
 	Network string `json:"network"`
 	// Client is the Ethereum 2.0 client to use
-	Client Ethereum2Client `json:"client,omitempty"`
+	Client Ethereum2Client `json:"client"`
 	// BeaconEndpoints is beacon node endpoints
 	// +kubebuilder:validation:MinItems=1
 	BeaconEndpoints []string `json:"beaconEndpoints"`
