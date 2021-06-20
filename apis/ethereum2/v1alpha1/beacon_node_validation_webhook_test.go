@@ -176,11 +176,13 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			OldNode: &BeaconNode{
 				Spec: BeaconNodeSpec{
 					Network: "mainnet",
+					Client:  TekuClient,
 				},
 			},
 			NewNode: &BeaconNode{
 				Spec: BeaconNodeSpec{
 					Network: "pyrmont",
+					Client:  TekuClient,
 				},
 			},
 			Errors: field.ErrorList{
@@ -188,6 +190,29 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.network",
 					BadValue: "pyrmont",
+					Detail:   "field is immutable",
+				},
+			},
+		},
+		{
+			Title: "Node #2",
+			OldNode: &BeaconNode{
+				Spec: BeaconNodeSpec{
+					Network: "mainnet",
+					Client:  TekuClient,
+				},
+			},
+			NewNode: &BeaconNode{
+				Spec: BeaconNodeSpec{
+					Network: "mainnet",
+					Client:  PrysmClient,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.client",
+					BadValue: PrysmClient,
 					Detail:   "field is immutable",
 				},
 			},
@@ -219,6 +244,7 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.NewNode.Default()
+					cc.OldNode.Default()
 					err := cc.NewNode.ValidateUpdate(cc.OldNode)
 					Expect(err).ToNot(BeNil())
 

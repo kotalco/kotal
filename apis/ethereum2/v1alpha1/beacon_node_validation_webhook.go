@@ -88,6 +88,11 @@ func (r *BeaconNode) ValidateUpdate(old runtime.Object) error {
 	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
+	if oldNode.Spec.Client != r.Spec.Client {
+		err := field.Invalid(path.Child("client"), r.Spec.Client, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
 	if oldNode.Spec.Network != r.Spec.Network {
 		err := field.Invalid(path.Child("network"), r.Spec.Network, "field is immutable")
 		allErrors = append(allErrors, err)

@@ -140,6 +140,41 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Validator #3",
+			OldValidator: &Validator{
+				Spec: ValidatorSpec{
+					Network:  "mainnet",
+					Client:   TekuClient,
+					Graffiti: "Kotal is amazing",
+					Keystores: []Keystore{
+						{
+							SecretName: "my-validator",
+						},
+					},
+				},
+			},
+			NewValidator: &Validator{
+				Spec: ValidatorSpec{
+					Network:  "mainnet",
+					Client:   PrysmClient,
+					Graffiti: "Kotal is amazing",
+					Keystores: []Keystore{
+						{
+							SecretName: "my-validator",
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.client",
+					BadValue: "prysm",
+					Detail:   "field is immutable",
+				},
+			},
+		},
 	}
 
 	Context("While creating validator client", func() {
@@ -165,6 +200,7 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 			func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
+					cc.OldValidator.Default()
 					cc.NewValidator.Default()
 					err := cc.NewValidator.ValidateUpdate(cc.OldValidator)
 
