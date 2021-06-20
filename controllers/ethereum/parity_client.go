@@ -255,6 +255,12 @@ func (p *ParityClient) Genesis() (content string, err error) {
 		"extraData":  extraData,
 	}
 
+	// specify base fee per gas if london fork is activated at genesis block
+	// https://github.com/openethereum/openethereum/issues/440
+	if genesis.Forks.Berlin == 0 {
+		genesisConfig["baseFeePerGas"] = "0x3B9ACA00"
+	}
+
 	paramsConfig := map[string]interface{}{
 		// other non fork parameters
 		"chainID":              hex(genesis.ChainID),
