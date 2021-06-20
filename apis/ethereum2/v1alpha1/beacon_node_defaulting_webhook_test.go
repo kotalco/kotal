@@ -10,7 +10,7 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 	It("Should default beacon node with missing client and p2p port", func() {
 		node := BeaconNode{
 			Spec: BeaconNodeSpec{
-				Join: "mainnet",
+				Network: "mainnet",
 			},
 		}
 		node.Default()
@@ -21,7 +21,7 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 	It("Should default beacon node with missing node resources", func() {
 		node := BeaconNode{
 			Spec: BeaconNodeSpec{
-				Join: "mainnet",
+				Network: "mainnet",
 			},
 		}
 		node.Default()
@@ -35,8 +35,8 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 	It("Should default beacon node with missing client and rest port/host", func() {
 		node := BeaconNode{
 			Spec: BeaconNodeSpec{
-				Join: "mainnet",
-				REST: true,
+				Network: "mainnet",
+				REST:    true,
 			},
 		}
 		node.Default()
@@ -48,9 +48,9 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 	It("Should default beacon node with missing rpc port and host", func() {
 		node := BeaconNode{
 			Spec: BeaconNodeSpec{
-				Client: PrysmClient,
-				Join:   "mainnet",
-				RPC:    true,
+				Client:  PrysmClient,
+				Network: "mainnet",
+				RPC:     true,
 			},
 		}
 		node.Default()
@@ -61,9 +61,9 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 	It("Should default beacon node with missing grpc port", func() {
 		node := BeaconNode{
 			Spec: BeaconNodeSpec{
-				Client: PrysmClient,
-				Join:   "mainnet",
-				GRPC:   true,
+				Client:  PrysmClient,
+				Network: "mainnet",
+				GRPC:    true,
 			},
 		}
 		node.Default()
@@ -73,9 +73,9 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 	It("Should default beacon node with missing grpc host", func() {
 		node := BeaconNode{
 			Spec: BeaconNodeSpec{
-				Client: PrysmClient,
-				Join:   "mainnet",
-				GRPC:   true,
+				Client:  PrysmClient,
+				Network: "mainnet",
+				GRPC:    true,
 			},
 		}
 		node.Default()

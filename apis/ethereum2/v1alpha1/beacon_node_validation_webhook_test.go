@@ -21,9 +21,9 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Title: "Node #1",
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Join:   "mainnet",
-					Client: PrysmClient,
-					REST:   true,
+					Network: "mainnet",
+					Client:  PrysmClient,
+					REST:    true,
 				},
 			},
 			Errors: field.ErrorList{
@@ -39,9 +39,9 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Title: "Node #2",
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Join:   "mainnet",
-					Client: NimbusClient,
-					REST:   true,
+					Network: "mainnet",
+					Client:  NimbusClient,
+					REST:    true,
 				},
 			},
 			Errors: field.ErrorList{
@@ -57,9 +57,9 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Title: "Node #3",
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Join:   "mainnet",
-					Client: TekuClient,
-					RPC:    true,
+					Network: "mainnet",
+					Client:  TekuClient,
+					RPC:     true,
 				},
 			},
 			Errors: field.ErrorList{
@@ -75,9 +75,9 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Title: "Node #4",
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Join:   "mainnet",
-					Client: LighthouseClient,
-					RPC:    true,
+					Network: "mainnet",
+					Client:  LighthouseClient,
+					RPC:     true,
 				},
 			},
 			Errors: field.ErrorList{
@@ -93,8 +93,8 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Title: "Node #5",
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Join:   "mainnet",
-					Client: PrysmClient,
+					Network: "mainnet",
+					Client:  PrysmClient,
 				},
 			},
 			Errors: field.ErrorList{
@@ -110,9 +110,9 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Title: "Node #6",
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Join:   "mainnet",
-					Client: TekuClient,
-					GRPC:   true,
+					Network: "mainnet",
+					Client:  TekuClient,
+					GRPC:    true,
 				},
 			},
 			Errors: field.ErrorList{
@@ -128,9 +128,9 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Title: "Node #7",
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Join:   "pyrmont",
-					Client: PrysmClient,
-					RPC:    true,
+					Network: "pyrmont",
+					Client:  PrysmClient,
+					RPC:     true,
 				},
 			},
 			Errors: field.ErrorList{
@@ -146,8 +146,8 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Title: "Node #8",
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Join:   "mainnet",
-					Client: NimbusClient,
+					Network: "mainnet",
+					Client:  NimbusClient,
 					Eth1Endpoints: []string{
 						"http://localhost:8545",
 						"http://localhost:8546",
@@ -175,18 +175,18 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Title: "Node #1",
 			OldNode: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Join: "mainnet",
+					Network: "mainnet",
 				},
 			},
 			NewNode: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Join: "pyrmont",
+					Network: "pyrmont",
 				},
 			},
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.join",
+					Field:    "spec.network",
 					BadValue: "pyrmont",
 					Detail:   "field is immutable",
 				},

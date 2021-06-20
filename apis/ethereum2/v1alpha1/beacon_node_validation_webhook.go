@@ -46,7 +46,7 @@ func (r *BeaconNode) validate() field.ErrorList {
 	}
 
 	// eth1 endpoint is required by prysm if network is not mainnet
-	if r.Spec.Client == PrysmClient && len(r.Spec.Eth1Endpoints) == 0 && r.Spec.Join != "mainnet" {
+	if r.Spec.Client == PrysmClient && len(r.Spec.Eth1Endpoints) == 0 && r.Spec.Network != "mainnet" {
 		err := field.Invalid(path.Child("eth1Endpoints"), "", fmt.Sprintf("required by %s client if network is not mainnet", r.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
 	}
@@ -88,8 +88,8 @@ func (r *BeaconNode) ValidateUpdate(old runtime.Object) error {
 	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
-	if oldNode.Spec.Join != r.Spec.Join {
-		err := field.Invalid(path.Child("join"), r.Spec.Join, "field is immutable")
+	if oldNode.Spec.Network != r.Spec.Network {
+		err := field.Invalid(path.Child("network"), r.Spec.Network, "field is immutable")
 		allErrors = append(allErrors, err)
 	}
 
