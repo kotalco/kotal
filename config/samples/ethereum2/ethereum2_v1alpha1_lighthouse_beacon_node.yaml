@@ -3,10 +3,10 @@ kind: BeaconNode
 metadata:
   name: lighthouse-beacon-node
 spec:
-  join: pyrmont
+  network: pyrmont
   client: lighthouse
   rest: true
   restPort: 8888
-  eth1Endpoints: 
+  eth1Endpoints:
     - http://localhost:8545
     - http://localhost:8546

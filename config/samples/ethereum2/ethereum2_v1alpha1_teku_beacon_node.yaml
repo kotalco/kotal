@@ -3,7 +3,7 @@ kind: BeaconNode
 metadata:
   name: teku-beacon-node
 spec:
-  join: mainnet
+  network: mainnet
   client: teku
   rest: true
   restPort: 8888

@@ -3,12 +3,12 @@ kind: BeaconNode
 metadata:
   name: prysm-beacon-node
 spec:
-  join: pyrmont
+  network: pyrmont
   client: prysm
   rpc: true
   rpcPort: 8888
   grpc: true
   grpcPort: 9999
-  eth1Endpoints: 
+  eth1Endpoints:
     - http://localhost:8545
     - http://localhost:8546

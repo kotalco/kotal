@@ -3,9 +3,9 @@ kind: BeaconNode
 metadata:
   name: nimbus-beacon-node
 spec:
-  join: pyrmont
+  network: pyrmont
   client: nimbus
   rpc: true
   rpcPort: 8888
-  eth1Endpoints: 
+  eth1Endpoints:
     - http://localhost:8545
