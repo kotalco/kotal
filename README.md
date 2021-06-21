@@ -33,7 +33,7 @@ For each protocol, kotal supports at least 1 client (reference client), client c
 | **Ethereum**     | Hyperledger Besu, Go-Ethereum, Open Ethereum |
 | **Ethereum 2.0** | Teku, Prysm, Lighthouse, Nimbus              |
 | **Filecoin**     | Lotus                                        |
-| **IFPS**         | go-ipfs                                      |
+| **IFPS**         | go-ipfs, ipfs-cluster-service                |
 
 ## Install Kotal
 
