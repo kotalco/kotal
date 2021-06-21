@@ -99,11 +99,11 @@ func (r *PeerReconciler) updateLabels(peer *ipfsv1alpha1.Peer) {
 		peer.Labels = map[string]string{}
 	}
 
-	// TODO: change client implementing multi-clients
-	peer.Labels["name"] = "peer"
-	peer.Labels["protocol"] = "ipfs"
-	peer.Labels["client"] = "go-ipfs"
-	peer.Labels["instance"] = peer.Name
+	peer.Labels["app.kubernetes.io/name"] = "go-ipfs"
+	peer.Labels["app.kubernetes.io/instance"] = peer.Name
+	peer.Labels["app.kubernetes.io/component"] = "ipfs-peer"
+	peer.Labels["app.kubernetes.io/managed-by"] = "kotal"
+	peer.Labels["app.kubernetes.io/created-by"] = "ipfs-peer-controller"
 
 }
 

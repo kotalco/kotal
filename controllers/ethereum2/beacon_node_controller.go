@@ -68,10 +68,11 @@ func (r *BeaconNodeReconciler) updateLabels(node *ethereum2v1alpha1.BeaconNode) 
 		node.Labels = map[string]string{}
 	}
 
-	node.Labels["name"] = "node"
-	node.Labels["client"] = string(node.Spec.Client)
-	node.Labels["protocol"] = "ethereum2"
-	node.Labels["instance"] = node.Name
+	node.Labels["app.kubernetes.io/name"] = string(node.Spec.Client)
+	node.Labels["app.kubernetes.io/instance"] = node.Name
+	node.Labels["app.kubernetes.io/component"] = "ethereum2-beacon-node"
+	node.Labels["app.kubernetes.io/managed-by"] = "kotal"
+	node.Labels["app.kubernetes.io/created-by"] = "ethereum2-beacon-node-controller"
 }
 
 // reconcileService reconciles beacon node service

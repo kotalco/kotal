@@ -63,9 +63,11 @@ func (r *ValidatorReconciler) updateLabels(validator *ethereum2v1alpha1.Validato
 		validator.Labels = map[string]string{}
 	}
 
-	validator.Labels["name"] = "node"
-	validator.Labels["protocol"] = "ethereum2"
-	validator.Labels["instance"] = validator.Name
+	validator.Labels["app.kubernetes.io/name"] = string(validator.Spec.Client)
+	validator.Labels["app.kubernetes.io/instance"] = validator.Name
+	validator.Labels["app.kubernetes.io/component"] = "ethereum2-validator"
+	validator.Labels["app.kubernetes.io/managed-by"] = "kotal"
+	validator.Labels["app.kubernetes.io/created-by"] = "ethereum2-validator-controller"
 }
 
 // reconcilePVC reconciles validator persistent volume claim

@@ -169,10 +169,11 @@ func (r *ClusterPeerReconciler) updateLabels(peer *ipfsv1alpha1.ClusterPeer) {
 		peer.Labels = map[string]string{}
 	}
 
-	peer.Labels["name"] = "cluster-peer"
-	peer.Labels["protocol"] = "ipfs"
-	peer.Labels["client"] = "ipfs-cluster-service"
-	peer.Labels["instance"] = peer.Name
+	peer.Labels["app.kubernetes.io/name"] = "ipfs-cluster-service"
+	peer.Labels["app.kubernetes.io/instance"] = peer.Name
+	peer.Labels["app.kubernetes.io/component"] = "ipfs-cluster-peer"
+	peer.Labels["app.kubernetes.io/managed-by"] = "kotal"
+	peer.Labels["app.kubernetes.io/created-by"] = "ipfs-cluster-peer-controller"
 }
 
 // reconcileConfigmap reconciles IPFS cluster peer configmap

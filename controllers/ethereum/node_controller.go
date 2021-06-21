@@ -97,13 +97,12 @@ func (r *NodeReconciler) updateLabels(node *ethereumv1alpha1.Node) {
 		node.Labels = map[string]string{}
 	}
 
-	node.Labels["name"] = "node"
-	node.Labels["protocol"] = "ethereum"
-	node.Labels["client"] = string(node.Spec.Client)
+	node.Labels["app.kubernetes.io/name"] = string(node.Spec.Client)
+	node.Labels["app.kubernetes.io/instance"] = node.Name
+	node.Labels["app.kubernetes.io/component"] = "ethereum-node"
+	node.Labels["app.kubernetes.io/managed-by"] = "kotal"
+	node.Labels["app.kubernetes.io/created-by"] = "ethereum-node-controller"
 
-	if node.Labels["instance"] == "" {
-		node.Labels["instance"] = node.Name
-	}
 }
 
 // updateStatus updates network status
