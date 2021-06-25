@@ -15,7 +15,7 @@ all: manager
 
 # Run tests
 test: generate fmt vet manifests
-	go test -v -coverprofile cover.out ./...
+	ACK_GINKGO_DEPRECATIONS=1.16.4 go test -v -coverprofile cover.out ./...
 
 cover:
 	go tool cover -html=cover.out
