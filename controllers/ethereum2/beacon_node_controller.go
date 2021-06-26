@@ -231,11 +231,14 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 
 	sts.Labels = node.GetLabels()
 
-	mountPath := homeDir
-	// teku bin is in homedir
-	// mounting at homedir overwrites its contents
-	if node.Spec.Client == ethereum2v1alpha1.TekuClient {
-		mountPath = shared.PathData(homeDir)
+	mountPath := shared.PathData(homeDir)
+
+	// Nimbus required changing permission of the data dir to be
+	// read and write by owner only
+	// that's why we mount volume at $HOME
+	// but data dir is atatched at $HOME/kota-data
+	if node.Spec.Client == ethereum2v1alpha1.NimbusClient {
+		mountPath = homeDir
 	}
 
 	mounts := []corev1.VolumeMount{
