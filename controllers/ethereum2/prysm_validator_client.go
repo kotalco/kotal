@@ -18,7 +18,7 @@ const (
 	// EnvPrysmValidatorImage is the environment variable used for Prysmatic Labs validator client image
 	EnvPrysmValidatorImage = "PRYSM_VALIDATOR_CLIENT_IMAGE"
 	// DefaultPrysmValidatorImage is Prysmatic Labs validator client image
-	DefaultPrysmValidatorImage = "gcr.io/prysmaticlabs/prysm/validator:v1.3.8-hotfix-6c0942"
+	DefaultPrysmValidatorImage = "gcr.io/prysmaticlabs/prysm/validator:v1.3.11"
 )
 
 // HomeDir returns container home directory
