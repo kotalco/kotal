@@ -61,6 +61,7 @@ spec:
                 - besu
                 - geth
                 - parity
+                - nethermind
                 type: string
               coinbase:
                 description: Coinbase is the account to which mining rewards are paid

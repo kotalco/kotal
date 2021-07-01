@@ -193,7 +193,7 @@ const (
 )
 
 // EthereumClient is the ethereum client running on a given node
-// +kubebuilder:validation:Enum=besu;geth;parity
+// +kubebuilder:validation:Enum=besu;geth;parity;nethermind
 type EthereumClient string
 
 const (
@@ -203,6 +203,8 @@ const (
 	GethClient EthereumClient = "geth"
 	// ParityClient is Parity (OpenEthereum) client
 	ParityClient EthereumClient = "parity"
+	// NethermindClient is Nethermind .NET client
+	NethermindClient EthereumClient = "nethermind"
 )
 
 // ImportedAccount is account derived from private key
