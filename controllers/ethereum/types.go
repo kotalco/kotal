@@ -199,3 +199,55 @@ const (
 	// ParityPassword is the argument used for locking imported ethereum address
 	ParityPassword = "--password"
 )
+
+// Nethermind client arguments
+const (
+	// NethermindLogging is the argument used for logging verbosity level
+	NethermindLogging = "--log"
+	// NethermindNodePrivateKey is the argument used for node private key
+	NethermindNodePrivateKey = "--KeyStore.EnodeKeyFile"
+	// NethermindStaticNodesFile is the argument used to locate static nodes file
+	NethermindStaticNodesFile = "--Init.StaticNodesPath"
+	// NethermindGenesisFile is the argument used for genesis file
+	NethermindGenesisFile = "--Init.ChainSpecPath"
+	// NethermindDataPath is the argument used for data path
+	NethermindDataPath = "--datadir"
+	// NethermindNetwork is the argument used for selecting network
+	NethermindNetwork = "--config"
+	// NethermindDiscoveryEnabled is the argument used to enabled discovery
+	NethermindDiscoveryEnabled = "--Init.DiscoveryEnabled"
+	// NethermindP2PPort is the argument used for p2p port
+	NethermindP2PPort = "--Network.P2PPort"
+	// NethermindFastSync is the argument used to enable beam sync
+	NethermindFastSync = "--Sync.FastSync"
+	// NethermindBeamSync is the argument used to enable fast sync
+	NethermindBeamSync = "--Sync.BeamSync"
+	// NethermindFastBlocks is the argument used to enable fast blocks sync
+	NethermindFastBlocks = "--Sync.FastBlocks"
+	// NethermindDownloadBodiesInFastSync is the argument used to enable downloading block bodies in fast sync
+	NethermindDownloadBodiesInFastSync = "--Sync.DownloadBodiesInFastSync"
+	// NethermindDownloadReceiptsInFastSync is the argument used to enable downloading block receipts in fast sync
+	NethermindDownloadReceiptsInFastSync = "--Sync.DownloadReceiptsInFastSync"
+	// NethermindDownloadHeadersInFastSync is the argument used to enable downloading block headers in fast sync
+	NethermindDownloadHeadersInFastSync = "--Sync.DownloadHeadersInFastSync"
+	// NethermindMinerEnabled is the argument used for turning on mining
+	NethermindMinerEnabled = "--Init.IsMining"
+	// NethermindMinerCoinbase is the argument used for setting coinbase account
+	NethermindMinerCoinbase = "--KeyStore.BlockAuthorAccount"
+	// NethermindRPCHTTPEnabled is the argument used to enable RPC over HTTP
+	NethermindRPCHTTPEnabled = "--JsonRpc.Enabled"
+	// NethermindRPCHTTPHost is the argument used for RPC HTTP Host
+	NethermindRPCHTTPHost = "--JsonRpc.Host"
+	// NethermindRPCHTTPPort is the argument used for RPC HTTP port
+	NethermindRPCHTTPPort = "--JsonRpc.Port"
+	// NethermindRPCHTTPAPI is the argument used for RPC HTTP APIs
+	NethermindRPCHTTPAPI = "--JsonRpc.EnabledModules"
+	// NethermindRPCWSEnabled is the argument used to enable RPC WS
+	NethermindRPCWSEnabled = "--Init.WebSocketsEnabled"
+	// NethermindRPCWSPort is the argument used for RPC WS port
+	NethermindRPCWSPort = "--JsonRpc.WebSocketsPort"
+	// NethermindUnlockAccounts is the argument used to unlock accounts
+	NethermindUnlockAccounts = "--KeyStore.UnlockAccounts"
+	// NethermindPasswordFiles is the argument used locate password files for unlocked accounts
+	NethermindPasswordFiles = "--KeyStore.PasswordFiles"
+)
