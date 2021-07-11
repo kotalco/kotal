@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"strings"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -35,6 +36,10 @@ var (
 	gethImportAccountScript string
 	//go:embed parity_import_account.sh
 	parityImportAccountScript string
+	//go:embed nethermind_convert_enode_privatekey.sh
+	nethermindConvertEnodePrivateKeyScript string
+	//go:embed nethermind_copy_keystore.sh
+	nethermindConvertCopyKeystoreScript string
 )
 
 // +kubebuilder:rbac:groups=ethereum.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
@@ -146,11 +151,15 @@ func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *c
 	case ethereumv1alpha1.ParityClient:
 		key = "static-nodes"
 		importAccountScript = parityImportAccountScript
+	case ethereumv1alpha1.NethermindClient:
+		key = "static-nodes.json"
 	}
 
 	configmap.Data["genesis.json"] = genesis
 	configmap.Data["init-geth-genesis.sh"] = initGethGenesisScript
 	configmap.Data["import-account.sh"] = importAccountScript
+	configmap.Data["nethermind_convert_enode_privatekey.sh"] = nethermindConvertEnodePrivateKeyScript
+	configmap.Data["nethermind_copy_keystore.sh"] = nethermindConvertCopyKeystoreScript
 
 	currentStaticNodes := configmap.Data[key]
 	// update static nodes config if it's empty
@@ -305,8 +314,8 @@ func (r *NodeReconciler) createNodeVolumes(node *ethereumv1alpha1.Node) []corev1
 		}
 		projections = append(projections, passwordProjection)
 
-		// parity: account keystore
-		if node.Spec.Client == ethereumv1alpha1.ParityClient {
+		// parity & nethermind : account keystore
+		if node.Spec.Client == ethereumv1alpha1.ParityClient || node.Spec.Client == ethereumv1alpha1.NethermindClient {
 			accountKeystoreProjection := corev1.VolumeProjection{
 				Secret: &corev1.SecretProjection{
 					LocalObjectReference: corev1.LocalObjectReference{
@@ -497,6 +506,52 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 			}
 			initContainers = append(initContainers, importAccount)
 		}
+	} else if node.Spec.Client == ethereumv1alpha1.NethermindClient {
+		if node.Spec.NodekeySecretName != "" {
+			convertEnodePrivatekey := corev1.Container{
+				Name:  "convert-enode-privatekey",
+				Image: "busybox",
+				Env: []corev1.EnvVar{
+					{
+						Name:  EnvDataPath,
+						Value: shared.PathData(homedir),
+					},
+					{
+						Name:  EnvSecretsPath,
+						Value: shared.PathSecrets(homedir),
+					},
+				},
+				Command:      []string{"/bin/sh"},
+				Args:         []string{fmt.Sprintf("%s/nethermind_convert_enode_privatekey.sh", shared.PathConfig(homedir))},
+				VolumeMounts: volumeMounts,
+			}
+			initContainers = append(initContainers, convertEnodePrivatekey)
+		}
+
+		if node.Spec.Import != nil {
+			copyKeystore := corev1.Container{
+				Name:  "copy-keystore",
+				Image: "busybox",
+				Env: []corev1.EnvVar{
+					{
+						Name:  EnvDataPath,
+						Value: shared.PathData(homedir),
+					},
+					{
+						Name:  EnvSecretsPath,
+						Value: shared.PathSecrets(homedir),
+					},
+					{
+						Name:  "COINBASE",
+						Value: strings.ToLower(string(node.Spec.Coinbase))[2:],
+					},
+				},
+				Command:      []string{"/bin/sh"},
+				Args:         []string{fmt.Sprintf("%s/nethermind_copy_keystore.sh", shared.PathConfig(homedir))},
+				VolumeMounts: volumeMounts,
+			}
+			initContainers = append(initContainers, copyKeystore)
+		}
 	}
 
 	sts.ObjectMeta.Labels = labels
@@ -562,8 +617,9 @@ func (r *NodeReconciler) getSecret(ctx context.Context, name types.NamespacedNam
 // specSecret creates keystore from account private key for parity client
 func (r *NodeReconciler) specSecret(ctx context.Context, node *ethereumv1alpha1.Node, secret *corev1.Secret) error {
 	secret.ObjectMeta.Labels = node.GetLabels()
-
-	if node.Spec.Import != nil && node.Spec.Client == ethereumv1alpha1.ParityClient {
+	client := node.Spec.Client
+	clientRequiresKeystore := client == ethereumv1alpha1.ParityClient || client == ethereumv1alpha1.NethermindClient
+	if node.Spec.Import != nil && clientRequiresKeystore {
 		key := types.NamespacedName{
 			Name:      node.Spec.Import.PrivateKeySecretName,
 			Namespace: node.Namespace,
