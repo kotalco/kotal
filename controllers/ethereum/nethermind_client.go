@@ -73,6 +73,7 @@ func (n *NethermindClient) Args() (args []string) {
 	if node.Spec.Genesis == nil {
 		appendArg(NethermindNetwork, node.Spec.Network)
 	} else {
+		appendArg(NethermindNetwork, fmt.Sprintf("%s/empty.cfg", shared.PathConfig(n.HomeDir())))
 		appendArg(NethermindDiscoveryEnabled, "false")
 	}
 

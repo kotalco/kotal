@@ -167,6 +167,12 @@ func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *c
 	if currentStaticNodes == "" || len(currentStaticNodes) < len(staticNodes) {
 		configmap.Data[key] = staticNodes
 	}
+
+	// create empty config for ptivate networks so it won't be ovverriden by
+	if node.Spec.Client == ethereumv1alpha1.NethermindClient && node.Spec.Genesis != nil {
+		configmap.Data["empty.cfg"] = "{}"
+	}
+
 }
 
 // reconcileConfigmap creates genesis config map if it doesn't exist or update it
