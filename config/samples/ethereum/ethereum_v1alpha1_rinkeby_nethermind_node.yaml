@@ -1,0 +1,31 @@
+apiVersion: ethereum.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: rinkeby-nethermind-node
+spec:
+  network: xdai
+  client: nethermind
+  # kubectl create secret generic nodekey --from-literal=key=608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
+  nodekeySecretName: nodekey
+  logging: info
+  rpc: true
+  rpcPort: 9999
+  rpcAPI:
+    - eth
+    - admin
+  p2pPort: 30304
+  ws: true
+  wsPort: 8888
+  miner: true
+  coinbase: "0xE04F58365312d0F3f02281728ffc5621A0e507FF"
+  import:
+    # kubectl create secret generic my-account-privatekey --from-literal=key=9283ab2360c32381ad7aa14bc19661872b4612947ac30ea3539b03ff8ed3a66a
+    # kubectl create secret generic my-account-password --from-literal=password=secret
+    privatekeySecretName: my-account-privatekey
+    passwordSecretName: my-account-password
+  syncMode: light
+  staticNodes:
+    - "enode://2281549869465d98e90cebc45e1d6834a01465a990add7bcf07a49287e7e66b50ca27f9c70a46190cef7ad746dd5d5b6b9dfee0c9954104c8e9bd0d42758ec58@10.5.0.2:30300"
+  resources:
+    cpu: "1"
+    memory: "1Gi"
