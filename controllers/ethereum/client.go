@@ -24,9 +24,9 @@ func NewEthereumClient(node *ethereumv1alpha1.Node) (EthereumClient, error) {
 	case ethereumv1alpha1.GethClient:
 		return &GethClient{node}, nil
 	case ethereumv1alpha1.ParityClient:
-		return &ParityClient{node}, nil
+		return &ParityClient{&ParityGenesis{}, node}, nil
 	case ethereumv1alpha1.NethermindClient:
-		return &NethermindClient{node}, nil
+		return &NethermindClient{&ParityGenesis{}, node}, nil
 	default:
 		return nil, fmt.Errorf("client %s is not supported", node.Spec.Client)
 	}

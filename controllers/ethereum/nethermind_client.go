@@ -21,6 +21,7 @@ const (
 
 // NethermindClient is nethermind client
 type NethermindClient struct {
+	*ParityGenesis
 	node *ethereumv1alpha1.Node
 }
 
@@ -141,9 +142,8 @@ func (n *NethermindClient) Args() (args []string) {
 }
 
 // Genesis returns genesis config parameter
-func (n *NethermindClient) Genesis() (content string, err error) {
-	// TODO: reuse parity or geth genesis generator
-	return
+func (p *NethermindClient) Genesis() (string, error) {
+	return p.ParityGenesis.Genesis(p.node)
 }
 
 // EncodeStaticNodes returns the static nodes, one per line
