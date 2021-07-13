@@ -1,3 +1,11 @@
+# WARNING: DON'T use the following secrets in production
+apiVersion: v1
+kind: Secret
+metadata:
+  name: poa-besu-nodekey
+stringData:
+  key: "7fb5b8b783a35f3fafbd8e36582ec5eec507e509a6077aa6c84a48afd4d4cf06"
+---
 apiVersion: ethereum.kotal.io/v1alpha1
 kind: Node
 metadata:
@@ -12,8 +20,9 @@ spec:
       blockPeriod: 15
       epochLength: 100
       signers:
-        - "0xd2c21213027cbf4d46c16b55fa98e5252b048706"
-        - "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
+        - "0xcF2C3fB8F36A863FD1A8c72E2473f81744B4CA6C"
+        - "0x1990E5760d9f8Ae0ec55dF8B0819C77e59846Ff2"
+        - "0xB87c1c66b36D98D1A74a9875EbA12c001e0bcEda"
     forks:
       homestead: 0
       eip150: 0
@@ -37,8 +46,7 @@ spec:
   ########### network nodes spec ###########
   client: besu
   rpc: true
-  # kubectl create secret generic nodekey --from-literal=key=608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
-  nodekeySecretName: nodekey
+  nodekeySecretName: poa-besu-nodekey
   rpcPort: 8599
   corsDomains:
     - all

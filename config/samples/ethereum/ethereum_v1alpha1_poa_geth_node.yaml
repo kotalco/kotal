@@ -1,3 +1,19 @@
+# WARNING: DON'T use the following secrets in production
+apiVersion: v1
+kind: Secret
+metadata:
+  name: poa-geth-account-key
+stringData:
+  # address 0xB87c1c66b36D98D1A74a9875EbA12c001e0bcEda
+  key: ef7fe53791454d96b0264fee1c788b6ff445fc327df8a8a78ca4da60821f69c9
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: poa-geth-account-password
+stringData:
+  password: secret
+---
 apiVersion: ethereum.kotal.io/v1alpha1
 kind: Node
 metadata:
@@ -12,8 +28,9 @@ spec:
       blockPeriod: 15
       epochLength: 100
       signers:
-        - "0xd2c21213027cbf4d46c16b55fa98e5252b048706"
-        - "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
+        - "0xcF2C3fB8F36A863FD1A8c72E2473f81744B4CA6C"
+        - "0x1990E5760d9f8Ae0ec55dF8B0819C77e59846Ff2"
+        - "0xB87c1c66b36D98D1A74a9875EbA12c001e0bcEda"
     forks:
       homestead: 0
       eip150: 0
@@ -37,12 +54,12 @@ spec:
   ########### network nodes spec ###########
   client: geth
   miner: true
-  coinbase: "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
+  coinbase: "0xB87c1c66b36D98D1A74a9875EbA12c001e0bcEda"
+  staticNodes:
+    - "enode://36f50b80f06135c8d2871d1c0c2faee6d3d952f8c100870fc41d61ac9e535fa6367409f9b2ac8658147273677f90c9fddee4f9269dad069a1f78ae3297a13b2e@10.96.161.221:30303"
   import:
-    # kubectl create secret generic my-account-privatekey --from-literal=key=5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
-    # kubectl create secret generic my-account-password --from-literal=password=secret
-    privatekeySecretName: my-account-privatekey
-    passwordSecretName: my-account-password
+    privatekeySecretName: poa-geth-account-key
+    passwordSecretName: poa-geth-account-password
   resources:
     cpu: "1"
     cpuLimit: "1"
