@@ -2,18 +2,18 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: rinkeby-nethermind-nodekey
+  name: mainnet-nethermind-nodekey
 stringData:
   key: 608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
 ---
 apiVersion: ethereum.kotal.io/v1alpha1
 kind: Node
 metadata:
-  name: rinkeby-nethermind-node
+  name: mainnet-nethermind-node
 spec:
-  network: rinkeby
+  network: mainnet
   client: nethermind
-  nodekeySecretName: rinkeby-nethermind-nodekey
+  nodekeySecretName: mainnet-nethermind-nodekey
   logging: info
   rpc: true
   rpcPort: 9999
@@ -23,7 +23,7 @@ spec:
   p2pPort: 30304
   ws: true
   wsPort: 8888
-  syncMode: light
+  syncMode: fast
   staticNodes:
     - "enode://2281549869465d98e90cebc45e1d6834a01465a990add7bcf07a49287e7e66b50ca27f9c70a46190cef7ad746dd5d5b6b9dfee0c9954104c8e9bd0d42758ec58@10.5.0.2:30300"
   resources:

@@ -28,7 +28,7 @@ spec:
     accounts:
       - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"
         balance: "0xffffffffffffffffffff"
-  ########### network nodes spec ###########
+  ########### node spec ###########
   client: parity
   rpc: true
   resources:

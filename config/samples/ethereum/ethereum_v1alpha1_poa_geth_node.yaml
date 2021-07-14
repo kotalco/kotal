@@ -51,7 +51,7 @@ spec:
     accounts:
       - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"
         balance: "0xffffffffffffffffffff"
-  ########### network nodes spec ###########
+  ########### node spec ###########
   client: geth
   miner: true
   coinbase: "0xB87c1c66b36D98D1A74a9875EbA12c001e0bcEda"

@@ -2,22 +2,22 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: pow-geth-account-key
+  name: pow-nethermind-account-key
 stringData:
-  # address 0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d
-  key: 5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
+  # address 0x1990E5760d9f8Ae0ec55dF8B0819C77e59846Ff2
+  key: bb30a68be4d1f8b54755398f81704fcbd00df4aa7d3cad02547d61291ac252b0
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: pow-geth-account-password
+  name: pow-nethermind-account-password
 stringData:
   password: secret
 ---
 apiVersion: ethereum.kotal.io/v1alpha1
 kind: Node
 metadata:
-  name: pow-geth-node
+  name: pow-nethermind-node
 spec:
   consensus: pow
   id: 20189
@@ -45,14 +45,16 @@ spec:
       - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"
         balance: "0xffffffffffffffffffff"
   ########### node spec ###########
-  client: geth
+  client: nethermind
+  logging: warn
   miner: true
-  coinbase: "0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d"
+  coinbase: "0x1990E5760d9f8Ae0ec55dF8B0819C77e59846Ff2"
   import:
-    privatekeySecretName: pow-geth-account-key
-    passwordSecretName: pow-geth-account-password
+    privatekeySecretName: pow-nethermind-account-key
+    passwordSecretName: pow-nethermind-account-password
+  syncMode: full
+  staticNodes:
+    - "enode://e578d440680b323545a4eb0a9c792ec1921bee933efa81238cf78c89768d15d1b1a817515825f9ab5f9cc8398ffad656e1d816e232ac30a0ab53b83f6125d946@10.96.232.189:30303"
   resources:
     cpu: "1"
-    cpuLimit: "1"
     memory: "1Gi"
-    memoryLimit: "2Gi"
