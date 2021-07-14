@@ -102,7 +102,7 @@ func (n *NethermindClient) Args() (args []string) {
 	}
 
 	if node.Spec.Miner {
-		appendArg(NethermindMinerEnabled, "true")
+		appendArg(NethermindMiningEnabled, "true")
 	}
 
 	if node.Spec.Coinbase != "" {

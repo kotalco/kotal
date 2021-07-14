@@ -230,8 +230,6 @@ const (
 	NethermindDownloadReceiptsInFastSync = "--Sync.DownloadReceiptsInFastSync"
 	// NethermindDownloadHeadersInFastSync is the argument used to enable downloading block headers in fast sync
 	NethermindDownloadHeadersInFastSync = "--Sync.DownloadHeadersInFastSync"
-	// NethermindMinerEnabled is the argument used for turning on mining
-	NethermindMinerEnabled = "--Init.IsMining"
 	// NethermindMinerCoinbase is the argument used for setting coinbase account
 	NethermindMinerCoinbase = "--KeyStore.BlockAuthorAccount"
 	// NethermindRPCHTTPEnabled is the argument used to enable RPC over HTTP
@@ -250,4 +248,6 @@ const (
 	NethermindUnlockAccounts = "--KeyStore.UnlockAccounts"
 	// NethermindPasswordFiles is the argument used locate password files for unlocked accounts
 	NethermindPasswordFiles = "--KeyStore.PasswordFiles"
+	// NethermindMiningEnabled is the argument used for turning on mining
+	NethermindMiningEnabled = "--Mining.Enabled"
 )
