@@ -121,6 +121,8 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha
 			enodeURL = "call admin_nodeInfo JSON-RPC method"
 		case ethereumv1alpha1.ParityClient:
 			enodeURL = "call parity_enode JSON-RPC method"
+		case ethereumv1alpha1.NethermindClient:
+			enodeURL = "call net_localEnode JSON-RPC method"
 		}
 	}
 
