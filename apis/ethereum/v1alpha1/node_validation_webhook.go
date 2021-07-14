@@ -29,7 +29,7 @@ func (n *Node) validate() field.ErrorList {
 	}
 
 	// validate off, fatal and all logs not supported by parity
-	if n.Spec.Client == ParityClient && (n.Spec.Logging == NoLogs || n.Spec.Logging == FatalLogs || n.Spec.Logging == AllLogs) {
+	if (n.Spec.Client == ParityClient || n.Spec.Client == NethermindClient) && (n.Spec.Logging == NoLogs || n.Spec.Logging == FatalLogs || n.Spec.Logging == AllLogs) {
 		err := field.Invalid(path.Child("logging"), n.Spec.Logging, fmt.Sprintf("not supported by client %s", n.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
 	}
