@@ -773,7 +773,7 @@ var _ = Describe("Ethereum node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.client",
 					BadValue: ParityClient,
-					Detail:   "client doesn't support graphQL",
+					Detail:   "client doesn't support GraphQL",
 				},
 			},
 		},

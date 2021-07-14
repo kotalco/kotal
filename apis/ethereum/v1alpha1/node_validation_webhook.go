@@ -58,9 +58,9 @@ func (n *Node) validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
-	// validate parity doesn't support graphql
-	if n.Spec.Client == ParityClient && n.Spec.GraphQL {
-		err := field.Invalid(path.Child("client"), n.Spec.Client, "client doesn't support graphQL")
+	// validate parity and nethermind doesn't support GraphQL
+	if n.Spec.GraphQL && (n.Spec.Client == ParityClient || n.Spec.Client == NethermindClient) {
+		err := field.Invalid(path.Child("client"), n.Spec.Client, "client doesn't support GraphQL")
 		nodeErrors = append(nodeErrors, err)
 	}
 
