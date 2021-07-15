@@ -38,7 +38,6 @@ func (n *NethermindClient) HomeDir() string {
 
 // Args returns command line arguments required for client run
 // NOTE:
-// - CORS domains can't be set
 // - Network ID can be set in genesis config
 // - Bootnodes can be set in genesis config
 // TODO:

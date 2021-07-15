@@ -70,6 +70,12 @@ func (n *Node) validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	// validate nethermind doesn't support CORS domains
+	if len(n.Spec.CORSDomains) > 0 && n.Spec.Client == NethermindClient {
+		err := field.Invalid(path.Child("client"), n.Spec.Client, "client doesn't support CORS domains")
+		nodeErrors = append(nodeErrors, err)
+	}
+
 	// validate only geth client supports light sync mode
 	if n.Spec.SyncMode == LightSynchronization && n.Spec.Client != GethClient && n.Spec.Client != NethermindClient {
 		err := field.Invalid(path.Child("client"), n.Spec.Client, "must be geth or nethermind if syncMode is light")
