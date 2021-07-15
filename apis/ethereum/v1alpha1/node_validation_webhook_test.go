@@ -404,7 +404,7 @@ var _ = Describe("Ethereum node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.client",
 					BadValue: "besu",
-					Detail:   "must be geth or parity if import is provided",
+					Detail:   "client doesn't support importing accounts",
 				},
 			},
 		},

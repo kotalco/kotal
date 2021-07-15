@@ -46,9 +46,10 @@ func (n *Node) validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
-	// validate only geth client can import accounts
+	// validate that besu doesn't support importing ethereum accounts
+	// Netermind, go-ethereum, and OpenEthereum support importing accounts
 	if n.Spec.Client == BesuClient && n.Spec.Import != nil {
-		err := field.Invalid(path.Child("client"), n.Spec.Client, "must be geth or parity if import is provided")
+		err := field.Invalid(path.Child("client"), n.Spec.Client, "client doesn't support importing accounts")
 		nodeErrors = append(nodeErrors, err)
 	}
 
