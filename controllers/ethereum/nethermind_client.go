@@ -38,8 +38,6 @@ func (n *NethermindClient) HomeDir() string {
 
 // Args returns command line arguments required for client run
 // NOTE:
-// - GraphQL is not supported
-// - Hosts can't be whitelisted
 // - CORS domains can't be set
 // - Network ID can be set in genesis config
 // - Bootnodes can be set in genesis config
