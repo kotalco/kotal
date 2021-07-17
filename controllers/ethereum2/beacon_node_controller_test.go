@@ -15,7 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
-	"github.com/kotalco/kotal/controllers/shared"
+	ethereum2Clients "github.com/kotalco/kotal/clients/ethereum2"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -58,7 +58,7 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 			BlockOwnerDeletion: &t,
 		}
 
-		client, _ := NewEthereum2Client(toCreate)
+		client, _ := ethereum2Clients.NewClient(toCreate)
 
 		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.TODO(), ns))
@@ -85,12 +85,6 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 			Expect(k8sClient.Get(context.Background(), key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				TekuDataPath,
-				shared.PathData(client.HomeDir()),
-				TekuNetwork,
-				"mainnet",
-			}))
 		})
 
 		It("Should allocate correct resources to bootnode statefulset", func() {

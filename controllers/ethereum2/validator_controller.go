@@ -14,6 +14,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	ethereum2Clients "github.com/kotalco/kotal/clients/ethereum2"
 	"github.com/kotalco/kotal/controllers/shared"
 )
 
@@ -302,15 +303,15 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 				Args: []string{
 					"accounts",
 					"import",
-					PrysmAcceptTermsOfUse,
+					ethereum2Clients.PrysmAcceptTermsOfUse,
 					fmt.Sprintf("--%s", validator.Spec.Network),
-					PrysmWalletDir,
+					ethereum2Clients.PrysmWalletDir,
 					fmt.Sprintf("%s/prysm-wallet", shared.PathData(homeDir)),
-					PrysmKeysDir,
+					ethereum2Clients.PrysmKeysDir,
 					fmt.Sprintf("%s/keystore-%d.json", keyDir, i),
-					PrysmAccountPasswordFile,
+					ethereum2Clients.PrysmAccountPasswordFile,
 					fmt.Sprintf("%s/password.txt", keyDir),
-					PrysmWalletPasswordFile,
+					ethereum2Clients.PrysmWalletPasswordFile,
 					fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", shared.PathSecrets(homeDir)),
 				},
 				VolumeMounts: mounts,
@@ -332,14 +333,14 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 					"import",
 				},
 				Args: []string{
-					LighthouseDataDir,
+					ethereum2Clients.LighthouseDataDir,
 					shared.PathData(homeDir),
-					LighthouseNetwork,
+					ethereum2Clients.LighthouseNetwork,
 					validator.Spec.Network,
-					LighthouseKeystore,
+					ethereum2Clients.LighthouseKeystore,
 					fmt.Sprintf("%s/keystore-%d.json", keyDir, i),
-					LighthouseReusePassword,
-					LighthousePasswordFile,
+					ethereum2Clients.LighthouseReusePassword,
+					ethereum2Clients.LighthousePasswordFile,
 					fmt.Sprintf("%s/password.txt", keyDir),
 				},
 				VolumeMounts: mounts,
@@ -420,7 +421,7 @@ func (r *ValidatorReconciler) reconcileStatefulset(ctx context.Context, validato
 		},
 	}
 
-	client, err := NewEthereum2Client(validator)
+	client, err := ethereum2Clients.NewClient(validator)
 	if err != nil {
 		return err
 	}

@@ -1,4 +1,4 @@
-package controllers
+package ethereum2
 
 import (
 	"fmt"
@@ -27,7 +27,7 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 		}
 
 		validator.Default()
-		client, _ := NewEthereum2Client(validator)
+		client, _ := NewClient(validator)
 		args := client.Args()
 
 		Expect(args).To(ContainElements([]string{

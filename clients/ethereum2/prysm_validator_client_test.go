@@ -1,4 +1,4 @@
-package controllers
+package ethereum2
 
 import (
 	"fmt"
@@ -9,43 +9,41 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
+var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 
 	It("Should generate correct client arguments", func() {
 		validator := &ethereum2v1alpha1.Validator{
 			Spec: ethereum2v1alpha1.ValidatorSpec{
-				Client:          ethereum2v1alpha1.TekuClient,
+				Client:          ethereum2v1alpha1.PrysmClient,
 				Network:         "mainnet",
-				BeaconEndpoints: []string{"http://localhost:9988"},
+				BeaconEndpoints: []string{"http://localhost:8899"},
 				Graffiti:        "Validated by Kotal",
 				Keystores: []ethereum2v1alpha1.Keystore{
 					{
 						SecretName: "my-validator",
 					},
 				},
+				WalletPasswordSecret: "wallet-password",
 			},
 		}
 
 		validator.Default()
-		client, _ := NewEthereum2Client(validator)
+		client, _ := NewClient(validator)
 		args := client.Args()
 
 		Expect(args).To(ContainElements([]string{
-			"vc",
-			TekuDataPath,
+			PrysmAcceptTermsOfUse,
+			PrysmDataDir,
 			shared.PathData(client.HomeDir()),
-			TekuNetwork,
-			"mainnet",
-			TekuBeaconNodeEndpoint,
-			"http://localhost:9988",
-			TekuGraffiti,
+			"--mainnet",
+			PrysmBeaconRPCProvider,
+			"http://localhost:8899",
+			PrysmGraffiti,
 			"Validated by Kotal",
-			TekuValidatorKeys,
-			fmt.Sprintf(
-				"%s/validator-keys/my-validator/keystore-0.json:%s/validator-keys/my-validator/password.txt",
-				shared.PathSecrets(client.HomeDir()),
-				shared.PathSecrets(client.HomeDir()),
-			),
+			PrysmWalletDir,
+			fmt.Sprintf("%s/prysm-wallet", shared.PathData(client.HomeDir())),
+			PrysmWalletPasswordFile,
+			fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", shared.PathSecrets(client.HomeDir())),
 		}))
 
 	})

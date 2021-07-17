@@ -15,6 +15,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	ethereum2Clients "github.com/kotalco/kotal/clients/ethereum2"
 	"github.com/kotalco/kotal/controllers/shared"
 )
 
@@ -208,7 +209,7 @@ func (r *BeaconNodeReconciler) reconcileStatefulset(ctx context.Context, node *e
 			return err
 		}
 
-		client, err := NewEthereum2Client(node)
+		client, err := ethereum2Clients.NewClient(node)
 		if err != nil {
 			return err
 		}

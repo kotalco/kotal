@@ -14,7 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
-	"github.com/kotalco/kotal/controllers/shared"
+	ethereum2Clients "github.com/kotalco/kotal/clients/ethereum2"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -64,7 +64,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			BlockOwnerDeletion: &t,
 		}
 
-		client, _ := NewEthereum2Client(toCreate)
+		client, _ := ethereum2Clients.NewClient(toCreate)
 
 		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.TODO(), ns))
@@ -87,26 +87,10 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 
 		It("Should create statefulset with correct arguments", func() {
 			validatorSts := &appsv1.StatefulSet{}
-			secretsDir := shared.PathSecrets(client.HomeDir())
 
 			Expect(k8sClient.Get(context.Background(), key, validatorSts)).To(Succeed())
 			Expect(validatorSts.GetOwnerReferences()).To(ContainElement(validatorOwnerReference))
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
-			Expect(validatorSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				TekuVC,
-				TekuDataPath,
-				shared.PathData(client.HomeDir()),
-				TekuNetwork,
-				"mainnet",
-				TekuValidatorsKeystoreLockingEnabled,
-				"false",
-				TekuBeaconNodeEndpoint,
-				"http://10.96.130.88:9999",
-				TekuGraffiti,
-				"testing Kotal validator controller",
-				TekuValidatorKeys,
-				fmt.Sprintf("%s/validator-keys/my-validator/keystore-0.json:%s/validator-keys/my-validator/password.txt", secretsDir, secretsDir),
-			}))
 		})
 
 		It("Should allocate correct resources to validator statefulset", func() {

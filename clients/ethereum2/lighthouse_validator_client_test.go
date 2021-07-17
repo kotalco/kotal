@@ -1,4 +1,4 @@
-package controllers
+package ethereum2
 
 import (
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
@@ -24,7 +24,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 		}
 
 		validator.Default()
-		client, _ := NewEthereum2Client(validator)
+		client, _ := NewClient(validator)
 		args := client.Args()
 
 		Expect(args).To(ContainElements([]string{

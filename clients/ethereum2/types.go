@@ -1,4 +1,4 @@
-package controllers
+package ethereum2
 
 // Client home directories
 const (

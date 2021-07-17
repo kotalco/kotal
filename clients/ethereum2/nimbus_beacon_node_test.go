@@ -1,4 +1,4 @@
-package controllers
+package ethereum2
 
 import (
 	"fmt"
@@ -132,7 +132,7 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.node.Default()
-				client, _ := NewEthereum2Client(cc.node)
+				client, _ := NewClient(cc.node)
 				args := client.Args()
 				Expect(args).To(ContainElements(cc.result))
 			})

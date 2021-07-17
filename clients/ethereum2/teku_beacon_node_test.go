@@ -1,15 +1,14 @@
-package controllers
+package ethereum2
 
 import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
+var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 
 	cases := []struct {
 		title  string
@@ -20,99 +19,102 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client:  ethereum2v1alpha1.LighthouseClient,
+					Client:  ethereum2v1alpha1.TekuClient,
 					Network: "mainnet",
 				},
 			},
 			result: []string{
-				LighthouseDataDir,
-				LighthouseNetwork,
+				TekuDataPath,
+				TekuNetwork,
 				"mainnet",
 			},
 		},
 		{
-			title: "beacon node syncing mainnet with eth1 endpoint",
+			title: "beacon node syncing mainnet with multiple eth1 endpoints",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client:        ethereum2v1alpha1.LighthouseClient,
-					Network:       "mainnet",
-					Eth1Endpoints: []string{"https://localhost:8545"},
+					Client:  ethereum2v1alpha1.TekuClient,
+					Network: "mainnet",
+					Eth1Endpoints: []string{
+						"https://localhost:8545",
+						"https://localhost:8546",
+					},
 				},
 			},
 			result: []string{
-				LighthouseDataDir,
-				LighthouseNetwork,
+				TekuDataPath,
+				TekuNetwork,
 				"mainnet",
-				LighthouseEth1Endpoints,
-				"https://localhost:8545",
+				TekuEth1Endpoints,
+				"https://localhost:8545,https://localhost:8546",
 			},
 		},
 		{
 			title: "beacon node syncing mainnet with eth1 endpoint and http enabled",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client:        ethereum2v1alpha1.LighthouseClient,
+					Client:        ethereum2v1alpha1.TekuClient,
 					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 					REST:          true,
 				},
 			},
 			result: []string{
-				LighthouseDataDir,
-				LighthouseNetwork,
+				TekuDataPath,
+				TekuNetwork,
 				"mainnet",
-				LighthouseEth1Endpoints,
+				TekuEth1Endpoints,
 				"https://localhost:8545",
-				LighthouseHTTP,
+				TekuRestEnabled,
 			},
 		},
 		{
 			title: "beacon node syncing mainnet with eth1 endpoint and http enabled with port",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client:        ethereum2v1alpha1.LighthouseClient,
+					Client:        ethereum2v1alpha1.TekuClient,
 					Network:       "mainnet",
 					Eth1Endpoints: []string{"https://localhost:8545"},
 					REST:          true,
-					RESTPort:      4444,
+					RESTPort:      3333,
 				},
 			},
 			result: []string{
-				LighthouseDataDir,
-				LighthouseNetwork,
+				TekuDataPath,
+				TekuNetwork,
 				"mainnet",
-				LighthouseEth1Endpoints,
+				TekuEth1Endpoints,
 				"https://localhost:8545",
-				LighthouseHTTP,
-				LighthouseHTTPPort,
-				"4444",
+				TekuRestEnabled,
+				TekuRestPort,
+				"3333",
 			},
 		},
 		{
-			title: "beacon node syncing mainnet with eth1 endpoint and http enabled with port and host",
+			title: "beacon node syncing mainnet with multiple eth1 endpoints and http enabled with port and host",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client:  ethereum2v1alpha1.LighthouseClient,
+					Client:  ethereum2v1alpha1.TekuClient,
 					Network: "mainnet",
 					Eth1Endpoints: []string{
 						"https://localhost:8545",
 						"https://localhost:8546",
 					},
 					REST:     true,
-					RESTPort: 4444,
+					RESTPort: 3333,
 					RESTHost: "0.0.0.0",
 				},
 			},
 			result: []string{
-				LighthouseDataDir,
-				LighthouseNetwork,
+				TekuDataPath,
+				TekuNetwork,
 				"mainnet",
-				LighthouseEth1Endpoints,
+				TekuEth1Endpoints,
 				"https://localhost:8545,https://localhost:8546",
-				LighthouseHTTP,
-				LighthouseHTTPPort,
-				"4444",
-				LighthouseHTTPAddress,
+				TekuRestEnabled,
+				TekuRestPort,
+				"3333",
+				TekuRestHost,
 				"0.0.0.0",
 			},
 		},
@@ -120,32 +122,27 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			title: "beacon node syncing mainnet with p2p port, eth1 endpoint, http enabled with port and host",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
-					Client:  ethereum2v1alpha1.LighthouseClient,
-					P2PPort: 7891,
-					Network: "mainnet",
-					Eth1Endpoints: []string{
-						"https://localhost:8545",
-						"https://localhost:8546",
-					},
-					REST:     true,
-					RESTPort: 4444,
-					RESTHost: "0.0.0.0",
+					Client:        ethereum2v1alpha1.TekuClient,
+					P2PPort:       7891,
+					Network:       "mainnet",
+					Eth1Endpoints: []string{"https://localhost:8545"},
+					REST:          true,
+					RESTPort:      3333,
+					RESTHost:      "0.0.0.0",
 				},
 			},
 			result: []string{
-				LighthouseDataDir,
-				LighthousePort,
+				TekuDataPath,
+				TekuP2PPort,
 				"7891",
-				LighthouseDiscoveryPort,
-				"7891",
-				LighthouseNetwork,
+				TekuNetwork,
 				"mainnet",
-				LighthouseEth1Endpoints,
-				"https://localhost:8545,https://localhost:8546",
-				LighthouseHTTP,
-				LighthouseHTTPPort,
-				"4444",
-				LighthouseHTTPAddress,
+				TekuEth1Endpoints,
+				"https://localhost:8545",
+				TekuRestEnabled,
+				TekuRestPort,
+				"3333",
+				TekuRestHost,
 				"0.0.0.0",
 			},
 		},
@@ -156,7 +153,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.node.Default()
-				client, _ := NewEthereum2Client(cc.node)
+				client, _ := NewClient(cc.node)
 				args := client.Args()
 				Expect(args).To(ContainElements(cc.result))
 			})

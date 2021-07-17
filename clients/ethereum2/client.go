@@ -1,4 +1,4 @@
-package controllers
+package ethereum2
 
 import (
 	"fmt"
@@ -13,7 +13,8 @@ type Ethereum2Client interface {
 	shared.Client
 }
 
-func NewEthereum2Client(obj runtime.Object) (Ethereum2Client, error) {
+// NewClient creates new ethereum 2.0 beacon node or validator client
+func NewClient(obj runtime.Object) (Ethereum2Client, error) {
 
 	switch component := obj.(type) {
 
