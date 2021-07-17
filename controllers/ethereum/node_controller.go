@@ -31,8 +31,8 @@ type NodeReconciler struct {
 }
 
 var (
-	//go:embed init_geth_genesis.sh
-	initGethGenesisScript string
+	//go:embed geth_init_genesis.sh
+	GethInitGenesisScript string
 	//go:embed geth_import_account.sh
 	gethImportAccountScript string
 	//go:embed parity_import_account.sh
@@ -159,7 +159,7 @@ func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *c
 	}
 
 	configmap.Data["genesis.json"] = genesis
-	configmap.Data["init-geth-genesis.sh"] = initGethGenesisScript
+	configmap.Data["geth-init-genesis.sh"] = GethInitGenesisScript
 	configmap.Data["import-account.sh"] = importAccountScript
 	configmap.Data["nethermind_convert_enode_privatekey.sh"] = nethermindConvertEnodePrivateKeyScript
 	configmap.Data["nethermind_copy_keystore.sh"] = nethermindConvertCopyKeystoreScript
@@ -464,7 +464,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 					},
 				},
 				Command:      []string{"/bin/sh"},
-				Args:         []string{fmt.Sprintf("%s/init-geth-genesis.sh", shared.PathConfig(homedir))},
+				Args:         []string{fmt.Sprintf("%s/geth-init-genesis.sh", shared.PathConfig(homedir))},
 				VolumeMounts: volumeMounts,
 			}
 			initContainers = append(initContainers, initGenesis)
