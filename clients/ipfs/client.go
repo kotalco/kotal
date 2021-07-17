@@ -13,8 +13,8 @@ type IPFSClient interface {
 	shared.Client
 }
 
-// NewIPFSClient creates a new client for ipfs peer or cluster peer
-func NewIPFSClient(obj runtime.Object) (IPFSClient, error) {
+// NewClient creates a new client for ipfs peer or cluster peer
+func NewClient(obj runtime.Object) (IPFSClient, error) {
 	switch peer := obj.(type) {
 	case *ipfsv1alpha1.Peer:
 		return &GoIPFSClient{peer}, nil

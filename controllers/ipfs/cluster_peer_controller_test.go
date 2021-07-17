@@ -11,6 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	ipfsClients "github.com/kotalco/kotal/clients/ipfs"
 	"github.com/kotalco/kotal/controllers/shared"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -53,7 +54,7 @@ var _ = Describe("IPFS cluster peer controller", func() {
 		Spec: spec,
 	}
 
-	client, _ := NewIPFSClient(toCreate)
+	client, _ := ipfsClients.NewClient(toCreate)
 
 	t := true
 
@@ -119,9 +120,6 @@ var _ = Describe("IPFS cluster peer controller", func() {
 
 		container := fetched.Spec.Template.Spec.Containers[0]
 		Expect(container.Image).To(Equal(client.Image()))
-		Expect(container.Args).To(ContainElements(
-			GoIPFSDaemonArg,
-		))
 
 	})
 
@@ -132,11 +130,11 @@ var _ = Describe("IPFS cluster peer controller", func() {
 		container := fetched.Spec.Template.Spec.Containers[0]
 		Expect(container.Env).To(ContainElements([]corev1.EnvVar{
 			{
-				Name:  EnvIPFSClusterPath,
-				Value: shared.PathData(GoIPFSClusterHomeDir),
+				Name:  ipfsClients.EnvIPFSClusterPath,
+				Value: shared.PathData(ipfsClients.GoIPFSClusterHomeDir),
 			},
 			{
-				Name:  EnvIPFSClusterPeerName,
+				Name:  ipfsClients.EnvIPFSClusterPeerName,
 				Value: toCreate.Name,
 			},
 		}))
@@ -144,19 +142,19 @@ var _ = Describe("IPFS cluster peer controller", func() {
 		initContainer := fetched.Spec.Template.Spec.InitContainers[0]
 		Expect(initContainer.Env).To(ContainElements([]corev1.EnvVar{
 			{
-				Name:  EnvIPFSClusterPath,
-				Value: shared.PathData(GoIPFSClusterHomeDir),
+				Name:  ipfsClients.EnvIPFSClusterPath,
+				Value: shared.PathData(ipfsClients.GoIPFSClusterHomeDir),
 			},
 			{
-				Name:  EnvIPFSClusterConsensus,
+				Name:  ipfsClients.EnvIPFSClusterConsensus,
 				Value: string(toCreate.Spec.Consensus),
 			},
 			{
-				Name:  EnvIPFSClusterPeerEndpoint,
+				Name:  ipfsClients.EnvIPFSClusterPeerEndpoint,
 				Value: toCreate.Spec.PeerEndpoint,
 			},
 			{
-				Name: EnvIPFSClusterSecret,
+				Name: ipfsClients.EnvIPFSClusterSecret,
 				ValueFrom: &corev1.EnvVarSource{
 					SecretKeyRef: &corev1.SecretKeySelector{
 						LocalObjectReference: corev1.LocalObjectReference{
@@ -167,15 +165,15 @@ var _ = Describe("IPFS cluster peer controller", func() {
 				},
 			},
 			{
-				Name:  EnvIPFSClusterTrustedPeers,
+				Name:  ipfsClients.EnvIPFSClusterTrustedPeers,
 				Value: strings.Join(toCreate.Spec.TrustedPeers, ","),
 			},
 			{
-				Name:  EnvIPFSClusterId,
+				Name:  ipfsClients.EnvIPFSClusterId,
 				Value: toCreate.Spec.ID,
 			},
 			{
-				Name: EnvIPFSClusterPrivatekey,
+				Name: ipfsClients.EnvIPFSClusterPrivatekey,
 				ValueFrom: &corev1.EnvVarSource{
 					SecretKeyRef: &corev1.SecretKeySelector{
 						LocalObjectReference: corev1.LocalObjectReference{

@@ -17,6 +17,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	ipfsClients "github.com/kotalco/kotal/clients/ipfs"
 	"github.com/kotalco/kotal/controllers/shared"
 )
 
@@ -262,7 +263,7 @@ func (r *ClusterPeerReconciler) reconcileStatefulset(ctx context.Context, peer *
 		},
 	}
 
-	client, err := NewIPFSClient(peer)
+	client, err := ipfsClients.NewClient(peer)
 	if err != nil {
 		return err
 	}
@@ -294,19 +295,19 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 	// environment variables required by `ipfs-cluster-service init`
 	initClusterPeerENV := []corev1.EnvVar{
 		{
-			Name:  EnvIPFSClusterPath,
+			Name:  ipfsClients.EnvIPFSClusterPath,
 			Value: shared.PathData(homeDir),
 		},
 		{
-			Name:  EnvIPFSClusterConsensus,
+			Name:  ipfsClients.EnvIPFSClusterConsensus,
 			Value: string(peer.Spec.Consensus),
 		},
 		{
-			Name:  EnvIPFSClusterPeerEndpoint,
+			Name:  ipfsClients.EnvIPFSClusterPeerEndpoint,
 			Value: peer.Spec.PeerEndpoint,
 		},
 		{
-			Name: EnvIPFSClusterSecret,
+			Name: ipfsClients.EnvIPFSClusterSecret,
 			ValueFrom: &corev1.EnvVarSource{
 				SecretKeyRef: &corev1.SecretKeySelector{
 					LocalObjectReference: corev1.LocalObjectReference{
@@ -317,7 +318,7 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 			},
 		},
 		{
-			Name:  EnvIPFSClusterTrustedPeers,
+			Name:  ipfsClients.EnvIPFSClusterTrustedPeers,
 			Value: strings.Join(peer.Spec.TrustedPeers, ","),
 		},
 	}
@@ -327,12 +328,12 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 	if peer.Spec.ID != "" {
 		// cluster id
 		initClusterPeerENV = append(initClusterPeerENV, corev1.EnvVar{
-			Name:  EnvIPFSClusterId,
+			Name:  ipfsClients.EnvIPFSClusterId,
 			Value: peer.Spec.ID,
 		})
 		// cluster private key
 		initClusterPeerENV = append(initClusterPeerENV, corev1.EnvVar{
-			Name: EnvIPFSClusterPrivatekey,
+			Name: ipfsClients.EnvIPFSClusterPrivatekey,
 			ValueFrom: &corev1.EnvVarSource{
 				SecretKeyRef: &corev1.SecretKeySelector{
 					LocalObjectReference: corev1.LocalObjectReference{
@@ -382,11 +383,11 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 						Command: command,
 						Env: []corev1.EnvVar{
 							{
-								Name:  EnvIPFSClusterPath,
+								Name:  ipfsClients.EnvIPFSClusterPath,
 								Value: shared.PathData(homeDir),
 							},
 							{
-								Name:  EnvIPFSClusterPeerName,
+								Name:  ipfsClients.EnvIPFSClusterPeerName,
 								Value: peer.Name,
 							},
 						},

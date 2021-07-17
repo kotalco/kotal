@@ -17,6 +17,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	ipfsClients "github.com/kotalco/kotal/clients/ipfs"
 	"github.com/kotalco/kotal/controllers/shared"
 )
 
@@ -253,7 +254,7 @@ func (r *PeerReconciler) reconcileStatefulSet(ctx context.Context, peer *ipfsv1a
 		},
 	}
 
-	client, err := NewIPFSClient(peer)
+	client, err := ipfsClients.NewClient(peer)
 	if err != nil {
 		return err
 	}
@@ -335,11 +336,11 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 			Image: "busybox",
 			Env: []corev1.EnvVar{
 				{
-					Name:  EnvIPFSPath,
+					Name:  ipfsClients.EnvIPFSPath,
 					Value: shared.PathData(homeDir),
 				},
 				{
-					Name:  EnvSecretsPath,
+					Name:  ipfsClients.EnvSecretsPath,
 					Value: shared.PathSecrets(homeDir),
 				},
 			},
@@ -362,11 +363,11 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 		Image: img,
 		Env: []corev1.EnvVar{
 			{
-				Name:  EnvIPFSPath,
+				Name:  ipfsClients.EnvIPFSPath,
 				Value: shared.PathData(homeDir),
 			},
 			{
-				Name:  EnvIPFSInitProfiles,
+				Name:  ipfsClients.EnvIPFSInitProfiles,
 				Value: strings.Join(initProfiles, ","),
 			},
 		},
@@ -388,27 +389,27 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 		Image: img,
 		Env: []corev1.EnvVar{
 			{
-				Name:  EnvIPFSPath,
+				Name:  ipfsClients.EnvIPFSPath,
 				Value: shared.PathData(homeDir),
 			},
 			{
-				Name:  EnvIPFSAPIPort,
+				Name:  ipfsClients.EnvIPFSAPIPort,
 				Value: fmt.Sprintf("%d", peer.Spec.APIPort),
 			},
 			{
-				Name:  EnvIPFSAPIHost,
+				Name:  ipfsClients.EnvIPFSAPIHost,
 				Value: peer.Spec.APIHost,
 			},
 			{
-				Name:  EnvIPFSGatewayPort,
+				Name:  ipfsClients.EnvIPFSGatewayPort,
 				Value: fmt.Sprintf("%d", peer.Spec.GatewayPort),
 			},
 			{
-				Name:  EnvIPFSGatewayHost,
+				Name:  ipfsClients.EnvIPFSGatewayHost,
 				Value: peer.Spec.GatewayHost,
 			},
 			{
-				Name:  EnvIPFSProfiles,
+				Name:  ipfsClients.EnvIPFSProfiles,
 				Value: strings.Join(profiles, ";"),
 			},
 		},
@@ -436,7 +437,7 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 						Image: img,
 						Env: []corev1.EnvVar{
 							{
-								Name:  EnvIPFSPath,
+								Name:  ipfsClients.EnvIPFSPath,
 								Value: shared.PathData(homeDir),
 							},
 						},
