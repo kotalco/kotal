@@ -7,6 +7,7 @@ import (
 	"time"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	ethereumClients "github.com/kotalco/kotal/clients/ethereum"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	appsv1 "k8s.io/api/apps/v1"
@@ -68,7 +69,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Logging:           ethereumv1alpha1.NoLogs,
 		}
 
-		var nodeClient EthereumClient
+		var nodeClient ethereumClients.EthereumClient
 
 		toCreate := &ethereumv1alpha1.Node{
 			ObjectMeta: metav1.ObjectMeta{
@@ -118,7 +119,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.Spec).To(Equal(toCreate.Spec))
 			// TODO: test status
 			nodeOwnerReference.UID = fetched.GetUID()
-			nodeClient, _ = NewEthereumClient(fetched)
+			nodeClient, _ = ethereumClients.NewClient(fetched)
 		})
 
 		It("Should create node configmap", func() {
@@ -152,15 +153,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), key, sts)).To(Succeed())
 			Expect(sts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(sts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
-			Expect(sts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuNetwork,
-				"mainnet",
-				BesuDataPath,
-				BesuNodePrivateKey,
-				BesuSyncMode,
-				string(ethereumv1alpha1.FullSynchronization),
-				BesuLogging,
-			}))
 		})
 
 		It("Should allocate correct resources to node statefulset", func() {
@@ -247,7 +239,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Logging:           ethereumv1alpha1.FatalLogs,
 		}
 
-		var nodeClient EthereumClient
+		var nodeClient ethereumClients.EthereumClient
 
 		toCreate := &ethereumv1alpha1.Node{
 			ObjectMeta: metav1.ObjectMeta{
@@ -319,7 +311,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.Spec).To(Equal(toCreate.Spec))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = key.Name
-			nodeClient, _ = NewEthereumClient(fetched)
+			nodeClient, _ = ethereumClients.NewClient(fetched)
 		})
 
 		It("Should create node config", func() {
@@ -352,14 +344,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), key, sts)).To(Succeed())
 			Expect(sts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(sts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
-			Expect(sts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuNetwork,
-				"rinkeby",
-				BesuDataPath,
-				BesuNodePrivateKey,
-				BesuSyncMode,
-				string(ethereumv1alpha1.FastSynchronization),
-			}))
 		})
 
 		It("Should allocate correct resources to node statefulset", func() {
@@ -477,7 +461,7 @@ var _ = Describe("Ethereum network controller", func() {
 			BlockOwnerDeletion: &t,
 		}
 
-		var nodeClient EthereumClient
+		var nodeClient ethereumClients.EthereumClient
 
 		It(fmt.Sprintf("should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
@@ -534,7 +518,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.Spec).To(Equal(toCreate.Spec))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = key.Name
-			nodeClient, _ = NewEthereumClient(fetched)
+			nodeClient, _ = ethereumClients.NewClient(fetched)
 		})
 
 		It("Should create node service", func() {
@@ -562,15 +546,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuDataPath,
-				BesuNodePrivateKey,
-				BesuSyncMode,
-				string(ethereumv1alpha1.FullSynchronization),
-				BesuLogging,
-				BesuDiscoveryEnabled,
-				"false",
-			}))
 		})
 
 		It("Should create node genesis block config", func() {
@@ -695,7 +670,7 @@ var _ = Describe("Ethereum network controller", func() {
 			BlockOwnerDeletion: &t,
 		}
 
-		var nodeClient EthereumClient
+		var nodeClient ethereumClients.EthereumClient
 
 		It(fmt.Sprintf("should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
@@ -752,7 +727,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(node.Spec).To(Equal(toCreate.Spec))
 			nodeOwnerReference.UID = node.GetUID()
 			nodeOwnerReference.Name = key.Name
-			nodeClient, _ = NewEthereumClient(node)
+			nodeClient, _ = ethereumClients.NewClient(node)
 		})
 
 		It("Should create node genesis block configmap", func() {
@@ -785,15 +760,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), key, sts)).To(Succeed())
 			Expect(sts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(sts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
-			Expect(sts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuDataPath,
-				BesuNodePrivateKey,
-				BesuSyncMode,
-				string(ethereumv1alpha1.FullSynchronization),
-				BesuLogging,
-				BesuDiscoveryEnabled,
-				"false",
-			}))
 		})
 
 		It("Should allocate correct resources to node statefulset", func() {
@@ -917,7 +883,7 @@ var _ = Describe("Ethereum network controller", func() {
 			BlockOwnerDeletion: &t,
 		}
 
-		var nodeClient EthereumClient
+		var nodeClient ethereumClients.EthereumClient
 
 		It(fmt.Sprintf("should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.Background(), ns)).Should(Succeed())
@@ -950,7 +916,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(fetched.Spec).To(Equal(toCreate.Spec))
 			nodeOwnerReference.UID = fetched.GetUID()
 			nodeOwnerReference.Name = key.Name
-			nodeClient, _ = NewEthereumClient(fetched)
+			nodeClient, _ = ethereumClients.NewClient(fetched)
 		})
 
 		It("Should create node genesis block configmap", func() {
@@ -985,15 +951,6 @@ var _ = Describe("Ethereum network controller", func() {
 			Expect(k8sClient.Get(context.Background(), key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Args).To(ContainElements([]string{
-				BesuDataPath,
-				BesuNodePrivateKey,
-				BesuSyncMode,
-				string(ethereumv1alpha1.FullSynchronization),
-				BesuLogging,
-				BesuDiscoveryEnabled,
-				"false",
-			}))
 		})
 
 		It("Should allocate correct resources to bootnode statefulset", func() {

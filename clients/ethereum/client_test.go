@@ -1,4 +1,4 @@
-package controllers
+package ethereum
 
 import (
 	"fmt"
@@ -695,7 +695,7 @@ var _ = Describe("Ethereum client arguments", func() {
 			cc := c
 			It(fmt.Sprintf("Should create correct client arguments for %s", cc.title), func() {
 				cc.node.Default()
-				client, err := NewEthereumClient(cc.node)
+				client, err := NewClient(cc.node)
 				Expect(err).To(BeNil())
 				args := client.Args()
 				Expect(args).To(ContainElements(cc.result))

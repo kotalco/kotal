@@ -1,4 +1,4 @@
-package controllers
+package ethereum
 
 import (
 	"encoding/json"

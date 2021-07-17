@@ -18,6 +18,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	ethereumClients "github.com/kotalco/kotal/clients/ethereum"
 	"github.com/kotalco/kotal/controllers/shared"
 	"github.com/kotalco/kotal/helpers"
 )
@@ -189,7 +190,7 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv
 		},
 	}
 
-	client, err := NewEthereumClient(node)
+	client, err := ethereumClients.NewClient(node)
 	if err != nil {
 		return err
 	}
@@ -588,7 +589,7 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereu
 		},
 	}
 
-	client, err := NewEthereumClient(node)
+	client, err := ethereumClients.NewClient(node)
 	if err != nil {
 		return err
 	}

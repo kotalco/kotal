@@ -1,12 +1,13 @@
-package controllers
+package ethereum
 
 import (
 	"bytes"
 	"encoding/hex"
+	"strings"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/rlp"
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
-	"strings"
 )
 
 // createExtraDataFromSigners creates extraDta genesis field value from initial signers

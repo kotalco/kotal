@@ -1,13 +1,10 @@
-package controllers
+package ethereum
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/crypto"
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
 )
@@ -184,28 +181,4 @@ func (p *ParityClient) Image() string {
 		return DefaultParityImage
 	}
 	return os.Getenv(EnvParityImage)
-}
-
-// KeyStoreFromPrivatekey generates key store from private key (hex without 0x)
-func KeyStoreFromPrivatekey(key, password string) (content []byte, err error) {
-	dir, err := ioutil.TempDir(os.TempDir(), "tmp")
-	if err != nil {
-		return
-	}
-	defer os.RemoveAll(dir)
-
-	ks := keystore.NewKeyStore(dir, keystore.StandardScryptN, keystore.StandardScryptP)
-	privateKey, err := crypto.HexToECDSA(key)
-	if err != nil {
-		return
-	}
-
-	acc, err := ks.ImportECDSA(privateKey, password)
-	if err != nil {
-		return
-	}
-
-	content, err = ks.Export(acc, password, password)
-
-	return
 }

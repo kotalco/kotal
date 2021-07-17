@@ -1,4 +1,4 @@
-package controllers
+package ethereum
 
 import (
 	"fmt"
@@ -16,8 +16,8 @@ type EthereumClient interface {
 	EncodeStaticNodes() string
 }
 
-// NewEthereumClient returns an Ethereum client instance
-func NewEthereumClient(node *ethereumv1alpha1.Node) (EthereumClient, error) {
+// NewClient returns an Ethereum client instance
+func NewClient(node *ethereumv1alpha1.Node) (EthereumClient, error) {
 	switch node.Spec.Client {
 	case ethereumv1alpha1.BesuClient:
 		return &BesuClient{node}, nil
