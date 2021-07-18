@@ -1,3 +1,11 @@
+# WARNING: DON'T use the following secrets in production
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mainnet-geth-nodekey
+stringData:
+  key: 5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
+---
 apiVersion: ethereum.kotal.io/v1alpha1
 kind: Node
 metadata:
@@ -5,8 +13,7 @@ metadata:
 spec:
   network: mainnet
   client: geth
-  # kubectl create secret generic node1key --from-literal=key=5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
-  nodekeySecretName: node1key
+  nodekeySecretName: mainnet-geth-nodekey
   rpc: true
   rpcPort: 8599
   corsDomains:

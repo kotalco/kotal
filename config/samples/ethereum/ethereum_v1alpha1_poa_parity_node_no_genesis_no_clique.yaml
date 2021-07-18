@@ -1,3 +1,11 @@
+# WARNING: DON'T use the following secrets in production
+apiVersion: v1
+kind: Secret
+metadata:
+  name: poa-parity-nodekey
+stringData:
+  key: 608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
+---
 apiVersion: ethereum.kotal.io/v1alpha1
 kind: Node
 metadata:
@@ -14,11 +22,10 @@ spec:
     accounts:
       - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"
         balance: "0xffffffffffffffffffff"
-  ########### network nodes spec ###########
+  ########### node spec ###########
   client: parity
   rpc: true
-  # kubectl create secret generic node1key --from-literal=key=608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
-  nodekeySecretName: node1key
+  nodekeySecretName: poa-parity-nodekey
   rpcPort: 8599
   corsDomains:
     - all

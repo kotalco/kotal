@@ -1,3 +1,12 @@
+# WARNING: DON'T use the following secrets in production
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pow-besu-nodekey
+stringData:
+  # address 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c
+  key: 608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
+---
 apiVersion: ethereum.kotal.io/v1alpha1
 kind: Node
 metadata:
@@ -15,8 +24,7 @@ spec:
   client: besu
   miner: true
   coinbase: "0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c"
-  # kubectl create secret generic node1key --from-literal=key=608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
-  nodekeySecretName: node1key
+  nodekeySecretName: pow-besu-nodekey
   rpc: true
   rpcPort: 8599
   corsDomains:
