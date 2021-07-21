@@ -11,7 +11,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var _ = Describe("Geth Client", func() {
+var _ = Describe("Nethermind Client", func() {
 
 	enode := ethereumv1alpha1.Enode("enode://2281549869465d98e90cebc45e1d6834a01465a990add7bcf07a49287e7e66b50ca27f9c70a46190cef7ad746dd5d5b6b9dfee0c9954104c8e9bd0d42758ec58@10.5.0.2:30300")
 	coinbase := "0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c"
@@ -22,122 +22,107 @@ var _ = Describe("Geth Client", func() {
 				Name: "gneral",
 			},
 			Spec: ethereumv1alpha1.NodeSpec{
-				Client: ethereumv1alpha1.GethClient,
+				Client: ethereumv1alpha1.NethermindClient,
 				StaticNodes: []ethereumv1alpha1.Enode{
 					enode,
 				},
 			},
 		}
-		testImage := "kotalco/geth:test"
+		testImage := "kotalco/nethermind:test"
 		client, _ := NewClient(node)
 
 		It("should return correct home directory", func() {
-			Expect(client.HomeDir()).To(Equal(GethHomeDir))
+			Expect(client.HomeDir()).To(Equal(NethermindHomeDir))
 		})
 
 		It("should return correct docker image tag", func() {
-			Expect(client.Image()).To(Equal(DefaultGethImage))
-			os.Setenv(EnvGethImage, testImage)
+			Expect(client.Image()).To(Equal(DefaultNethermindImage))
+			os.Setenv(EnvNethermindImage, testImage)
 			Expect(client.Image()).To(Equal(testImage))
 		})
 
 		It("should encode static nodes correctly", func() {
-
-			Expect(client.EncodeStaticNodes()).To(Equal(fmt.Sprintf("[Node.P2P]\nStaticNodes = [\"%s\"]", string(enode))))
+			Expect(client.EncodeStaticNodes()).To(Equal(fmt.Sprintf("[\"%s\"]", string(enode))))
 		})
 	})
 
 	Context("Joining mainnet", func() {
-		node := &ethereumv1alpha1.Node{
+		node := ethereumv1alpha1.Node{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "geth-mainnet-node",
+				Name: "nethermind-mainnet-node",
 			},
 			Spec: ethereumv1alpha1.NodeSpec{
-				NetworkConfig:     ethereumv1alpha1.NetworkConfig{Network: ethereumv1alpha1.MainNetwork},
-				Client:            ethereumv1alpha1.GethClient,
-				Bootnodes:         []ethereumv1alpha1.Enode{enode},
-				NodekeySecretName: "geth-mainnet-nodekey",
-				StaticNodes:       []ethereumv1alpha1.Enode{enode},
-				P2PPort:           3333,
-				SyncMode:          ethereumv1alpha1.LightSynchronization,
+				NetworkConfig: ethereumv1alpha1.NetworkConfig{
+					Network: ethereumv1alpha1.MainNetwork,
+				},
+				Client:            ethereumv1alpha1.NethermindClient,
+				NodekeySecretName: "mainnet-nethermind-nodekey",
 				Logging:           ethereumv1alpha1.WarnLogs,
-				Hosts:             []string{"whitelisted.host.com"},
-				CORSDomains:       []string{"allowed.domain.com"},
 				RPC:               true,
-				RPCPort:           8888,
+				RPCPort:           8799,
 				RPCAPI: []ethereumv1alpha1.API{
-					ethereumv1alpha1.NetworkAPI,
 					ethereumv1alpha1.AdminAPI,
-					ethereumv1alpha1.DebugAPI,
+					ethereumv1alpha1.NetworkAPI,
 				},
-				WS:     true,
-				WSPort: 7777,
-				WSAPI: []ethereumv1alpha1.API{
-					ethereumv1alpha1.ETHAPI,
-					ethereumv1alpha1.TransactionPoolAPI,
+				P2PPort:  30306,
+				WS:       true,
+				WSPort:   30307,
+				SyncMode: ethereumv1alpha1.FastSynchronization,
+				StaticNodes: []ethereumv1alpha1.Enode{
+					enode,
 				},
-				GraphQL:     true,
-				GraphQLPort: 9999,
 			},
 		}
+
 		node.Default()
 
-		It("should generate correct arguments", func() {
-
-			client, err := NewClient(node)
+		It("Should generate correct args", func() {
+			client, err := NewClient(&node)
 
 			Expect(err).To(BeNil())
 			Expect(client.Args()).To(ContainElements(
 				[]string{
-					GethDataDir,
+					NethermindNodePrivateKey,
+					fmt.Sprintf("%s/kotal_nodekey", shared.PathData(client.HomeDir())),
+					NethermindStaticNodesFile,
+					fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(client.HomeDir())),
+					NethermindDataPath,
 					shared.PathData(client.HomeDir()),
-					fmt.Sprintf("--%s", ethereumv1alpha1.MainNetwork),
-					GethLogging,
-					client.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
-					GethNodeKey,
-					fmt.Sprintf("%s/nodekey", shared.PathSecrets(client.HomeDir())),
-					GethConfig,
-					fmt.Sprintf("%s/config.toml", shared.PathConfig(client.HomeDir())),
-					GethBootnodes,
-					string(enode),
-					GethP2PPort,
-					"3333",
-					GethSyncMode,
-					string(ethereumv1alpha1.LightSynchronization),
-					GethRPCHTTPEnabled,
-					GethRPCHTTPHost,
+					NethermindNetwork,
+					node.Spec.Network,
+					NethermindP2PPort,
+					"30306",
+					NethermindFastSync,
+					"true",
+					NethermindFastBlocks,
+					"true",
+					NethermindDownloadBodiesInFastSync,
+					"true",
+					NethermindDownloadReceiptsInFastSync,
+					"true",
+					NethermindRPCHTTPEnabled,
+					"true",
+					NethermindRPCHTTPHost,
 					DefaultHost,
-					GethRPCHTTPPort,
-					"8888",
-					GethRPCHTTPAPI,
-					"net,admin,debug",
-					GethRPCWSEnabled,
-					GethRPCWSHost,
-					DefaultHost,
-					GethRPCWSPort,
-					"7777",
-					GethRPCWSAPI,
-					"eth,txpool",
-					GethGraphQLHTTPEnabled,
-					GethRPCHostWhitelist,
-					"whitelisted.host.com",
-					GethGraphQLHostWhitelist,
-					"whitelisted.host.com",
-					GethRPCHTTPCorsOrigins,
-					"allowed.domain.com",
-					GethGraphQLHTTPCorsOrigins,
-					"allowed.domain.com",
-					GethWSOrigins,
-					"allowed.domain.com",
+					NethermindRPCHTTPPort,
+					"8799",
+					NethermindRPCHTTPAPI,
+					"admin,net",
+					NethermindRPCWSEnabled,
+					"true",
+					NethermindRPCWSPort,
+					"30307",
 				},
 			))
+
 		})
+
 	})
 
 	Context("miner in private PoW network", func() {
 		node := &ethereumv1alpha1.Node{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "geth-pow-node",
+				Name: "nethermind-pow-node",
 			},
 			Spec: ethereumv1alpha1.NodeSpec{
 				NetworkConfig: ethereumv1alpha1.NetworkConfig{
@@ -148,12 +133,12 @@ var _ = Describe("Geth Client", func() {
 						Ethash:  &ethereumv1alpha1.Ethash{},
 					},
 				},
-				Client:   ethereumv1alpha1.GethClient,
+				Client:   ethereumv1alpha1.NethermindClient,
 				Miner:    true,
 				Coinbase: ethereumv1alpha1.EthereumAddress(coinbase),
 				Import: &ethereumv1alpha1.ImportedAccount{
-					PrivateKeySecretName: "geth-pow-account-key",
-					PasswordSecretName:   "geth-pow-account-password",
+					PrivateKeySecretName: "nethermind-pow-account-key",
+					PasswordSecretName:   "nethermind-pow-account-password",
 				},
 			},
 		}
@@ -166,16 +151,18 @@ var _ = Describe("Geth Client", func() {
 			Expect(err).To(BeNil())
 			Expect(client.Args()).To(ContainElements(
 				[]string{
-					GethMinerEnabled,
-					GethMinerCoinbase,
+					NethermindMiningEnabled,
+					"true",
+					NethermindMinerCoinbase,
 					coinbase,
-					GethUnlock,
-					coinbase,
-					GethPassword,
-					fmt.Sprintf("%s/account.password", shared.PathSecrets(client.HomeDir())),
-					GethNetworkID,
-					"12345",
-					GethNoDiscovery,
+					NethermindUnlockAccounts,
+					fmt.Sprintf("[%s]", coinbase),
+					NethermindPasswordFiles,
+					fmt.Sprintf("[%s/account.password]", shared.PathSecrets(client.HomeDir())),
+					NethermindDiscoveryEnabled,
+					"false",
+					NethermindNetwork,
+					fmt.Sprintf("%s/empty.cfg", shared.PathConfig(client.HomeDir())),
 				},
 			))
 		})
@@ -185,7 +172,7 @@ var _ = Describe("Geth Client", func() {
 	Context("signer in private PoA network", func() {
 		node := &ethereumv1alpha1.Node{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "geth-poa-node",
+				Name: "nethermind-poa-node",
 			},
 			Spec: ethereumv1alpha1.NodeSpec{
 				NetworkConfig: ethereumv1alpha1.NetworkConfig{
@@ -202,12 +189,12 @@ var _ = Describe("Geth Client", func() {
 						},
 					},
 				},
-				Client:   ethereumv1alpha1.GethClient,
+				Client:   ethereumv1alpha1.NethermindClient,
 				Miner:    true,
 				Coinbase: ethereumv1alpha1.EthereumAddress(coinbase),
 				Import: &ethereumv1alpha1.ImportedAccount{
-					PrivateKeySecretName: "geth-poa-account-key",
-					PasswordSecretName:   "geth-poa-account-password",
+					PrivateKeySecretName: "nethermind-poa-account-key",
+					PasswordSecretName:   "nethermind-poa-account-password",
 				},
 			},
 		}
@@ -220,16 +207,18 @@ var _ = Describe("Geth Client", func() {
 			Expect(err).To(BeNil())
 			Expect(client.Args()).To(ContainElements(
 				[]string{
-					GethMinerEnabled,
-					GethMinerCoinbase,
+					NethermindMiningEnabled,
+					"true",
+					NethermindMinerCoinbase,
 					coinbase,
-					GethUnlock,
-					coinbase,
-					GethPassword,
-					fmt.Sprintf("%s/account.password", shared.PathSecrets(client.HomeDir())),
-					GethNetworkID,
-					"12345",
-					GethNoDiscovery,
+					NethermindUnlockAccounts,
+					fmt.Sprintf("[%s]", coinbase),
+					NethermindPasswordFiles,
+					fmt.Sprintf("[%s/account.password]", shared.PathSecrets(client.HomeDir())),
+					NethermindDiscoveryEnabled,
+					"false",
+					NethermindNetwork,
+					fmt.Sprintf("%s/empty.cfg", shared.PathConfig(client.HomeDir())),
 				},
 			))
 		})
