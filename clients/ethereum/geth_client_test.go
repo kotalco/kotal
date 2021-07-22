@@ -189,7 +189,7 @@ var _ = Describe("Geth Client", func() {
 			},
 			Spec: ethereumv1alpha1.NodeSpec{
 				NetworkConfig: ethereumv1alpha1.NetworkConfig{
-					Consensus: ethereumv1alpha1.ProofOfWork,
+					Consensus: ethereumv1alpha1.ProofOfAuthority,
 					ID:        12345,
 					Genesis: &ethereumv1alpha1.Genesis{
 						ChainID: 12345,
