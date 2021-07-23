@@ -88,51 +88,49 @@ var _ = Describe("Besu Client", func() {
 
 			Expect(err).To(BeNil())
 			Expect(client.Args()).To(ContainElements(
-				[]string{
-					BesuDataPath,
-					shared.PathData(client.HomeDir()),
-					BesuNatMethod,
-					"KUBERNETES",
-					BesuNetwork,
-					ethereumv1alpha1.MainNetwork,
-					BesuLogging,
-					client.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
-					BesuNodePrivateKey,
-					fmt.Sprintf("%s/nodekey", shared.PathSecrets(client.HomeDir())),
-					BesuStaticNodesFile,
-					fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(client.HomeDir())),
-					BesuBootnodes,
-					string(enode),
-					BesuP2PPort,
-					"3333",
-					BesuSyncMode,
-					string(ethereumv1alpha1.LightSynchronization),
-					BesuRPCHTTPEnabled,
-					BesuRPCHTTPHost,
-					DefaultHost,
-					BesuRPCHTTPPort,
-					"8888",
-					BesuRPCHTTPAPI,
-					"net,admin,debug",
-					BesuRPCWSEnabled,
-					BesuRPCWSHost,
-					DefaultHost,
-					BesuRPCWSPort,
-					"7777",
-					BesuRPCWSAPI,
-					"eth,txpool",
-					BesuGraphQLHTTPEnabled,
-					BesuGraphQLHTTPHost,
-					DefaultHost,
-					BesuGraphQLHTTPPort,
-					"9999",
-					BesuHostAllowlist,
-					"whitelisted.host.com",
-					BesuRPCHTTPCorsOrigins,
-					"allowed.domain.com",
-					BesuGraphQLHTTPCorsOrigins,
-					"allowed.domain.com",
-				},
+				BesuDataPath,
+				shared.PathData(client.HomeDir()),
+				BesuNatMethod,
+				"KUBERNETES",
+				BesuNetwork,
+				ethereumv1alpha1.MainNetwork,
+				BesuLogging,
+				client.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+				BesuNodePrivateKey,
+				fmt.Sprintf("%s/nodekey", shared.PathSecrets(client.HomeDir())),
+				BesuStaticNodesFile,
+				fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(client.HomeDir())),
+				BesuBootnodes,
+				string(enode),
+				BesuP2PPort,
+				"3333",
+				BesuSyncMode,
+				string(ethereumv1alpha1.LightSynchronization),
+				BesuRPCHTTPEnabled,
+				BesuRPCHTTPHost,
+				DefaultHost,
+				BesuRPCHTTPPort,
+				"8888",
+				BesuRPCHTTPAPI,
+				"net,admin,debug",
+				BesuRPCWSEnabled,
+				BesuRPCWSHost,
+				DefaultHost,
+				BesuRPCWSPort,
+				"7777",
+				BesuRPCWSAPI,
+				"eth,txpool",
+				BesuGraphQLHTTPEnabled,
+				BesuGraphQLHTTPHost,
+				DefaultHost,
+				BesuGraphQLHTTPPort,
+				"9999",
+				BesuHostAllowlist,
+				"whitelisted.host.com",
+				BesuRPCHTTPCorsOrigins,
+				"allowed.domain.com",
+				BesuGraphQLHTTPCorsOrigins,
+				"allowed.domain.com",
 			))
 		})
 
@@ -165,23 +163,17 @@ var _ = Describe("Besu Client", func() {
 			client, err := NewClient(node)
 
 			Expect(err).To(BeNil())
-			Expect(client.Args()).NotTo(ContainElements(
-				[]string{
-					BesuNetwork,
-				},
-			))
+			Expect(client.Args()).NotTo(ContainElements(BesuNetwork))
 			Expect(client.Args()).To(ContainElements(
-				[]string{
-					BesuGenesisFile,
-					fmt.Sprintf("%s/genesis.json", shared.PathConfig(client.HomeDir())),
-					BesuMinerEnabled,
-					BesuMinerCoinbase,
-					coinbase,
-					BesuNetworkID,
-					"12345",
-					BesuDiscoveryEnabled,
-					"false",
-				},
+				BesuGenesisFile,
+				fmt.Sprintf("%s/genesis.json", shared.PathConfig(client.HomeDir())),
+				BesuMinerEnabled,
+				BesuMinerCoinbase,
+				coinbase,
+				BesuNetworkID,
+				"12345",
+				BesuDiscoveryEnabled,
+				"false",
 			))
 		})
 
@@ -220,23 +212,17 @@ var _ = Describe("Besu Client", func() {
 			client, err := NewClient(node)
 
 			Expect(err).To(BeNil())
-			Expect(client.Args()).NotTo(ContainElements(
-				[]string{
-					BesuNetwork,
-				},
-			))
+			Expect(client.Args()).NotTo(ContainElements(BesuNetwork))
 			Expect(client.Args()).To(ContainElements(
-				[]string{
-					BesuGenesisFile,
-					fmt.Sprintf("%s/genesis.json", shared.PathConfig(client.HomeDir())),
-					BesuMinerEnabled,
-					BesuMinerCoinbase,
-					coinbase,
-					BesuNetworkID,
-					"12345",
-					BesuDiscoveryEnabled,
-					"false",
-				},
+				BesuGenesisFile,
+				fmt.Sprintf("%s/genesis.json", shared.PathConfig(client.HomeDir())),
+				BesuMinerEnabled,
+				BesuMinerCoinbase,
+				coinbase,
+				BesuNetworkID,
+				"12345",
+				BesuDiscoveryEnabled,
+				"false",
 			))
 		})
 
@@ -275,23 +261,17 @@ var _ = Describe("Besu Client", func() {
 			client, err := NewClient(node)
 
 			Expect(err).To(BeNil())
-			Expect(client.Args()).NotTo(ContainElements(
-				[]string{
-					BesuNetwork,
-				},
-			))
+			Expect(client.Args()).NotTo(ContainElements(BesuNetwork))
 			Expect(client.Args()).To(ContainElements(
-				[]string{
-					BesuGenesisFile,
-					fmt.Sprintf("%s/genesis.json", shared.PathConfig(client.HomeDir())),
-					BesuMinerEnabled,
-					BesuMinerCoinbase,
-					coinbase,
-					BesuNetworkID,
-					"12345",
-					BesuDiscoveryEnabled,
-					"false",
-				},
+				BesuGenesisFile,
+				fmt.Sprintf("%s/genesis.json", shared.PathConfig(client.HomeDir())),
+				BesuMinerEnabled,
+				BesuMinerCoinbase,
+				coinbase,
+				BesuNetworkID,
+				"12345",
+				BesuDiscoveryEnabled,
+				"false",
 			))
 		})
 
