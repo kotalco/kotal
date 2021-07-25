@@ -5,6 +5,9 @@ type Genesis struct {
 	// Accounts is array of accounts to fund or associate with code and storage
 	Accounts []Account `json:"accounts,omitempty"`
 
+	// NetworkID is network id
+	NetworkID uint `json:"networkId"`
+
 	// ChainID is the the chain ID used in transaction signature to prevent reply attack
 	// more details https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
 	ChainID uint `json:"chainId"`

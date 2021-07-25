@@ -39,8 +39,13 @@ type NodeList struct {
 
 //NodeSpec is the specification of the node
 type NodeSpec struct {
-	NetworkConfig      `json:",inline"`
 	AvailabilityConfig `json:",inline"`
+
+	// Genesis is genesis block configuration
+	Genesis *Genesis `json:"genesis,omitempty"`
+
+	// Network specifies the network to join
+	Network string `json:"network,omitempty"`
 
 	// Client is ethereum client running on the node
 	Client EthereumClient `json:"client"`
