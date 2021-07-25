@@ -19,11 +19,10 @@ kind: Node
 metadata:
   name: poa-nethermind-node
 spec:
-  consensus: poa
-  id: 20189
   ########### Genesis block spec ###########
   genesis:
     chainId: 20189
+    networkId: 20189
     clique:
       blockPeriod: 15
       epochLength: 100

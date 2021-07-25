@@ -3,11 +3,11 @@ kind: Node
 metadata:
   name: pow-parity-node
 spec:
-  consensus: pow
-  id: 11
   ########### Genesis block spec ###########
   genesis:
     chainId: 9999
+    networkId: 11
+    ethash: {}
     accounts:
       - address: "0x48c5F25a884116d58A6287B72C9b069F936C9489"
         balance: "0xffffffffffffffffffff"

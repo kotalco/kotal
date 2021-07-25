@@ -11,11 +11,10 @@ kind: Node
 metadata:
   name: poa-parity-node
 spec:
-  consensus: poa
-  id: 11
   ########### Genesis block spec ###########
   genesis:
     chainId: 20189
+    networkId: 11
     clique:
       signers:
         - "0xd2c21213027cbf4d46c16b55fa98e5252b048706"
