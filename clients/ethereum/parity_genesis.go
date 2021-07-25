@@ -20,12 +20,11 @@ func (p *ParityGenesis) NormalizeNonce(data string) string {
 // Genesis returns genesis config parameter
 func (p *ParityGenesis) Genesis(node *ethereumv1alpha1.Node) (content string, err error) {
 	genesis := node.Spec.Genesis
-	consensus := node.Spec.Consensus
 	extraData := "0x00"
 	var engineConfig map[string]interface{}
 
 	// clique PoA settings
-	if consensus == ethereumv1alpha1.ProofOfAuthority {
+	if genesis.Clique != nil {
 		extraData = createExtraDataFromSigners(genesis.Clique.Signers)
 		engineConfig = map[string]interface{}{
 			"clique": map[string]interface{}{
@@ -53,7 +52,7 @@ func (p *ParityGenesis) Genesis(node *ethereumv1alpha1.Node) (content string, er
 	londonBlock := hex(genesis.Forks.London)
 
 	// ethash PoW settings
-	if consensus == ethereumv1alpha1.ProofOfWork {
+	if genesis.Ethash != nil {
 		params := map[string]interface{}{
 			"minimumDifficulty":      "0x020000",
 			"difficultyBoundDivisor": "0x0800",
@@ -112,7 +111,7 @@ func (p *ParityGenesis) Genesis(node *ethereumv1alpha1.Node) (content string, er
 		"gasLimitBoundDivisor": "0x0400",
 		"maximumExtraDataSize": "0xffff",
 		"minGasLimit":          "0x1388",
-		"networkID":            hex(node.Spec.ID),
+		"networkID":            hex(node.Spec.Genesis.NetworkID),
 		// Tingerine Whistle
 		"eip150Transition": tingerineWhistleBlock,
 		// Spurious Dragon

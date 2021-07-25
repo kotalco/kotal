@@ -54,10 +54,6 @@ func (p *ParityClient) Args() (args []string) {
 
 	appendArg(ParityLogging, p.LoggingArgFromVerbosity(node.Spec.Logging))
 
-	if node.Spec.ID != 0 {
-		appendArg(ParityNetworkID, fmt.Sprintf("%d", node.Spec.ID))
-	}
-
 	if node.Spec.NodekeySecretName != "" {
 		appendArg(ParityNodeKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(p.HomeDir())))
 	}
@@ -80,6 +76,7 @@ func (p *ParityClient) Args() (args []string) {
 		}
 	} else {
 		appendArg(ParityNetwork, fmt.Sprintf("%s/genesis.json", shared.PathConfig(p.HomeDir())))
+		appendArg(ParityNetworkID, fmt.Sprintf("%d", node.Spec.Genesis.NetworkID))
 		appendArg(ParityNoDiscovery)
 	}
 
@@ -95,7 +92,7 @@ func (p *ParityClient) Args() (args []string) {
 		appendArg(ParityMinerCoinbase, string(node.Spec.Coinbase))
 		appendArg(ParityUnlock, string(node.Spec.Coinbase))
 		appendArg(ParityPassword, fmt.Sprintf("%s/account.password", shared.PathSecrets(p.HomeDir())))
-		if node.Spec.Consensus == ethereumv1alpha1.ProofOfAuthority {
+		if node.Spec.Genesis.Clique != nil {
 			appendArg(ParityEngineSigner, string(node.Spec.Coinbase))
 		}
 	}

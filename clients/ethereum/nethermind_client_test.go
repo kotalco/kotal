@@ -52,10 +52,8 @@ var _ = Describe("Nethermind Client", func() {
 				Name: "nethermind-mainnet-node",
 			},
 			Spec: ethereumv1alpha1.NodeSpec{
-				NetworkConfig: ethereumv1alpha1.NetworkConfig{
-					Network: ethereumv1alpha1.MainNetwork,
-				},
 				Client:            ethereumv1alpha1.NethermindClient,
+				Network:           ethereumv1alpha1.MainNetwork,
 				NodekeySecretName: "mainnet-nethermind-nodekey",
 				Logging:           ethereumv1alpha1.WarnLogs,
 				RPC:               true,
@@ -123,13 +121,10 @@ var _ = Describe("Nethermind Client", func() {
 				Name: "nethermind-pow-node",
 			},
 			Spec: ethereumv1alpha1.NodeSpec{
-				NetworkConfig: ethereumv1alpha1.NetworkConfig{
-					Consensus: ethereumv1alpha1.ProofOfWork,
-					ID:        12345,
-					Genesis: &ethereumv1alpha1.Genesis{
-						ChainID: 12345,
-						Ethash:  &ethereumv1alpha1.Ethash{},
-					},
+				Genesis: &ethereumv1alpha1.Genesis{
+					ChainID:   12345,
+					NetworkID: 12345,
+					Ethash:    &ethereumv1alpha1.Ethash{},
 				},
 				Client:   ethereumv1alpha1.NethermindClient,
 				Miner:    true,
@@ -171,17 +166,14 @@ var _ = Describe("Nethermind Client", func() {
 				Name: "nethermind-poa-node",
 			},
 			Spec: ethereumv1alpha1.NodeSpec{
-				NetworkConfig: ethereumv1alpha1.NetworkConfig{
-					Consensus: ethereumv1alpha1.ProofOfAuthority,
-					ID:        12345,
-					Genesis: &ethereumv1alpha1.Genesis{
-						ChainID: 12345,
-						Clique: &ethereumv1alpha1.Clique{
-							Signers: []ethereumv1alpha1.EthereumAddress{
-								"0xcF2C3fB8F36A863FD1A8c72E2473f81744B4CA6C",
-								"0x1990E5760d9f8Ae0ec55dF8B0819C77e59846Ff2",
-								"0xB87c1c66b36D98D1A74a9875EbA12c001e0bcEda",
-							},
+				Genesis: &ethereumv1alpha1.Genesis{
+					ChainID:   12345,
+					NetworkID: 12345,
+					Clique: &ethereumv1alpha1.Clique{
+						Signers: []ethereumv1alpha1.EthereumAddress{
+							"0xcF2C3fB8F36A863FD1A8c72E2473f81744B4CA6C",
+							"0x1990E5760d9f8Ae0ec55dF8B0819C77e59846Ff2",
+							"0xB87c1c66b36D98D1A74a9875EbA12c001e0bcEda",
 						},
 					},
 				},

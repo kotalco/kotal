@@ -13,10 +13,8 @@ func TestNewClient(t *testing.T) {
 			Name: "node-with-invalid-client",
 		},
 		Spec: ethereumv1alpha1.NodeSpec{
-			NetworkConfig: ethereumv1alpha1.NetworkConfig{
-				Network: ethereumv1alpha1.MainNetwork,
-			},
-			Client: ethereumv1alpha1.EthereumClient("nokia"),
+			Client:  ethereumv1alpha1.EthereumClient("nokia"),
+			Network: ethereumv1alpha1.MainNetwork,
 		},
 	}
 

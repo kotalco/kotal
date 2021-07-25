@@ -58,10 +58,6 @@ func (g *GethClient) Args() (args []string) {
 	// config.toml holding static nodes
 	appendArg(GethConfig, fmt.Sprintf("%s/config.toml", shared.PathConfig(g.HomeDir())))
 
-	if node.Spec.ID != 0 {
-		appendArg(GethNetworkID, fmt.Sprintf("%d", node.Spec.ID))
-	}
-
 	if node.Spec.NodekeySecretName != "" {
 		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(g.HomeDir())))
 	}
@@ -76,6 +72,7 @@ func (g *GethClient) Args() (args []string) {
 
 	if node.Spec.Genesis != nil {
 		appendArg(GethNoDiscovery)
+		appendArg(GethNetworkID, fmt.Sprintf("%d", node.Spec.Genesis.NetworkID))
 	}
 
 	appendArg(GethDataDir, shared.PathData(g.HomeDir()))
@@ -192,7 +189,6 @@ func (g *GethClient) EncodeStaticNodes() string {
 func (g *GethClient) Genesis() (content string, err error) {
 	node := g.node
 	genesis := node.Spec.Genesis
-	consensus := node.Spec.Consensus
 	mixHash := genesis.MixHash
 	nonce := genesis.Nonce
 	extraData := "0x00"
@@ -202,13 +198,14 @@ func (g *GethClient) Genesis() (content string, err error) {
 	var consensusConfig map[string]uint
 	var engine string
 
-	if consensus == ethereumv1alpha1.ProofOfWork {
+	// ethash PoW settings
+	if genesis.Ethash != nil {
 		consensusConfig = map[string]uint{}
 		engine = "ethash"
 	}
 
 	// clique PoA settings
-	if consensus == ethereumv1alpha1.ProofOfAuthority {
+	if genesis.Clique != nil {
 		consensusConfig = map[string]uint{
 			"period": genesis.Clique.BlockPeriod,
 			"epoch":  genesis.Clique.EpochLength,

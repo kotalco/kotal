@@ -48,10 +48,6 @@ func (b *BesuClient) Args() (args []string) {
 
 	appendArg(BesuLogging, b.LoggingArgFromVerbosity(node.Spec.Logging))
 
-	if node.Spec.ID != 0 {
-		appendArg(BesuNetworkID, fmt.Sprintf("%d", node.Spec.ID))
-	}
-
 	if node.Spec.NodekeySecretName != "" {
 		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(b.HomeDir())))
 	}
@@ -72,9 +68,11 @@ func (b *BesuClient) Args() (args []string) {
 
 	appendArg(BesuDataPath, shared.PathData(b.HomeDir()))
 
+	// public network
 	if node.Spec.Genesis == nil {
 		appendArg(BesuNetwork, node.Spec.Network)
-	} else {
+	} else { // private network
+		appendArg(BesuNetworkID, fmt.Sprintf("%d", node.Spec.Genesis.NetworkID))
 		appendArg(BesuDiscoveryEnabled, "false")
 	}
 
@@ -162,7 +160,6 @@ func (b *BesuClient) Args() (args []string) {
 func (b *BesuClient) Genesis() (content string, err error) {
 	node := b.node
 	genesis := node.Spec.Genesis
-	consensus := node.Spec.Consensus
 	mixHash := genesis.MixHash
 	nonce := genesis.Nonce
 	extraData := "0x00"
@@ -173,7 +170,7 @@ func (b *BesuClient) Genesis() (content string, err error) {
 	var engine string
 
 	// ethash PoW settings
-	if consensus == ethereumv1alpha1.ProofOfWork {
+	if genesis.Ethash != nil {
 		consensusConfig = map[string]uint{}
 
 		if genesis.Ethash.FixedDifficulty != nil {
@@ -184,7 +181,7 @@ func (b *BesuClient) Genesis() (content string, err error) {
 	}
 
 	// clique PoA settings
-	if consensus == ethereumv1alpha1.ProofOfAuthority {
+	if genesis.Clique != nil {
 		consensusConfig = map[string]uint{
 			"blockperiodseconds": genesis.Clique.BlockPeriod,
 			"epochlength":        genesis.Clique.EpochLength,
@@ -194,7 +191,7 @@ func (b *BesuClient) Genesis() (content string, err error) {
 	}
 
 	// clique ibft2 settings
-	if consensus == ethereumv1alpha1.IstanbulBFT {
+	if genesis.IBFT2 != nil {
 
 		consensusConfig = map[string]uint{
 			"blockperiodseconds":        genesis.IBFT2.BlockPeriod,
