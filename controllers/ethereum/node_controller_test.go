@@ -60,10 +60,8 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NodeSpec{
-			NetworkConfig: ethereumv1alpha1.NetworkConfig{
-				Network: "mainnet",
-			},
 			Client:            ethereumv1alpha1.BesuClient,
+			Network:           "mainnet",
 			NodekeySecretName: "nodekey",
 			SyncMode:          ethereumv1alpha1.FullSynchronization,
 			Logging:           ethereumv1alpha1.NoLogs,
@@ -231,10 +229,8 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NodeSpec{
-			NetworkConfig: ethereumv1alpha1.NetworkConfig{
-				Network: "rinkeby",
-			},
 			Client:            ethereumv1alpha1.BesuClient,
+			Network:           "rinkeby",
 			NodekeySecretName: "nodekey",
 			Logging:           ethereumv1alpha1.FatalLogs,
 		}
@@ -429,15 +425,12 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NodeSpec{
-			NetworkConfig: ethereumv1alpha1.NetworkConfig{
-				ID:        networkID,
-				Consensus: ethereumv1alpha1.ProofOfAuthority,
-				Genesis: &ethereumv1alpha1.Genesis{
-					ChainID: 55555,
-					Clique: &ethereumv1alpha1.Clique{
-						Signers: []ethereumv1alpha1.EthereumAddress{
-							ethereumv1alpha1.EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706"),
-						},
+			Genesis: &ethereumv1alpha1.Genesis{
+				ChainID:   55555,
+				NetworkID: networkID,
+				Clique: &ethereumv1alpha1.Clique{
+					Signers: []ethereumv1alpha1.EthereumAddress{
+						ethereumv1alpha1.EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706"),
 					},
 				},
 			},
@@ -640,13 +633,10 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NodeSpec{
-			NetworkConfig: ethereumv1alpha1.NetworkConfig{
-				ID:        networkID,
-				Consensus: ethereumv1alpha1.ProofOfWork,
-				Genesis: &ethereumv1alpha1.Genesis{
-					ChainID: 55555,
-					Ethash:  &ethereumv1alpha1.Ethash{},
-				},
+			Genesis: &ethereumv1alpha1.Genesis{
+				ChainID:   55555,
+				NetworkID: networkID,
+				Ethash:    &ethereumv1alpha1.Ethash{},
 			},
 			Client:            ethereumv1alpha1.BesuClient,
 			NodekeySecretName: "nodekey",
@@ -847,17 +837,14 @@ var _ = Describe("Ethereum network controller", func() {
 		}
 
 		spec := ethereumv1alpha1.NodeSpec{
-			NetworkConfig: ethereumv1alpha1.NetworkConfig{
-				ID:        networkID,
-				Consensus: ethereumv1alpha1.IstanbulBFT,
-				Genesis: &ethereumv1alpha1.Genesis{
-					ChainID: 55555,
-					IBFT2: &ethereumv1alpha1.IBFT2{
-						Validators: []ethereumv1alpha1.EthereumAddress{
-							"0x427e2c7cecd72bc4cdd4f7ebb8bb6e49789c8044",
-							"0xd2c21213027cbf4d46c16b55fa98e5252b048706",
-							"0x8e1f6c7c76a1d7f74eda342d330ca9749f31cc2b",
-						},
+			Genesis: &ethereumv1alpha1.Genesis{
+				ChainID:   55555,
+				NetworkID: networkID,
+				IBFT2: &ethereumv1alpha1.IBFT2{
+					Validators: []ethereumv1alpha1.EthereumAddress{
+						"0x427e2c7cecd72bc4cdd4f7ebb8bb6e49789c8044",
+						"0xd2c21213027cbf4d46c16b55fa98e5252b048706",
+						"0x8e1f6c7c76a1d7f74eda342d330ca9749f31cc2b",
 					},
 				},
 			},
