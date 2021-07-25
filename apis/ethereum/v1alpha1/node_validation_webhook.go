@@ -22,6 +22,23 @@ func (n *Node) validate() field.ErrorList {
 
 	path := field.NewPath("spec")
 
+	// validate genesis block
+	if n.Spec.Genesis != nil {
+		nodeErrors = append(nodeErrors, n.Spec.Genesis.Validate()...)
+	}
+
+	// network: can't specifiy genesis while joining existing network
+	if n.Spec.Network != "" && n.Spec.Genesis != nil {
+		err := field.Invalid(field.NewPath("spec").Child("network"), n.Spec.Network, "must be none if spec.genesis is specified")
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	// genesis: must specify genesis if there's no network to join
+	if n.Spec.Network == "" && n.Spec.Genesis == nil {
+		err := field.Invalid(field.NewPath("spec").Child("genesis"), "", "must be specified if spec.network is none")
+		nodeErrors = append(nodeErrors, err)
+	}
+
 	// validate fatal and trace logging not supported by geth
 	if n.Spec.Client == GethClient && (n.Spec.Logging == FatalLogs || n.Spec.Logging == TraceLogs) {
 		err := field.Invalid(path.Child("logging"), n.Spec.Logging, fmt.Sprintf("not supported by client %s", n.Spec.Client))
@@ -84,13 +101,13 @@ func (n *Node) validate() field.ErrorList {
 	}
 
 	// validate geth supports only pow and poa
-	if privateNetwork && n.Spec.Consensus == IstanbulBFT && n.Spec.Client != BesuClient {
-		err := field.Invalid(path.Child("client"), n.Spec.Client, fmt.Sprintf("client doesn't support %s consensus", n.Spec.Consensus))
+	if privateNetwork && n.Spec.Genesis.IBFT2 != nil && n.Spec.Client != BesuClient {
+		err := field.Invalid(path.Child("client"), n.Spec.Client, "client doesn't support ibft2 consensus")
 		nodeErrors = append(nodeErrors, err)
 	}
 
 	// validate besu only support fixed difficulty ethash networks
-	if privateNetwork && n.Spec.Consensus == ProofOfWork && n.Spec.Genesis.Ethash.FixedDifficulty != nil && n.Spec.Client != BesuClient {
+	if privateNetwork && n.Spec.Genesis.Ethash != nil && n.Spec.Genesis.Ethash.FixedDifficulty != nil && n.Spec.Client != BesuClient {
 		err := field.Invalid(path.Child("client"), n.Spec.Client, "client doesn't support fixed difficulty pow networks")
 		nodeErrors = append(nodeErrors, err)
 	}
@@ -102,7 +119,7 @@ func (n *Node) validate() field.ErrorList {
 	}
 
 	// validate parity doesn't support PoW mining
-	if n.Spec.Client == ParityClient && n.Spec.Consensus == ProofOfWork && n.Spec.Miner {
+	if privateNetwork && n.Spec.Client == ParityClient && n.Spec.Genesis.Ethash != nil && n.Spec.Miner {
 		err := field.Invalid(path.Child("client"), n.Spec.Client, "client doesn't support mining")
 		nodeErrors = append(nodeErrors, err)
 	}
@@ -135,7 +152,6 @@ func (n *Node) ValidateCreate() error {
 	nodelog.Info("validate create", "name", n.Name)
 
 	allErrors = append(allErrors, n.validate()...)
-	allErrors = append(allErrors, n.Spec.NetworkConfig.ValidateCreate()...)
 	allErrors = append(allErrors, n.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
@@ -157,8 +173,12 @@ func (n *Node) ValidateUpdate(old runtime.Object) error {
 		allErrors = append(allErrors, err)
 	}
 
+	if oldNode.Spec.Network != n.Spec.Network {
+		err := field.Invalid(field.NewPath("spec").Child("network"), n.Spec.Network, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
 	allErrors = append(allErrors, n.validate()...)
-	allErrors = append(allErrors, n.Spec.NetworkConfig.ValidateUpdate(&oldNode.Spec.NetworkConfig)...)
 	allErrors = append(allErrors, n.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
 	if len(allErrors) == 0 {

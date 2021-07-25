@@ -19,7 +19,7 @@ func (n *Node) Default() {
 
 	// default genesis block
 	if n.Spec.Genesis != nil {
-		n.Spec.Genesis.Default(n.Spec.Consensus)
+		n.Spec.Genesis.Default()
 	}
 
 	if n.Spec.P2PPort == 0 {

@@ -1,7 +1,7 @@
 package v1alpha1
 
 // Default defaults genesis block parameters
-func (g *Genesis) Default(consensus ConsensusAlgorithm) {
+func (g *Genesis) Default() {
 	if g.Coinbase == "" {
 		g.Coinbase = DefaultCoinbase
 	}
@@ -30,16 +30,7 @@ func (g *Genesis) Default(consensus ConsensusAlgorithm) {
 		g.Timestamp = DefaultTimestamp
 	}
 
-	if consensus == ProofOfWork {
-		if g.Ethash == nil {
-			g.Ethash = &Ethash{}
-		}
-	}
-
-	if consensus == ProofOfAuthority {
-		if g.Clique == nil {
-			g.Clique = &Clique{}
-		}
+	if g.Clique != nil {
 		if g.Clique.BlockPeriod == 0 {
 			g.Clique.BlockPeriod = DefaultCliqueBlockPeriod
 		}
@@ -48,10 +39,7 @@ func (g *Genesis) Default(consensus ConsensusAlgorithm) {
 		}
 	}
 
-	if consensus == IstanbulBFT {
-		if g.IBFT2 == nil {
-			g.IBFT2 = &IBFT2{}
-		}
+	if g.IBFT2 != nil {
 		if g.IBFT2.BlockPeriod == 0 {
 			g.IBFT2.BlockPeriod = DefaultIBFT2BlockPeriod
 		}
@@ -73,6 +61,5 @@ func (g *Genesis) Default(consensus ConsensusAlgorithm) {
 		if g.IBFT2.FutureMessagesMaxDistance == 0 {
 			g.IBFT2.FutureMessagesMaxDistance = DefaultIBFT2FutureMessagesMaxDistance
 		}
-
 	}
 }

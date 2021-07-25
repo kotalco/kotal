@@ -15,7 +15,6 @@ var _ = Describe("Ethereum node validation", func() {
 
 	var (
 		networkID       uint = 77777
-		newNetworkID    uint = 8888
 		fixedDifficulty uint = 1500
 		coinbase             = EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706")
 	)
@@ -26,42 +25,17 @@ var _ = Describe("Ethereum node validation", func() {
 		Errors field.ErrorList
 	}{
 		{
-			Title: "node #1",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network:   RinkebyNetwork,
-						Consensus: ProofOfWork,
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.consensus",
-					BadValue: ProofOfWork,
-					Detail:   "must be none while joining a network",
-				},
-			},
-		},
-		{
 			Title: "node #2",
 			Node: &Node{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-						Genesis: &Genesis{
-							ChainID: 444,
-						},
+					Genesis: &Genesis{
+						ChainID: 444,
 					},
-					Client: BesuClient,
+					Client:  BesuClient,
+					Network: RinkebyNetwork,
 				},
 			},
 			Errors: field.ErrorList{
@@ -99,11 +73,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: ProofOfAuthority,
-						Genesis: &Genesis{
-							ChainID: 1,
-						},
+					Genesis: &Genesis{
+						ChainID: 1,
 					},
 					Client: BesuClient,
 				},
@@ -118,95 +89,14 @@ var _ = Describe("Ethereum node validation", func() {
 			},
 		},
 		{
-			Title: "node #5",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: ProofOfWork,
-						Genesis: &Genesis{
-							ChainID: 55555,
-							Clique:  &Clique{},
-						},
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.consensus",
-					BadValue: ProofOfWork,
-					Detail:   "must be poa if spec.genesis.clique is specified",
-				},
-			},
-		},
-		{
-			Title: "node #6",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: ProofOfWork,
-						Genesis: &Genesis{
-							ChainID: 55555,
-							IBFT2:   &IBFT2{},
-						},
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.consensus",
-					BadValue: ProofOfWork,
-					Detail:   "must be ibft2 if spec.genesis.ibft2 is specified",
-				},
-			},
-		},
-		{
-			Title: "node #7",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: IstanbulBFT,
-						Genesis: &Genesis{
-							ChainID: 55555,
-							Ethash:  &Ethash{},
-						},
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.consensus",
-					BadValue: IstanbulBFT,
-					Detail:   "must be pow if spec.genesis.ethash is specified",
-				},
-			},
-		},
-		{
 			Title: "node #10",
 			Node: &Node{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: IstanbulBFT,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
+					Genesis: &Genesis{
+						ChainID: 55555,
 					},
 					Miner:  true,
 					Client: BesuClient,
@@ -228,11 +118,9 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: IstanbulBFT,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
+					Genesis: &Genesis{
+						ChainID: 55555,
+						IBFT2:   &IBFT2{},
 					},
 					Coinbase: EthereumAddress("0x676aEda2E67D24eb304cFf75A5190824831E3399"),
 					Client:   BesuClient,
@@ -248,44 +136,18 @@ var _ = Describe("Ethereum node validation", func() {
 			},
 		},
 		{
-			Title: "node #12",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.consensus",
-					BadValue: "",
-					Detail:   "must be specified if spec.genesis is provided",
-				},
-			},
-		},
-		{
 			Title: "node #13",
 			Node: &Node{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: ProofOfAuthority,
-						Genesis: &Genesis{
-							ChainID: 55555,
-							Forks: &Forks{
-								EIP150:    1,
-								Homestead: 2,
-							},
+					Genesis: &Genesis{
+						ChainID: 55555,
+						Clique:  &Clique{},
+						Forks: &Forks{
+							EIP150:    1,
+							Homestead: 2,
 						},
 					},
 					Client: BesuClient,
@@ -301,66 +163,16 @@ var _ = Describe("Ethereum node validation", func() {
 			},
 		},
 		{
-			Title: "node #14",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:      networkID,
-						Network: RinkebyNetwork,
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.id",
-					BadValue: fmt.Sprintf("%d", networkID),
-					Detail:   "must be none if spec.network is provided",
-				},
-			},
-		},
-		{
-			Title: "node #15",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: ProofOfWork,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.id",
-					BadValue: "",
-					Detail:   "must be specified if spec.network is none",
-				},
-			},
-		},
-		{
 			Title: "node #16",
 			Node: &Node{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:        networkID,
-						Consensus: ProofOfWork,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
+					Genesis: &Genesis{
+						ChainID:   55555,
+						NetworkID: networkID,
+						Ethash:    &Ethash{},
 					},
 					Client:   GethClient,
 					Miner:    true,
@@ -383,12 +195,10 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:        networkID,
-						Consensus: ProofOfWork,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
+					Genesis: &Genesis{
+						ChainID:   55555,
+						NetworkID: networkID,
+						Ethash:    &Ethash{},
 					},
 					Client:   BesuClient,
 					Miner:    true,
@@ -415,12 +225,10 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:        networkID,
-						Consensus: IstanbulBFT,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
+					Genesis: &Genesis{
+						NetworkID: networkID,
+						ChainID:   55555,
+						IBFT2:     &IBFT2{},
 					},
 					Client: GethClient,
 				},
@@ -441,12 +249,10 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:        networkID,
-						Consensus: ProofOfAuthority,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
+					Genesis: &Genesis{
+						ChainID:   55555,
+						NetworkID: networkID,
+						Clique:    &Clique{},
 					},
 					Client:   GethClient,
 					RPC:      true,
@@ -474,12 +280,10 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:        networkID,
-						Consensus: ProofOfAuthority,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
+					Genesis: &Genesis{
+						ChainID:   55555,
+						NetworkID: networkID,
+						Clique:    &Clique{},
 					},
 					Client:   GethClient,
 					WS:       true,
@@ -507,12 +311,10 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:        networkID,
-						Consensus: ProofOfAuthority,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
+					Genesis: &Genesis{
+						ChainID:   55555,
+						NetworkID: networkID,
+						Clique:    &Clique{},
 					},
 					Client:   GethClient,
 					GraphQL:  true,
@@ -540,14 +342,11 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:        networkID,
-						Consensus: ProofOfWork,
-						Genesis: &Genesis{
-							ChainID: 55555,
-							Ethash: &Ethash{
-								FixedDifficulty: &fixedDifficulty,
-							},
+					Genesis: &Genesis{
+						ChainID:   55555,
+						NetworkID: networkID,
+						Ethash: &Ethash{
+							FixedDifficulty: &fixedDifficulty,
 						},
 					},
 					Client: GethClient,
@@ -569,10 +368,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
 					Client:   BesuClient,
+					Network:  RinkebyNetwork,
 					SyncMode: LightSynchronization,
 				},
 			},
@@ -592,10 +389,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
-					Client: BesuClient,
+					Client:  BesuClient,
+					Network: RinkebyNetwork,
 					Resources: shared.Resources{
 						CPU:      "2",
 						CPULimit: "1",
@@ -618,10 +413,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
-					Client: BesuClient,
+					Client:  BesuClient,
+					Network: RinkebyNetwork,
 					Resources: shared.Resources{
 						CPU:         "1",
 						CPULimit:    "2",
@@ -646,10 +439,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
 					Client:  GethClient,
+					Network: RinkebyNetwork,
 					Logging: FatalLogs,
 				},
 			},
@@ -669,10 +460,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
 					Client:  GethClient,
+					Network: RinkebyNetwork,
 					Logging: TraceLogs,
 				},
 			},
@@ -692,10 +481,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
 					Client:  ParityClient,
+					Network: RinkebyNetwork,
 					Logging: NoLogs,
 				},
 			},
@@ -715,10 +502,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
 					Client:  ParityClient,
+					Network: RinkebyNetwork,
 					Logging: FatalLogs,
 				},
 			},
@@ -738,10 +523,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
 					Client:  ParityClient,
+					Network: RinkebyNetwork,
 					Logging: AllLogs,
 				},
 			},
@@ -761,10 +544,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
 					Client:  ParityClient,
+					Network: RinkebyNetwork,
 					GraphQL: true,
 				},
 			},
@@ -784,12 +565,10 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:        networkID,
-						Consensus: IstanbulBFT,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
+					Genesis: &Genesis{
+						ChainID:   55555,
+						NetworkID: networkID,
+						IBFT2:     &IBFT2{},
 					},
 					Client: ParityClient,
 				},
@@ -810,10 +589,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
 					Client:   ParityClient,
+					Network:  RinkebyNetwork,
 					SyncMode: LightSynchronization,
 				},
 			},
@@ -833,12 +610,10 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:        networkID,
-						Consensus: ProofOfWork,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
+					Genesis: &Genesis{
+						ChainID:   55555,
+						NetworkID: networkID,
+						Ethash:    &Ethash{},
 					},
 					Client:   ParityClient,
 					Miner:    true,
@@ -861,10 +636,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
 					Client:  GethClient,
+					Network: RinkebyNetwork,
 					GraphQL: true,
 				},
 			},
@@ -892,10 +665,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RinkebyNetwork,
-					},
-					Client: BesuClient,
+					Client:  BesuClient,
+					Network: RinkebyNetwork,
 				},
 			},
 			NewNode: &Node{
@@ -903,10 +674,8 @@ var _ = Describe("Ethereum node validation", func() {
 					Name: "node-1",
 				},
 				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Network: RopstenNetwork,
-					},
-					Client: BesuClient,
+					Client:  BesuClient,
+					Network: RopstenNetwork,
 				},
 			},
 			Errors: field.ErrorList{
@@ -914,125 +683,6 @@ var _ = Describe("Ethereum node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.network",
 					BadValue: RopstenNetwork,
-					Detail:   "field is immutable",
-				},
-			},
-		},
-		{
-			Title: "node #2",
-			OldNode: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: ProofOfAuthority,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
-					},
-					Client: BesuClient,
-				},
-			},
-			NewNode: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: ProofOfWork,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.consensus",
-					BadValue: ProofOfWork,
-					Detail:   "field is immutable",
-				},
-			},
-		},
-		{
-			Title: "node #3",
-			OldNode: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: ProofOfAuthority,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
-					},
-					Client: GethClient,
-				},
-			},
-			NewNode: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						Consensus: ProofOfAuthority,
-						Genesis: &Genesis{
-							ChainID: 4444,
-						},
-					},
-					Client: GethClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.genesis",
-					BadValue: "",
-					Detail:   "field is immutable",
-				},
-			},
-		},
-		{
-			Title: "node #5",
-			OldNode: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:        networkID,
-						Consensus: ProofOfAuthority,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
-					},
-					Client: BesuClient,
-				},
-			},
-			NewNode: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					NetworkConfig: NetworkConfig{
-						ID:        newNetworkID,
-						Consensus: ProofOfAuthority,
-						Genesis: &Genesis{
-							ChainID: 55555,
-						},
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.id",
-					BadValue: fmt.Sprintf("%d", newNetworkID),
 					Detail:   "field is immutable",
 				},
 			},

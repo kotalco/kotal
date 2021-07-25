@@ -21,37 +21,13 @@ var (
 )
 
 // Validate validates network genesis block spec
-func (g *Genesis) Validate(networkConfig *NetworkConfig) field.ErrorList {
+func (g *Genesis) Validate() field.ErrorList {
 
 	var allErrors field.ErrorList
-
-	// network: can't specifiy genesis while joining existing network
-	if networkConfig.Network != "" {
-		err := field.Invalid(field.NewPath("spec").Child("network"), networkConfig.Network, "must be none if spec.genesis is specified")
-		allErrors = append(allErrors, err)
-	}
 
 	// don't use existing network chain id
 	if chain := ChainByID[g.ChainID]; chain != "" {
 		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("chainId"), fmt.Sprintf("%d", g.ChainID), fmt.Sprintf("can't use chain id of %s network to avoid tx replay", chain))
-		allErrors = append(allErrors, err)
-	}
-
-	// ethash must be nil of consensus is not Pow
-	if networkConfig.Consensus != ProofOfWork && g.Ethash != nil {
-		err := field.Invalid(field.NewPath("spec").Child("consensus"), networkConfig.Consensus, fmt.Sprintf("must be %s if spec.genesis.ethash is specified", ProofOfWork))
-		allErrors = append(allErrors, err)
-	}
-
-	// clique must be nil of consensus is not PoA
-	if networkConfig.Consensus != ProofOfAuthority && g.Clique != nil {
-		err := field.Invalid(field.NewPath("spec").Child("consensus"), networkConfig.Consensus, fmt.Sprintf("must be %s if spec.genesis.clique is specified", ProofOfAuthority))
-		allErrors = append(allErrors, err)
-	}
-
-	// ibft2 must be nil of consensus is not ibft2
-	if networkConfig.Consensus != IstanbulBFT && g.IBFT2 != nil {
-		err := field.Invalid(field.NewPath("spec").Child("consensus"), networkConfig.Consensus, fmt.Sprintf("must be %s if spec.genesis.ibft2 is specified", IstanbulBFT))
 		allErrors = append(allErrors, err)
 	}
 
