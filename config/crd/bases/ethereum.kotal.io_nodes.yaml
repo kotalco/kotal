@@ -67,21 +67,13 @@ spec:
                 description: Coinbase is the account to which mining rewards are paid
                 pattern: ^0[xX][0-9a-fA-F]{40}$
                 type: string
-              consensus:
-                description: Consensus is the consensus algorithm to be used by the network nodes to reach consensus
-                enum:
-                - poa
-                - pow
-                - ibft2
-                - quorum
-                type: string
               corsDomains:
                 description: CORSDomains is the domains from which to accept cross origin requests
                 items:
                   type: string
                 type: array
               genesis:
-                description: Genesis is genesis block specification
+                description: Genesis is genesis block configuration
                 properties:
                   accounts:
                     description: Accounts is array of accounts to fund or associate with code and storage
@@ -228,6 +220,9 @@ spec:
                     description: MixHash is hash combined with nonce to prove effort spent to create block
                     pattern: ^0[xX][0-9a-fA-F]{64}$
                     type: string
+                  networkId:
+                    description: NetworkID is network id
+                    type: integer
                   nonce:
                     description: Nonce is random number used in block computation
                     pattern: ^0[xX][0-9a-fA-F]+$
@@ -238,6 +233,7 @@ spec:
                     type: string
                 required:
                 - chainId
+                - networkId
                 type: object
               graphql:
                 description: GraphQL is whether GraphQL server is enabled or not
@@ -253,9 +249,6 @@ spec:
                 items:
                   type: string
                 type: array
-              id:
-                description: ID is network id
-                type: integer
               import:
                 description: import is account to import
                 properties:
