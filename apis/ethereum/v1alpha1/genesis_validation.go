@@ -25,6 +25,13 @@ func (g *Genesis) Validate() field.ErrorList {
 
 	var allErrors field.ErrorList
 
+	// validate consensus config (ethash, clique, ibft2) is not missing
+	// TODO: update this validation after suporting new consensus algorithm
+	if g.Ethash == nil && g.Clique == nil && g.IBFT2 == nil {
+		err := field.Invalid(field.NewPath("spec").Child("genesis"), "", "consensus configuration (ethash, clique, or ibft2) is missing")
+		allErrors = append(allErrors, err)
+	}
+
 	// don't use existing network chain id
 	if chain := ChainByID[g.ChainID]; chain != "" {
 		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("chainId"), fmt.Sprintf("%d", g.ChainID), fmt.Sprintf("can't use chain id of %s network to avoid tx replay", chain))

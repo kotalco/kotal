@@ -25,6 +25,29 @@ var _ = Describe("Ethereum node validation", func() {
 		Errors field.ErrorList
 	}{
 		{
+			Title: "node #1",
+			Node: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-1",
+				},
+				Spec: NodeSpec{
+					Genesis: &Genesis{
+						ChainID:   4444,
+						NetworkID: networkID,
+					},
+					Client: BesuClient,
+				},
+			},
+			Errors: []*field.Error{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.genesis",
+					BadValue: "",
+					Detail:   "consensus configuration (ethash, clique, or ibft2) is missing",
+				},
+			},
+		},
+		{
 			Title: "node #2",
 			Node: &Node{
 				ObjectMeta: metav1.ObjectMeta{
