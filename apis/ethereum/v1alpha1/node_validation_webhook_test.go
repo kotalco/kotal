@@ -51,6 +51,31 @@ var _ = Describe("Ethereum node validation", func() {
 			Title: "node #2",
 			Node: &Node{
 				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-2",
+				},
+				Spec: NodeSpec{
+					Genesis: &Genesis{
+						ChainID:   4444,
+						NetworkID: networkID,
+						Ethash:    &Ethash{},
+						Clique:    &Clique{},
+					},
+					Client: BesuClient,
+				},
+			},
+			Errors: []*field.Error{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.genesis",
+					BadValue: "",
+					Detail:   "multiple consensus configurations (ethash, clique) are enabled",
+				},
+			},
+		},
+		{
+			Title: "node #2",
+			Node: &Node{
+				ObjectMeta: metav1.ObjectMeta{
 					Name: "node-1",
 				},
 				Spec: NodeSpec{

@@ -2,6 +2,7 @@ package v1alpha1
 
 import (
 	"fmt"
+	"strings"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
@@ -20,15 +21,39 @@ var (
 	}
 )
 
+// EnabledConsensusConfigs returns enabled consensus configs
+func (g *Genesis) EnabledConsensusConfigs() []string {
+	configs := map[string]bool{
+		"ethash": g.Ethash != nil,
+		"clique": g.Clique != nil,
+		"ibft2":  g.IBFT2 != nil,
+	}
+
+	enabledConfigs := []string{}
+
+	for consensus, enabled := range configs {
+		if enabled {
+			enabledConfigs = append(enabledConfigs, consensus)
+		}
+	}
+
+	return enabledConfigs
+}
+
 // Validate validates network genesis block spec
 func (g *Genesis) Validate() field.ErrorList {
 
 	var allErrors field.ErrorList
 
 	// validate consensus config (ethash, clique, ibft2) is not missing
+	// validate only one consensus configuration can be set
 	// TODO: update this validation after suporting new consensus algorithm
-	if g.Ethash == nil && g.Clique == nil && g.IBFT2 == nil {
+	configs := g.EnabledConsensusConfigs()
+	if len(configs) == 0 {
 		err := field.Invalid(field.NewPath("spec").Child("genesis"), "", "consensus configuration (ethash, clique, or ibft2) is missing")
+		allErrors = append(allErrors, err)
+	} else if len(configs) > 1 {
+		err := field.Invalid(field.NewPath("spec").Child("genesis"), "", fmt.Sprintf("multiple consensus configurations (%s) are enabled", strings.Join(configs, ", ")))
 		allErrors = append(allErrors, err)
 	}
 
