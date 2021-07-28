@@ -82,6 +82,28 @@ var _ = Describe("Genesis Block validation", func() {
 				},
 			},
 		},
+		{
+			Title: "reserved account is used",
+			Genesis: &Genesis{
+				ChainID:   4444,
+				NetworkID: 4444,
+				Ethash:    &Ethash{},
+				Accounts: []Account{
+					{
+						Address: EthereumAddress("0x0000000000000000000000000000000000000015"),
+						Balance: HexString("0xffffff"),
+					},
+				},
+			},
+			Errors: []*field.Error{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.genesis.accounts",
+					BadValue: "0x0000000000000000000000000000000000000015",
+					Detail:   "reserved account is used",
+				},
+			},
+		},
 	}
 
 	updateCases := []struct {

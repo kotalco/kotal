@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strconv"
 	"strings"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -42,10 +43,30 @@ func (g *Genesis) EnabledConsensusConfigs() []string {
 	return enabledConfigs
 }
 
+// ReservedAccountIsUsed returns true if reserved account is used
+// reserved accounts are accounts from 0x00...01 to 0x00...ff
+// reserved accounts are used for precompiles
+func (g *Genesis) ReservedAccountIsUsed() (bool, string) {
+	for _, account := range g.Accounts {
+		address := string(account.Address)
+		i, _ := strconv.ParseInt(address, 16, 64)
+		if i < 256 {
+			return true, address
+		}
+	}
+	return false, ""
+}
+
 // validate validates network genesis block spec
 func (g *Genesis) validate() field.ErrorList {
 
 	var allErrors field.ErrorList
+
+	// validate accounts from 0x00...01 to 0x00...ff are reserved
+	if used, address := g.ReservedAccountIsUsed(); used {
+		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("accounts"), address, "reserved account is used")
+		allErrors = append(allErrors, err)
+	}
 
 	// validate consensus config (ethash, clique, ibft2) is not missing
 	// validate only one consensus configuration can be set
