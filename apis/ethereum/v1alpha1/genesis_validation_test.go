@@ -209,7 +209,8 @@ var _ = Describe("Genesis Block validation", func() {
 					Detail:   "field is immutable",
 				},
 			},
-		}, {
+		},
+		{
 			Title: "updating timestamp",
 			OldGenesis: &Genesis{
 				NetworkID: 55555,
@@ -229,6 +230,41 @@ var _ = Describe("Genesis Block validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.genesis.timestamp",
 					BadValue: HexString("0x1"),
+					Detail:   "field is immutable",
+				},
+			},
+		},
+		{
+			Title: "updating accounts",
+			OldGenesis: &Genesis{
+				NetworkID: 55555,
+				ChainID:   55555,
+				Ethash:    &Ethash{},
+				Forks:     &Forks{},
+				Accounts: []Account{
+					{
+						Address: EthereumAddress("0xB1368D309179D8E7f25B34398e4cF9D9dEFdC75C"),
+						Balance: HexString("0xffffff"),
+					},
+				},
+			},
+			NewGenesis: &Genesis{
+				NetworkID: 55555,
+				ChainID:   55555,
+				Ethash:    &Ethash{},
+				Forks:     &Forks{},
+				Accounts: []Account{
+					{
+						Address: EthereumAddress("0xB1368D309179D8E7f25B34398e4cF9D9dEFdC75C"),
+						Balance: HexString("0x111111"), // change account balance
+					},
+				},
+			},
+			Errors: []*field.Error{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.genesis.accounts",
+					BadValue: "",
 					Detail:   "field is immutable",
 				},
 			},

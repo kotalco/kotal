@@ -2,6 +2,7 @@ package v1alpha1
 
 import (
 	"fmt"
+	"reflect"
 	"sort"
 	"strings"
 
@@ -155,6 +156,11 @@ func (g *Genesis) ValidateUpdate(oldGenesis *Genesis) field.ErrorList {
 
 	if g.Timestamp != oldGenesis.Timestamp {
 		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("timestamp"), g.Timestamp, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
+	if !reflect.DeepEqual(g.Accounts, oldGenesis.Accounts) {
+		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("accounts"), "", "field is immutable")
 		allErrors = append(allErrors, err)
 	}
 
