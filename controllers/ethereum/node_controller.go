@@ -117,11 +117,23 @@ func (r *NodeReconciler) updateStaticNodes(ctx context.Context, node *ethereumv1
 	for i, enode := range node.Spec.StaticNodes {
 		if !strings.HasPrefix(string(enode), "enode://") {
 			staticNode := &ethereumv1alpha1.Node{}
-			name := types.NamespacedName{
-				Name:      string(enode),
-				Namespace: node.Namespace,
+			var name, namespace string
+			// enode reference can have the format name.namespace
+			// name is the node name
+			// namespace is the node namespace
+			if parts := strings.Split(string(enode), "."); len(parts) > 1 {
+				name = parts[0]
+				namespace = parts[1]
+			} else {
+				// nodes without . refered to nodes in the current node namespace
+				name = string(enode)
+				namespace = node.Namespace
 			}
-			if err := r.Client.Get(ctx, name, staticNode); err != nil {
+			namespacedName := types.NamespacedName{
+				Name:      name,
+				Namespace: namespace,
+			}
+			if err := r.Client.Get(ctx, namespacedName, staticNode); err != nil {
 				// remove static node reference, so it won't be included into static nodes file
 				node.Spec.StaticNodes = append(node.Spec.StaticNodes[:i], node.Spec.StaticNodes[i+1:]...)
 				r.Log.Error(err, "failed to get static node")
@@ -134,6 +146,9 @@ func (r *NodeReconciler) updateStaticNodes(ctx context.Context, node *ethereumv1
 			// replace reference with actual enode url
 			if strings.HasPrefix(staticNodeURL, "enode://") {
 				node.Spec.StaticNodes[i] = ethereumv1alpha1.Enode(staticNodeURL)
+			} else {
+				// remove static node reference, so it won't be included into static nodes file
+				node.Spec.StaticNodes = append(node.Spec.StaticNodes[:i], node.Spec.StaticNodes[i+1:]...)
 			}
 		}
 	}
