@@ -64,6 +64,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	}
 
 	r.updateLabels(&node)
+	r.updateStaticNodes(ctx, &node)
 
 	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return
@@ -109,6 +110,33 @@ func (r *NodeReconciler) updateLabels(node *ethereumv1alpha1.Node) {
 	node.Labels["app.kubernetes.io/managed-by"] = "kotal"
 	node.Labels["app.kubernetes.io/created-by"] = "ethereum-node-controller"
 
+}
+
+// updateStaticNodes replaces Ethereum node references with their enodeURL
+func (r *NodeReconciler) updateStaticNodes(ctx context.Context, node *ethereumv1alpha1.Node) {
+	for i, enode := range node.Spec.StaticNodes {
+		if !strings.HasPrefix(string(enode), "enode://") {
+			staticNode := &ethereumv1alpha1.Node{}
+			name := types.NamespacedName{
+				Name:      string(enode),
+				Namespace: node.Namespace,
+			}
+			if err := r.Client.Get(ctx, name, staticNode); err != nil {
+				// remove static node reference, so it won't be included into static nodes file
+				node.Spec.StaticNodes = append(node.Spec.StaticNodes[:i], node.Spec.StaticNodes[i+1:]...)
+				r.Log.Error(err, "failed to get static node")
+				// don't return the error
+				// node maybe not up and running yet
+				continue
+			}
+			staticNodeURL := staticNode.Status.EnodeURL
+			r.Log.Info("static node URL", string(enode), staticNodeURL)
+			// replace reference with actual enode url
+			if strings.HasPrefix(staticNodeURL, "enode://") {
+				node.Spec.StaticNodes[i] = ethereumv1alpha1.Enode(staticNodeURL)
+			}
+		}
+	}
 }
 
 // updateStatus updates network status
