@@ -68,7 +68,7 @@ var _ = Describe("Ethereum node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.genesis",
 					BadValue: "",
-					Detail:   "multiple consensus configurations (ethash, clique) are enabled",
+					Detail:   "multiple consensus configurations (clique, ethash) are enabled",
 				},
 			},
 		},

@@ -22,11 +22,6 @@ func (n *Node) validate() field.ErrorList {
 
 	path := field.NewPath("spec")
 
-	// validate genesis block
-	if n.Spec.Genesis != nil {
-		nodeErrors = append(nodeErrors, n.Spec.Genesis.Validate()...)
-	}
-
 	// network: can't specifiy genesis while joining existing network
 	if n.Spec.Network != "" && n.Spec.Genesis != nil {
 		err := field.Invalid(field.NewPath("spec").Child("network"), n.Spec.Network, "must be none if spec.genesis is specified")
@@ -154,6 +149,11 @@ func (n *Node) ValidateCreate() error {
 	allErrors = append(allErrors, n.validate()...)
 	allErrors = append(allErrors, n.Spec.Resources.ValidateCreate()...)
 
+	// validate genesis block
+	if n.Spec.Genesis != nil {
+		allErrors = append(allErrors, n.Spec.Genesis.ValidateCreate()...)
+	}
+
 	if len(allErrors) == 0 {
 		return nil
 	}
@@ -176,6 +176,11 @@ func (n *Node) ValidateUpdate(old runtime.Object) error {
 	if oldNode.Spec.Network != n.Spec.Network {
 		err := field.Invalid(field.NewPath("spec").Child("network"), n.Spec.Network, "field is immutable")
 		allErrors = append(allErrors, err)
+	}
+
+	// validate genesis block
+	if oldNode.Spec.Genesis != nil {
+		allErrors = append(allErrors, n.Spec.Genesis.ValidateUpdate(oldNode.Spec.Genesis)...)
 	}
 
 	allErrors = append(allErrors, n.validate()...)

@@ -2,6 +2,7 @@ package v1alpha1
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -40,8 +41,8 @@ func (g *Genesis) EnabledConsensusConfigs() []string {
 	return enabledConfigs
 }
 
-// Validate validates network genesis block spec
-func (g *Genesis) Validate() field.ErrorList {
+// validate validates network genesis block spec
+func (g *Genesis) validate() field.ErrorList {
 
 	var allErrors field.ErrorList
 
@@ -53,6 +54,7 @@ func (g *Genesis) Validate() field.ErrorList {
 		err := field.Invalid(field.NewPath("spec").Child("genesis"), "", "consensus configuration (ethash, clique, or ibft2) is missing")
 		allErrors = append(allErrors, err)
 	} else if len(configs) > 1 {
+		sort.Strings(configs)
 		err := field.Invalid(field.NewPath("spec").Child("genesis"), "", fmt.Sprintf("multiple consensus configurations (%s) are enabled", strings.Join(configs, ", ")))
 		allErrors = append(allErrors, err)
 	}
@@ -112,4 +114,51 @@ func (g *Genesis) ValidateForksOrder() field.ErrorList {
 
 	return orderErrors
 
+}
+
+// ValidateCreate validates genesis block during node creation
+func (g *Genesis) ValidateCreate() field.ErrorList {
+	var allErrors field.ErrorList
+
+	allErrors = append(allErrors, g.validate()...)
+
+	return allErrors
+}
+
+func (g *Genesis) ValidateUpdate(oldGenesis *Genesis) field.ErrorList {
+	var allErrors field.ErrorList
+
+	if g.Coinbase != oldGenesis.Coinbase {
+		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("coinbase"), g.Coinbase, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
+	if g.Difficulty != oldGenesis.Difficulty {
+		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("difficulty"), g.Difficulty, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
+	if g.MixHash != oldGenesis.MixHash {
+		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("mixHash"), g.MixHash, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
+	if g.GasLimit != oldGenesis.GasLimit {
+		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("gasLimit"), g.GasLimit, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
+	if g.Nonce != oldGenesis.Nonce {
+		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("nonce"), g.Nonce, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
+	if g.Timestamp != oldGenesis.Timestamp {
+		err := field.Invalid(field.NewPath("spec").Child("genesis").Child("timestamp"), g.Timestamp, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
+	allErrors = append(allErrors, g.validate()...)
+
+	return allErrors
 }
