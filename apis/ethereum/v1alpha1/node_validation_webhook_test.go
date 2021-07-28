@@ -25,54 +25,6 @@ var _ = Describe("Ethereum node validation", func() {
 		Errors field.ErrorList
 	}{
 		{
-			Title: "node #1",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					Genesis: &Genesis{
-						ChainID:   4444,
-						NetworkID: networkID,
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: []*field.Error{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.genesis",
-					BadValue: "",
-					Detail:   "consensus configuration (ethash, clique, or ibft2) is missing",
-				},
-			},
-		},
-		{
-			Title: "node #2",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-2",
-				},
-				Spec: NodeSpec{
-					Genesis: &Genesis{
-						ChainID:   4444,
-						NetworkID: networkID,
-						Ethash:    &Ethash{},
-						Clique:    &Clique{},
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: []*field.Error{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.genesis",
-					BadValue: "",
-					Detail:   "multiple consensus configurations (clique, ethash) are enabled",
-				},
-			},
-		},
-		{
 			Title: "node #2",
 			Node: &Node{
 				ObjectMeta: metav1.ObjectMeta{
@@ -111,28 +63,6 @@ var _ = Describe("Ethereum node validation", func() {
 					Field:    "spec.genesis",
 					BadValue: "",
 					Detail:   "must be specified if spec.network is none",
-				},
-			},
-		},
-		{
-			Title: "node #4",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					Genesis: &Genesis{
-						ChainID: 1,
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.genesis.chainId",
-					BadValue: "1",
-					Detail:   "can't use chain id of mainnet network to avoid tx replay",
 				},
 			},
 		},
@@ -180,33 +110,6 @@ var _ = Describe("Ethereum node validation", func() {
 					Field:    "spec.miner",
 					BadValue: false,
 					Detail:   "must set miner to true if coinbase is provided",
-				},
-			},
-		},
-		{
-			Title: "node #13",
-			Node: &Node{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "node-1",
-				},
-				Spec: NodeSpec{
-					Genesis: &Genesis{
-						ChainID: 55555,
-						Clique:  &Clique{},
-						Forks: &Forks{
-							EIP150:    1,
-							Homestead: 2,
-						},
-					},
-					Client: BesuClient,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.genesis.forks.eip150",
-					BadValue: "1",
-					Detail:   "Fork eip150 can't be activated (at block 1) before fork homestead (at block 2)",
 				},
 			},
 		},

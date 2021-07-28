@@ -14,7 +14,75 @@ var _ = Describe("Genesis Block validation", func() {
 		Title   string
 		Genesis *Genesis
 		Errors  field.ErrorList
-	}{}
+	}{
+		{
+			Title: "using mainnet chain id",
+			Genesis: &Genesis{
+				ChainID:   1,
+				NetworkID: 55555,
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.genesis.chainId",
+					BadValue: "1",
+					Detail:   "can't use chain id of mainnet network to avoid tx replay",
+				},
+			},
+		},
+		{
+			Title: "bad fork activation order",
+			Genesis: &Genesis{
+				ChainID:   55555,
+				NetworkID: 55555,
+				Ethash:    &Ethash{},
+				Forks: &Forks{
+					EIP150:    1,
+					Homestead: 2,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.genesis.forks.eip150",
+					BadValue: "1",
+					Detail:   "Fork eip150 can't be activated (at block 1) before fork homestead (at block 2)",
+				},
+			},
+		},
+		{
+			Title: "consensus configuration is missing",
+			Genesis: &Genesis{
+				ChainID:   4444,
+				NetworkID: 4444,
+			},
+			Errors: []*field.Error{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.genesis",
+					BadValue: "",
+					Detail:   "consensus configuration (ethash, clique, or ibft2) is missing",
+				},
+			},
+		},
+		{
+			Title: "multiple consensus configurations are used",
+			Genesis: &Genesis{
+				ChainID:   4444,
+				NetworkID: 4444,
+				Ethash:    &Ethash{},
+				Clique:    &Clique{},
+			},
+			Errors: []*field.Error{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.genesis",
+					BadValue: "",
+					Detail:   "multiple consensus configurations (clique, ethash) are enabled",
+				},
+			},
+		},
+	}
 
 	updateCases := []struct {
 		Title      string
