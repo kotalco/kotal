@@ -235,11 +235,21 @@ func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *c
 		key = "static-nodes.json"
 	}
 
-	configmap.Data["genesis.json"] = genesis
-	configmap.Data["geth-init-genesis.sh"] = GethInitGenesisScript
-	configmap.Data["import-account.sh"] = importAccountScript
-	configmap.Data["nethermind_convert_enode_privatekey.sh"] = nethermindConvertEnodePrivateKeyScript
-	configmap.Data["nethermind_copy_keystore.sh"] = nethermindConvertCopyKeystoreScript
+	if node.Spec.Genesis != nil {
+		configmap.Data["genesis.json"] = genesis
+		if node.Spec.Client == ethereumv1alpha1.GethClient {
+			configmap.Data["geth-init-genesis.sh"] = GethInitGenesisScript
+		}
+	}
+
+	if node.Spec.Import != nil {
+		configmap.Data["import-account.sh"] = importAccountScript
+	}
+
+	if node.Spec.Client == ethereumv1alpha1.NethermindClient {
+		configmap.Data["nethermind_convert_enode_privatekey.sh"] = nethermindConvertEnodePrivateKeyScript
+		configmap.Data["nethermind_copy_keystore.sh"] = nethermindConvertCopyKeystoreScript
+	}
 
 	currentStaticNodes := configmap.Data[key]
 	// update static nodes config if it's empty
