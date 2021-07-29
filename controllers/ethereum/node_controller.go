@@ -65,6 +65,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	r.updateLabels(&node)
 	r.updateStaticNodes(ctx, &node)
+	r.updateBootnodes(ctx, &node)
 
 	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return
@@ -112,43 +113,76 @@ func (r *NodeReconciler) updateLabels(node *ethereumv1alpha1.Node) {
 
 }
 
+// getEnodeURL fetch enodeURL from enode that has the format of node.namespace
+// name is the node name, and namespace is the node namespace
+func (r *NodeReconciler) getEnodeURL(ctx context.Context, enode, ns string) (string, error) {
+	node := &ethereumv1alpha1.Node{}
+	var name, namespace string
+
+	if parts := strings.Split(enode, "."); len(parts) > 1 {
+		name = parts[0]
+		namespace = parts[1]
+	} else {
+		// nodes without . refered to nodes in the current node namespace
+		name = enode
+		namespace = ns
+	}
+
+	namespacedName := types.NamespacedName{
+		Name:      name,
+		Namespace: namespace,
+	}
+
+	if err := r.Client.Get(ctx, namespacedName, node); err != nil {
+		return "", err
+	}
+
+	return node.Status.EnodeURL, nil
+}
+
 // updateStaticNodes replaces Ethereum node references with their enodeURL
 func (r *NodeReconciler) updateStaticNodes(ctx context.Context, node *ethereumv1alpha1.Node) {
 	for i, enode := range node.Spec.StaticNodes {
 		if !strings.HasPrefix(string(enode), "enode://") {
-			staticNode := &ethereumv1alpha1.Node{}
-			var name, namespace string
-			// enode reference can have the format name.namespace
-			// name is the node name
-			// namespace is the node namespace
-			if parts := strings.Split(string(enode), "."); len(parts) > 1 {
-				name = parts[0]
-				namespace = parts[1]
-			} else {
-				// nodes without . refered to nodes in the current node namespace
-				name = string(enode)
-				namespace = node.Namespace
-			}
-			namespacedName := types.NamespacedName{
-				Name:      name,
-				Namespace: namespace,
-			}
-			if err := r.Client.Get(ctx, namespacedName, staticNode); err != nil {
+			enodeURL, err := r.getEnodeURL(ctx, string(enode), node.Namespace)
+			if err != nil {
 				// remove static node reference, so it won't be included into static nodes file
+				// don't return the error, node maybe not up and running yet
 				node.Spec.StaticNodes = append(node.Spec.StaticNodes[:i], node.Spec.StaticNodes[i+1:]...)
 				r.Log.Error(err, "failed to get static node")
-				// don't return the error
-				// node maybe not up and running yet
 				continue
 			}
-			staticNodeURL := staticNode.Status.EnodeURL
-			r.Log.Info("static node URL", string(enode), staticNodeURL)
+			r.Log.Info("static node enodeURL", string(enode), enodeURL)
 			// replace reference with actual enode url
-			if strings.HasPrefix(staticNodeURL, "enode://") {
-				node.Spec.StaticNodes[i] = ethereumv1alpha1.Enode(staticNodeURL)
+			if strings.HasPrefix(enodeURL, "enode://") {
+				node.Spec.StaticNodes[i] = ethereumv1alpha1.Enode(enodeURL)
 			} else {
 				// remove static node reference, so it won't be included into static nodes file
 				node.Spec.StaticNodes = append(node.Spec.StaticNodes[:i], node.Spec.StaticNodes[i+1:]...)
+			}
+		}
+	}
+}
+
+// updateBootnodes replaces Ethereum node references with their enodeURL
+func (r *NodeReconciler) updateBootnodes(ctx context.Context, node *ethereumv1alpha1.Node) {
+	for i, enode := range node.Spec.Bootnodes {
+		if !strings.HasPrefix(string(enode), "enode://") {
+			enodeURL, err := r.getEnodeURL(ctx, string(enode), node.Namespace)
+			if err != nil {
+				// remove bootnode reference, so it won't be included into bootnodes
+				// don't return the error, node maybe not up and running yet
+				node.Spec.Bootnodes = append(node.Spec.Bootnodes[:i], node.Spec.Bootnodes[i+1:]...)
+				r.Log.Error(err, "failed to get bootnode")
+				continue
+			}
+			r.Log.Info("bootnode enodeURL", string(enode), enodeURL)
+			// replace reference with actual enode url
+			if strings.HasPrefix(enodeURL, "enode://") {
+				node.Spec.Bootnodes[i] = ethereumv1alpha1.Enode(enodeURL)
+			} else {
+				// remove bootnode reference, so it won't be included into bootnodes
+				node.Spec.Bootnodes = append(node.Spec.Bootnodes[:i], node.Spec.Bootnodes[i+1:]...)
 			}
 		}
 	}
