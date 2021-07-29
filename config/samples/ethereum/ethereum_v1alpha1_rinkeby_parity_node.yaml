@@ -14,7 +14,7 @@ metadata:
 spec:
   network: rinkeby
   client: parity
-  nodekeySecretName: rinkeby-parity-nodekey
+  nodePrivatekeySecretName: rinkeby-parity-nodekey
   rpc: true
   rpcPort: 8599
   corsDomains:

@@ -13,7 +13,7 @@ metadata:
 spec:
   network: rinkeby
   client: nethermind
-  nodekeySecretName: rinkeby-nethermind-nodekey
+  nodePrivatekeySecretName: rinkeby-nethermind-nodekey
   logging: info
   rpc: true
   rpcPort: 9999

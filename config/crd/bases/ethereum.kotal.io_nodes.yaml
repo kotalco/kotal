@@ -280,8 +280,8 @@ spec:
               network:
                 description: Network specifies the network to join
                 type: string
-              nodekeySecretName:
-                description: NodekeySecretName is the secret name holding node private key
+              nodePrivatekeySecretName:
+                description: NodePrivatekeySecretName is the secret name holding node private key
                 type: string
               p2pPort:
                 description: P2PPort is port used for peer to peer communication

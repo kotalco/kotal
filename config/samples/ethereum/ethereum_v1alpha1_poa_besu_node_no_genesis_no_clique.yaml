@@ -24,7 +24,7 @@ spec:
   ########### node spec ###########
   client: besu
   rpc: true
-  nodekeySecretName: poa-besu-nodekey
+  nodePrivatekeySecretName: poa-besu-nodekey
   rpcPort: 8599
   corsDomains:
     - all

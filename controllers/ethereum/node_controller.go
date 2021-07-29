@@ -191,7 +191,7 @@ func (r *NodeReconciler) updateBootnodes(ctx context.Context, node *ethereumv1al
 // updateStatus updates network status
 func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha1.Node, enodeURL string) error {
 
-	if node.Spec.NodekeySecretName == "" {
+	if node.Spec.NodePrivatekeySecretName == "" {
 		switch node.Spec.Client {
 		case ethereumv1alpha1.BesuClient:
 			enodeURL = "call net_enode JSON-RPC method"
@@ -359,11 +359,11 @@ func (r *NodeReconciler) createNodeVolumes(node *ethereumv1alpha1.Node) []corev1
 	projections := []corev1.VolumeProjection{}
 
 	// nodekey (node private key) projection
-	if node.Spec.NodekeySecretName != "" {
+	if node.Spec.NodePrivatekeySecretName != "" {
 		nodekeyProjection := corev1.VolumeProjection{
 			Secret: &corev1.SecretProjection{
 				LocalObjectReference: corev1.LocalObjectReference{
-					Name: node.Spec.NodekeySecretName,
+					Name: node.Spec.NodePrivatekeySecretName,
 				},
 				Items: []corev1.KeyToPath{
 					{
@@ -465,7 +465,7 @@ func (r *NodeReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, hom
 
 	volumeMounts := []corev1.VolumeMount{}
 
-	if node.Spec.NodekeySecretName != "" || node.Spec.Import != nil {
+	if node.Spec.NodePrivatekeySecretName != "" || node.Spec.Import != nil {
 		nodekeyMount := corev1.VolumeMount{
 			Name:      "secrets",
 			MountPath: shared.PathSecrets(homedir),
@@ -603,7 +603,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 			initContainers = append(initContainers, importAccount)
 		}
 	} else if node.Spec.Client == ethereumv1alpha1.NethermindClient {
-		if node.Spec.NodekeySecretName != "" {
+		if node.Spec.NodePrivatekeySecretName != "" {
 			convertEnodePrivatekey := corev1.Container{
 				Name:  "convert-enode-privatekey",
 				Image: "busybox",
@@ -762,9 +762,9 @@ func (r *NodeReconciler) reconcileSecret(ctx context.Context, node *ethereumv1al
 	// pubkey is required by the caller
 	// 1. read the private key secret content
 	// 2. derive public key from the private key
-	if node.Spec.NodekeySecretName != "" {
+	if node.Spec.NodePrivatekeySecretName != "" {
 		key := types.NamespacedName{
-			Name:      node.Spec.NodekeySecretName,
+			Name:      node.Spec.NodePrivatekeySecretName,
 			Namespace: node.Namespace,
 		}
 

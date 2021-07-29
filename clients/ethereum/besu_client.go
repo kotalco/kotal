@@ -48,7 +48,7 @@ func (b *BesuClient) Args() (args []string) {
 
 	appendArg(BesuLogging, b.LoggingArgFromVerbosity(node.Spec.Logging))
 
-	if node.Spec.NodekeySecretName != "" {
+	if node.Spec.NodePrivatekeySecretName != "" {
 		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(b.HomeDir())))
 	}
 

@@ -53,7 +53,7 @@ func (n *NethermindClient) Args() (args []string) {
 
 	appendArg(NethermindLogging, n.LoggingArgFromVerbosity(node.Spec.Logging))
 
-	if node.Spec.NodekeySecretName != "" {
+	if node.Spec.NodePrivatekeySecretName != "" {
 		// use enode private key in binary format
 		// that has been converted using nethermind_convert_enode_privatekey.sh script
 		appendArg(NethermindNodePrivateKey, fmt.Sprintf("%s/kotal_nodekey", shared.PathData(n.HomeDir())))

@@ -14,7 +14,7 @@ metadata:
 spec:
   network: rinkeby
   client: besu
-  nodekeySecretName: rinkeby-besu-nodekey
+  nodePrivatekeySecretName: rinkeby-besu-nodekey
   rpc: true
   rpcPort: 8599
   corsDomains:
