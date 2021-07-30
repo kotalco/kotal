@@ -53,10 +53,15 @@ func (g *GethClient) Args() (args []string) {
 		args = append(args, arg...)
 	}
 
+	appendArg(GethDataDir, shared.PathData(g.HomeDir()))
+	appendArg(GethP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
+	appendArg(GethSyncMode, string(node.Spec.SyncMode))
 	appendArg(GethLogging, g.LoggingArgFromVerbosity(node.Spec.Logging))
 
 	// config.toml holding static nodes
-	appendArg(GethConfig, fmt.Sprintf("%s/config.toml", shared.PathConfig(g.HomeDir())))
+	if len(node.Spec.StaticNodes) != 0 {
+		appendArg(GethConfig, fmt.Sprintf("%s/config.toml", shared.PathConfig(g.HomeDir())))
+	}
 
 	if node.Spec.NodePrivatekeySecretName != "" {
 		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(g.HomeDir())))
@@ -70,30 +75,15 @@ func (g *GethClient) Args() (args []string) {
 		appendArg(GethBootnodes, strings.Join(bootnodes, ","))
 	}
 
-	if node.Spec.Genesis != nil {
+	if node.Spec.Genesis == nil {
+		appendArg(fmt.Sprintf("--%s", node.Spec.Network))
+	} else {
 		appendArg(GethNoDiscovery)
 		appendArg(GethNetworkID, fmt.Sprintf("%d", node.Spec.Genesis.NetworkID))
 	}
 
-	appendArg(GethDataDir, shared.PathData(g.HomeDir()))
-
-	if node.Spec.Network != "" {
-		appendArg(fmt.Sprintf("--%s", node.Spec.Network))
-	}
-
-	if node.Spec.P2PPort != 0 {
-		appendArg(GethP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
-	}
-
-	if node.Spec.SyncMode != "" {
-		appendArg(GethSyncMode, string(node.Spec.SyncMode))
-	}
-
 	if node.Spec.Miner {
 		appendArg(GethMinerEnabled)
-	}
-
-	if node.Spec.Coinbase != "" {
 		appendArg(GethMinerCoinbase, string(node.Spec.Coinbase))
 		appendArg(GethUnlock, string(node.Spec.Coinbase))
 		appendArg(GethPassword, fmt.Sprintf("%s/account.password", shared.PathSecrets(g.HomeDir())))
@@ -102,13 +92,8 @@ func (g *GethClient) Args() (args []string) {
 	if node.Spec.RPC {
 		appendArg(GethRPCHTTPEnabled)
 		appendArg(GethRPCHTTPHost, DefaultHost)
-	}
-
-	if node.Spec.RPCPort != 0 {
 		appendArg(GethRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
-	}
-
-	if len(node.Spec.RPCAPI) != 0 {
+		// JSON-RPC API
 		apis := []string{}
 		for _, api := range node.Spec.RPCAPI {
 			apis = append(apis, string(api))
@@ -120,13 +105,8 @@ func (g *GethClient) Args() (args []string) {
 	if node.Spec.WS {
 		appendArg(GethRPCWSEnabled)
 		appendArg(GethRPCWSHost, DefaultHost)
-	}
-
-	if node.Spec.WSPort != 0 {
 		appendArg(GethRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
-	}
-
-	if len(node.Spec.WSAPI) != 0 {
+		// WebSocket API
 		apis := []string{}
 		for _, api := range node.Spec.WSAPI {
 			apis = append(apis, string(api))
@@ -137,10 +117,9 @@ func (g *GethClient) Args() (args []string) {
 
 	if node.Spec.GraphQL {
 		appendArg(GethGraphQLHTTPEnabled)
+		//NOTE: .GraphQLPort is ignored because rpc port will be used by graphql server
+		// .GraphQLPort will be used in the service that point to the pod
 	}
-
-	//NOTE: .GraphQLPort is ignored because rpc port will be used by graphql server
-	// .GraphQLPort will be used in the service that point to the pod
 
 	if len(node.Spec.Hosts) != 0 {
 		commaSeperatedHosts := strings.Join(node.Spec.Hosts, ",")

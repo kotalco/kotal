@@ -51,6 +51,8 @@ func (n *NethermindClient) Args() (args []string) {
 		args = append(args, arg...)
 	}
 
+	appendArg(NethermindDataPath, shared.PathData(n.HomeDir()))
+	appendArg(NethermindP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 	appendArg(NethermindLogging, n.LoggingArgFromVerbosity(node.Spec.Logging))
 
 	if node.Spec.NodePrivatekeySecretName != "" {
@@ -59,23 +61,17 @@ func (n *NethermindClient) Args() (args []string) {
 		appendArg(NethermindNodePrivateKey, fmt.Sprintf("%s/kotal_nodekey", shared.PathData(n.HomeDir())))
 	}
 
-	appendArg(NethermindStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(n.HomeDir())))
-
-	if node.Spec.Genesis != nil {
-		appendArg(NethermindGenesisFile, fmt.Sprintf("%s/genesis.json", shared.PathConfig(n.HomeDir())))
+	if len(node.Spec.StaticNodes) != 0 {
+		appendArg(NethermindStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(n.HomeDir())))
 	}
-
-	appendArg(NethermindDataPath, shared.PathData(n.HomeDir()))
 
 	if node.Spec.Genesis == nil {
 		appendArg(NethermindNetwork, node.Spec.Network)
 	} else {
+		// use empty config, because nethermind uses mainnet.cfg by default which can shadow some settings here
 		appendArg(NethermindNetwork, fmt.Sprintf("%s/empty.cfg", shared.PathConfig(n.HomeDir())))
+		appendArg(NethermindGenesisFile, fmt.Sprintf("%s/genesis.json", shared.PathConfig(n.HomeDir())))
 		appendArg(NethermindDiscoveryEnabled, "false")
-	}
-
-	if node.Spec.P2PPort != 0 {
-		appendArg(NethermindP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 	}
 
 	switch node.Spec.SyncMode {
@@ -100,9 +96,6 @@ func (n *NethermindClient) Args() (args []string) {
 
 	if node.Spec.Miner {
 		appendArg(NethermindMiningEnabled, "true")
-	}
-
-	if node.Spec.Coinbase != "" {
 		appendArg(NethermindMinerCoinbase, string(node.Spec.Coinbase))
 		appendArg(NethermindUnlockAccounts, fmt.Sprintf("[%s]", node.Spec.Coinbase))
 		appendArg(NethermindPasswordFiles, fmt.Sprintf("[%s/account.password]", shared.PathSecrets(n.HomeDir())))
@@ -110,14 +103,9 @@ func (n *NethermindClient) Args() (args []string) {
 
 	if node.Spec.RPC {
 		appendArg(NethermindRPCHTTPEnabled, "true")
-		appendArg(NethermindRPCHTTPHost, DefaultHost)
-	}
-
-	if node.Spec.RPCPort != 0 {
 		appendArg(NethermindRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
-	}
-
-	if len(node.Spec.RPCAPI) != 0 {
+		appendArg(NethermindRPCHTTPHost, DefaultHost)
+		// JSON-RPC API
 		apis := []string{}
 		for _, api := range node.Spec.RPCAPI {
 			apis = append(apis, string(api))
@@ -127,13 +115,10 @@ func (n *NethermindClient) Args() (args []string) {
 	}
 
 	if node.Spec.WS {
-		// no option for ws host, ws uses same http host as JSON-RPC
-		// ws reuse enabled JSON-RPC modules
 		appendArg(NethermindRPCWSEnabled, "true")
-	}
-
-	if node.Spec.WSPort != 0 {
 		appendArg(NethermindRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
+		// no option for ws host, ws uses same http host as JSON-RPC
+		// nethermind ws reuses enabled JSON-RPC modules
 	}
 
 	return args

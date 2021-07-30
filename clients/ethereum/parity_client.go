@@ -52,6 +52,9 @@ func (p *ParityClient) Args() (args []string) {
 		args = append(args, arg...)
 	}
 
+	appendArg(ParityDataDir, shared.PathData(p.HomeDir()))
+	appendArg(ParityP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
+	appendArg(ParitySyncMode, p.PrunningArgFromSyncMode(node.Spec.SyncMode))
 	appendArg(ParityLogging, p.LoggingArgFromVerbosity(node.Spec.Logging))
 
 	if node.Spec.NodePrivatekeySecretName != "" {
@@ -66,9 +69,9 @@ func (p *ParityClient) Args() (args []string) {
 		appendArg(ParityBootnodes, strings.Join(bootnodes, ","))
 	}
 
-	appendArg(ParityDataDir, shared.PathData(p.HomeDir()))
-
-	appendArg(ParityReservedPeers, fmt.Sprintf("%s/static-nodes", shared.PathConfig(p.HomeDir())))
+	if len(node.Spec.StaticNodes) != 0 {
+		appendArg(ParityReservedPeers, fmt.Sprintf("%s/static-nodes", shared.PathConfig(p.HomeDir())))
+	}
 
 	if node.Spec.Genesis == nil {
 		if node.Spec.Network != ethereumv1alpha1.MainNetwork {
@@ -80,14 +83,6 @@ func (p *ParityClient) Args() (args []string) {
 		appendArg(ParityNoDiscovery)
 	}
 
-	if node.Spec.P2PPort != 0 {
-		appendArg(ParityP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
-	}
-
-	if node.Spec.SyncMode != "" {
-		appendArg(ParitySyncMode, p.PrunningArgFromSyncMode(node.Spec.SyncMode))
-	}
-
 	if node.Spec.Coinbase != "" {
 		appendArg(ParityMinerCoinbase, string(node.Spec.Coinbase))
 		appendArg(ParityUnlock, string(node.Spec.Coinbase))
@@ -97,42 +92,32 @@ func (p *ParityClient) Args() (args []string) {
 		}
 	}
 
-	if !node.Spec.RPC {
-		appendArg(ParityDisableRPC)
-	}
-
-	if node.Spec.RPCPort != 0 {
+	if node.Spec.RPC {
 		appendArg(ParityRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
-	}
-
-	appendArg(ParityRPCHTTPHost, DefaultHost)
-
-	if len(node.Spec.RPCAPI) != 0 {
+		appendArg(ParityRPCHTTPHost, DefaultHost)
+		// JSON-RPC API
 		apis := []string{}
 		for _, api := range node.Spec.RPCAPI {
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		appendArg(ParityRPCHTTPAPI, commaSeperatedAPIs)
+	} else {
+		appendArg(ParityDisableRPC)
 	}
 
-	if !node.Spec.WS {
-		appendArg(ParityDisableWS)
-	}
-
-	if node.Spec.WSPort != 0 {
+	if node.Spec.WS {
 		appendArg(ParityRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
-	}
-
-	appendArg(ParityRPCWSHost, DefaultHost)
-
-	if len(node.Spec.WSAPI) != 0 {
+		appendArg(ParityRPCWSHost, DefaultHost)
+		// WebSocket API
 		apis := []string{}
 		for _, api := range node.Spec.WSAPI {
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
 		appendArg(ParityRPCWSAPI, commaSeperatedAPIs)
+	} else {
+		appendArg(ParityDisableWS)
 	}
 
 	if len(node.Spec.Hosts) != 0 {

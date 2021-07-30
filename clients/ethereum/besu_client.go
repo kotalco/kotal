@@ -45,14 +45,18 @@ func (b *BesuClient) Args() (args []string) {
 	}
 
 	appendArg(BesuNatMethod, "KUBERNETES")
-
+	appendArg(BesuDataPath, shared.PathData(b.HomeDir()))
+	appendArg(BesuP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
+	appendArg(BesuSyncMode, string(node.Spec.SyncMode))
 	appendArg(BesuLogging, b.LoggingArgFromVerbosity(node.Spec.Logging))
 
 	if node.Spec.NodePrivatekeySecretName != "" {
 		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(b.HomeDir())))
 	}
 
-	appendArg(BesuStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(b.HomeDir())))
+	if len(node.Spec.StaticNodes) != 0 {
+		appendArg(BesuStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(b.HomeDir())))
+	}
 
 	if len(node.Spec.Bootnodes) != 0 {
 		bootnodes := []string{}
@@ -62,46 +66,25 @@ func (b *BesuClient) Args() (args []string) {
 		appendArg(BesuBootnodes, strings.Join(bootnodes, ","))
 	}
 
-	if node.Spec.Genesis != nil {
-		appendArg(BesuGenesisFile, fmt.Sprintf("%s/genesis.json", shared.PathConfig(b.HomeDir())))
-	}
-
-	appendArg(BesuDataPath, shared.PathData(b.HomeDir()))
-
 	// public network
 	if node.Spec.Genesis == nil {
 		appendArg(BesuNetwork, node.Spec.Network)
 	} else { // private network
+		appendArg(BesuGenesisFile, fmt.Sprintf("%s/genesis.json", shared.PathConfig(b.HomeDir())))
 		appendArg(BesuNetworkID, fmt.Sprintf("%d", node.Spec.Genesis.NetworkID))
 		appendArg(BesuDiscoveryEnabled, "false")
 	}
 
-	if node.Spec.P2PPort != 0 {
-		appendArg(BesuP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
-	}
-
-	if node.Spec.SyncMode != "" {
-		appendArg(BesuSyncMode, string(node.Spec.SyncMode))
-	}
-
 	if node.Spec.Miner {
 		appendArg(BesuMinerEnabled)
-	}
-
-	if node.Spec.Coinbase != "" {
 		appendArg(BesuMinerCoinbase, string(node.Spec.Coinbase))
 	}
 
 	if node.Spec.RPC {
 		appendArg(BesuRPCHTTPEnabled)
 		appendArg(BesuRPCHTTPHost, DefaultHost)
-	}
-
-	if node.Spec.RPCPort != 0 {
 		appendArg(BesuRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
-	}
-
-	if len(node.Spec.RPCAPI) != 0 {
+		// JSON-RPC API
 		apis := []string{}
 		for _, api := range node.Spec.RPCAPI {
 			apis = append(apis, string(api))
@@ -113,13 +96,8 @@ func (b *BesuClient) Args() (args []string) {
 	if node.Spec.WS {
 		appendArg(BesuRPCWSEnabled)
 		appendArg(BesuRPCWSHost, DefaultHost)
-	}
-
-	if node.Spec.WSPort != 0 {
 		appendArg(BesuRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
-	}
-
-	if len(node.Spec.WSAPI) != 0 {
+		// WebSocket API
 		apis := []string{}
 		for _, api := range node.Spec.WSAPI {
 			apis = append(apis, string(api))
@@ -131,9 +109,6 @@ func (b *BesuClient) Args() (args []string) {
 	if node.Spec.GraphQL {
 		appendArg(BesuGraphQLHTTPEnabled)
 		appendArg(BesuGraphQLHTTPHost, DefaultHost)
-	}
-
-	if node.Spec.GraphQLPort != 0 {
 		appendArg(BesuGraphQLHTTPPort, fmt.Sprintf("%d", node.Spec.GraphQLPort))
 	}
 
