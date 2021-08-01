@@ -10,3 +10,8 @@ spec:
   graffiti: Validated by Kotal
   keystores:
     - secretName: my-validator
+  resources:
+    # these resources are only for testing
+    # change resources depending on your use case
+    cpu: "1"
+    memory: "1Gi"

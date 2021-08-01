@@ -10,3 +10,8 @@ spec:
   eth1Endpoints:
     - http://localhost:8545
     - http://localhost:8546
+  resources:
+    # these resources are only for testing
+    # change resources depending on your use case
+    cpu: "1"
+    memory: "1Gi"

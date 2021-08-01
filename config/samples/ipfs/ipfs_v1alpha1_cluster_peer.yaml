@@ -19,5 +19,6 @@ spec:
   # kubectl apply -f ipfs_v1alpha1_bare_peer.yaml
   peerEndpoint: /dns4/bare-peer/tcp/5001
   # WARNING: DON'T use the following cluster secret in production
-  # kubectl create secret generic cluster-secret --from-literal=secret=clu$ter$3cr3t
+  # CLUSTER_SECRET=$(openssl rand -hex 32)
+  # kubectl create secret generic cluster-secret --from-literal=secret=$CLUSTER_SECRET
   clusterSecretName: cluster-secret
