@@ -18,7 +18,7 @@ const (
 	// EnvPrysmBeaconNodeImage is the environment variable used for Prysmatic Labs beacon node image
 	EnvPrysmBeaconNodeImage = "PRYSM_BEACON_NODE_IMAGE"
 	// DefaultPrysmBeaconNodeImage is Prysmatic Labs beacon node image
-	DefaultPrysmBeaconNodeImage = "gcr.io/prysmaticlabs/prysm/beacon-chain:v1.3.11"
+	DefaultPrysmBeaconNodeImage = "gcr.io/prysmaticlabs/prysm/beacon-chain:v1.4.2"
 )
 
 // HomeDir returns container home directory

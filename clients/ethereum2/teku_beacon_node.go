@@ -18,7 +18,7 @@ const (
 	// EnvTekuBeaconNodeImage is the environment variable used for PegaSys Teku beacon node image
 	EnvTekuBeaconNodeImage = "TEKU_BEACON_NODE_IMAGE"
 	// DefaultTekuBeaconNodeImage is PegaSys Teku beacon node image
-	DefaultTekuBeaconNodeImage = "consensys/teku:21.6.0"
+	DefaultTekuBeaconNodeImage = "consensys/teku:21.7.0"
 )
 
 // HomeDir returns container home directory
