@@ -20,8 +20,8 @@ spec:
     - jsonPath: .spec.client
       name: Client
       type: string
-    - jsonPath: .spec.join
-      name: Join
+    - jsonPath: .spec.network
+      name: Network
       type: string
     name: v1alpha1
     schema:

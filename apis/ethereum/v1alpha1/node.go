@@ -18,7 +18,7 @@ type NodeStatus struct {
 // Node is the Schema for the nodes API
 // +kubebuilder:printcolumn:name="Client",type=string,JSONPath=".spec.client"
 // +kubebuilder:printcolumn:name="Consensus",type=string,JSONPath=".spec.consensus"
-// +kubebuilder:printcolumn:name="Join",type=string,JSONPath=".spec.join"
+// +kubebuilder:printcolumn:name="Network",type=string,JSONPath=".spec.network"
 // +kubebuilder:printcolumn:name="enodeURL",type=string,JSONPath=".status.enodeURL",priority=10
 type Node struct {
 	metav1.TypeMeta   `json:",inline"`

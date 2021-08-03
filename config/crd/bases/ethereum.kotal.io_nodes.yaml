@@ -23,8 +23,8 @@ spec:
     - jsonPath: .spec.consensus
       name: Consensus
       type: string
-    - jsonPath: .spec.join
-      name: Join
+    - jsonPath: .spec.network
+      name: Network
       type: string
     - jsonPath: .status.enodeURL
       name: enodeURL
