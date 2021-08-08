@@ -8,6 +8,8 @@ import (
 
 // NodeStatus defines the observed state of Node
 type NodeStatus struct {
+	// Consensus is network consensus algorithm
+	Consensus string `json:"consensus,omitempty"`
 	// EnodeURL is the node URL
 	EnodeURL string `json:"enodeURL,omitempty"`
 }
@@ -17,7 +19,7 @@ type NodeStatus struct {
 
 // Node is the Schema for the nodes API
 // +kubebuilder:printcolumn:name="Client",type=string,JSONPath=".spec.client"
-// +kubebuilder:printcolumn:name="Consensus",type=string,JSONPath=".spec.consensus"
+// +kubebuilder:printcolumn:name="Consensus",type=string,JSONPath=".status.consensus"
 // +kubebuilder:printcolumn:name="Network",type=string,JSONPath=".spec.network"
 // +kubebuilder:printcolumn:name="enodeURL",type=string,JSONPath=".status.enodeURL",priority=10
 type Node struct {

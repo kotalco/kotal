@@ -9,6 +9,8 @@ const (
 	RinkebyNetwork = "rinkeby"
 	// GoerliNetwork is goerli poa cross-client network
 	GoerliNetwork = "goerli"
+	// XDaiNetwork is xdai pos network
+	XDaiNetwork = "xdai"
 	// KottiNetwork is kotti poa ethereum classic test network
 	KottiNetwork = "kotti"
 	// ClassicNetwork is ethereum classic network

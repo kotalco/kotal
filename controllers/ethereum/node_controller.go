@@ -191,6 +191,29 @@ func (r *NodeReconciler) updateBootnodes(ctx context.Context, node *ethereumv1al
 // updateStatus updates network status
 func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha1.Node, enodeURL string) error {
 
+	var consensus string
+
+	if node.Spec.Genesis == nil {
+		switch node.Spec.Network {
+		case ethereumv1alpha1.MainNetwork, ethereumv1alpha1.RopstenNetwork:
+			consensus = "pow"
+		case ethereumv1alpha1.RinkebyNetwork, ethereumv1alpha1.GoerliNetwork:
+			consensus = "poa"
+		case ethereumv1alpha1.XDaiNetwork:
+			consensus = "pos"
+		}
+	} else {
+		if node.Spec.Genesis.Ethash != nil {
+			consensus = "pow"
+		} else if node.Spec.Genesis.Clique != nil {
+			consensus = "poa"
+		} else if node.Spec.Genesis.IBFT2 != nil {
+			consensus = "ibft2"
+		}
+	}
+
+	node.Status.Consensus = consensus
+
 	if node.Spec.NodePrivatekeySecretName == "" {
 		switch node.Spec.Client {
 		case ethereumv1alpha1.BesuClient:

@@ -20,7 +20,7 @@ spec:
     - jsonPath: .spec.client
       name: Client
       type: string
-    - jsonPath: .spec.consensus
+    - jsonPath: .status.consensus
       name: Consensus
       type: string
     - jsonPath: .spec.network
@@ -384,6 +384,9 @@ spec:
           status:
             description: NodeStatus defines the observed state of Node
             properties:
+              consensus:
+                description: Consensus is network consensus algorithm
+                type: string
               enodeURL:
                 description: EnodeURL is the node URL
                 type: string
