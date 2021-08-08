@@ -10,6 +10,8 @@ import (
 type NodeStatus struct {
 	// Consensus is network consensus algorithm
 	Consensus string `json:"consensus,omitempty"`
+	// Network is the network this node is joining
+	Network string `json:"network,omitempty"`
 	// EnodeURL is the node URL
 	EnodeURL string `json:"enodeURL,omitempty"`
 }
@@ -20,7 +22,7 @@ type NodeStatus struct {
 // Node is the Schema for the nodes API
 // +kubebuilder:printcolumn:name="Client",type=string,JSONPath=".spec.client"
 // +kubebuilder:printcolumn:name="Consensus",type=string,JSONPath=".status.consensus"
-// +kubebuilder:printcolumn:name="Network",type=string,JSONPath=".spec.network"
+// +kubebuilder:printcolumn:name="Network",type=string,JSONPath=".status.network"
 // +kubebuilder:printcolumn:name="enodeURL",type=string,JSONPath=".status.enodeURL",priority=10
 type Node struct {
 	metav1.TypeMeta   `json:",inline"`

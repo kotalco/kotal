@@ -191,7 +191,7 @@ func (r *NodeReconciler) updateBootnodes(ctx context.Context, node *ethereumv1al
 // updateStatus updates network status
 func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha1.Node, enodeURL string) error {
 
-	var consensus string
+	var consensus, network string
 
 	if node.Spec.Genesis == nil {
 		switch node.Spec.Network {
@@ -213,6 +213,12 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha
 	}
 
 	node.Status.Consensus = consensus
+
+	if network = node.Spec.Network; network == "" {
+		network = "private"
+	}
+
+	node.Status.Network = network
 
 	if node.Spec.NodePrivatekeySecretName == "" {
 		switch node.Spec.Client {

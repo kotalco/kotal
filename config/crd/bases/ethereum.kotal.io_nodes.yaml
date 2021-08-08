@@ -23,7 +23,7 @@ spec:
     - jsonPath: .status.consensus
       name: Consensus
       type: string
-    - jsonPath: .spec.network
+    - jsonPath: .status.network
       name: Network
       type: string
     - jsonPath: .status.enodeURL
@@ -389,6 +389,9 @@ spec:
                 type: string
               enodeURL:
                 description: EnodeURL is the node URL
+                type: string
+              network:
+                description: Network is the network this node is joining
                 type: string
             type: object
         type: object
