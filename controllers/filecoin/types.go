@@ -14,13 +14,11 @@ const (
 	EnvLotusImage = "LOTUS_IMAGE"
 
 	// DefaultLotusMainnetImage is the lotus image used for mainnet
-	DefaultLotusMainnetImage = "kotalco/lotus:mainnet-v1.1.2"
+	DefaultLotusMainnetImage = "kotalco/filecoin:v1.11.1"
 	// DefaultLotusNerpaImage is the lotus image used for nerpa network
-	DefaultLotusNerpaImage = "kotalco/lotus:nerpa-11.04.0"
+	DefaultLotusNerpaImage = "kotalco/filecoin:nerpa-v1.11.1"
 	// DefaultLotusCalibrationImage is the lotus image used for calibration network
-	DefaultLotusCalibrationImage = "kotalco/lotus:calibration-10.22.0"
-	// DefaultLotusButterflyImage is the lotus image used for butterfly network
-	DefaultLotusButterflyImage = "kotalco/lotus:butterfly-10.22.0"
+	DefaultLotusCalibrationImage = "kotalco/filecoin:calibration-v1.11.1"
 )
 
 // LotusImage returns the Filecoin lotus image to be used by the node

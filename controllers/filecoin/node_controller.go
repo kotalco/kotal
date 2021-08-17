@@ -215,7 +215,7 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 					{
 						Name:  "node",
 						Image: image,
-						Args:  []string{"daemon"},
+						Args:  []string{"lotus", "daemon"},
 						Env: []corev1.EnvVar{
 							{
 								Name:  "LOTUS_PATH",
