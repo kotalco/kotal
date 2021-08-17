@@ -1,6 +1,0 @@
-apiVersion: filecoin.kotal.io/v1alpha1
-kind: Node
-metadata:
-  name: butterfly-node
-spec:
-  network: butterfly

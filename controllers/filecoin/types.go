@@ -32,8 +32,6 @@ func LotusImage(network filecoinv1alpha1.FilecoinNetwork) (string, error) {
 		return DefaultLotusNerpaImage, nil
 	case filecoinv1alpha1.CalibrationNetwork:
 		return DefaultLotusCalibrationImage, nil
-	case filecoinv1alpha1.ButterflyNetwork:
-		return DefaultLotusButterflyImage, nil
 	default:
 		return "", errors.New(ErrLotusImageNotAvailable)
 	}
