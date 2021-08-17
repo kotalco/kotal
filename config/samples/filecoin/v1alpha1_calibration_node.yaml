@@ -4,4 +4,6 @@ metadata:
   name: calibration-node
 spec:
   network: calibration
-
+  resources:
+    cpu: "2"
+    memory: "2Gi"

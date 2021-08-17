@@ -4,3 +4,6 @@ metadata:
   name: my-node
 spec:
   network: nerpa
+  resources:
+    cpu: "2"
+    memory: "2Gi"
