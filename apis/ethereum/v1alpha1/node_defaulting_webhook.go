@@ -38,7 +38,8 @@ func (n *Node) Default() {
 	// must be called after defaulting sync mode because it's depending on its value
 	n.DefaultNodeResources()
 
-	if n.Spec.RPC || n.Spec.WS || n.Spec.GraphQL {
+	// don't default hosts or corsDomains if client is nethermind
+	if (n.Spec.RPC || n.Spec.WS || n.Spec.GraphQL) && n.Spec.Client != NethermindClient {
 		if len(n.Spec.Hosts) == 0 {
 			n.Spec.Hosts = DefaultOrigins
 		}
