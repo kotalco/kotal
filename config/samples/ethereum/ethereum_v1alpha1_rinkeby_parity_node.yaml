@@ -23,8 +23,6 @@ spec:
     - web3
     - net
     - eth
-  graphql: true
-  graphqlPort: 8777
   resources:
     cpu: "1"
     cpuLimit: "1"
