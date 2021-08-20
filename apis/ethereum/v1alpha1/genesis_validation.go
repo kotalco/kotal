@@ -2,9 +2,9 @@ package v1alpha1
 
 import (
 	"fmt"
+	"math/big"
 	"reflect"
 	"sort"
-	"strconv"
 	"strings"
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -44,13 +44,19 @@ func (g *Genesis) EnabledConsensusConfigs() []string {
 }
 
 // ReservedAccountIsUsed returns true if reserved account is used
-// reserved accounts are accounts from 0x00...01 to 0x00...ff
+// reserved accounts are accounts from 0x00...01 to 0x00...ff (1 to 256)
 // reserved accounts are used for precompiles
 func (g *Genesis) ReservedAccountIsUsed() (bool, string) {
+	// space of reserved addresses
+	space := new(big.Int)
+	space.SetInt64(256)
+
 	for _, account := range g.Accounts {
 		address := string(account.Address)
-		i, _ := strconv.ParseInt(address, 16, 64)
-		if i < 256 {
+		i := new(big.Int)
+		i.SetString(address[2:], 16)
+		// address must be outside (with greater int value) reserved space
+		if i.Cmp(space) != 1 {
 			return true, address
 		}
 	}
