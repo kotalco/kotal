@@ -44,7 +44,6 @@ spec:
                 enum:
                 - mainnet
                 - nerpa
-                - butterfly
                 - calibration
                 type: string
               resources:

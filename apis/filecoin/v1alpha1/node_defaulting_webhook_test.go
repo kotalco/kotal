@@ -40,23 +40,6 @@ var _ = Describe("Filecoin node defaulting", func() {
 
 	})
 
-	It("Should default Filecoin butterfly node", func() {
-		node := Node{
-			Spec: NodeSpec{
-				Network: ButterflyNetwork,
-			},
-		}
-
-		node.Default()
-
-		Expect(node.Spec.Resources.CPU).To((Equal(DefaultButterflyNodeCPURequest)))
-		Expect(node.Spec.Resources.CPULimit).To((Equal(DefaultButterflyNodeCPULimit)))
-		Expect(node.Spec.Resources.Memory).To((Equal(DefaultButterflyNodeMemoryRequest)))
-		Expect(node.Spec.Resources.MemoryLimit).To((Equal(DefaultButterflyNodeMemoryLimit)))
-		Expect(node.Spec.Resources.Storage).To((Equal(DefaultButterflyNodeStorageRequest)))
-
-	})
-
 	It("Should default Filecoin calibration node", func() {
 		node := Node{
 			Spec: NodeSpec{

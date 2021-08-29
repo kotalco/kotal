@@ -31,7 +31,6 @@ func (n *Node) Default() {
 	nerpa := n.Spec.Network == NerpaNetwork
 	mainnet := n.Spec.Network == MainNetwork
 	calibration := n.Spec.Network == CalibrationNetwork
-	butterfly := n.Spec.Network == ButterflyNetwork
 
 	if n.Spec.Resources.CPU == "" {
 		if nerpa {
@@ -42,9 +41,6 @@ func (n *Node) Default() {
 		}
 		if calibration {
 			n.Spec.CPU = DefaultCalibrationNodeCPURequest
-		}
-		if butterfly {
-			n.Spec.CPU = DefaultButterflyNodeCPURequest
 		}
 	}
 
@@ -58,9 +54,6 @@ func (n *Node) Default() {
 		if calibration {
 			n.Spec.CPULimit = DefaultCalibrationNodeCPULimit
 		}
-		if butterfly {
-			n.Spec.CPULimit = DefaultButterflyNodeCPULimit
-		}
 	}
 
 	if n.Spec.Memory == "" {
@@ -72,9 +65,6 @@ func (n *Node) Default() {
 		}
 		if calibration {
 			n.Spec.Memory = DefaultCalibrationNodeMemoryRequest
-		}
-		if butterfly {
-			n.Spec.Memory = DefaultButterflyNodeMemoryRequest
 		}
 	}
 
@@ -88,9 +78,6 @@ func (n *Node) Default() {
 		if calibration {
 			n.Spec.MemoryLimit = DefaultCalibrationNodeMemoryLimit
 		}
-		if butterfly {
-			n.Spec.MemoryLimit = DefaultButterflyNodeMemoryLimit
-		}
 	}
 
 	if n.Spec.Storage == "" {
@@ -102,9 +89,6 @@ func (n *Node) Default() {
 		}
 		if calibration {
 			n.Spec.Storage = DefaultCalibrationNodeStorageRequest
-		}
-		if butterfly {
-			n.Spec.Storage = DefaultButterflyNodeStorageRequest
 		}
 	}
 
