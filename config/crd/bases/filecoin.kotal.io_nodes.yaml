@@ -42,6 +42,9 @@ spec:
               api:
                 description: API enables API server
                 type: boolean
+              apiPort:
+                description: APIPort enables API server
+                type: integer
               network:
                 description: Network is the Filecoin network the node will join and sync
                 enum:

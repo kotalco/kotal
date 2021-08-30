@@ -9,6 +9,8 @@ import (
 type NodeSpec struct {
 	// API enables API server
 	API bool `json:"api,omitempty"`
+	// APIPort enables API server
+	APIPort uint `json:"apiPort,omitempty"`
 	// Network is the Filecoin network the node will join and sync
 	Network FilecoinNetwork `json:"network"`
 	// Resources is node compute and storage resources
