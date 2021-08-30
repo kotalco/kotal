@@ -10,6 +10,7 @@ var _ = Describe("Filecoin node defaulting", func() {
 		node := Node{
 			Spec: NodeSpec{
 				Network: MainNetwork,
+				API:     true,
 			},
 		}
 
@@ -20,6 +21,7 @@ var _ = Describe("Filecoin node defaulting", func() {
 		Expect(node.Spec.Resources.Memory).To((Equal(DefaultMainnetNodeMemoryRequest)))
 		Expect(node.Spec.Resources.MemoryLimit).To((Equal(DefaultMainnetNodeMemoryLimit)))
 		Expect(node.Spec.Resources.Storage).To((Equal(DefaultMainnetNodeStorageRequest)))
+		Expect(node.Spec.APIPort).To(Equal(DefaultAPIPort))
 
 	})
 

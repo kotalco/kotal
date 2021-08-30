@@ -32,6 +32,12 @@ func (n *Node) Default() {
 	mainnet := n.Spec.Network == MainNetwork
 	calibration := n.Spec.Network == CalibrationNetwork
 
+	if n.Spec.API {
+		if n.Spec.APIPort == 0 {
+			n.Spec.APIPort = DefaultAPIPort
+		}
+	}
+
 	if n.Spec.Resources.CPU == "" {
 		if nerpa {
 			n.Spec.CPU = DefaultNerpaNodeCPURequest

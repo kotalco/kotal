@@ -1,6 +1,8 @@
 package v1alpha1
 
 const (
+	// DefaultAPIPort is the default port the API server is listening to
+	DefaultAPIPort uint = 1234
 	// DefaultNerpaNodeCPURequest is the default nerpa node cpu request
 	DefaultNerpaNodeCPURequest = "4"
 	// DefaultNerpaNodeCPULimit is the default nerpa node cpu limit
