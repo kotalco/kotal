@@ -39,6 +39,9 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
+              api:
+                description: API enables API server
+                type: boolean
               network:
                 description: Network is the Filecoin network the node will join and sync
                 enum:
