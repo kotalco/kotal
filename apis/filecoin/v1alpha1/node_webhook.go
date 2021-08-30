@@ -36,6 +36,9 @@ func (n *Node) Default() {
 		if n.Spec.APIPort == 0 {
 			n.Spec.APIPort = DefaultAPIPort
 		}
+		if n.Spec.APIHost == "" {
+			n.Spec.APIHost = DefaultAPIHost
+		}
 	}
 
 	if n.Spec.Resources.CPU == "" {
