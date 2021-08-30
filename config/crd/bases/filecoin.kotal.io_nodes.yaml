@@ -42,8 +42,11 @@ spec:
               api:
                 description: API enables API server
                 type: boolean
+              apiHost:
+                description: APIHost is API server host
+                type: string
               apiPort:
-                description: APIPort enables API server
+                description: APIPort is API server listening port
                 type: integer
               network:
                 description: Network is the Filecoin network the node will join and sync
