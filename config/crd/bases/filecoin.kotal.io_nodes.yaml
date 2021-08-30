@@ -48,6 +48,9 @@ spec:
               apiPort:
                 description: APIPort is API server listening port
                 type: integer
+              apiRequestTimeout:
+                description: APIRequestTimeout is API request timeout in seconds
+                type: integer
               network:
                 description: Network is the Filecoin network the node will join and sync
                 enum:
