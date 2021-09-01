@@ -15,6 +15,8 @@ type NodeSpec struct {
 	APIHost string `json:"apiHost,omitempty"`
 	// APIRequestTimeout is API request timeout in seconds
 	APIRequestTimeout uint `json:"apiRequestTimeout,omitempty"`
+	// DisableMetadataLog disables metadata log
+	DisableMetadataLog bool `json:"disableMetadataLog,omitempty"`
 	// Network is the Filecoin network the node will join and sync
 	Network FilecoinNetwork `json:"network"`
 	// Resources is node compute and storage resources
