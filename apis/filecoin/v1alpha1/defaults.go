@@ -5,6 +5,8 @@ const (
 	DefaultAPIPort uint = 1234
 	// DefaultAPIHost is the default API server host
 	DefaultAPIHost = "0.0.0.0"
+	// DefaultAPIRequestTimeout is the default API request timeout
+	DefaultAPIRequestTimeout uint = 30
 	// DefaultNerpaNodeCPURequest is the default nerpa node cpu request
 	DefaultNerpaNodeCPURequest = "4"
 	// DefaultNerpaNodeCPULimit is the default nerpa node cpu limit

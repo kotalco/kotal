@@ -23,6 +23,7 @@ var _ = Describe("Filecoin node defaulting", func() {
 		Expect(node.Spec.Resources.Storage).To((Equal(DefaultMainnetNodeStorageRequest)))
 		Expect(node.Spec.APIPort).To(Equal(DefaultAPIPort))
 		Expect(node.Spec.APIHost).To(Equal(DefaultAPIHost))
+		Expect(node.Spec.APIRequestTimeout).To(Equal(DefaultAPIRequestTimeout))
 
 	})
 

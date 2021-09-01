@@ -39,6 +39,9 @@ func (n *Node) Default() {
 		if n.Spec.APIHost == "" {
 			n.Spec.APIHost = DefaultAPIHost
 		}
+		if n.Spec.APIRequestTimeout == 0 {
+			n.Spec.APIRequestTimeout = DefaultAPIRequestTimeout
+		}
 	}
 
 	if n.Spec.Resources.CPU == "" {
