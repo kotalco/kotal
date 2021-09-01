@@ -17,6 +17,8 @@ type NodeSpec struct {
 	APIRequestTimeout uint `json:"apiRequestTimeout,omitempty"`
 	// DisableMetadataLog disables metadata log
 	DisableMetadataLog bool `json:"disableMetadataLog,omitempty"`
+	// P2PPort is p2p port
+	P2PPort uint `json:"p2pPort,omitempty"`
 	// Network is the Filecoin network the node will join and sync
 	Network FilecoinNetwork `json:"network"`
 	// Resources is node compute and storage resources
