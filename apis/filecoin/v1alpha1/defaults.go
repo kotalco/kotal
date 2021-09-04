@@ -3,6 +3,8 @@ package v1alpha1
 const (
 	// DefaultAPIPort is the default port the API server is listening to
 	DefaultAPIPort uint = 1234
+	// DefaultP2PPort is the default p2p port
+	DefaultP2PPort uint = 4444
 	// DefaultHost is the default host used by API server and p2p
 	DefaultHost = "0.0.0.0"
 	// DefaultAPIRequestTimeout is the default API request timeout

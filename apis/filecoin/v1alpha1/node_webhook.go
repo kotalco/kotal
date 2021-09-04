@@ -44,6 +44,9 @@ func (n *Node) Default() {
 		}
 	}
 
+	if n.Spec.P2PPort == 0 {
+		n.Spec.P2PPort = DefaultP2PPort
+	}
 	if n.Spec.P2PHost == "" {
 		n.Spec.P2PHost = DefaultHost
 	}
