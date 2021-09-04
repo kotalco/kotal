@@ -61,6 +61,9 @@ spec:
                 - nerpa
                 - calibration
                 type: string
+              p2pHost:
+                description: P2PHost is p2p host
+                type: string
               p2pPort:
                 description: P2PPort is p2p port
                 type: integer

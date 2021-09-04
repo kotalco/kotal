@@ -19,6 +19,8 @@ type NodeSpec struct {
 	DisableMetadataLog bool `json:"disableMetadataLog,omitempty"`
 	// P2PPort is p2p port
 	P2PPort uint `json:"p2pPort,omitempty"`
+	// P2PHost is p2p host
+	P2PHost string `json:"p2pHost,omitempty"`
 	// Network is the Filecoin network the node will join and sync
 	Network FilecoinNetwork `json:"network"`
 	// Resources is node compute and storage resources
