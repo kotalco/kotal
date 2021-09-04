@@ -27,6 +27,8 @@ type NodeSpec struct {
 	IPFSPeerEndpoint string `json:"ipfsPeerEndpoint,omitempty"`
 	// IPFSOnlineMode sets ipfs online mode
 	IPFSOnlineMode bool `json:"ipfsOnlineMode,omitempty"`
+	// IPFSForRetrieval uses ipfs for retrieval
+	IPFSForRetrieval bool `json:"ipfsForRetrieval,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

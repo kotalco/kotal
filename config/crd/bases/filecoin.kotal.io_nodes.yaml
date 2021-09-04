@@ -54,6 +54,9 @@ spec:
               disableMetadataLog:
                 description: DisableMetadataLog disables metadata log
                 type: boolean
+              ipfsForRetrieval:
+                description: IPFSForRetrieval uses ipfs for retrieval
+                type: boolean
               ipfsOnlineMode:
                 description: IPFSOnlineMode sets ipfs online mode
                 type: boolean
