@@ -23,6 +23,8 @@ type NodeSpec struct {
 	P2PHost string `json:"p2pHost,omitempty"`
 	// Network is the Filecoin network the node will join and sync
 	Network FilecoinNetwork `json:"network"`
+	// IPFSPeerEndpoint is ipfs peer endpoint
+	IPFSPeerEndpoint string `json:"ipfsPeerEndpoint,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

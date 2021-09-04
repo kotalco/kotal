@@ -54,6 +54,9 @@ spec:
               disableMetadataLog:
                 description: DisableMetadataLog disables metadata log
                 type: boolean
+              ipfsPeerEndpoint:
+                description: IPFSPeerEndpoint is ipfs peer endpoint
+                type: string
               network:
                 description: Network is the Filecoin network the node will join and sync
                 enum:
