@@ -3,8 +3,8 @@ package v1alpha1
 const (
 	// DefaultAPIPort is the default port the API server is listening to
 	DefaultAPIPort uint = 1234
-	// DefaultAPIHost is the default API server host
-	DefaultAPIHost = "0.0.0.0"
+	// DefaultHost is the default host used by API server and p2p
+	DefaultHost = "0.0.0.0"
 	// DefaultAPIRequestTimeout is the default API request timeout
 	DefaultAPIRequestTimeout uint = 30
 	// DefaultNerpaNodeCPURequest is the default nerpa node cpu request
