@@ -266,6 +266,35 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 				Labels: labels,
 			},
 			Spec: corev1.PodSpec{
+				InitContainers: []corev1.Container{
+					{
+						Name:  "copy-config-toml",
+						Image: "busybox",
+						Command: []string{
+							"/bin/sh",
+							"-c",
+						},
+						Args: []string{
+							fmt.Sprintf(`
+								mkdir -p %s &&
+								cp %s/config.toml %s`,
+								"/mnt/data",
+								"/mnt/config",
+								"/mnt/data",
+							),
+						},
+						VolumeMounts: []corev1.VolumeMount{
+							{
+								Name:      node.Name,
+								MountPath: "/mnt/data",
+							},
+							{
+								Name:      "config",
+								MountPath: "/mnt/config",
+							},
+						},
+					},
+				},
 				Containers: []corev1.Container{
 					{
 						Name:  "node",
@@ -301,6 +330,16 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 						VolumeSource: corev1.VolumeSource{
 							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
 								ClaimName: node.Name,
+							},
+						},
+					},
+					{
+						Name: "config",
+						VolumeSource: corev1.VolumeSource{
+							ConfigMap: &corev1.ConfigMapVolumeSource{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: node.Name,
+								},
 							},
 						},
 					},
