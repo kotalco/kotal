@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -44,6 +45,10 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	}
 
 	if err = r.reconcileService(ctx, &node); err != nil {
+		return
+	}
+
+	if err = r.reconcileConfigmap(ctx, &node); err != nil {
 		return
 	}
 
@@ -138,6 +143,50 @@ func (r *NodeReconciler) reconcileService(ctx context.Context, node *filecoinv1a
 			return err
 		}
 		r.specService(node, svc)
+		return nil
+	})
+
+	return err
+}
+
+// specConfigmap updates node statefulset spec
+func (r *NodeReconciler) specConfigmap(node *filecoinv1alpha1.Node, configmap *corev1.ConfigMap, configToml string) {
+	labels := map[string]string{
+		"name":     "node",
+		"instance": node.Name,
+	}
+
+	configmap.ObjectMeta.Labels = labels
+
+	if configmap.Data == nil {
+		configmap.Data = map[string]string{}
+	}
+
+	configmap.Data["config.toml"] = configToml
+
+}
+
+// reconcileConfigmap reconciles node configmap
+func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *filecoinv1alpha1.Node) error {
+
+	configmap := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	// filecoin generates config.toml file from node spec
+	configToml, err := ConfigFromSpec(node)
+	if err != nil {
+		return err
+	}
+
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
+		if err := ctrl.SetControllerReference(node, configmap, r.Scheme); err != nil {
+			return err
+		}
+		r.specConfigmap(node, configmap, configToml)
 		return nil
 	})
 
