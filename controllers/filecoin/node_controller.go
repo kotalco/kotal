@@ -227,8 +227,14 @@ func (r *NodeReconciler) specService(node *filecoinv1alpha1.Node, svc *corev1.Se
 	svc.Spec.Ports = []corev1.ServicePort{
 		{
 			Name:       "api",
-			Port:       int32(1234),
-			TargetPort: intstr.FromInt(1234),
+			Port:       int32(node.Spec.APIPort),
+			TargetPort: intstr.FromInt(int(node.Spec.APIPort)),
+			Protocol:   corev1.ProtocolTCP,
+		},
+		{
+			Name:       "p2p",
+			Port:       int32(node.Spec.P2PPort),
+			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
 			Protocol:   corev1.ProtocolTCP,
 		},
 	}
