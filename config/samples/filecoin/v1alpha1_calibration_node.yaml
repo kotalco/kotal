@@ -4,6 +4,15 @@ metadata:
   name: calibration-node
 spec:
   network: calibration
+  api: true
+  apiPort: 1234
+  apiHost: 0.0.0.0
+  apiRequestTimeout: 30
+  disableMetadataLog: false
+  p2pPort: 4444
+  p2pHost: 0.0.0.0
+  ipfsPeerEndpoint: /dns4/peer-sample/tcp/5001
+  ipfsOnlineMode: false
   resources:
     cpu: "2"
     memory: "2Gi"
