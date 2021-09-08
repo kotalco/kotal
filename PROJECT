@@ -23,4 +23,7 @@ resources:
 - group: ipfs
   kind: ClusterPeer
   version: v1alpha1
+- group: polkadot
+  kind: Node
+  version: v1alpha1
 version: "2"

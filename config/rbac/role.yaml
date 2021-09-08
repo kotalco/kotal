@@ -207,3 +207,23 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - polkadot.kotal.io
+  resources:
+  - nodes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - polkadot.kotal.io
+  resources:
+  - nodes/status
+  verbs:
+  - get
+  - patch
+  - update
