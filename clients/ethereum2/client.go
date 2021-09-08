@@ -4,13 +4,13 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
-	"github.com/kotalco/kotal/controllers/shared"
+	"github.com/kotalco/kotal/clients"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // Ethereum2Client is Ethereum 2.0 beacon node or validator client
 type Ethereum2Client interface {
-	shared.Client
+	clients.Interface
 }
 
 // NewClient creates new ethereum 2.0 beacon node or validator client
