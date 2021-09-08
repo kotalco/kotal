@@ -6,8 +6,8 @@ import (
 
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
-	// Foo is an example field of Node. Edit Node_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Network is the polkadot network/chain to join
+	Network string `json:"network"`
 }
 
 // NodeStatus defines the observed state of Node

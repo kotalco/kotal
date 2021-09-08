@@ -32,9 +32,11 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
-              foo:
-                description: Foo is an example field of Node. Edit Node_types.go to remove/update
+              network:
+                description: Network is the polkadot network/chain to join
                 type: string
+            required:
+            - network
             type: object
           status:
             description: NodeStatus defines the observed state of Node
