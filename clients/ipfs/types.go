@@ -1,4 +1,4 @@
-package controllers
+package ipfs
 
 const (
 	// EnvIPFSPath is the environment variable used for go-ipfs path
