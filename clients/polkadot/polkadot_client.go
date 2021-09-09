@@ -4,6 +4,7 @@ import (
 	"os"
 
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // PolkadotClient is parity Polkadot client
@@ -40,6 +41,7 @@ func (c *PolkadotClient) Args() (args []string) {
 
 	node := c.node
 
+	args = append(args, PolkadotArgBasePath, shared.PathData(c.HomeDir()))
 	args = append(args, PolkadotArgChain, node.Spec.Network)
 
 	return
