@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"github.com/kotalco/kotal/apis/shared"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -8,6 +9,8 @@ import (
 type NodeSpec struct {
 	// Network is the polkadot network/chain to join
 	Network string `json:"network"`
+	// Resources is node compute and storage resources
+	shared.Resources `json:"resources,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
