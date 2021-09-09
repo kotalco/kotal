@@ -38,7 +38,9 @@ func (c *PolkadotClient) Command() []string {
 // Args returns go-ipfs args
 func (c *PolkadotClient) Args() (args []string) {
 
-	_ = c.node
+	node := c.node
+
+	args = append(args, PolkadotArgChain, node.Spec.Network)
 
 	return
 }
