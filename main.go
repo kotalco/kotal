@@ -167,6 +167,7 @@ func main() {
 			os.Exit(1)
 		}
 	}
+
 	if err = (&polkadotcontroller.NodeReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("Node"),
@@ -174,6 +175,12 @@ func main() {
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Node")
 		os.Exit(1)
+	}
+	if enableWebhooks {
+		if err = (&polkadotv1alpha1.Node{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Node")
+			os.Exit(1)
+		}
 	}
 	// +kubebuilder:scaffold:builder
 

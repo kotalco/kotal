@@ -34,6 +34,11 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	// default the node if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		node.Default()
+	}
+
 	r.updateLabels(&node)
 
 	if err = r.reconcilePVC(ctx, &node); err != nil {
