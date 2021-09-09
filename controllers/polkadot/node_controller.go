@@ -116,6 +116,16 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 								MountPath: shared.PathData(homeDir),
 							},
 						},
+						Resources: corev1.ResourceRequirements{
+							Requests: map[corev1.ResourceName]resource.Quantity{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPU),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.Memory),
+							},
+							Limits: map[corev1.ResourceName]resource.Quantity{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.MemoryLimit),
+							},
+						},
 					},
 				},
 				Volumes: []corev1.Volume{
@@ -160,8 +170,7 @@ func (r *NodeReconciler) reconcilePVC(ctx context.Context, node *polkadotv1alpha
 // specPVC updates ipfs peer persistent volume claim
 func (r *NodeReconciler) specPVC(node *polkadotv1alpha1.Node, pvc *corev1.PersistentVolumeClaim) {
 	request := corev1.ResourceList{
-		// TODO: update with resources storage
-		corev1.ResourceStorage: resource.MustParse("80Gi"),
+		corev1.ResourceStorage: resource.MustParse(node.Spec.Storage),
 	}
 
 	// spec is immutable after creation except resources.requests for bound claims
@@ -178,7 +187,7 @@ func (r *NodeReconciler) specPVC(node *polkadotv1alpha1.Node, pvc *corev1.Persis
 		Resources: corev1.ResourceRequirements{
 			Requests: request,
 		},
-		// TODO: update with storage class
+		StorageClassName: node.Spec.StorageClass,
 	}
 }
 
