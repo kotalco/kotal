@@ -75,7 +75,7 @@ kind: docker-build load deploy
 
 # load image into minikube registry
 minikube-load:
-	minikube cache add ${IMG}
+	minikube image load ${IMG}
 	minikube cache reload
 
 # Build the docker image
