@@ -145,6 +145,7 @@ var _ = Describe("IPFS peer validation", func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.Peer.Default()
+					cc.NewPeer.Default()
 					err := cc.NewPeer.ValidateUpdate(cc.Peer)
 
 					// all test cases has validation errors

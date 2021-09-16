@@ -47,18 +47,14 @@ func (r *Resources) validate() (errors field.ErrorList) {
 
 	memory := r.Memory
 	memoryLimit := r.MemoryLimit
+	memoryQuantity := resource.MustParse(memory)
+	memoryLimitQuantity := resource.MustParse(memoryLimit)
 
-	// validate memory and memory limit can't be equal
-	if memory != memoryLimit {
-		// validate memoryLimit can't be less than memory request
-		memoryQuantity := resource.MustParse(memory)
-		memoryLimitQuantity := resource.MustParse(memoryLimit)
-
-		if memoryLimitQuantity.Cmp(memoryQuantity) == -1 {
-			msg := fmt.Sprintf("must be greater than memory %s", string(memory))
-			err := field.Invalid(field.NewPath("spec").Child("resources").Child("memoryLimit"), memoryLimit, msg)
-			errors = append(errors, err)
-		}
+	// validate memory limit must be greater than memory
+	if memoryLimitQuantity.Cmp(memoryQuantity) != 1 {
+		msg := fmt.Sprintf("must be greater than memory %s", string(memory))
+		err := field.Invalid(field.NewPath("spec").Child("resources").Child("memoryLimit"), memoryLimit, msg)
+		errors = append(errors, err)
 	}
 
 	return
@@ -79,10 +75,17 @@ func (r *Resources) ValidateUpdate(oldResources *Resources) (errors field.ErrorL
 	errors = append(errors, r.validate()...)
 
 	// requested storage can't be decreased
-	if oldStorage < r.Storage {
-		msg := fmt.Sprintf("must be greater than or equal to old storage %s", oldStorage)
-		err := field.Invalid(field.NewPath("spec").Child("resources").Child("storage"), r.Storage, msg)
-		errors = append(errors, err)
+	if oldStorage != r.Storage {
+
+		oldStorageQuantity := resource.MustParse(oldStorage)
+		newStorageQuantity := resource.MustParse(r.Storage)
+
+		if newStorageQuantity.Cmp(oldStorageQuantity) == -1 {
+			msg := fmt.Sprintf("must be greater than or equal to old storage %s", oldStorage)
+			err := field.Invalid(field.NewPath("spec").Child("resources").Child("storage"), r.Storage, msg)
+			errors = append(errors, err)
+		}
+
 	}
 
 	// storage class is immutable

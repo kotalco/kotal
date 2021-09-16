@@ -603,6 +603,7 @@ var _ = Describe("Ethereum node validation", func() {
 		},
 	}
 
+	// TODO: move .resources validation to shared resources package
 	updateCases := []struct {
 		Title   string
 		OldNode *Node
@@ -635,6 +636,115 @@ var _ = Describe("Ethereum node validation", func() {
 					Field:    "spec.network",
 					BadValue: RopstenNetwork,
 					Detail:   "field is immutable",
+				},
+			},
+		},
+		{
+			Title: "node #2",
+			OldNode: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-2",
+				},
+				Spec: NodeSpec{
+					Client:  BesuClient,
+					Network: RopstenNetwork,
+					Resources: shared.Resources{
+						Storage: "20Gi",
+					},
+				},
+			},
+			NewNode: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-2",
+				},
+				Spec: NodeSpec{
+					Client:  BesuClient,
+					Network: RopstenNetwork,
+					Resources: shared.Resources{
+						Storage: "10Gi",
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.resources.storage",
+					BadValue: "10Gi",
+					Detail:   "must be greater than or equal to old storage 20Gi",
+				},
+			},
+		},
+		{
+			Title: "node #3",
+			OldNode: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-3",
+				},
+				Spec: NodeSpec{
+					Client:  BesuClient,
+					Network: RopstenNetwork,
+					Resources: shared.Resources{
+						CPU:      "1",
+						CPULimit: "2",
+					},
+				},
+			},
+			NewNode: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-3",
+				},
+				Spec: NodeSpec{
+					Client:  BesuClient,
+					Network: RopstenNetwork,
+					Resources: shared.Resources{
+						CPU:      "2",
+						CPULimit: "1",
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.resources.cpuLimit",
+					BadValue: "1",
+					Detail:   "must be greater than or equal to cpu 2",
+				},
+			},
+		},
+		{
+			Title: "node #4",
+			OldNode: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-4",
+				},
+				Spec: NodeSpec{
+					Client:  BesuClient,
+					Network: RopstenNetwork,
+					Resources: shared.Resources{
+						Memory:      "1Gi",
+						MemoryLimit: "2Gi",
+					},
+				},
+			},
+			NewNode: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-4",
+				},
+				Spec: NodeSpec{
+					Client:  BesuClient,
+					Network: RopstenNetwork,
+					Resources: shared.Resources{
+						Memory:      "1Gi",
+						MemoryLimit: "1Gi",
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.resources.memoryLimit",
+					BadValue: "1Gi",
+					Detail:   "must be greater than memory 1Gi",
 				},
 			},
 		},
