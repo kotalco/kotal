@@ -5,10 +5,24 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// SynchronizationMode is the blockchain synchronization mode
+// +kubebuilder:validation:Enum=fast;full
+type SynchronizationMode string
+
+const (
+	//FastSynchronization is the fast synchronization mode
+	FastSynchronization SynchronizationMode = "fast"
+
+	//FullSynchronization is the full archival synchronization mode
+	FullSynchronization SynchronizationMode = "full"
+)
+
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Network is the polkadot network/chain to join
 	Network string `json:"network"`
+	// SyncMode is the blockchain synchronization mode
+	SyncMode SynchronizationMode `json:"syncMode,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

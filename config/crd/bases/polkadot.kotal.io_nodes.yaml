@@ -62,6 +62,12 @@ spec:
                     description: StorageClass is the volume storage class
                     type: string
                 type: object
+              syncMode:
+                description: SyncMode is the blockchain synchronization mode
+                enum:
+                - fast
+                - full
+                type: string
             required:
             - network
             type: object
