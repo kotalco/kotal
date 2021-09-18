@@ -1,6 +1,7 @@
 package polkadot
 
 import (
+	"fmt"
 	"os"
 
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
@@ -45,7 +46,11 @@ func (c *PolkadotClient) Args() (args []string) {
 	args = append(args, PolkadotArgChain, node.Spec.Network)
 	args = append(args, PolkadotArgSync, string(node.Spec.SyncMode))
 	args = append(args, PolkadotArgLogging, string(node.Spec.Logging))
-	args = append(args, PolkadotArgRPCExternal)
+
+	if node.Spec.RPC {
+		args = append(args, PolkadotArgRPCExternal)
+		args = append(args, PolkadotArgRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort))
+	}
 
 	return
 }

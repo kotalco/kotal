@@ -11,4 +11,6 @@ const (
 	PolkadotArgLogging = "--log"
 	// PolkadotArgRPCExternal is argument used to enable rpc server on all hosts
 	PolkadotArgRPCExternal = "--rpc-external"
+	// PolkadotArgRPCPort is argument used to set JSON-RPC server port
+	PolkadotArgRPCPort = "--rpc-port"
 )
