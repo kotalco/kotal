@@ -15,6 +15,7 @@ var _ = Describe("Polkadot client arguments", func() {
 				Network:  "kusama",
 				SyncMode: "fast",
 				Logging:  "warn",
+				RPC:      true,
 			},
 		}
 
@@ -29,6 +30,7 @@ var _ = Describe("Polkadot client arguments", func() {
 			"kusama",
 			PolkadotArgLogging,
 			string(polkadotv1alpha1.WarnLogs),
+			PolkadotArgRPCExternal,
 		}))
 
 	})

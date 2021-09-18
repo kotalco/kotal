@@ -9,4 +9,6 @@ const (
 	PolkadotArgSync = "--sync"
 	// PolkadotArgLogging is argument to set logging verbosity
 	PolkadotArgLogging = "--log"
+	// PolkadotArgRPCExternal is argument used to enable rpc server on all hosts
+	PolkadotArgRPCExternal = "--rpc-external"
 )
