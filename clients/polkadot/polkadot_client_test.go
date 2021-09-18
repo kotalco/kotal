@@ -18,6 +18,7 @@ var _ = Describe("Polkadot client arguments", func() {
 				RPC:      true,
 				RPCPort:  6789,
 				WS:       true,
+				WSPort:   3456,
 			},
 		}
 
@@ -36,6 +37,8 @@ var _ = Describe("Polkadot client arguments", func() {
 			PolkadotArgRPCPort,
 			"6789",
 			PolkadotArgWSExternal,
+			PolkadotArgWSPort,
+			"3456",
 		}))
 
 	})

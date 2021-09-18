@@ -54,6 +54,7 @@ func (c *PolkadotClient) Args() (args []string) {
 
 	if node.Spec.WS {
 		args = append(args, PolkadotArgWSExternal)
+		args = append(args, PolkadotArgWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
 	}
 
 	return
