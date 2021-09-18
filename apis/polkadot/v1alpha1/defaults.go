@@ -1,5 +1,10 @@
 package v1alpha1
 
+const (
+	// DefaultSyncMode is the default blockchain sync mode
+	DefaultSyncMode = FullSynchronization
+)
+
 // Resources
 const (
 	// DefaultNodeCPURequest is the cpu requested by polkadot node

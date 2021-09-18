@@ -36,4 +36,8 @@ func (r *Node) Default() {
 
 	r.DefaultNodeResources()
 
+	if r.Spec.SyncMode == "" {
+		r.Spec.SyncMode = DefaultSyncMode
+	}
+
 }
