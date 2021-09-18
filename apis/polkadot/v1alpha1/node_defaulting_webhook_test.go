@@ -13,7 +13,9 @@ var _ = Describe("Polkadot node defaulting", func() {
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "my-node",
 			},
-			Spec: NodeSpec{},
+			Spec: NodeSpec{
+				RPC: true,
+			},
 		}
 
 		node.Default()
@@ -25,6 +27,7 @@ var _ = Describe("Polkadot node defaulting", func() {
 		Expect(node.Spec.Resources.Storage).To(Equal(DefaultNodeStorageRequest))
 		Expect(node.Spec.SyncMode).To(Equal(DefaultSyncMode))
 		Expect(node.Spec.Logging).To(Equal(DefaultLoggingVerbosity))
+		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))
 
 	})
 })

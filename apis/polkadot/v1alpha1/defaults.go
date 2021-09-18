@@ -5,6 +5,8 @@ const (
 	DefaultSyncMode = FullSynchronization
 	// DefaultLoggingVerbosity is the default node logging verbosity
 	DefaultLoggingVerbosity = InfoLogs
+	// DefaultRPCPort is the default JSON-RPC server port
+	DefaultRPCPort uint = 9933
 )
 
 // Resources
