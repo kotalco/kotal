@@ -43,6 +43,7 @@ func (c *PolkadotClient) Args() (args []string) {
 
 	args = append(args, PolkadotArgBasePath, shared.PathData(c.HomeDir()))
 	args = append(args, PolkadotArgSync, string(node.Spec.SyncMode))
+	args = append(args, PolkadotArgLogging, string(node.Spec.Logging))
 	args = append(args, PolkadotArgChain, node.Spec.Network)
 
 	return

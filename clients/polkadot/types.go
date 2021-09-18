@@ -7,4 +7,6 @@ const (
 	PolkadotArgBasePath = "--base-path"
 	// PolkadotArgSync is argument to set blockchain sync mode
 	PolkadotArgSync = "--sync"
+	// PolkadotArgLogging is argument to set logging verbosity
+	PolkadotArgLogging = "--log"
 )
