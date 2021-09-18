@@ -15,6 +15,7 @@ var _ = Describe("Polkadot node defaulting", func() {
 			},
 			Spec: NodeSpec{
 				RPC: true,
+				WS:  true,
 			},
 		}
 
@@ -28,6 +29,7 @@ var _ = Describe("Polkadot node defaulting", func() {
 		Expect(node.Spec.SyncMode).To(Equal(DefaultSyncMode))
 		Expect(node.Spec.Logging).To(Equal(DefaultLoggingVerbosity))
 		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))
+		Expect(node.Spec.WSPort).To(Equal(DefaultWSPort))
 
 	})
 })

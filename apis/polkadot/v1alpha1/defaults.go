@@ -7,6 +7,8 @@ const (
 	DefaultLoggingVerbosity = InfoLogs
 	// DefaultRPCPort is the default JSON-RPC server port
 	DefaultRPCPort uint = 9933
+	// DefaultWSPort is the default websocket server port
+	DefaultWSPort uint = 9944
 )
 
 // Resources

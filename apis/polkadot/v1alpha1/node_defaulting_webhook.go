@@ -50,4 +50,10 @@ func (r *Node) Default() {
 		}
 	}
 
+	if r.Spec.WS {
+		if r.Spec.WSPort == 0 {
+			r.Spec.WSPort = DefaultWSPort
+		}
+	}
+
 }
