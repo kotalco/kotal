@@ -13,4 +13,6 @@ const (
 	PolkadotArgRPCExternal = "--rpc-external"
 	// PolkadotArgRPCPort is argument used to set JSON-RPC server port
 	PolkadotArgRPCPort = "--rpc-port"
+	// PolkadotArgWSExternal is argument used to enable websocket server
+	PolkadotArgWSExternal = "--ws-external"
 )

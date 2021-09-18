@@ -52,6 +52,10 @@ func (c *PolkadotClient) Args() (args []string) {
 		args = append(args, PolkadotArgRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort))
 	}
 
+	if node.Spec.WS {
+		args = append(args, PolkadotArgWSExternal)
+	}
+
 	return
 }
 
