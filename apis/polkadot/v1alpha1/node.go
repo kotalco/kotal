@@ -44,6 +44,8 @@ type NodeSpec struct {
 	Logging VerbosityLevel `json:"logging,omitempty"`
 	// RPC enables JSON-RPC server
 	RPC bool `json:"rpc,omitempty"`
+	// RPCPort is JSON-RPC server port
+	RPCPort uint `json:"rpcPort,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

@@ -74,6 +74,9 @@ spec:
               rpc:
                 description: RPC enables JSON-RPC server
                 type: boolean
+              rpcPort:
+                description: RPCPort is JSON-RPC server port
+                type: integer
               syncMode:
                 description: SyncMode is the blockchain synchronization mode
                 enum:
