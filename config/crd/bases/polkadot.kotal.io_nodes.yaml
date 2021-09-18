@@ -71,6 +71,9 @@ spec:
                     description: StorageClass is the volume storage class
                     type: string
                 type: object
+              rpc:
+                description: RPC enables JSON-RPC server
+                type: boolean
               syncMode:
                 description: SyncMode is the blockchain synchronization mode
                 enum:

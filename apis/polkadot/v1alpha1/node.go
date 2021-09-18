@@ -42,6 +42,8 @@ type NodeSpec struct {
 	SyncMode SynchronizationMode `json:"syncMode,omitempty"`
 	// Logging is logging verboisty level
 	Logging VerbosityLevel `json:"logging,omitempty"`
+	// RPC enables JSON-RPC server
+	RPC bool `json:"rpc,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
