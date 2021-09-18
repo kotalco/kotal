@@ -83,6 +83,9 @@ spec:
                 - fast
                 - full
                 type: string
+              ws:
+                description: WS enables Websocket server
+                type: boolean
             required:
             - network
             type: object
