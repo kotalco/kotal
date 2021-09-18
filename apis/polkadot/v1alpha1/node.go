@@ -48,6 +48,8 @@ type NodeSpec struct {
 	RPCPort uint `json:"rpcPort,omitempty"`
 	// WS enables Websocket server
 	WS bool `json:"ws,omitempty"`
+	// WSPort is Websocket server port
+	WSPort uint `json:"wsPort,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

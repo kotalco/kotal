@@ -86,6 +86,9 @@ spec:
               ws:
                 description: WS enables Websocket server
                 type: boolean
+              wsPort:
+                description: WSPort is Websocket server port
+                type: integer
             required:
             - network
             type: object
