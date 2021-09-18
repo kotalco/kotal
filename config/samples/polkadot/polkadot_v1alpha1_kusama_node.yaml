@@ -1,0 +1,15 @@
+apiVersion: polkadot.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: node-sample
+spec:
+  network: kusama
+  logging: info
+  syncMode: full
+  rpc: true
+  rpcPort: 9933
+  ws: true
+  wsPort: 9944
+  resources:
+    cpu: "1"
+    memory: "1Gi"
