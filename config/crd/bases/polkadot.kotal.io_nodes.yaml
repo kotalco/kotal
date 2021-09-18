@@ -32,6 +32,15 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
+              logging:
+                description: Logging is logging verboisty level
+                enum:
+                - error
+                - warn
+                - info
+                - debug
+                - trace
+                type: string
               network:
                 description: Network is the polkadot network/chain to join
                 type: string

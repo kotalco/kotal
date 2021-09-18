@@ -17,12 +17,31 @@ const (
 	FullSynchronization SynchronizationMode = "full"
 )
 
+// VerbosityLevel is logging verbosity levels
+// +kubebuilder:validation:Enum=error;warn;info;debug;trace
+type VerbosityLevel string
+
+const (
+	// ErrorLogs outputs only error logs
+	ErrorLogs VerbosityLevel = "error"
+	// WarnLogs outputs only warning logs
+	WarnLogs VerbosityLevel = "warn"
+	// InfoLogs outputs only informational logs
+	InfoLogs VerbosityLevel = "info"
+	// DebugLogs outputs only debugging logs
+	DebugLogs VerbosityLevel = "debug"
+	// TraceLogs outputs only tracing logs
+	TraceLogs VerbosityLevel = "trace"
+)
+
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Network is the polkadot network/chain to join
 	Network string `json:"network"`
 	// SyncMode is the blockchain synchronization mode
 	SyncMode SynchronizationMode `json:"syncMode,omitempty"`
+	// Logging is logging verboisty level
+	Logging VerbosityLevel `json:"logging,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
