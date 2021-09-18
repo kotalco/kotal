@@ -3,6 +3,8 @@ package v1alpha1
 const (
 	// DefaultSyncMode is the default blockchain sync mode
 	DefaultSyncMode = FullSynchronization
+	// DefaultLoggingVerbosity is the default node logging verbosity
+	DefaultLoggingVerbosity = InfoLogs
 )
 
 // Resources

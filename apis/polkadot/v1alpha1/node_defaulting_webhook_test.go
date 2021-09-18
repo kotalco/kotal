@@ -24,6 +24,7 @@ var _ = Describe("Polkadot node defaulting", func() {
 		Expect(node.Spec.Resources.MemoryLimit).To(Equal(DefaultNodeMemoryLimit))
 		Expect(node.Spec.Resources.Storage).To(Equal(DefaultNodeStorageRequest))
 		Expect(node.Spec.SyncMode).To(Equal(DefaultSyncMode))
+		Expect(node.Spec.Logging).To(Equal(DefaultLoggingVerbosity))
 
 	})
 })
