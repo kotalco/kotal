@@ -95,6 +95,32 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *polkado
 	return err
 }
 
+// nodeVolumes returns node volumes
+func (r *NodeReconciler) nodeVolumes(node *polkadotv1alpha1.Node) (volumes []corev1.Volume) {
+	dataVolume := corev1.Volume{
+		Name: "data",
+		VolumeSource: corev1.VolumeSource{
+			PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+				ClaimName: node.Name,
+			},
+		},
+	}
+	volumes = append(volumes, dataVolume)
+
+	return
+}
+
+// nodeVolumeMounts returns node volume mounts
+func (r NodeReconciler) nodeVolumeMounts(node *polkadotv1alpha1.Node, homeDir string) (mounts []corev1.VolumeMount) {
+	dataMount := corev1.VolumeMount{
+		Name:      "data",
+		MountPath: shared.PathData(homeDir),
+	}
+	mounts = append(mounts, dataMount)
+
+	return
+}
+
 // specStatefulSet updates node statefulset spec
 func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv1.StatefulSet, image, homeDir string, args []string) error {
 
@@ -112,15 +138,10 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 			Spec: corev1.PodSpec{
 				Containers: []corev1.Container{
 					{
-						Name:  "node",
-						Image: image,
-						Args:  args,
-						VolumeMounts: []corev1.VolumeMount{
-							{
-								Name:      "data",
-								MountPath: shared.PathData(homeDir),
-							},
-						},
+						Name:         "node",
+						Image:        image,
+						Args:         args,
+						VolumeMounts: r.nodeVolumeMounts(node, homeDir),
 						Resources: corev1.ResourceRequirements{
 							Requests: map[corev1.ResourceName]resource.Quantity{
 								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPU),
@@ -133,16 +154,7 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 						},
 					},
 				},
-				Volumes: []corev1.Volume{
-					{
-						Name: "data",
-						VolumeSource: corev1.VolumeSource{
-							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-								ClaimName: node.Name,
-							},
-						},
-					},
-				},
+				Volumes: r.nodeVolumes(node),
 			},
 		},
 	}
