@@ -38,6 +38,8 @@ const (
 type NodeSpec struct {
 	// Network is the polkadot network/chain to join
 	Network string `json:"network"`
+	// NodePrivatekeySecretName is the secret name holding node Ed25519 private key
+	NodePrivatekeySecretName string `json:"nodePrivatekeySecretName,omitempty"`
 	// SyncMode is the blockchain synchronization mode
 	SyncMode SynchronizationMode `json:"syncMode,omitempty"`
 	// Logging is logging verboisty level

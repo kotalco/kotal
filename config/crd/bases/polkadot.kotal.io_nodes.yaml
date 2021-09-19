@@ -44,6 +44,9 @@ spec:
               network:
                 description: Network is the polkadot network/chain to join
                 type: string
+              nodePrivatekeySecretName:
+                description: NodePrivatekeySecretName is the secret name holding node Ed25519 private key
+                type: string
               resources:
                 description: Resources is node compute and storage resources
                 properties:
