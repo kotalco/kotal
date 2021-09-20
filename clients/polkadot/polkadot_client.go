@@ -62,6 +62,10 @@ func (c *PolkadotClient) Args() (args []string) {
 		args = append(args, PolkadotArgNodeKeyFile, fmt.Sprintf("%s/kotal_nodekey", shared.PathData(c.HomeDir())))
 	}
 
+	if node.Spec.Validator {
+		args = append(args, PolkadotArgValidator)
+	}
+
 	return
 }
 

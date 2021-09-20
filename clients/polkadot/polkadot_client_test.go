@@ -21,6 +21,7 @@ var _ = Describe("Polkadot client arguments", func() {
 			Spec: polkadotv1alpha1.NodeSpec{
 				Network:                  "kusama",
 				NodePrivatekeySecretName: "kusama-node-key",
+				Validator:                true,
 				SyncMode:                 "fast",
 				Logging:                  "warn",
 				RPC:                      true,
@@ -39,6 +40,7 @@ var _ = Describe("Polkadot client arguments", func() {
 			shared.PathData(client.HomeDir()),
 			PolkadotArgChain,
 			"kusama",
+			PolkadotArgValidator,
 			PolkadotArgLogging,
 			string(polkadotv1alpha1.WarnLogs),
 			PolkadotArgRPCExternal,

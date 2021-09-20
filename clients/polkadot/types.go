@@ -21,4 +21,6 @@ const (
 	PolkadotArgNodeKeyFile = "--node-key-file"
 	// PolkadotArgNodeKeyType is argument used to set node key type
 	PolkadotArgNodeKeyType = "--node-key-type"
+	// PolkadotArgValidator is argument used to enable validator mode
+	PolkadotArgValidator = "--validator"
 )
