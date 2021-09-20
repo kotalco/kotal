@@ -57,6 +57,11 @@ func (c *PolkadotClient) Args() (args []string) {
 		args = append(args, PolkadotArgWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
 	}
 
+	if node.Spec.NodePrivatekeySecretName != "" {
+		args = append(args, PolkadotArgNodeKeyType, "Ed25519")
+		args = append(args, PolkadotArgNodeKeyFile, fmt.Sprintf("%s/kotal_nodekey", shared.PathData(c.HomeDir())))
+	}
+
 	return
 }
 
