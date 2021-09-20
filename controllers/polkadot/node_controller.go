@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"context"
+	_ "embed"
+	"fmt"
 
 	"github.com/go-logr/logr"
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
@@ -23,6 +25,11 @@ type NodeReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+var (
+	//go:embed convert_node_private_key.sh
+	convertNodePrivateKeyScript string
+)
+
 // +kubebuilder:rbac:groups=polkadot.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=polkadot.kotal.io,resources=nodes/status,verbs=get;update;patch
 
@@ -40,6 +47,10 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	}
 
 	r.updateLabels(&node)
+
+	if err = r.reconcileConfigmap(ctx, &node); err != nil {
+		return
+	}
 
 	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return
@@ -65,6 +76,40 @@ func (r *NodeReconciler) updateLabels(node *polkadotv1alpha1.Node) {
 	node.Labels["app.kubernetes.io/managed-by"] = "kotal"
 	node.Labels["app.kubernetes.io/created-by"] = "polkadot-node-controller"
 
+}
+
+// reconcileConfigmap reconciles polkadot node configmap
+func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *polkadotv1alpha1.Node) error {
+	config := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, config, func() error {
+		if err := ctrl.SetControllerReference(node, config, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specConfigmap(node, config)
+
+		return nil
+	})
+
+	return err
+
+}
+
+// specConfigmap updates polkadot node configmap spec
+func (r *NodeReconciler) specConfigmap(node *polkadotv1alpha1.Node, config *corev1.ConfigMap) {
+	config.ObjectMeta.Labels = node.Labels
+
+	if config.Data == nil {
+		config.Data = make(map[string]string)
+	}
+
+	config.Data["convert_node_private_key.sh"] = convertNodePrivateKeyScript
 }
 
 // reconcileStatefulset reconciles node statefulset
@@ -107,6 +152,36 @@ func (r *NodeReconciler) nodeVolumes(node *polkadotv1alpha1.Node) (volumes []cor
 	}
 	volumes = append(volumes, dataVolume)
 
+	configVolume := corev1.Volume{
+		Name: "config",
+		VolumeSource: corev1.VolumeSource{
+			ConfigMap: &corev1.ConfigMapVolumeSource{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Name,
+				},
+			},
+		},
+	}
+	volumes = append(volumes, configVolume)
+
+	if node.Spec.NodePrivatekeySecretName != "" {
+		secretVolume := corev1.Volume{
+			Name: "secret",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: node.Spec.NodePrivatekeySecretName,
+					Items: []corev1.KeyToPath{
+						{
+							Key:  "key",
+							Path: "nodekey",
+						},
+					},
+				},
+			},
+		}
+		volumes = append(volumes, secretVolume)
+	}
+
 	return
 }
 
@@ -118,6 +193,19 @@ func (r NodeReconciler) nodeVolumeMounts(node *polkadotv1alpha1.Node, homeDir st
 	}
 	mounts = append(mounts, dataMount)
 
+	configMount := corev1.VolumeMount{
+		Name:      "config",
+		MountPath: shared.PathConfig(homeDir),
+	}
+	mounts = append(mounts, configMount)
+
+	if node.Spec.NodePrivatekeySecretName != "" {
+		secretMount := corev1.VolumeMount{
+			Name:      "secret",
+			MountPath: shared.PathSecrets(homeDir),
+		}
+		mounts = append(mounts, secretMount)
+	}
 	return
 }
 
@@ -125,6 +213,29 @@ func (r NodeReconciler) nodeVolumeMounts(node *polkadotv1alpha1.Node, homeDir st
 func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv1.StatefulSet, image, homeDir string, args []string) error {
 
 	sts.ObjectMeta.Labels = node.Labels
+
+	var initContainers []corev1.Container
+
+	if node.Spec.NodePrivatekeySecretName != "" {
+		convertEnodePrivatekey := corev1.Container{
+			Name:  "convert-node-private-key",
+			Image: "busybox",
+			Env: []corev1.EnvVar{
+				{
+					Name:  EnvDataPath,
+					Value: shared.PathData(homeDir),
+				},
+				{
+					Name:  EnvSecretsPath,
+					Value: shared.PathSecrets(homeDir),
+				},
+			},
+			Command:      []string{"/bin/sh"},
+			Args:         []string{fmt.Sprintf("%s/convert_node_private_key.sh", shared.PathConfig(homeDir))},
+			VolumeMounts: r.nodeVolumeMounts(node, homeDir),
+		}
+		initContainers = append(initContainers, convertEnodePrivatekey)
+	}
 
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
@@ -136,6 +247,7 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 				Labels: node.Labels,
 			},
 			Spec: corev1.PodSpec{
+				InitContainers: initContainers,
 				Containers: []corev1.Container{
 					{
 						Name:         "node",
