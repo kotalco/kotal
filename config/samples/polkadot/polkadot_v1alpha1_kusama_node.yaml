@@ -16,6 +16,7 @@ spec:
   nodePrivatekeySecretName: "polkadot-node-key"
   logging: info
   syncMode: full
+  validator: true
   rpc: true
   rpcPort: 9933
   ws: true
