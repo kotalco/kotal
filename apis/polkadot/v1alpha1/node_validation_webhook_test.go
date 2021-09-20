@@ -17,7 +17,50 @@ var _ = Describe("Polkadot node validation", func() {
 		Title  string
 		Node   *Node
 		Errors field.ErrorList
-	}{}
+	}{
+		{
+			Title: "validator node with rpc enabled",
+			Node: &Node{
+				ObjectMeta: v1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					Network:   "kusama",
+					Validator: true,
+					RPC:       true,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.rpc",
+					BadValue: true,
+					Detail:   "must be false if node is validator",
+				},
+			},
+		},
+		{
+			Title: "validator node with ws enabled",
+			Node: &Node{
+				ObjectMeta: v1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					Network:   "kusama",
+					Validator: true,
+					WS:        true,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.ws",
+					BadValue: true,
+					Detail:   "must be false if node is validator",
+				},
+			},
+		},
+	}
 
 	updateCases := []struct {
 		Title   string
@@ -49,6 +92,66 @@ var _ = Describe("Polkadot node validation", func() {
 					Field:    "spec.network",
 					BadValue: "polkadot",
 					Detail:   "field is immutable",
+				},
+			},
+		},
+		{
+			Title: "enabling rpc for validator node",
+			OldNode: &Node{
+				ObjectMeta: v1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					Network:   "kusama",
+					Validator: true,
+				},
+			},
+			NewNode: &Node{
+				ObjectMeta: v1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					Network:   "kusama",
+					Validator: true,
+					RPC:       true,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.rpc",
+					BadValue: true,
+					Detail:   "must be false if node is validator",
+				},
+			},
+		},
+		{
+			Title: "enabling ws for validator node",
+			OldNode: &Node{
+				ObjectMeta: v1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					Network:   "kusama",
+					Validator: true,
+				},
+			},
+			NewNode: &Node{
+				ObjectMeta: v1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					Network:   "kusama",
+					Validator: true,
+					WS:        true,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.ws",
+					BadValue: true,
+					Detail:   "must be false if node is validator",
 				},
 			},
 		},

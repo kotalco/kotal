@@ -12,11 +12,38 @@ import (
 
 var _ webhook.Validator = &Node{}
 
+// validate shared validation logic for create and update resources
+func (r *Node) validate() field.ErrorList {
+	var nodeErrors field.ErrorList
+
+	// validate rpc and ws can't be enabled if node is validator
+	if r.Spec.Validator {
+		if r.Spec.RPC {
+			err := field.Invalid(field.NewPath("spec").Child("rpc"), r.Spec.RPC, "must be false if node is validator")
+			nodeErrors = append(nodeErrors, err)
+		}
+		if r.Spec.WS {
+			err := field.Invalid(field.NewPath("spec").Child("ws"), r.Spec.WS, "must be false if node is validator")
+			nodeErrors = append(nodeErrors, err)
+		}
+	}
+
+	return nodeErrors
+}
+
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (r *Node) ValidateCreate() error {
+	var allErrors field.ErrorList
+
 	nodelog.Info("validate create", "name", r.Name)
 
-	return nil
+	allErrors = append(allErrors, r.validate()...)
+
+	if len(allErrors) == 0 {
+		return nil
+	}
+
+	return apierrors.NewInvalid(schema.GroupKind{}, r.Name, allErrors)
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
@@ -25,6 +52,8 @@ func (r *Node) ValidateUpdate(old runtime.Object) error {
 	oldNode := old.(*Node)
 
 	nodelog.Info("validate update", "name", r.Name)
+
+	allErrors = append(allErrors, r.validate()...)
 
 	if r.Spec.Network != oldNode.Spec.Network {
 		err := field.Invalid(field.NewPath("spec").Child("network"), r.Spec.Network, "field is immutable")
