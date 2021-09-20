@@ -40,6 +40,8 @@ type NodeSpec struct {
 	Network string `json:"network"`
 	// NodePrivatekeySecretName is the secret name holding node Ed25519 private key
 	NodePrivatekeySecretName string `json:"nodePrivatekeySecretName,omitempty"`
+	// Validator enables validator mode
+	Validator bool `json:"validator,omitempty"`
 	// SyncMode is the blockchain synchronization mode
 	SyncMode SynchronizationMode `json:"syncMode,omitempty"`
 	// Logging is logging verboisty level

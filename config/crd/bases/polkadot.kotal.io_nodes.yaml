@@ -86,6 +86,9 @@ spec:
                 - fast
                 - full
                 type: string
+              validator:
+                description: Validator enables validator mode
+                type: boolean
               ws:
                 description: WS enables Websocket server
                 type: boolean
