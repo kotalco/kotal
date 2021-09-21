@@ -30,7 +30,9 @@ var _ = Describe("Polkadot client arguments", func() {
 				WSPort:                   3456,
 				Telemetry:                true,
 				TelemetryURL:             "wss://telemetry.kotal.io/submit/ 0",
+				Prometheus:               true,
 				// TODO: create test for node with telemetry disabled
+				// TODO: create test for node with prometheus disabled
 			},
 		}
 
@@ -58,6 +60,7 @@ var _ = Describe("Polkadot client arguments", func() {
 			fmt.Sprintf("%s/kotal_nodekey", shared.PathData(client.HomeDir())),
 			PolkadotArgTelemetryURL,
 			"wss://telemetry.kotal.io/submit/ 0",
+			PolkadotArgPrometheusExternal,
 		}))
 
 	})

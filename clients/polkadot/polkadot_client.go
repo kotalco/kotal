@@ -68,6 +68,13 @@ func (c *PolkadotClient) Args() (args []string) {
 		args = append(args, PolkadotArgNoTelemetry)
 	}
 
+	if node.Spec.Prometheus {
+		args = append(args, PolkadotArgPrometheusExternal)
+		// prometheus port
+	} else {
+		args = append(args, PolkadotArgNoPrometheus)
+	}
+
 	if node.Spec.Validator {
 		args = append(args, PolkadotArgValidator)
 	}

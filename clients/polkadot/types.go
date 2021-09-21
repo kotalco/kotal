@@ -27,4 +27,8 @@ const (
 	PolkadotArgNoTelemetry = "--no-telemetry"
 	// PolkadotArgTelemetryURL is argument used to connect to telemetry service
 	PolkadotArgTelemetryURL = "--telemetry-url"
+	// PolkadotArgNoPrometheus is argument used to disable prometheus exporter
+	PolkadotArgNoPrometheus = "--no-prometheus"
+	// PolkadotArgPrometheusExternal is argument used to enable prometheus exporter
+	PolkadotArgPrometheusExternal = "--prometheus-external"
 )
