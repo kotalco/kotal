@@ -54,6 +54,9 @@ spec:
               nodePrivatekeySecretName:
                 description: NodePrivatekeySecretName is the secret name holding node Ed25519 private key
                 type: string
+              prometheus:
+                description: Prometheus exposes a prometheus exporter endpoint.
+                type: boolean
               resources:
                 description: Resources is node compute and storage resources
                 properties:

@@ -50,6 +50,8 @@ type NodeSpec struct {
 	Telemetry bool `json:"telemetry,omitempty"`
 	// TelemetryURL is telemetry service URL
 	TelemetryURL string `json:"telemetryURL,omitempty"`
+	// Prometheus exposes a prometheus exporter endpoint.
+	Prometheus bool `json:"prometheus,omitempty"`
 	// RPC enables JSON-RPC server
 	RPC bool `json:"rpc,omitempty"`
 	// RPCPort is JSON-RPC server port
