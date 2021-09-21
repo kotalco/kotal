@@ -56,4 +56,8 @@ func (r *Node) Default() {
 		}
 	}
 
+	if r.Spec.Telemetry && r.Spec.TelemetryURL == "" {
+		r.Spec.TelemetryURL = DefaultTelemetryURL
+	}
+
 }

@@ -9,6 +9,8 @@ const (
 	DefaultRPCPort uint = 9933
 	// DefaultWSPort is the default websocket server port
 	DefaultWSPort uint = 9944
+	// DefaultTelemetryURL is the default telemetry service URL
+	DefaultTelemetryURL = "wss://telemetry.polkadot.io/submit/ 0"
 )
 
 // Resources

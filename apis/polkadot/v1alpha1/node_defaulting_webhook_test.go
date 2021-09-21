@@ -14,8 +14,9 @@ var _ = Describe("Polkadot node defaulting", func() {
 				Name: "my-node",
 			},
 			Spec: NodeSpec{
-				RPC: true,
-				WS:  true,
+				RPC:       true,
+				WS:        true,
+				Telemetry: true,
 			},
 		}
 
@@ -30,6 +31,7 @@ var _ = Describe("Polkadot node defaulting", func() {
 		Expect(node.Spec.Logging).To(Equal(DefaultLoggingVerbosity))
 		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))
 		Expect(node.Spec.WSPort).To(Equal(DefaultWSPort))
+		Expect(node.Spec.TelemetryURL).To(Equal(DefaultTelemetryURL))
 
 	})
 })
