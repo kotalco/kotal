@@ -63,7 +63,7 @@ func (c *PolkadotClient) Args() (args []string) {
 	}
 
 	if node.Spec.Telemetry {
-		// TODO: telemtry urls
+		args = append(args, PolkadotArgTelemetryURL, node.Spec.TelemetryURL)
 	} else {
 		args = append(args, PolkadotArgNoTelemetry)
 	}

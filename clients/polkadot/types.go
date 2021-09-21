@@ -25,4 +25,6 @@ const (
 	PolkadotArgValidator = "--validator"
 	// PolkadotArgNoTelemetry is argument used to disable connecting to telemetry server
 	PolkadotArgNoTelemetry = "--no-telemetry"
+	// PolkadotArgTelemetryURL is argument used to connect to telemetry service
+	PolkadotArgTelemetryURL = "--telemetry-url"
 )

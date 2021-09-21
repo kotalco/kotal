@@ -28,6 +28,9 @@ var _ = Describe("Polkadot client arguments", func() {
 				RPCPort:                  6789,
 				WS:                       true,
 				WSPort:                   3456,
+				Telemetry:                true,
+				TelemetryURL:             "wss://telemetry.kotal.io/submit/ 0",
+				// TODO: create test for node with telemetry disabled
 			},
 		}
 
@@ -53,7 +56,8 @@ var _ = Describe("Polkadot client arguments", func() {
 			"Ed25519",
 			PolkadotArgNodeKeyFile,
 			fmt.Sprintf("%s/kotal_nodekey", shared.PathData(client.HomeDir())),
-			PolkadotArgNoTelemetry,
+			PolkadotArgTelemetryURL,
+			"wss://telemetry.kotal.io/submit/ 0",
 		}))
 
 	})
