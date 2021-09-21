@@ -23,4 +23,6 @@ const (
 	PolkadotArgNodeKeyType = "--node-key-type"
 	// PolkadotArgValidator is argument used to enable validator mode
 	PolkadotArgValidator = "--validator"
+	// PolkadotArgNoTelemetry is argument used to disable connecting to telemetry server
+	PolkadotArgNoTelemetry = "--no-telemetry"
 )

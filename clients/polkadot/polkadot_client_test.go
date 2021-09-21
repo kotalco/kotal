@@ -53,6 +53,7 @@ var _ = Describe("Polkadot client arguments", func() {
 			"Ed25519",
 			PolkadotArgNodeKeyFile,
 			fmt.Sprintf("%s/kotal_nodekey", shared.PathData(client.HomeDir())),
+			PolkadotArgNoTelemetry,
 		}))
 
 	})
