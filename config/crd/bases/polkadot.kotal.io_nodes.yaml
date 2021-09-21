@@ -57,6 +57,9 @@ spec:
               prometheus:
                 description: Prometheus exposes a prometheus exporter endpoint.
                 type: boolean
+              prometheusPort:
+                description: PrometheusPort is prometheus exporter port
+                type: integer
               resources:
                 description: Resources is node compute and storage resources
                 properties:
