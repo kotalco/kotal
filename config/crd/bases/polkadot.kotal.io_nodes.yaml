@@ -93,6 +93,9 @@ spec:
                 - fast
                 - full
                 type: string
+              telemetry:
+                description: Telemetry enables connecting to telemetry server
+                type: boolean
               validator:
                 description: Validator enables validator mode
                 type: boolean
