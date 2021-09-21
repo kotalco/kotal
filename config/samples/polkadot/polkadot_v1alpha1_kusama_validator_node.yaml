@@ -10,16 +10,13 @@ stringData:
 apiVersion: polkadot.kotal.io/v1alpha1
 kind: Node
 metadata:
-  name: node-sample
+  name: validator-node-sample
 spec:
   network: kusama
   nodePrivatekeySecretName: "polkadot-node-key"
   logging: info
   syncMode: full
-  rpc: true
-  rpcPort: 9933
-  ws: true
-  wsPort: 9944
+  validator: true
   resources:
     cpu: "1"
     memory: "1Gi"
