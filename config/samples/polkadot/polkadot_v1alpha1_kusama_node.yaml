@@ -20,6 +20,7 @@ spec:
   rpcPort: 9933
   ws: true
   wsPort: 9944
+  telemetry: true
   resources:
     cpu: "1"
     memory: "1Gi"
