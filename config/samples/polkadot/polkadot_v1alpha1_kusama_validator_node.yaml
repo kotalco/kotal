@@ -18,6 +18,7 @@ spec:
   syncMode: full
   validator: true
   telemetry: true
+  prometheus: true
   resources:
     cpu: "1"
     memory: "1Gi"

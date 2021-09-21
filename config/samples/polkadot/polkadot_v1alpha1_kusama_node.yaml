@@ -21,6 +21,7 @@ spec:
   ws: true
   wsPort: 9944
   telemetry: true
+  prometheus: true
   resources:
     cpu: "1"
     memory: "1Gi"
