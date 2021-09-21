@@ -96,6 +96,9 @@ spec:
               telemetry:
                 description: Telemetry enables connecting to telemetry server
                 type: boolean
+              telemetryURL:
+                description: TelemetryURL is telemetry service URL
+                type: string
               validator:
                 description: Validator enables validator mode
                 type: boolean

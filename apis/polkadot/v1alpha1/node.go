@@ -48,6 +48,8 @@ type NodeSpec struct {
 	Logging VerbosityLevel `json:"logging,omitempty"`
 	// Telemetry enables connecting to telemetry server
 	Telemetry bool `json:"telemetry,omitempty"`
+	// TelemetryURL is telemetry service URL
+	TelemetryURL string `json:"telemetryURL,omitempty"`
 	// RPC enables JSON-RPC server
 	RPC bool `json:"rpc,omitempty"`
 	// RPCPort is JSON-RPC server port
