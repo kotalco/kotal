@@ -70,7 +70,7 @@ func (c *PolkadotClient) Args() (args []string) {
 
 	if node.Spec.Prometheus {
 		args = append(args, PolkadotArgPrometheusExternal)
-		// prometheus port
+		args = append(args, PolkadotArgPrometheusPort, fmt.Sprintf("%d", node.Spec.PrometheusPort))
 	} else {
 		args = append(args, PolkadotArgNoPrometheus)
 	}

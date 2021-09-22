@@ -31,4 +31,6 @@ const (
 	PolkadotArgNoPrometheus = "--no-prometheus"
 	// PolkadotArgPrometheusExternal is argument used to enable prometheus exporter
 	PolkadotArgPrometheusExternal = "--prometheus-external"
+	// PolkadotArgPrometheusPort is argument used to set prometheus exporter port
+	PolkadotArgPrometheusPort = "--prometheus-port"
 )
