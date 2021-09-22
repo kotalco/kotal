@@ -11,6 +11,8 @@ const (
 	DefaultWSPort uint = 9944
 	// DefaultTelemetryURL is the default telemetry service URL
 	DefaultTelemetryURL = "wss://telemetry.polkadot.io/submit/ 0"
+	// DefaultPrometheusPort is the default prometheus exporter port
+	DefaultPrometheusPort uint = 9615
 )
 
 // Resources

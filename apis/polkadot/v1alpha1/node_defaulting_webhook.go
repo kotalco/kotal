@@ -60,4 +60,8 @@ func (r *Node) Default() {
 		r.Spec.TelemetryURL = DefaultTelemetryURL
 	}
 
+	if r.Spec.Prometheus && r.Spec.PrometheusPort == 0 {
+		r.Spec.PrometheusPort = DefaultPrometheusPort
+	}
+
 }
