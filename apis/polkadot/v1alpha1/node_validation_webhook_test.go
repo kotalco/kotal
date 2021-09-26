@@ -12,7 +12,7 @@ import (
 )
 
 var _ = Describe("Polkadot node validation", func() {
-
+	t := true
 	createCases := []struct {
 		Title  string
 		Node   *Node
@@ -55,6 +55,27 @@ var _ = Describe("Polkadot node validation", func() {
 				{
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.ws",
+					BadValue: true,
+					Detail:   "must be false if node is validator",
+				},
+			},
+		},
+		{
+			Title: "validator node with pruning enabled",
+			Node: &Node{
+				ObjectMeta: v1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					Network:   "kusama",
+					Validator: true,
+					Pruning:   &t,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.pruning",
 					BadValue: true,
 					Detail:   "must be false if node is validator",
 				},

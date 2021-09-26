@@ -16,16 +16,23 @@ var _ webhook.Validator = &Node{}
 func (r *Node) validate() field.ErrorList {
 	var nodeErrors field.ErrorList
 
-	// validate rpc and ws can't be enabled if node is validator
 	if r.Spec.Validator {
+		// validate rpc must be disabled if node is validator
 		if r.Spec.RPC {
 			err := field.Invalid(field.NewPath("spec").Child("rpc"), r.Spec.RPC, "must be false if node is validator")
 			nodeErrors = append(nodeErrors, err)
 		}
+		// validate ws must be disabled if node is validator
 		if r.Spec.WS {
 			err := field.Invalid(field.NewPath("spec").Child("ws"), r.Spec.WS, "must be false if node is validator")
 			nodeErrors = append(nodeErrors, err)
 		}
+		// validate pruning must be disabled if node is validator
+		if pruning := r.Spec.Pruning; pruning != nil && *pruning {
+			err := field.Invalid(field.NewPath("spec").Child("pruning"), r.Spec.Pruning, "must be false if node is validator")
+			nodeErrors = append(nodeErrors, err)
+		}
+
 	}
 
 	return nodeErrors
