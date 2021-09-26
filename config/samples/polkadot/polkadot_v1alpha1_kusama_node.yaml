@@ -17,6 +17,7 @@ spec:
   logging: info
   syncMode: fast
   pruning: true
+  retainedBlocks: 1024
   rpc: true
   rpcPort: 9933
   ws: true
