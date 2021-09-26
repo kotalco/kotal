@@ -16,6 +16,7 @@ spec:
   nodePrivatekeySecretName: "polkadot-node-key"
   logging: info
   syncMode: full
+  pruning: false
   validator: true
   telemetry: true
   prometheus: true
