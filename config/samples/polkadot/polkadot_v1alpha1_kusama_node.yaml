@@ -15,7 +15,7 @@ spec:
   network: kusama
   nodePrivatekeySecretName: "polkadot-node-key"
   logging: info
-  syncMode: full
+  syncMode: fast
   rpc: true
   rpcPort: 9933
   ws: true
