@@ -13,6 +13,7 @@ import (
 var _ = Describe("Polkadot client arguments", func() {
 
 	It("Should generate correct client arguments", func() {
+		t := false
 		node := &polkadotv1alpha1.Node{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "kusama-node",
@@ -32,8 +33,10 @@ var _ = Describe("Polkadot client arguments", func() {
 				TelemetryURL:             "wss://telemetry.kotal.io/submit/ 0",
 				Prometheus:               true,
 				PrometheusPort:           5432,
+				Pruning:                  &t,
 				// TODO: create test for node with telemetry disabled
 				// TODO: create test for node with prometheus disabled
+				// TODO: create test for node with pruning true
 			},
 		}
 
@@ -64,6 +67,8 @@ var _ = Describe("Polkadot client arguments", func() {
 			PolkadotArgPrometheusExternal,
 			PolkadotArgPrometheusPort,
 			"5432",
+			PolkadotArgPruning,
+			"archive",
 		}))
 
 	})

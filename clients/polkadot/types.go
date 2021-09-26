@@ -7,6 +7,8 @@ const (
 	PolkadotArgBasePath = "--base-path"
 	// PolkadotArgSync is argument to set blockchain sync mode
 	PolkadotArgSync = "--sync"
+	// PolkadotArgPruning is argument used to keep recent blocks or archive all
+	PolkadotArgPruning = "--pruning"
 	// PolkadotArgLogging is argument to set logging verbosity
 	PolkadotArgLogging = "--log"
 	// PolkadotArgRPCExternal is argument used to enable rpc server on all hosts

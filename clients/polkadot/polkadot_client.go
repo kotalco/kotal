@@ -47,6 +47,15 @@ func (c *PolkadotClient) Args() (args []string) {
 	args = append(args, PolkadotArgSync, string(node.Spec.SyncMode))
 	args = append(args, PolkadotArgLogging, string(node.Spec.Logging))
 
+	if node.Spec.Pruning != nil {
+		var pruning bool = *node.Spec.Pruning
+		if pruning {
+			// TODO: set --pruning to number of retained blocks
+		} else {
+			args = append(args, PolkadotArgPruning, "archive")
+		}
+	}
+
 	if node.Spec.RPC {
 		args = append(args, PolkadotArgRPCExternal)
 		args = append(args, PolkadotArgRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort))
