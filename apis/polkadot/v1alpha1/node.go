@@ -46,6 +46,8 @@ type NodeSpec struct {
 	SyncMode SynchronizationMode `json:"syncMode,omitempty"`
 	// Pruning keeps recent or all blocks
 	Pruning *bool `json:"pruning,omitempty"`
+	// RetainedBlocks is the number of blocks to keep state for
+	RetainedBlocks uint `json:"retainedBlocks,omitempty"`
 	// Logging is logging verboisty level
 	Logging VerbosityLevel `json:"logging,omitempty"`
 	// Telemetry enables connecting to telemetry server

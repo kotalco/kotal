@@ -90,6 +90,9 @@ spec:
                     description: StorageClass is the volume storage class
                     type: string
                 type: object
+              retainedBlocks:
+                description: RetainedBlocks is the number of blocks to keep state for
+                type: integer
               rpc:
                 description: RPC enables JSON-RPC server
                 type: boolean
