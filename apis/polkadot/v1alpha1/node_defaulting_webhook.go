@@ -45,6 +45,10 @@ func (r *Node) Default() {
 		r.Spec.Pruning = &t
 	}
 
+	if r.Spec.RetainedBlocks == 0 {
+		r.Spec.RetainedBlocks = DefaultRetainedBlocks
+	}
+
 	if r.Spec.Logging == "" {
 		r.Spec.Logging = DefaultLoggingVerbosity
 	}

@@ -18,6 +18,7 @@ var _ = Describe("Polkadot node defaulting", func() {
 				WS:         true,
 				Telemetry:  true,
 				Prometheus: true,
+				// TODO: create test for node with pruning enabled
 			},
 		}
 

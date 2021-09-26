@@ -5,6 +5,8 @@ const (
 	DefaultSyncMode = FullSynchronization
 	// DefaultLoggingVerbosity is the default node logging verbosity
 	DefaultLoggingVerbosity = InfoLogs
+	// DefaultRetainedBlocks is the default node of blocks to retain if node isn't archive
+	DefaultRetainedBlocks uint = 256
 	// DefaultRPCPort is the default JSON-RPC server port
 	DefaultRPCPort uint = 9933
 	// DefaultWSPort is the default websocket server port
