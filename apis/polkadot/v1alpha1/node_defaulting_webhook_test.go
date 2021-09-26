@@ -21,6 +21,8 @@ var _ = Describe("Polkadot node defaulting", func() {
 			},
 		}
 
+		t := true
+
 		node.Default()
 
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultNodeCPURequest))
@@ -34,6 +36,7 @@ var _ = Describe("Polkadot node defaulting", func() {
 		Expect(node.Spec.WSPort).To(Equal(DefaultWSPort))
 		Expect(node.Spec.TelemetryURL).To(Equal(DefaultTelemetryURL))
 		Expect(node.Spec.PrometheusPort).To(Equal(DefaultPrometheusPort))
+		Expect(node.Spec.Pruning).To(Equal(&t))
 
 	})
 })

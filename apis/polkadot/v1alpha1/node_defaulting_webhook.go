@@ -40,6 +40,11 @@ func (r *Node) Default() {
 		r.Spec.SyncMode = DefaultSyncMode
 	}
 
+	if r.Spec.Pruning == nil {
+		t := true
+		r.Spec.Pruning = &t
+	}
+
 	if r.Spec.Logging == "" {
 		r.Spec.Logging = DefaultLoggingVerbosity
 	}
