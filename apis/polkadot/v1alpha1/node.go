@@ -44,6 +44,8 @@ type NodeSpec struct {
 	Validator bool `json:"validator,omitempty"`
 	// SyncMode is the blockchain synchronization mode
 	SyncMode SynchronizationMode `json:"syncMode,omitempty"`
+	// Pruning keeps recent or all blocks
+	Pruning *bool `json:"pruning,omitempty"`
 	// Logging is logging verboisty level
 	Logging VerbosityLevel `json:"logging,omitempty"`
 	// Telemetry enables connecting to telemetry server

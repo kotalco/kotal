@@ -60,6 +60,9 @@ spec:
               prometheusPort:
                 description: PrometheusPort is prometheus exporter port
                 type: integer
+              pruning:
+                description: Pruning keeps recent or all blocks
+                type: boolean
               resources:
                 description: Resources is node compute and storage resources
                 properties:
