@@ -50,7 +50,7 @@ func (c *PolkadotClient) Args() (args []string) {
 	if node.Spec.Pruning != nil {
 		var pruning bool = *node.Spec.Pruning
 		if pruning {
-			// TODO: set --pruning to number of retained blocks
+			args = append(args, PolkadotArgPruning, fmt.Sprintf("%d", node.Spec.RetainedBlocks))
 		} else {
 			args = append(args, PolkadotArgPruning, "archive")
 		}
