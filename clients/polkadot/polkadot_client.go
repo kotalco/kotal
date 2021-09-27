@@ -3,6 +3,7 @@ package polkadot
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -64,6 +65,10 @@ func (c *PolkadotClient) Args() (args []string) {
 	if node.Spec.WS {
 		args = append(args, PolkadotArgWSExternal)
 		args = append(args, PolkadotArgWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
+	}
+
+	if node.Spec.WS || node.Spec.RPC {
+		args = append(args, PolkadotArgRPCCors, strings.Join(node.Spec.CORSDomains, ","))
 	}
 
 	if node.Spec.NodePrivatekeySecretName != "" {

@@ -34,6 +34,7 @@ var _ = Describe("Polkadot client arguments", func() {
 				Prometheus:               true,
 				PrometheusPort:           5432,
 				Pruning:                  &t,
+				CORSDomains:              []string{"kotal.com"},
 				// TODO: create test for node with telemetry disabled
 				// TODO: create test for node with prometheus disabled
 				// TODO: create test for node with pruning true
@@ -69,6 +70,8 @@ var _ = Describe("Polkadot client arguments", func() {
 			"5432",
 			PolkadotArgPruning,
 			"archive",
+			PolkadotArgRPCCors,
+			"kotal.com",
 		}))
 
 	})
