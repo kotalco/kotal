@@ -15,6 +15,8 @@ const (
 	DefaultTelemetryURL = "wss://telemetry.polkadot.io/submit/ 0"
 	// DefaultPrometheusPort is the default prometheus exporter port
 	DefaultPrometheusPort uint = 9615
+	// DefaultCORSDomain is the default browser origin allowed to access the JSON-RPC HTTP and WS servers
+	DefaultCORSDomain = "all"
 )
 
 // Resources

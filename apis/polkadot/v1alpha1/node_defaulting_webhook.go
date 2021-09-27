@@ -65,6 +65,10 @@ func (r *Node) Default() {
 		}
 	}
 
+	if len(r.Spec.CORSDomains) == 0 {
+		r.Spec.CORSDomains = []string{DefaultCORSDomain}
+	}
+
 	if r.Spec.Telemetry && r.Spec.TelemetryURL == "" {
 		r.Spec.TelemetryURL = DefaultTelemetryURL
 	}
