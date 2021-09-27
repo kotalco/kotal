@@ -39,6 +39,11 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
+              corsDomains:
+                description: CORSDomains is browser origins allowed to access the JSON-RPC HTTP and WS servers
+                items:
+                  type: string
+                type: array
               logging:
                 description: Logging is logging verboisty level
                 enum:
