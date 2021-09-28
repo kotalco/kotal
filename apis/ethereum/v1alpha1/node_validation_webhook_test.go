@@ -601,6 +601,48 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 			},
 		},
+		{
+			Title: "node #38",
+			Node: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-1",
+				},
+				Spec: NodeSpec{
+					Client:  NethermindClient,
+					Network: RinkebyNetwork,
+					Hosts:   []string{"kotal.com"},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.client",
+					BadValue: NethermindClient,
+					Detail:   "client doesn't support hosts whitelisting",
+				},
+			},
+		},
+		{
+			Title: "node #39",
+			Node: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-1",
+				},
+				Spec: NodeSpec{
+					Client:      NethermindClient,
+					Network:     RinkebyNetwork,
+					CORSDomains: []string{"kotal.com"},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.client",
+					BadValue: NethermindClient,
+					Detail:   "client doesn't support CORS domains",
+				},
+			},
+		},
 	}
 
 	// TODO: move .resources validation to shared resources package
