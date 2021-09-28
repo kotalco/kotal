@@ -132,26 +132,6 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-ipfs-kotal-io-v1alpha1-swarm
-  failurePolicy: Fail
-  name: mutate-ipfs-v1alpha1-swarm.kb.io
-  rules:
-  - apiGroups:
-    - ipfs.kotal.io
-    apiVersions:
-    - v1alpha1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - swarms
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  clientConfig:
-    service:
-      name: webhook-service
-      namespace: system
       path: /mutate-polkadot-kotal-io-v1alpha1-node
   failurePolicy: Fail
   name: mutate-polkadot-v1alpha1-node.kb.io
@@ -293,26 +273,6 @@ webhooks:
     - UPDATE
     resources:
     - peers
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  clientConfig:
-    service:
-      name: webhook-service
-      namespace: system
-      path: /validate-ipfs-kotal-io-v1alpha1-swarm
-  failurePolicy: Fail
-  name: validate-ipfs-v1alpha1-swarm.kb.io
-  rules:
-  - apiGroups:
-    - ipfs.kotal.io
-    apiVersions:
-    - v1alpha1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - swarms
   sideEffects: None
 - admissionReviewVersions:
   - v1
