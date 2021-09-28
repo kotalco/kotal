@@ -2,28 +2,25 @@ domain: kotal.io
 multigroup: true
 repo: github.com/kotalco/kotal
 resources:
-- group: ipfs
-  kind: Swarm
-  version: v1alpha1
-- group: filecoin
-  kind: Node
-  version: v1alpha1
-- group: ethereum
-  kind: Node
-  version: v1alpha1
-- group: ethereum2
-  kind: BeaconNode
-  version: v1alpha1
-- group: ethereum2
-  kind: Validator
-  version: v1alpha1
-- group: ipfs
-  kind: Peer
-  version: v1alpha1
-- group: ipfs
-  kind: ClusterPeer
-  version: v1alpha1
-- group: polkadot
-  kind: Node
-  version: v1alpha1
+  - group: filecoin
+    kind: Node
+    version: v1alpha1
+  - group: ethereum
+    kind: Node
+    version: v1alpha1
+  - group: ethereum2
+    kind: BeaconNode
+    version: v1alpha1
+  - group: ethereum2
+    kind: Validator
+    version: v1alpha1
+  - group: ipfs
+    kind: Peer
+    version: v1alpha1
+  - group: ipfs
+    kind: ClusterPeer
+    version: v1alpha1
+  - group: polkadot
+    kind: Node
+    version: v1alpha1
 version: "2"
