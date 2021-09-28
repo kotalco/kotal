@@ -790,6 +790,35 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 			},
 		},
+		{
+			Title: "node #5",
+			OldNode: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-5",
+				},
+				Spec: NodeSpec{
+					Client:  BesuClient,
+					Network: RopstenNetwork,
+				},
+			},
+			NewNode: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-5",
+				},
+				Spec: NodeSpec{
+					Client:  GethClient,
+					Network: RopstenNetwork,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.client",
+					BadValue: GethClient,
+					Detail:   "field is immutable",
+				},
+			},
+		},
 	}
 
 	Context("While creating node", func() {
