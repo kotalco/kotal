@@ -63,21 +63,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&ipfscontroller.SwarmReconciler{
-		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("Swarm"),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Swarm")
-		os.Exit(1)
-	}
-	if enableWebhooks {
-		if err = (&ipfsv1alpha1.Swarm{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Swarm")
-			os.Exit(1)
-		}
-	}
-
 	if err = (&filecoincontroller.NodeReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("Node"),
