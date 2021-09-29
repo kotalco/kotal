@@ -38,6 +38,8 @@ const (
 type NodeSpec struct {
 	// Network is the polkadot network/chain to join
 	Network string `json:"network"`
+	// P2PPort is p2p protocol tcp port
+	P2PPort uint `json:"p2pPort,omitempty"`
 	// NodePrivatekeySecretName is the secret name holding node Ed25519 private key
 	NodePrivatekeySecretName string `json:"nodePrivatekeySecretName,omitempty"`
 	// Validator enables validator mode

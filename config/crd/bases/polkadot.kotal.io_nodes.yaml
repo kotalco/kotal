@@ -59,6 +59,9 @@ spec:
               nodePrivatekeySecretName:
                 description: NodePrivatekeySecretName is the secret name holding node Ed25519 private key
                 type: string
+              p2pPort:
+                description: P2PPort is p2p protocol tcp port
+                type: integer
               prometheus:
                 description: Prometheus exposes a prometheus exporter endpoint.
                 type: boolean
