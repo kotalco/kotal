@@ -51,6 +51,8 @@ var _ = Describe("Polkadot client arguments", func() {
 			shared.PathData(client.HomeDir()),
 			PolkadotArgChain,
 			"kusama",
+			PolkadotArgName,
+			"kusama-node",
 			PolkadotArgPort,
 			"4444",
 			PolkadotArgValidator,

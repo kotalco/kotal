@@ -3,6 +3,8 @@ package polkadot
 const (
 	// PolkadotArgChain is argument used to set chain
 	PolkadotArgChain = "--chain"
+	// PolkadotArgName is node name reported to the telemetry server if enabled
+	PolkadotArgName = "--name"
 	// PolkadotArgPort is argument used to set p2p tcp port
 	PolkadotArgPort = "--port"
 	// PolkadotArgBasePath is argument to set base path
