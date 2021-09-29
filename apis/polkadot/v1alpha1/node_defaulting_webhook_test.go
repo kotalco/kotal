@@ -26,6 +26,7 @@ var _ = Describe("Polkadot node defaulting", func() {
 
 		node.Default()
 
+		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultNodeCPURequest))
 		Expect(node.Spec.Resources.CPULimit).To(Equal(DefaultNodeCPULimit))
 		Expect(node.Spec.Resources.Memory).To(Equal(DefaultNodeMemoryRequest))

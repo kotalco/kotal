@@ -40,6 +40,10 @@ func (r *Node) Default() {
 		r.Spec.SyncMode = DefaultSyncMode
 	}
 
+	if r.Spec.P2PPort == 0 {
+		r.Spec.P2PPort = DefaultP2PPort
+	}
+
 	if r.Spec.Pruning == nil {
 		t := true
 		r.Spec.Pruning = &t
