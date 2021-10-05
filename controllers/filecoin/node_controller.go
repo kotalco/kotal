@@ -44,6 +44,8 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
+	r.updateLabels(&node)
+
 	if err = r.reconcileService(ctx, &node); err != nil {
 		return
 	}
@@ -80,6 +82,21 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *filecoinv1alpha
 	return nil
 }
 
+// updateLabels adds missing labels to the node
+func (r *NodeReconciler) updateLabels(node *filecoinv1alpha1.Node) {
+
+	if node.Labels == nil {
+		node.Labels = map[string]string{}
+	}
+
+	node.Labels["app.kubernetes.io/name"] = "lotus"
+	node.Labels["app.kubernetes.io/instance"] = node.Name
+	node.Labels["app.kubernetes.io/component"] = "filecoin-node"
+	node.Labels["app.kubernetes.io/managed-by"] = "kotal"
+	node.Labels["app.kubernetes.io/created-by"] = "filecoin-node-controller"
+
+}
+
 // reconcilePVC reconciles node pvc
 func (r *NodeReconciler) reconcilePVC(ctx context.Context, node *filecoinv1alpha1.Node) error {
 	pvc := &corev1.PersistentVolumeClaim{
@@ -112,10 +129,7 @@ func (r *NodeReconciler) specPVC(node *filecoinv1alpha1.Node, pvc *corev1.Persis
 		return
 	}
 
-	pvc.ObjectMeta.Labels = map[string]string{
-		"name":     "node",
-		"instance": node.Name,
-	}
+	pvc.ObjectMeta.Labels = node.Labels
 
 	pvc.Spec = corev1.PersistentVolumeClaimSpec{
 		AccessModes: []corev1.PersistentVolumeAccessMode{
@@ -151,12 +165,7 @@ func (r *NodeReconciler) reconcileService(ctx context.Context, node *filecoinv1a
 
 // specConfigmap updates node statefulset spec
 func (r *NodeReconciler) specConfigmap(node *filecoinv1alpha1.Node, configmap *corev1.ConfigMap, configToml string) {
-	labels := map[string]string{
-		"name":     "node",
-		"instance": node.Name,
-	}
-
-	configmap.ObjectMeta.Labels = labels
+	configmap.ObjectMeta.Labels = node.Labels
 
 	if configmap.Data == nil {
 		configmap.Data = map[string]string{}
@@ -217,10 +226,7 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *filecoi
 
 // specService updates node statefulset spec
 func (r *NodeReconciler) specService(node *filecoinv1alpha1.Node, svc *corev1.Service) {
-	labels := map[string]string{
-		"name":     "node",
-		"instance": node.Name,
-	}
+	labels := node.Labels
 
 	svc.ObjectMeta.Labels = labels
 
@@ -244,10 +250,7 @@ func (r *NodeReconciler) specService(node *filecoinv1alpha1.Node, svc *corev1.Se
 
 // specStatefulSet updates node statefulset spec
 func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv1.StatefulSet) error {
-	labels := map[string]string{
-		"name":     "node",
-		"instance": node.Name,
-	}
+	labels := node.Labels
 
 	image, err := LotusImage(node.Spec.Network)
 	if err != nil {
