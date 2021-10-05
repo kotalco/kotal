@@ -317,7 +317,8 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 				Labels: node.Labels,
 			},
 			Spec: corev1.PodSpec{
-				InitContainers: initContainers,
+				InitContainers:  initContainers,
+				SecurityContext: shared.SecurityContext(),
 				Containers: []corev1.Container{
 					{
 						Name:         "node",
