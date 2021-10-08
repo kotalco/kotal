@@ -2,9 +2,13 @@ package controllers
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
 
 	"github.com/go-logr/logr"
+	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
+	filecoinClients "github.com/kotalco/kotal/clients/filecoin"
+	"github.com/kotalco/kotal/controllers/shared"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -13,9 +17,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-
-	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
-	"github.com/kotalco/kotal/controllers/shared"
 )
 
 // NodeReconciler reconciles a Node object
@@ -24,6 +25,11 @@ type NodeReconciler struct {
 	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
+
+var (
+	//go:embed copy_config_toml.sh
+	CopyConfigToml string
+)
 
 // +kubebuilder:rbac:groups=filecoin.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=filecoin.kotal.io,resources=nodes/status,verbs=get;update;patch
@@ -172,6 +178,7 @@ func (r *NodeReconciler) specConfigmap(node *filecoinv1alpha1.Node, configmap *c
 	}
 
 	configmap.Data["config.toml"] = configToml
+	configmap.Data["copy_config_toml.sh"] = CopyConfigToml
 
 }
 
@@ -211,11 +218,16 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *filecoi
 		},
 	}
 
+	client := filecoinClients.NewClient(node)
+	img := client.Image()
+	args := client.Args()
+	homeDir := client.HomeDir()
+
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		if err := r.specStatefulSet(node, sts); err != nil {
+		if err := r.specStatefulSet(node, sts, img, homeDir, args); err != nil {
 			return err
 		}
 		return nil
@@ -249,13 +261,8 @@ func (r *NodeReconciler) specService(node *filecoinv1alpha1.Node, svc *corev1.Se
 }
 
 // specStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv1.StatefulSet) error {
+func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv1.StatefulSet, img, homeDir string, args []string) error {
 	labels := node.Labels
-
-	image, err := LotusImage(node.Spec.Network)
-	if err != nil {
-		return err
-	}
 
 	sts.ObjectMeta.Labels = labels
 
@@ -273,27 +280,26 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 					{
 						Name:  "copy-config-toml",
 						Image: "busybox",
-						Command: []string{
-							"/bin/sh",
-							"-c",
+						Env: []corev1.EnvVar{
+							{
+								Name:  EnvDataPath,
+								Value: shared.PathData(homeDir),
+							},
+							{
+								Name:  EnvConfigPath,
+								Value: shared.PathConfig(homeDir),
+							},
 						},
-						Args: []string{
-							fmt.Sprintf(`
-								mkdir -p %s &&
-								cp %s/config.toml %s`,
-								"/mnt/data",
-								"/mnt/config",
-								"/mnt/data",
-							),
-						},
+						Command: []string{"/bin/sh"},
+						Args:    []string{fmt.Sprintf("%s/copy_config_toml.sh", shared.PathConfig(homeDir))},
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      node.Name,
-								MountPath: "/mnt/data",
+								MountPath: shared.PathData(homeDir),
 							},
 							{
 								Name:      "config",
-								MountPath: "/mnt/config",
+								MountPath: shared.PathConfig(homeDir),
 							},
 						},
 					},
@@ -301,18 +307,18 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 				Containers: []corev1.Container{
 					{
 						Name:  "node",
-						Image: image,
-						Args:  []string{"lotus", "daemon"},
+						Image: img,
+						Args:  args,
 						Env: []corev1.EnvVar{
 							{
 								Name:  "LOTUS_PATH",
-								Value: "/mnt/data",
+								Value: shared.PathData(homeDir),
 							},
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      node.Name,
-								MountPath: "/mnt/data",
+								MountPath: shared.PathData(homeDir),
 							},
 						},
 						Resources: corev1.ResourceRequirements{
