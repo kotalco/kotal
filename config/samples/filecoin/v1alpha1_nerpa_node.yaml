@@ -14,5 +14,5 @@ spec:
   ipfsPeerEndpoint: /dns4/peer-sample/tcp/5001
   ipfsOnlineMode: false
   resources:
-    cpu: "2"
-    memory: "2Gi"
+    cpu: "1"
+    memory: "1Gi"
