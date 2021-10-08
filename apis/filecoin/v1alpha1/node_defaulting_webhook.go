@@ -1,0 +1,98 @@
+package v1alpha1
+
+import (
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
+)
+
+// +kubebuilder:webhook:path=/mutate-filecoin-kotal-io-v1alpha1-node,mutating=true,failurePolicy=fail,groups=filecoin.kotal.io,resources=nodes,verbs=create;update,versions=v1alpha1,name=mutate-filecoin-v1alpha1-node.kb.io,sideEffects=None,admissionReviewVersions=v1
+
+var _ webhook.Defaulter = &Node{}
+
+// Default implements webhook.Defaulter so a webhook will be registered for the type
+func (n *Node) Default() {
+	nodelog.Info("default", "name", n.Name)
+
+	nerpa := n.Spec.Network == NerpaNetwork
+	mainnet := n.Spec.Network == MainNetwork
+	calibration := n.Spec.Network == CalibrationNetwork
+
+	if n.Spec.API {
+		if n.Spec.APIPort == 0 {
+			n.Spec.APIPort = DefaultAPIPort
+		}
+		if n.Spec.APIHost == "" {
+			n.Spec.APIHost = DefaultHost
+		}
+		if n.Spec.APIRequestTimeout == 0 {
+			n.Spec.APIRequestTimeout = DefaultAPIRequestTimeout
+		}
+	}
+
+	if n.Spec.P2PPort == 0 {
+		n.Spec.P2PPort = DefaultP2PPort
+	}
+	if n.Spec.P2PHost == "" {
+		n.Spec.P2PHost = DefaultHost
+	}
+
+	if n.Spec.Resources.CPU == "" {
+		if nerpa {
+			n.Spec.CPU = DefaultNerpaNodeCPURequest
+		}
+		if mainnet {
+			n.Spec.CPU = DefaultMainnetNodeCPURequest
+		}
+		if calibration {
+			n.Spec.CPU = DefaultCalibrationNodeCPURequest
+		}
+	}
+
+	if n.Spec.CPULimit == "" {
+		if nerpa {
+			n.Spec.CPULimit = DefaultNerpaNodeCPULimit
+		}
+		if mainnet {
+			n.Spec.CPULimit = DefaultMainnetNodeCPULimit
+		}
+		if calibration {
+			n.Spec.CPULimit = DefaultCalibrationNodeCPULimit
+		}
+	}
+
+	if n.Spec.Memory == "" {
+		if nerpa {
+			n.Spec.Memory = DefaultNerpaNodeMemoryRequest
+		}
+		if mainnet {
+			n.Spec.Memory = DefaultMainnetNodeMemoryRequest
+		}
+		if calibration {
+			n.Spec.Memory = DefaultCalibrationNodeMemoryRequest
+		}
+	}
+
+	if n.Spec.MemoryLimit == "" {
+		if nerpa {
+			n.Spec.MemoryLimit = DefaultNerpaNodeMemoryLimit
+		}
+		if mainnet {
+			n.Spec.MemoryLimit = DefaultMainnetNodeMemoryLimit
+		}
+		if calibration {
+			n.Spec.MemoryLimit = DefaultCalibrationNodeMemoryLimit
+		}
+	}
+
+	if n.Spec.Storage == "" {
+		if nerpa {
+			n.Spec.Storage = DefaultNerpaNodeStorageRequest
+		}
+		if mainnet {
+			n.Spec.Storage = DefaultMainnetNodeStorageRequest
+		}
+		if calibration {
+			n.Spec.Storage = DefaultCalibrationNodeStorageRequest
+		}
+	}
+
+}
