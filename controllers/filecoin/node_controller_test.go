@@ -1,0 +1,146 @@
+package controllers
+
+import (
+	"context"
+	"fmt"
+	"os"
+	"time"
+
+	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
+	filecoinClients "github.com/kotalco/kotal/clients/filecoin"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/intstr"
+)
+
+var _ = Describe("kusama node controller", func() {
+	ns := &corev1.Namespace{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "filecoin",
+		},
+	}
+
+	key := types.NamespacedName{
+		Name:      "nerpa-node",
+		Namespace: ns.Name,
+	}
+
+	spec := filecoinv1alpha1.NodeSpec{
+		Network: filecoinv1alpha1.NerpaNetwork,
+		API:     true,
+	}
+
+	toCreate := &filecoinv1alpha1.Node{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      key.Name,
+			Namespace: key.Namespace,
+		},
+		Spec: spec,
+	}
+
+	client := filecoinClients.NewClient(toCreate)
+
+	t := true
+
+	nodeOwnerReference := metav1.OwnerReference{
+		APIVersion:         "filecoin.kotal.io/v1alpha1",
+		Kind:               "Node",
+		Name:               toCreate.Name,
+		Controller:         &t,
+		BlockOwnerDeletion: &t,
+	}
+
+	It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
+		Expect(k8sClient.Create(context.TODO(), ns)).To(Succeed())
+	})
+
+	It("should create kusama node", func() {
+		if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+			toCreate.Default()
+		}
+		Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
+	})
+
+	It("Should get kusama node", func() {
+		fetched := &filecoinv1alpha1.Node{}
+		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+		Expect(fetched.Spec).To(Equal(toCreate.Spec))
+		nodeOwnerReference.UID = fetched.UID
+		time.Sleep(5 * time.Second)
+	})
+
+	It("Should create node statefulset", func() {
+		fetched := &appsv1.StatefulSet{}
+		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
+		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+	})
+
+	It("Should create allocate correct resources to peer statefulset", func() {
+		fetched := &appsv1.StatefulSet{}
+		expectedResources := corev1.ResourceRequirements{
+			Requests: corev1.ResourceList{
+				corev1.ResourceCPU:    resource.MustParse(filecoinv1alpha1.DefaultNerpaNodeCPURequest),
+				corev1.ResourceMemory: resource.MustParse(filecoinv1alpha1.DefaultNerpaNodeMemoryRequest),
+			},
+			Limits: corev1.ResourceList{
+				corev1.ResourceCPU:    resource.MustParse(filecoinv1alpha1.DefaultNerpaNodeCPULimit),
+				corev1.ResourceMemory: resource.MustParse(filecoinv1alpha1.DefaultNerpaNodeMemoryLimit),
+			},
+		}
+		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+		Expect(fetched.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+	})
+
+	It("Should create node configmap", func() {
+		fetched := &corev1.ConfigMap{}
+		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
+		Expect(fetched.Data).To(HaveKey("config.toml"))
+		Expect(fetched.Data).To(HaveKey("copy_config_toml.sh"))
+	})
+
+	It("Should create node data persistent volume with correct resources", func() {
+		fetched := &corev1.PersistentVolumeClaim{}
+		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
+		expectedResources := corev1.ResourceRequirements{
+			Requests: corev1.ResourceList{
+				corev1.ResourceStorage: resource.MustParse(filecoinv1alpha1.DefaultNerpaNodeStorageRequest),
+			},
+		}
+		Expect(fetched.Spec.Resources).To(Equal(expectedResources))
+	})
+
+	It("Should create node service", func() {
+		fetched := &corev1.Service{}
+		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
+		Expect(fetched.Spec.Ports).To(ContainElements(
+			[]corev1.ServicePort{
+				{
+					Name:       "p2p",
+					Port:       int32(filecoinv1alpha1.DefaultP2PPort),
+					TargetPort: intstr.FromInt(int(filecoinv1alpha1.DefaultP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+				{
+					Name:       "api",
+					Port:       int32(filecoinv1alpha1.DefaultAPIPort),
+					TargetPort: intstr.FromInt(int(filecoinv1alpha1.DefaultAPIPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			},
+		))
+	})
+
+	It(fmt.Sprintf("Should delete %s namespace", ns.Name), func() {
+		Expect(k8sClient.Delete(context.Background(), ns)).To(Succeed())
+	})
+
+})
