@@ -52,7 +52,7 @@ func (r *ClusterPeerReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		peer.Default()
 	}
 
-	r.updateLabels(&peer)
+	shared.UpdateLabels(&peer, "ipfs-cluster-service")
 
 	if err = r.reconcileService(ctx, &peer); err != nil {
 		return
@@ -162,19 +162,6 @@ func (r *ClusterPeerReconciler) specService(peer *ipfsv1alpha1.ClusterPeer, svc 
 	}
 
 	svc.Spec.Selector = labels
-}
-
-// updateLabels updates IPFS cluster peer labels
-func (r *ClusterPeerReconciler) updateLabels(peer *ipfsv1alpha1.ClusterPeer) {
-	if peer.Labels == nil {
-		peer.Labels = map[string]string{}
-	}
-
-	peer.Labels["app.kubernetes.io/name"] = "ipfs-cluster-service"
-	peer.Labels["app.kubernetes.io/instance"] = peer.Name
-	peer.Labels["app.kubernetes.io/component"] = "ipfs-cluster-peer"
-	peer.Labels["app.kubernetes.io/managed-by"] = "kotal"
-	peer.Labels["app.kubernetes.io/created-by"] = "ipfs-cluster-peer-controller"
 }
 
 // reconcileConfigmap reconciles IPFS cluster peer configmap

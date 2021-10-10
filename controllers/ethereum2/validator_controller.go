@@ -44,7 +44,7 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		validator.Default()
 	}
 
-	r.updateLabels(&validator)
+	shared.UpdateLabels(&validator, string(validator.Spec.Client))
 
 	if err = r.reconcilePVC(ctx, &validator); err != nil {
 		return
@@ -55,20 +55,6 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	}
 
 	return
-}
-
-// updateLabels adds missing labels to the validator
-func (r *ValidatorReconciler) updateLabels(validator *ethereum2v1alpha1.Validator) {
-
-	if validator.Labels == nil {
-		validator.Labels = map[string]string{}
-	}
-
-	validator.Labels["app.kubernetes.io/name"] = string(validator.Spec.Client)
-	validator.Labels["app.kubernetes.io/instance"] = validator.Name
-	validator.Labels["app.kubernetes.io/component"] = "ethereum2-validator"
-	validator.Labels["app.kubernetes.io/managed-by"] = "kotal"
-	validator.Labels["app.kubernetes.io/created-by"] = "ethereum2-validator-controller"
 }
 
 // reconcilePVC reconciles validator persistent volume claim

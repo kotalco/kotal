@@ -47,7 +47,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
-	r.updateLabels(&node)
+	shared.UpdateLabels(&node, "polkadot")
 
 	if err = r.reconcileConfigmap(ctx, &node); err != nil {
 		return
@@ -66,21 +66,6 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	}
 
 	return
-}
-
-// updateLabels adds missing labels to the node
-func (r *NodeReconciler) updateLabels(node *polkadotv1alpha1.Node) {
-
-	if node.Labels == nil {
-		node.Labels = map[string]string{}
-	}
-
-	node.Labels["app.kubernetes.io/name"] = "polkadot"
-	node.Labels["app.kubernetes.io/instance"] = node.Name
-	node.Labels["app.kubernetes.io/component"] = "polkadot-node"
-	node.Labels["app.kubernetes.io/managed-by"] = "kotal"
-	node.Labels["app.kubernetes.io/created-by"] = "polkadot-node-controller"
-
 }
 
 // reconcileConfigmap reconciles polkadot node configmap

@@ -55,7 +55,7 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		peer.Default()
 	}
 
-	r.updateLabels(&peer)
+	shared.UpdateLabels(&peer, "go-ipfs")
 
 	if err = r.reconcileConfigmap(ctx, &peer); err != nil {
 		return
@@ -91,21 +91,6 @@ func (r *PeerReconciler) updateStatus(ctx context.Context, peer *ipfsv1alpha1.Pe
 	}
 
 	return nil
-}
-
-// updateLabels adds meta labels to the peer
-func (r *PeerReconciler) updateLabels(peer *ipfsv1alpha1.Peer) {
-
-	if peer.Labels == nil {
-		peer.Labels = map[string]string{}
-	}
-
-	peer.Labels["app.kubernetes.io/name"] = "go-ipfs"
-	peer.Labels["app.kubernetes.io/instance"] = peer.Name
-	peer.Labels["app.kubernetes.io/component"] = "ipfs-peer"
-	peer.Labels["app.kubernetes.io/managed-by"] = "kotal"
-	peer.Labels["app.kubernetes.io/created-by"] = "ipfs-peer-controller"
-
 }
 
 // reconcileService reconciles ipfs peer service

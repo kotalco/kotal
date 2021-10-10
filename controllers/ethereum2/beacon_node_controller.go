@@ -45,7 +45,7 @@ func (r *BeaconNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		node.Default()
 	}
 
-	r.updateLabels(&node)
+	shared.UpdateLabels(&node, string(node.Spec.Client))
 
 	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return
@@ -60,20 +60,6 @@ func (r *BeaconNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	}
 
 	return
-}
-
-// updateLabels adds missing labels to the node
-func (r *BeaconNodeReconciler) updateLabels(node *ethereum2v1alpha1.BeaconNode) {
-
-	if node.Labels == nil {
-		node.Labels = map[string]string{}
-	}
-
-	node.Labels["app.kubernetes.io/name"] = string(node.Spec.Client)
-	node.Labels["app.kubernetes.io/instance"] = node.Name
-	node.Labels["app.kubernetes.io/component"] = "ethereum2-beacon-node"
-	node.Labels["app.kubernetes.io/managed-by"] = "kotal"
-	node.Labels["app.kubernetes.io/created-by"] = "ethereum2-beacon-node-controller"
 }
 
 // reconcileService reconciles beacon node service

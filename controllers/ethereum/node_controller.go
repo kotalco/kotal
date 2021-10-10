@@ -63,7 +63,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
-	r.updateLabels(&node)
+	shared.UpdateLabels(&node, string(node.Spec.Client))
 	r.updateStaticNodes(ctx, &node)
 	r.updateBootnodes(ctx, &node)
 
@@ -96,21 +96,6 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	}
 
 	return ctrl.Result{}, nil
-}
-
-// updateLabels adds missing labels to the node
-func (r *NodeReconciler) updateLabels(node *ethereumv1alpha1.Node) {
-
-	if node.Labels == nil {
-		node.Labels = map[string]string{}
-	}
-
-	node.Labels["app.kubernetes.io/name"] = string(node.Spec.Client)
-	node.Labels["app.kubernetes.io/instance"] = node.Name
-	node.Labels["app.kubernetes.io/component"] = "ethereum-node"
-	node.Labels["app.kubernetes.io/managed-by"] = "kotal"
-	node.Labels["app.kubernetes.io/created-by"] = "ethereum-node-controller"
-
 }
 
 // getEnodeURL fetch enodeURL from enode that has the format of node.namespace

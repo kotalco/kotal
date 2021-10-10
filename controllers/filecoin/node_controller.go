@@ -50,7 +50,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
-	r.updateLabels(&node)
+	shared.UpdateLabels(&node, "lotus")
 
 	if err = r.reconcileService(ctx, &node); err != nil {
 		return
@@ -86,21 +86,6 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *filecoinv1alpha
 	}
 
 	return nil
-}
-
-// updateLabels adds missing labels to the node
-func (r *NodeReconciler) updateLabels(node *filecoinv1alpha1.Node) {
-
-	if node.Labels == nil {
-		node.Labels = map[string]string{}
-	}
-
-	node.Labels["app.kubernetes.io/name"] = "lotus"
-	node.Labels["app.kubernetes.io/instance"] = node.Name
-	node.Labels["app.kubernetes.io/component"] = "filecoin-node"
-	node.Labels["app.kubernetes.io/managed-by"] = "kotal"
-	node.Labels["app.kubernetes.io/created-by"] = "filecoin-node-controller"
-
 }
 
 // reconcilePVC reconciles node pvc
