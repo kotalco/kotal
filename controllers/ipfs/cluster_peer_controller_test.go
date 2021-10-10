@@ -36,7 +36,7 @@ var _ = Describe("IPFS cluster peer controller", func() {
 
 	spec := ipfsv1alpha1.ClusterPeerSpec{
 		ID:                   "12D3KooWBcEtY8GH4mNkri9kM3haeWhEXtQV7mi81ErWrqLYGuiq",
-		PrivatekeySecretName: "cluster-privatekey",
+		PrivateKeySecretName: "cluster-privatekey",
 		ClusterSecretName:    "cluster-secret",
 		Consensus:            ipfsv1alpha1.CRDT,
 		TrustedPeers: []string{
@@ -173,11 +173,11 @@ var _ = Describe("IPFS cluster peer controller", func() {
 				Value: toCreate.Spec.ID,
 			},
 			{
-				Name: ipfsClients.EnvIPFSClusterPrivatekey,
+				Name: ipfsClients.EnvIPFSClusterPrivateKey,
 				ValueFrom: &corev1.EnvVarSource{
 					SecretKeyRef: &corev1.SecretKeySelector{
 						LocalObjectReference: corev1.LocalObjectReference{
-							Name: toCreate.Spec.PrivatekeySecretName,
+							Name: toCreate.Spec.PrivateKeySecretName,
 						},
 						Key: "key",
 					},

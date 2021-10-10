@@ -13,7 +13,7 @@ metadata:
   name: validator-node-sample
 spec:
   network: kusama
-  nodePrivatekeySecretName: "polkadot-node-key"
+  nodePrivateKeySecretName: "polkadot-node-key"
   logging: info
   syncMode: full
   pruning: false

@@ -24,7 +24,7 @@ spec:
   ########### node spec ###########
   client: geth
   rpc: true
-  nodePrivatekeySecretName: poa-besu-nodekey
+  nodePrivateKeySecretName: poa-besu-nodekey
   rpcPort: 8599
   corsDomains:
     - all

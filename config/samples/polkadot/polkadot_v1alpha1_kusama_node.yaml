@@ -13,7 +13,7 @@ metadata:
   name: node-sample
 spec:
   network: kusama
-  nodePrivatekeySecretName: "polkadot-node-key"
+  nodePrivateKeySecretName: "polkadot-node-key"
   logging: info
   syncMode: fast
   pruning: true

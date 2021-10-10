@@ -10,7 +10,7 @@ spec:
   # WARNING: DON'T use the following private key in production
   # KEY=CAESQOH/DvUJmeJ9z6m3wAStpkrlBwJQxIyNSK0YGf0EI5ZRGpwsWxl4wmgReqmHl8LQjTC2iPM0QbYAjeY3Z63AFnI=
   # kubectl create secret generic my-cluster-privatekey --from-literal=key=$KEY
-  privatekeySecretName: my-cluster-privatekey
+  privateKeySecretName: my-cluster-privatekey
   consensus: crdt
   trustedPeers:
     - 12D3KooWBcEtY8GH4mNkri9kM3haeWhEXtQV7mi81ErWrqLYGuiq

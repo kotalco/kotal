@@ -13,7 +13,7 @@ metadata:
 spec:
   network: goerli
   client: besu
-  nodePrivatekeySecretName: goerli-besu-nodekey
+  nodePrivateKeySecretName: goerli-besu-nodekey
   rpc: true
   rpcPort: 8599
   corsDomains:

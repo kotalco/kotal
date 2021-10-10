@@ -73,7 +73,7 @@ func (c *PolkadotClient) Args() (args []string) {
 		args = append(args, PolkadotArgRPCCors, strings.Join(node.Spec.CORSDomains, ","))
 	}
 
-	if node.Spec.NodePrivatekeySecretName != "" {
+	if node.Spec.NodePrivateKeySecretName != "" {
 		args = append(args, PolkadotArgNodeKeyType, "Ed25519")
 		args = append(args, PolkadotArgNodeKeyFile, fmt.Sprintf("%s/kotal_nodekey", shared.PathData(c.HomeDir())))
 	}

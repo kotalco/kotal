@@ -57,7 +57,7 @@ func (p *ParityClient) Args() (args []string) {
 	appendArg(ParitySyncMode, p.PrunningArgFromSyncMode(node.Spec.SyncMode))
 	appendArg(ParityLogging, p.LoggingArgFromVerbosity(node.Spec.Logging))
 
-	if node.Spec.NodePrivatekeySecretName != "" {
+	if node.Spec.NodePrivateKeySecretName != "" {
 		appendArg(ParityNodeKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(p.HomeDir())))
 	}
 

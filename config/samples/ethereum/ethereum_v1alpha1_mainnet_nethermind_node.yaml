@@ -13,7 +13,7 @@ metadata:
 spec:
   network: mainnet
   client: nethermind
-  nodePrivatekeySecretName: mainnet-nethermind-nodekey
+  nodePrivateKeySecretName: mainnet-nethermind-nodekey
   logging: info
   rpc: true
   rpcPort: 9999

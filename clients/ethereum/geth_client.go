@@ -63,7 +63,7 @@ func (g *GethClient) Args() (args []string) {
 		appendArg(GethConfig, fmt.Sprintf("%s/config.toml", shared.PathConfig(g.HomeDir())))
 	}
 
-	if node.Spec.NodePrivatekeySecretName != "" {
+	if node.Spec.NodePrivateKeySecretName != "" {
 		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(g.HomeDir())))
 	}
 

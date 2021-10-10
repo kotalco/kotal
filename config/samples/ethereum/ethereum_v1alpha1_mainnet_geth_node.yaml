@@ -13,7 +13,7 @@ metadata:
 spec:
   network: mainnet
   client: geth
-  nodePrivatekeySecretName: mainnet-geth-nodekey
+  nodePrivateKeySecretName: mainnet-geth-nodekey
   rpc: true
   rpcPort: 8599
   corsDomains:

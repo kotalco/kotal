@@ -13,7 +13,7 @@ metadata:
 spec:
   network: goerli
   client: nethermind
-  nodePrivatekeySecretName: goerli-nethermind-nodekey
+  nodePrivateKeySecretName: goerli-nethermind-nodekey
   logging: info
   rpc: true
   rpcPort: 9999

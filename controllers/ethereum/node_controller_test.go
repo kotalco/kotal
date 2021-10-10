@@ -62,7 +62,7 @@ var _ = Describe("Ethereum network controller", func() {
 		spec := ethereumv1alpha1.NodeSpec{
 			Client:                   ethereumv1alpha1.BesuClient,
 			Network:                  "mainnet",
-			NodePrivatekeySecretName: "nodekey",
+			NodePrivateKeySecretName: "nodekey",
 			SyncMode:                 ethereumv1alpha1.FullSynchronization,
 			Logging:                  ethereumv1alpha1.NoLogs,
 		}
@@ -231,7 +231,7 @@ var _ = Describe("Ethereum network controller", func() {
 		spec := ethereumv1alpha1.NodeSpec{
 			Client:                   ethereumv1alpha1.BesuClient,
 			Network:                  "rinkeby",
-			NodePrivatekeySecretName: "nodekey",
+			NodePrivateKeySecretName: "nodekey",
 			Logging:                  ethereumv1alpha1.FatalLogs,
 		}
 
@@ -435,7 +435,7 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			},
 			Client:                   ethereumv1alpha1.BesuClient,
-			NodePrivatekeySecretName: "nodekey",
+			NodePrivateKeySecretName: "nodekey",
 		}
 
 		toCreate := &ethereumv1alpha1.Node{
@@ -639,7 +639,7 @@ var _ = Describe("Ethereum network controller", func() {
 				Ethash:    &ethereumv1alpha1.Ethash{},
 			},
 			Client:                   ethereumv1alpha1.BesuClient,
-			NodePrivatekeySecretName: "nodekey",
+			NodePrivateKeySecretName: "nodekey",
 			Logging:                  ethereumv1alpha1.TraceLogs,
 		}
 
@@ -849,7 +849,7 @@ var _ = Describe("Ethereum network controller", func() {
 				},
 			},
 			Client:                   ethereumv1alpha1.BesuClient,
-			NodePrivatekeySecretName: "nodekey",
+			NodePrivateKeySecretName: "nodekey",
 			Logging:                  ethereumv1alpha1.WarnLogs,
 		}
 

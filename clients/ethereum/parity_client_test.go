@@ -54,7 +54,7 @@ var _ = Describe("Nethermind Client", func() {
 			Spec: ethereumv1alpha1.NodeSpec{
 				Client:                   ethereumv1alpha1.ParityClient,
 				Network:                  ethereumv1alpha1.MainNetwork,
-				NodePrivatekeySecretName: "parity-mainnet-nodekey",
+				NodePrivateKeySecretName: "parity-mainnet-nodekey",
 				Bootnodes:                []ethereumv1alpha1.Enode{enode},
 				StaticNodes:              []ethereumv1alpha1.Enode{enode},
 				P2PPort:                  3333,

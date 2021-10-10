@@ -255,12 +255,12 @@ spec:
                   passwordSecretName:
                     description: PasswordSecretName is the secret holding password used to encrypt account private key
                     type: string
-                  privatekeySecretName:
+                  privateKeySecretName:
                     description: PrivateKeySecretName is the secret name holding account private key
                     type: string
                 required:
                 - passwordSecretName
-                - privatekeySecretName
+                - privateKeySecretName
                 type: object
               logging:
                 description: Logging is logging verboisty level
@@ -280,8 +280,8 @@ spec:
               network:
                 description: Network specifies the network to join
                 type: string
-              nodePrivatekeySecretName:
-                description: NodePrivatekeySecretName is the secret name holding node private key
+              nodePrivateKeySecretName:
+                description: NodePrivateKeySecretName is the secret name holding node private key
                 type: string
               p2pPort:
                 description: P2PPort is port used for peer to peer communication

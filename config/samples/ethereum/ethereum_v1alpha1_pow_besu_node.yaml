@@ -40,7 +40,7 @@ spec:
   ########### node spec ###########
   client: besu
   miner: true
-  nodePrivatekeySecretName: pow-besu-nodekey
+  nodePrivateKeySecretName: pow-besu-nodekey
   coinbase: "0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c"
   rpc: true
   rpcPort: 8599

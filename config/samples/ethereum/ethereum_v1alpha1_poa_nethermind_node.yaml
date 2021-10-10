@@ -56,7 +56,7 @@ spec:
   miner: true
   coinbase: "0x1990E5760d9f8Ae0ec55dF8B0819C77e59846Ff2"
   import:
-    privatekeySecretName: poa-nethermind-account-key
+    privateKeySecretName: poa-nethermind-account-key
     passwordSecretName: poa-nethermind-account-password
   syncMode: full
   staticNodes:

@@ -8,8 +8,8 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
-// KeyStoreFromPrivatekey generates key store from private key (hex without 0x)
-func KeyStoreFromPrivatekey(key, password string) (content []byte, err error) {
+// KeyStoreFromPrivateKey generates key store from private key (hex without 0x)
+func KeyStoreFromPrivateKey(key, password string) (content []byte, err error) {
 	dir, err := ioutil.TempDir(os.TempDir(), "tmp")
 	if err != nil {
 		return

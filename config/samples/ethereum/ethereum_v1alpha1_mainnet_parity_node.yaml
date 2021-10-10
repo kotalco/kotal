@@ -13,7 +13,7 @@ metadata:
 spec:
   network: mainnet
   client: parity
-  nodePrivatekeySecretName: mainnet-parity-nodekey
+  nodePrivateKeySecretName: mainnet-parity-nodekey
   rpc: true
   rpcPort: 8599
   corsDomains:

@@ -57,7 +57,7 @@ spec:
   staticNodes:
     - "enode://36f50b80f06135c8d2871d1c0c2faee6d3d952f8c100870fc41d61ac9e535fa6367409f9b2ac8658147273677f90c9fddee4f9269dad069a1f78ae3297a13b2e@10.96.161.221:30303"
   import:
-    privatekeySecretName: poa-parity-account-key
+    privateKeySecretName: poa-parity-account-key
     passwordSecretName: poa-parity-account-password
   resources:
     cpu: "1"

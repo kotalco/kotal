@@ -46,7 +46,7 @@ spec:
   ########### node spec ###########
   client: besu
   rpc: true
-  nodePrivatekeySecretName: ibft2-besu-nodekey
+  nodePrivateKeySecretName: ibft2-besu-nodekey
   rpcPort: 8599
   corsDomains:
     - all

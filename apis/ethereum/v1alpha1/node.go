@@ -60,8 +60,8 @@ type NodeSpec struct {
 	// Bootnodes is set of ethereum node URLS for p2p discovery bootstrap
 	Bootnodes []Enode `json:"bootnodes,omitempty"`
 
-	// NodePrivatekeySecretName is the secret name holding node private key
-	NodePrivatekeySecretName string `json:"nodePrivatekeySecretName,omitempty"`
+	// NodePrivateKeySecretName is the secret name holding node private key
+	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
 
 	// StaticNodes is a set of ethereum nodes to maintain connection to
 	StaticNodes []Enode `json:"staticNodes,omitempty"`
@@ -219,7 +219,7 @@ const (
 // ImportedAccount is account derived from private key
 type ImportedAccount struct {
 	// PrivateKeySecretName is the secret name holding account private key
-	PrivateKeySecretName string `json:"privatekeySecretName"`
+	PrivateKeySecretName string `json:"privateKeySecretName"`
 	// PasswordSecretName is the secret holding password used to encrypt account private key
 	PasswordSecretName string `json:"passwordSecretName"`
 }

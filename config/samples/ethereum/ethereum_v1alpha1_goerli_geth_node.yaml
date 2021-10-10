@@ -13,7 +13,7 @@ metadata:
 spec:
   network: goerli
   client: geth
-  nodePrivatekeySecretName: goerli-geth-nodekey
+  nodePrivateKeySecretName: goerli-geth-nodekey
   rpc: true
   rpcPort: 8599
   corsDomains:

@@ -40,8 +40,8 @@ type NodeSpec struct {
 	Network string `json:"network"`
 	// P2PPort is p2p protocol tcp port
 	P2PPort uint `json:"p2pPort,omitempty"`
-	// NodePrivatekeySecretName is the secret name holding node Ed25519 private key
-	NodePrivatekeySecretName string `json:"nodePrivatekeySecretName,omitempty"`
+	// NodePrivateKeySecretName is the secret name holding node Ed25519 private key
+	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
 	// Validator enables validator mode
 	Validator bool `json:"validator,omitempty"`
 	// SyncMode is the blockchain synchronization mode

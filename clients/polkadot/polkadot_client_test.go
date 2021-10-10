@@ -22,7 +22,7 @@ var _ = Describe("Polkadot client arguments", func() {
 			Spec: polkadotv1alpha1.NodeSpec{
 				Network:                  "kusama",
 				P2PPort:                  4444,
-				NodePrivatekeySecretName: "kusama-node-key",
+				NodePrivateKeySecretName: "kusama-node-key",
 				Validator:                true,
 				SyncMode:                 "fast",
 				Logging:                  "warn",

@@ -13,7 +13,7 @@ metadata:
 spec:
   network: mainnet
   client: besu
-  nodePrivatekeySecretName: mainnet-besu-nodekey
+  nodePrivateKeySecretName: mainnet-besu-nodekey
   rpc: true
   rpcPort: 8599
   corsDomains:

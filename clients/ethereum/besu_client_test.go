@@ -56,7 +56,7 @@ var _ = Describe("Besu Client", func() {
 				Client:                   ethereumv1alpha1.BesuClient,
 				Network:                  ethereumv1alpha1.MainNetwork,
 				Bootnodes:                []ethereumv1alpha1.Enode{enode},
-				NodePrivatekeySecretName: "besu-mainnet-nodekey",
+				NodePrivateKeySecretName: "besu-mainnet-nodekey",
 				StaticNodes:              []ethereumv1alpha1.Enode{enode},
 				P2PPort:                  3333,
 				SyncMode:                 ethereumv1alpha1.LightSynchronization,
@@ -149,7 +149,7 @@ var _ = Describe("Besu Client", func() {
 				},
 				Client:                   ethereumv1alpha1.BesuClient,
 				Miner:                    true,
-				NodePrivatekeySecretName: "besu-pow-nodekey",
+				NodePrivateKeySecretName: "besu-pow-nodekey",
 				Coinbase:                 ethereumv1alpha1.EthereumAddress(coinbase),
 			},
 		}
@@ -195,7 +195,7 @@ var _ = Describe("Besu Client", func() {
 				},
 				Client:                   ethereumv1alpha1.BesuClient,
 				Miner:                    true,
-				NodePrivatekeySecretName: "besu-poa-nodekey",
+				NodePrivateKeySecretName: "besu-poa-nodekey",
 				Coinbase:                 ethereumv1alpha1.EthereumAddress(coinbase),
 			},
 		}
@@ -241,7 +241,7 @@ var _ = Describe("Besu Client", func() {
 				},
 				Client:                   ethereumv1alpha1.BesuClient,
 				Miner:                    true,
-				NodePrivatekeySecretName: "besu-ibft2-nodekey",
+				NodePrivateKeySecretName: "besu-ibft2-nodekey",
 				Coinbase:                 ethereumv1alpha1.EthereumAddress(coinbase),
 			},
 		}

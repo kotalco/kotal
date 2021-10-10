@@ -24,7 +24,7 @@ spec:
   ########### node spec ###########
   client: parity
   rpc: true
-  nodePrivatekeySecretName: poa-parity-nodekey
+  nodePrivateKeySecretName: poa-parity-nodekey
   rpcPort: 8599
   corsDomains:
     - all

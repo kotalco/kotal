@@ -54,7 +54,7 @@ var _ = Describe("Nethermind Client", func() {
 			Spec: ethereumv1alpha1.NodeSpec{
 				Client:                   ethereumv1alpha1.NethermindClient,
 				Network:                  ethereumv1alpha1.MainNetwork,
-				NodePrivatekeySecretName: "mainnet-nethermind-nodekey",
+				NodePrivateKeySecretName: "mainnet-nethermind-nodekey",
 				Logging:                  ethereumv1alpha1.WarnLogs,
 				RPC:                      true,
 				RPCPort:                  8799,

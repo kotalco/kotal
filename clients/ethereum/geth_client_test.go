@@ -56,7 +56,7 @@ var _ = Describe("Geth Client", func() {
 				Network:                  ethereumv1alpha1.MainNetwork,
 				Client:                   ethereumv1alpha1.GethClient,
 				Bootnodes:                []ethereumv1alpha1.Enode{enode},
-				NodePrivatekeySecretName: "geth-mainnet-nodekey",
+				NodePrivateKeySecretName: "geth-mainnet-nodekey",
 				StaticNodes:              []ethereumv1alpha1.Enode{enode},
 				P2PPort:                  3333,
 				SyncMode:                 ethereumv1alpha1.LightSynchronization,

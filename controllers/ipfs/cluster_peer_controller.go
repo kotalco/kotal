@@ -320,11 +320,11 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 		})
 		// cluster private key
 		initClusterPeerENV = append(initClusterPeerENV, corev1.EnvVar{
-			Name: ipfsClients.EnvIPFSClusterPrivatekey,
+			Name: ipfsClients.EnvIPFSClusterPrivateKey,
 			ValueFrom: &corev1.EnvVarSource{
 				SecretKeyRef: &corev1.SecretKeySelector{
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: peer.Spec.PrivatekeySecretName,
+						Name: peer.Spec.PrivateKeySecretName,
 					},
 					Key: "key",
 				},

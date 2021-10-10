@@ -56,8 +56,8 @@ spec:
               network:
                 description: Network is the polkadot network/chain to join
                 type: string
-              nodePrivatekeySecretName:
-                description: NodePrivatekeySecretName is the secret name holding node Ed25519 private key
+              nodePrivateKeySecretName:
+                description: NodePrivateKeySecretName is the secret name holding node Ed25519 private key
                 type: string
               p2pPort:
                 description: P2PPort is p2p protocol tcp port

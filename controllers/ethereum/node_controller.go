@@ -205,7 +205,7 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha
 
 	node.Status.Network = network
 
-	if node.Spec.NodePrivatekeySecretName == "" {
+	if node.Spec.NodePrivateKeySecretName == "" {
 		switch node.Spec.Client {
 		case ethereumv1alpha1.BesuClient:
 			enodeURL = "call net_enode JSON-RPC method"
@@ -373,11 +373,11 @@ func (r *NodeReconciler) createNodeVolumes(node *ethereumv1alpha1.Node) []corev1
 	projections := []corev1.VolumeProjection{}
 
 	// nodekey (node private key) projection
-	if node.Spec.NodePrivatekeySecretName != "" {
+	if node.Spec.NodePrivateKeySecretName != "" {
 		nodekeyProjection := corev1.VolumeProjection{
 			Secret: &corev1.SecretProjection{
 				LocalObjectReference: corev1.LocalObjectReference{
-					Name: node.Spec.NodePrivatekeySecretName,
+					Name: node.Spec.NodePrivateKeySecretName,
 				},
 				Items: []corev1.KeyToPath{
 					{
@@ -479,7 +479,7 @@ func (r *NodeReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, hom
 
 	volumeMounts := []corev1.VolumeMount{}
 
-	if node.Spec.NodePrivatekeySecretName != "" || node.Spec.Import != nil {
+	if node.Spec.NodePrivateKeySecretName != "" || node.Spec.Import != nil {
 		nodekeyMount := corev1.VolumeMount{
 			Name:      "secrets",
 			MountPath: shared.PathSecrets(homedir),
@@ -617,8 +617,8 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 			initContainers = append(initContainers, importAccount)
 		}
 	} else if node.Spec.Client == ethereumv1alpha1.NethermindClient {
-		if node.Spec.NodePrivatekeySecretName != "" {
-			convertEnodePrivatekey := corev1.Container{
+		if node.Spec.NodePrivateKeySecretName != "" {
+			convertEnodePrivateKey := corev1.Container{
 				Name:  "convert-enode-privatekey",
 				Image: "busybox",
 				Env: []corev1.EnvVar{
@@ -635,7 +635,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 				Args:         []string{fmt.Sprintf("%s/nethermind_convert_enode_privatekey.sh", shared.PathConfig(homedir))},
 				VolumeMounts: volumeMounts,
 			}
-			initContainers = append(initContainers, convertEnodePrivatekey)
+			initContainers = append(initContainers, convertEnodePrivateKey)
 		}
 
 		if node.Spec.Import != nil {
@@ -750,7 +750,7 @@ func (r *NodeReconciler) specSecret(ctx context.Context, node *ethereumv1alpha1.
 			return err
 		}
 
-		account, err := KeyStoreFromPrivatekey(privateKey, password)
+		account, err := KeyStoreFromPrivateKey(privateKey, password)
 		if err != nil {
 			return err
 		}
@@ -776,9 +776,9 @@ func (r *NodeReconciler) reconcileSecret(ctx context.Context, node *ethereumv1al
 	// pubkey is required by the caller
 	// 1. read the private key secret content
 	// 2. derive public key from the private key
-	if node.Spec.NodePrivatekeySecretName != "" {
+	if node.Spec.NodePrivateKeySecretName != "" {
 		key := types.NamespacedName{
-			Name:      node.Spec.NodePrivatekeySecretName,
+			Name:      node.Spec.NodePrivateKeySecretName,
 			Namespace: node.Namespace,
 		}
 

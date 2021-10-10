@@ -219,12 +219,12 @@ func (r *NodeReconciler) nodeVolumes(node *polkadotv1alpha1.Node) (volumes []cor
 	}
 	volumes = append(volumes, configVolume)
 
-	if node.Spec.NodePrivatekeySecretName != "" {
+	if node.Spec.NodePrivateKeySecretName != "" {
 		secretVolume := corev1.Volume{
 			Name: "secret",
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
-					SecretName: node.Spec.NodePrivatekeySecretName,
+					SecretName: node.Spec.NodePrivateKeySecretName,
 					Items: []corev1.KeyToPath{
 						{
 							Key:  "key",
@@ -254,7 +254,7 @@ func (r NodeReconciler) nodeVolumeMounts(node *polkadotv1alpha1.Node, homeDir st
 	}
 	mounts = append(mounts, configMount)
 
-	if node.Spec.NodePrivatekeySecretName != "" {
+	if node.Spec.NodePrivateKeySecretName != "" {
 		secretMount := corev1.VolumeMount{
 			Name:      "secret",
 			MountPath: shared.PathSecrets(homeDir),
@@ -271,8 +271,8 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 
 	var initContainers []corev1.Container
 
-	if node.Spec.NodePrivatekeySecretName != "" {
-		convertEnodePrivatekey := corev1.Container{
+	if node.Spec.NodePrivateKeySecretName != "" {
+		convertEnodePrivateKey := corev1.Container{
 			Name:  "convert-node-private-key",
 			Image: "busybox",
 			Env: []corev1.EnvVar{
@@ -289,7 +289,7 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 			Args:         []string{fmt.Sprintf("%s/convert_node_private_key.sh", shared.PathConfig(homeDir))},
 			VolumeMounts: r.nodeVolumeMounts(node, homeDir),
 		}
-		initContainers = append(initContainers, convertEnodePrivatekey)
+		initContainers = append(initContainers, convertEnodePrivateKey)
 	}
 
 	sts.Spec = appsv1.StatefulSetSpec{
