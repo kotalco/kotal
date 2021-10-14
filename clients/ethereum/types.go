@@ -199,6 +199,8 @@ const (
 	NethermindNodePrivateKey = "--KeyStore.EnodeKeyFile"
 	// NethermindStaticNodesFile is the argument used to locate static nodes file
 	NethermindStaticNodesFile = "--Init.StaticNodesPath"
+	// NethermindBootnodes is the argument used to set bootnodes
+	NethermindBootnodes = "--Discovery.Bootnodes"
 	// NethermindGenesisFile is the argument used for genesis file
 	NethermindGenesisFile = "--Init.ChainSpecPath"
 	// NethermindDataPath is the argument used for data path

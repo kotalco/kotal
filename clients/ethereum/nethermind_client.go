@@ -39,9 +39,6 @@ func (n *NethermindClient) HomeDir() string {
 // Args returns command line arguments required for client run
 // NOTE:
 // - Network ID can be set in genesis config
-// - Bootnodes can be set in genesis config
-// TODO:
-// - followup adding --bootnodes cli flag https://github.com/NethermindEth/nethermind/issues/3185
 func (n *NethermindClient) Args() (args []string) {
 
 	node := n.node
@@ -63,6 +60,14 @@ func (n *NethermindClient) Args() (args []string) {
 
 	if len(node.Spec.StaticNodes) != 0 {
 		appendArg(NethermindStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(n.HomeDir())))
+	}
+
+	if len(node.Spec.Bootnodes) != 0 {
+		bootnodes := []string{}
+		for _, bootnode := range node.Spec.Bootnodes {
+			bootnodes = append(bootnodes, string(bootnode))
+		}
+		appendArg(NethermindBootnodes, strings.Join(bootnodes, ","))
 	}
 
 	if node.Spec.Genesis == nil {
