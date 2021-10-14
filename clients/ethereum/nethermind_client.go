@@ -14,7 +14,7 @@ const (
 	// EnvNethermindImage is the environment variable used for nethermind image
 	EnvNethermindImage = "NETHERMIND_IMAGE"
 	// DefaultNethermindImage is nethermind image
-	DefaultNethermindImage = "kotalco/nethermind:v1.10.79"
+	DefaultNethermindImage = "kotalco/nethermind:v1.11.4"
 	// NethermindHomeDir is nethermind docker image home directory
 	NethermindHomeDir = "/home/nethermind"
 )
