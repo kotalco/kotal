@@ -18,7 +18,7 @@ const (
 	// EnvNimbusBeaconNodeImage is the environment variable used for Status Ethereum 2.0 beacon node image
 	EnvNimbusBeaconNodeImage = "NIMBUS_BEACON_NODE_IMAGE"
 	// DefaultNimbusBeaconNodeImage is the default Status Ethereum 2.0 beacon node image
-	DefaultNimbusBeaconNodeImage = "kotalco/nimbus:v1.4.1"
+	DefaultNimbusBeaconNodeImage = "kotalco/nimbus:v1.5.1"
 )
 
 // HomeDir returns container home directory
