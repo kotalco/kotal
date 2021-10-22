@@ -139,6 +139,8 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 				"https://localhost:8547",
 				PrysmGRPCPort,
 				"4445",
+				PrysmGRPCGatewayCorsDomains,
+				"*",
 			},
 		},
 		{
@@ -168,6 +170,8 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 				"4445",
 				PrysmGRPCHost,
 				"0.0.0.0",
+				PrysmGRPCGatewayCorsDomains,
+				"*",
 			},
 		},
 		{
@@ -202,6 +206,8 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 				"4445",
 				PrysmGRPCHost,
 				"0.0.0.0",
+				PrysmGRPCGatewayCorsDomains,
+				"*",
 			},
 		},
 	}

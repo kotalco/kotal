@@ -3,6 +3,7 @@ package ethereum2
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -53,6 +54,8 @@ func (t *PrysmBeaconNode) Args() (args []string) {
 	}
 
 	if node.Spec.GRPC {
+		args = append(args, PrysmGRPCGatewayCorsDomains, strings.Join(node.Spec.CORSDomains, ","))
+
 		if node.Spec.GRPCPort != 0 {
 			args = append(args, PrysmGRPCPort, fmt.Sprintf("%d", node.Spec.GRPCPort))
 		}

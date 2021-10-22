@@ -67,6 +67,8 @@ const (
 	PrysmP2PTCPPort = "--p2p-tcp-port"
 	// PrysmP2PUDPPort is the argument used p2p discovery udp port
 	PrysmP2PUDPPort = "--p2p-udp-port"
+	// PrysmGRPCGatewayCorsDomains is the argument used to whitelist domains for cross domain requests
+	PrysmGRPCGatewayCorsDomains = "--grpc-gateway-corsdomain"
 
 	// PrysmBeaconRPCProvider is the argument used for beacon node rpc endpoint
 	PrysmBeaconRPCProvider = "--beacon-rpc-provider"
