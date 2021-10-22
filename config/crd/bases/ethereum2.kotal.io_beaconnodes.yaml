@@ -66,6 +66,11 @@ spec:
               grpcPort:
                 description: GRPCPort is GRPC gateway server port
                 type: integer
+              hosts:
+                description: Hosts is a list of hostnames to to whitelist for API access
+                items:
+                  type: string
+                type: array
               network:
                 description: Network is the network to join
                 type: string
