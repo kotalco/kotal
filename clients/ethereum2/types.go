@@ -30,6 +30,8 @@ const (
 	TekuP2PPort = "--p2p-port"
 	// TekuRESTAPICorsOrigins is the argument used to whitelist domains for cross domain requests
 	TekuRESTAPICorsOrigins = "--rest-api-cors-origins"
+	// TekuRESTAPIHostAllowlist is the argument used to whitelist hosts for API access
+	TekuRESTAPIHostAllowlist = "--rest-api-host-allowlist"
 
 	// TekuVC is the argument used to run validator client
 	TekuVC = "vc"
