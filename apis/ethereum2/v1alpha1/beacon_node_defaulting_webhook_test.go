@@ -44,6 +44,8 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		node.Default()
 		Expect(node.Spec.RESTPort).To(Equal(DefaultRestPort))
 		Expect(node.Spec.RESTHost).To(Equal(DefaultRestHost))
+		Expect(node.Spec.CORSDomains).To(ConsistOf(DefaultOrigins))
+		Expect(node.Spec.Hosts).To(ConsistOf(DefaultOrigins))
 	})
 
 	It("Should default beacon node with missing rpc port and host", func() {
@@ -57,6 +59,8 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		node.Default()
 		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))
 		Expect(node.Spec.RPCHost).To(Equal(DefaultRPCHost))
+		Expect(node.Spec.CORSDomains).To(ConsistOf(DefaultOrigins))
+		Expect(node.Spec.Hosts).To(ConsistOf(DefaultOrigins))
 	})
 
 	It("Should default beacon node with missing grpc port", func() {
@@ -69,6 +73,8 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		}
 		node.Default()
 		Expect(node.Spec.GRPCPort).To(Equal(DefaultGRPCPort))
+		Expect(node.Spec.CORSDomains).To(ConsistOf(DefaultOrigins))
+		Expect(node.Spec.Hosts).To(ConsistOf(DefaultOrigins))
 	})
 
 	It("Should default beacon node with missing grpc host", func() {
@@ -81,6 +87,8 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		}
 		node.Default()
 		Expect(node.Spec.GRPCHost).To(Equal(DefaultGRPCHost))
+		Expect(node.Spec.CORSDomains).To(ConsistOf(DefaultOrigins))
+		Expect(node.Spec.Hosts).To(ConsistOf(DefaultOrigins))
 	})
 
 	It("Should default beacon node with missing cors domains", func() {
@@ -91,7 +99,8 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 			},
 		}
 		node.Default()
-		Expect(node.Spec.CORSDomains).To(ConsistOf(DefaultCorsDomains))
+		Expect(node.Spec.CORSDomains).To(ConsistOf(DefaultOrigins))
+		Expect(node.Spec.Hosts).To(ConsistOf(DefaultOrigins))
 	})
 
 })

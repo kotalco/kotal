@@ -43,7 +43,10 @@ func (r *BeaconNode) Default() {
 
 	if r.Spec.RPC || r.Spec.REST || r.Spec.GRPC {
 		if len(r.Spec.CORSDomains) == 0 {
-			r.Spec.CORSDomains = DefaultCorsDomains
+			r.Spec.CORSDomains = DefaultOrigins
+		}
+		if len(r.Spec.Hosts) == 0 {
+			r.Spec.Hosts = DefaultOrigins
 		}
 	}
 

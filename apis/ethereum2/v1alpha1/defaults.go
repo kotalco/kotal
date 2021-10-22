@@ -1,8 +1,8 @@
 package v1alpha1
 
 var (
-	// DefaultCorsDomains is the default domains from which to accept cross origin requests
-	DefaultCorsDomains = []string{"*"}
+	// DefaultOrigins is the default domains from which to accept cross origin requests
+	DefaultOrigins = []string{"*"}
 )
 
 const (
