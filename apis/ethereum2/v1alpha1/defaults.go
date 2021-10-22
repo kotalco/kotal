@@ -1,5 +1,10 @@
 package v1alpha1
 
+var (
+	// DefaultCorsDomains is the default domains from which to accept cross origin requests
+	DefaultCorsDomains = []string{"*"}
+)
+
 const (
 	// DefaultP2PPort is the default port used for p2p and discovery
 	DefaultP2PPort uint = 9000

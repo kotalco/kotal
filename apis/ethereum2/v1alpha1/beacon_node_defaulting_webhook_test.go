@@ -83,4 +83,15 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		Expect(node.Spec.GRPCHost).To(Equal(DefaultGRPCHost))
 	})
 
+	It("Should default beacon node with missing cors domains", func() {
+		node := BeaconNode{
+			Spec: BeaconNodeSpec{
+				Client: TekuClient,
+				REST:   true,
+			},
+		}
+		node.Default()
+		Expect(node.Spec.CORSDomains).To(ConsistOf(DefaultCorsDomains))
+	})
+
 })
