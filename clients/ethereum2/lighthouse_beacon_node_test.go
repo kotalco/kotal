@@ -64,6 +64,8 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 				LighthouseEth1Endpoints,
 				"https://localhost:8545",
 				LighthouseHTTP,
+				LighthouseAllowOrigins,
+				"*",
 			},
 		},
 		{
@@ -86,6 +88,8 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 				LighthouseHTTP,
 				LighthouseHTTPPort,
 				"4444",
+				LighthouseAllowOrigins,
+				"*",
 			},
 		},
 		{
@@ -114,6 +118,8 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 				"4444",
 				LighthouseHTTPAddress,
 				"0.0.0.0",
+				LighthouseAllowOrigins,
+				"*",
 			},
 		},
 		{
@@ -147,6 +153,8 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 				"4444",
 				LighthouseHTTPAddress,
 				"0.0.0.0",
+				LighthouseAllowOrigins,
+				"*",
 			},
 		},
 	}

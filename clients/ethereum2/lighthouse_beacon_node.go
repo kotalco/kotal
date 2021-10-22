@@ -43,6 +43,7 @@ func (t *LighthouseBeaconNode) Args() (args []string) {
 
 	if node.Spec.REST {
 		args = append(args, LighthouseHTTP)
+		args = append(args, LighthouseAllowOrigins, strings.Join(node.Spec.CORSDomains, ","))
 
 		if node.Spec.RESTPort != 0 {
 			args = append(args, LighthouseHTTPPort, fmt.Sprintf("%d", node.Spec.RESTPort))

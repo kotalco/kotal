@@ -94,6 +94,8 @@ const (
 	LighthouseEth1 = "--eth1"
 	// LighthouseHTTP is the argument used to enable Beacon REST API
 	LighthouseHTTP = "--http"
+	// LighthouseAllowOrigins is the argument used to whitelist domains for cross domain requests
+	LighthouseAllowOrigins = "--http-allow-origin"
 	// LighthouseHTTPPort is the argument used for Beacon REST API server port
 	LighthouseHTTPPort = "--http-port"
 	// LighthouseHTTPAddress is the argument used for Beacon REST API server host
