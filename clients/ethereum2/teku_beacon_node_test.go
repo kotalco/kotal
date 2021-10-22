@@ -66,6 +66,8 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 				TekuEth1Endpoints,
 				"https://localhost:8545",
 				TekuRestEnabled,
+				TekuRESTAPICorsOrigins,
+				"*",
 			},
 		},
 		{
@@ -88,6 +90,8 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 				TekuRestEnabled,
 				TekuRestPort,
 				"3333",
+				TekuRESTAPICorsOrigins,
+				"*",
 			},
 		},
 		{
@@ -116,6 +120,8 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 				"3333",
 				TekuRestHost,
 				"0.0.0.0",
+				TekuRESTAPICorsOrigins,
+				"*",
 			},
 		},
 		{
@@ -144,6 +150,8 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 				"3333",
 				TekuRestHost,
 				"0.0.0.0",
+				TekuRESTAPICorsOrigins,
+				"*",
 			},
 		},
 	}

@@ -41,6 +41,7 @@ func (t *TekuBeaconNode) Args() (args []string) {
 
 	if node.Spec.REST {
 		args = append(args, TekuRestEnabled)
+		args = append(args, TekuRESTAPICorsOrigins, strings.Join(node.Spec.CORSDomains, ","))
 
 		if node.Spec.RESTPort != 0 {
 			args = append(args, TekuRestPort, fmt.Sprintf("%d", node.Spec.RESTPort))
