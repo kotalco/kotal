@@ -207,6 +207,13 @@ func (b *BesuClient) Genesis() (content string, err error) {
 		config["daoForkBlock"] = genesis.Forks.DAO
 	}
 
+	// If london fork is activated at genesis block
+	// set baseFeePerGas to 0x3B9ACA00
+	// https://discord.com/channels/697535391594446898/743193040197386451/900791897700859916
+	if genesis.Forks.London == 0 {
+		result["baseFeePerGas"] = "0x3B9ACA00"
+	}
+
 	result["config"] = config
 	result["nonce"] = nonce
 	result["timestamp"] = genesis.Timestamp
