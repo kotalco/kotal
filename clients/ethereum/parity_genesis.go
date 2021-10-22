@@ -100,7 +100,7 @@ func (p *ParityGenesis) Genesis(node *ethereumv1alpha1.Node) (content string, er
 
 	// specify base fee per gas if london fork is activated at genesis block
 	// https://github.com/openethereum/openethereum/issues/440
-	if genesis.Forks.Berlin == 0 {
+	if genesis.Forks.London == 0 {
 		genesisConfig["baseFeePerGas"] = "0x3B9ACA00"
 	}
 
