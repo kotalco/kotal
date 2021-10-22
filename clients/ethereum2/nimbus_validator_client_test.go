@@ -16,7 +16,7 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 			Spec: ethereum2v1alpha1.ValidatorSpec{
 				Client:          ethereum2v1alpha1.NimbusClient,
 				Network:         "mainnet",
-				BeaconEndpoints: []string{"http://10.0.0.11"},
+				BeaconEndpoints: []string{"http://nimbus-beacon-node"},
 				Graffiti:        "Validated by Kotal",
 				Keystores: []ethereum2v1alpha1.Keystore{
 					{
@@ -33,8 +33,7 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 		Expect(args).To(ContainElements([]string{
 			NimbusNonInteractive,
 			argWithVal(NimbusDataDir, shared.PathData(client.HomeDir())),
-			argWithVal(NimbusRPCAddress, "http://10.0.0.11"),
-			argWithVal(NimbusRPCPort, "80"),
+			argWithVal(NimbusBeaconNodes, "http://nimbus-beacon-node"),
 			argWithVal(NimbusGraffiti, "Validated by Kotal"),
 			argWithVal(NimbusValidatorsDir, fmt.Sprintf("%s/kotal-validators/validator-keys", shared.PathData(client.HomeDir()))),
 			argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/kotal-validators/validator-secrets", shared.PathData(client.HomeDir()))),

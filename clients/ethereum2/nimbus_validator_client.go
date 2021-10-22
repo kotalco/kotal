@@ -2,8 +2,8 @@ package ethereum2
 
 import (
 	"fmt"
-	"net/url"
 	"os"
+	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -40,24 +40,7 @@ func (t *NimbusValidatorClient) Args() (args []string) {
 
 	args = append(args, argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/kotal-validators/validator-secrets", shared.PathData(t.HomeDir()))))
 
-	endpoint := validator.Spec.BeaconEndpoints[0]
-
-	if endpoint != "" {
-		// TODO: validate endpoint is valid from webhook
-		u, _ := url.Parse(endpoint)
-		port := u.Port()
-
-		if port == "" {
-			port = "80"
-		} else {
-			endpoint = u.Hostname()
-		}
-
-		// TODO: resolve host to ip
-
-		args = append(args, argWithVal(NimbusRPCAddress, endpoint))
-		args = append(args, argWithVal(NimbusRPCPort, port))
-	}
+	args = append(args, argWithVal(NimbusBeaconNodes, strings.Join(validator.Spec.BeaconEndpoints, ",")))
 
 	if validator.Spec.Graffiti != "" {
 		args = append(args, argWithVal(NimbusGraffiti, validator.Spec.Graffiti))

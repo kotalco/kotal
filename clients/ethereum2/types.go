@@ -144,4 +144,6 @@ const (
 	NimbusValidatorsDir = "--validators-dir"
 	// NimbusSecretsDir is the argument used to locate validator keystores secrets directory
 	NimbusSecretsDir = "--secrets-dir"
+	// NimbusBeaconNodes is the argument used to set one or more beacon node HTTP REST APIs
+	NimbusBeaconNodes = "--beacon-node"
 )
