@@ -19,7 +19,7 @@ const (
 	// EnvBesuImage is the environment variable used for hyperledger besu image
 	EnvBesuImage = "BESU_IMAGE"
 	// DefaultBesuImage is hyperledger besu image
-	DefaultBesuImage = "hyperledger/besu:21.7.1"
+	DefaultBesuImage = "hyperledger/besu:21.7.4"
 	// BesuHomeDir is besu docker image home directory
 	BesuHomeDir = "/opt/besu"
 )
