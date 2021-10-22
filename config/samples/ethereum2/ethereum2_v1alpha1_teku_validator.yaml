@@ -6,7 +6,7 @@ spec:
   client: teku
   network: mainnet
   beaconEndpoints:
-    - http://10.96.130.88:9999
+    - http://teku-beacon-node:8888
   graffiti: Validated by Kotal
   # my-vaidator secret must exist before deploying the validator
   # my-validator secret must has [keystore] and [password] keys

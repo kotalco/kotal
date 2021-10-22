@@ -6,7 +6,7 @@ spec:
   client: nimbus
   network: mainnet
   beaconEndpoints:
-    - http://10.96.130.88:9999
+    - http://nimbus-beacon-node:8888
   graffiti: Validated by Kotal
   keystores:
     - secretName: my-validator

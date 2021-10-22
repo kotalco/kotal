@@ -6,7 +6,8 @@ spec:
   client: prysm
   network: mainnet
   beaconEndpoints:
-    - http://10.96.130.88:9999
+    # it gives too many colons error when protocol (https://) is added
+    - prysm-beacon-node:8888
   graffiti: Validated by Kotal
   walletPasswordSecret: wallet-password
   keystores:
