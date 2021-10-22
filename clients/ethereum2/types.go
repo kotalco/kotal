@@ -7,7 +7,7 @@ const (
 	// PrysmHomeDir is prysm home directory
 	PrysmHomeDir = "/home/.eth2"
 	// NimbusHomeDir is nimbus home directory
-	NimbusHomeDir = "/home/user"
+	NimbusHomeDir = "/home/nimbus"
 	// LighthouseHomeDir is lighthouse home directory
 	LighthouseHomeDir = "/home/lighthouse"
 )
