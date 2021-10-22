@@ -47,6 +47,11 @@ spec:
                 - lighthouse
                 - nimbus
                 type: string
+              corsDomains:
+                description: CORSDomains is the domains from which to accept cross origin requests
+                items:
+                  type: string
+                type: array
               eth1Endpoints:
                 description: Eth1Endpoints is Ethereum 1 endpoints
                 items:

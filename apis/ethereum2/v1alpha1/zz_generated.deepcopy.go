@@ -76,6 +76,11 @@ func (in *BeaconNodeSpec) DeepCopyInto(out *BeaconNodeSpec) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
+	if in.CORSDomains != nil {
+		in, out := &in.CORSDomains, &out.CORSDomains
+		*out = make([]string, len(*in))
+		copy(*out, *in)
+	}
 	in.Resources.DeepCopyInto(&out.Resources)
 }
 

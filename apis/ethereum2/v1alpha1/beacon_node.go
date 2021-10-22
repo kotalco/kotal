@@ -35,6 +35,9 @@ type BeaconNodeSpec struct {
 	// GRPCPort is GRPC gateway server port
 	GRPCPort uint `json:"grpcPort,omitempty"`
 
+	// CORSDomains is the domains from which to accept cross origin requests
+	CORSDomains []string `json:"corsDomains,omitempty"`
+
 	// P2PPort is p2p and discovery port
 	P2PPort uint `json:"p2pPort,omitempty"`
 
