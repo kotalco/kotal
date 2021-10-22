@@ -29,23 +29,6 @@ var _ = Describe("Filecoin node defaulting", func() {
 
 	})
 
-	It("Should default Filecoin nerpa node", func() {
-		node := Node{
-			Spec: NodeSpec{
-				Network: NerpaNetwork,
-			},
-		}
-
-		node.Default()
-
-		Expect(node.Spec.Resources.CPU).To((Equal(DefaultNerpaNodeCPURequest)))
-		Expect(node.Spec.Resources.CPULimit).To((Equal(DefaultNerpaNodeCPULimit)))
-		Expect(node.Spec.Resources.Memory).To((Equal(DefaultNerpaNodeMemoryRequest)))
-		Expect(node.Spec.Resources.MemoryLimit).To((Equal(DefaultNerpaNodeMemoryLimit)))
-		Expect(node.Spec.Resources.Storage).To((Equal(DefaultNerpaNodeStorageRequest)))
-
-	})
-
 	It("Should default Filecoin calibration node", func() {
 		node := Node{
 			Spec: NodeSpec{

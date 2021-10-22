@@ -18,8 +18,6 @@ const (
 	EnvLotusImage = "LOTUS_IMAGE"
 	// DefaultLotusImage is the default lotus client image
 	DefaultLotusImage = "kotalco/lotus:v1.12.0"
-	// DefaultLotusNerpaImage is the default lotus client image for nerpa network
-	DefaultLotusNerpaImage = "kotalco/lotus:v1.11.3-nerpa"
 	// DefaultLotusCalibrationImage is the default lotus client image for calibration network
 	DefaultLotusCalibrationImage = "kotalco/lotus:v1.12.0-calibration"
 	//  LotusHomeDir is lotus client image home dir
@@ -32,8 +30,6 @@ func (c *LotusClient) Image() string {
 		switch c.node.Spec.Network {
 		case filecoinv1alpha1.MainNetwork:
 			return DefaultLotusImage
-		case filecoinv1alpha1.NerpaNetwork:
-			return DefaultLotusNerpaImage
 		case filecoinv1alpha1.CalibrationNetwork:
 			return DefaultLotusCalibrationImage
 		}

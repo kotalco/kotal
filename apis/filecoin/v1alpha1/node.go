@@ -34,14 +34,12 @@ type NodeSpec struct {
 }
 
 // FilecoinNetwork is Filecoin network
-// +kubebuilder:validation:Enum=mainnet;nerpa;calibration
+// +kubebuilder:validation:Enum=mainnet;calibration
 type FilecoinNetwork string
 
 const (
 	// MainNetwork is the Filecoin main network
 	MainNetwork FilecoinNetwork = "mainnet"
-	// NerpaNetwork is the Filecoin main network
-	NerpaNetwork FilecoinNetwork = "nerpa"
 	// CalibrationNetwork is the Filecoin main network
 	CalibrationNetwork FilecoinNetwork = "calibration"
 )

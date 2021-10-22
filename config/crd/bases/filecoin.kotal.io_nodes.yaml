@@ -67,7 +67,6 @@ spec:
                 description: Network is the Filecoin network the node will join and sync
                 enum:
                 - mainnet
-                - nerpa
                 - calibration
                 type: string
               p2pHost:

@@ -12,7 +12,6 @@ var _ webhook.Defaulter = &Node{}
 func (n *Node) Default() {
 	nodelog.Info("default", "name", n.Name)
 
-	nerpa := n.Spec.Network == NerpaNetwork
 	mainnet := n.Spec.Network == MainNetwork
 	calibration := n.Spec.Network == CalibrationNetwork
 
@@ -36,9 +35,6 @@ func (n *Node) Default() {
 	}
 
 	if n.Spec.Resources.CPU == "" {
-		if nerpa {
-			n.Spec.CPU = DefaultNerpaNodeCPURequest
-		}
 		if mainnet {
 			n.Spec.CPU = DefaultMainnetNodeCPURequest
 		}
@@ -48,9 +44,6 @@ func (n *Node) Default() {
 	}
 
 	if n.Spec.CPULimit == "" {
-		if nerpa {
-			n.Spec.CPULimit = DefaultNerpaNodeCPULimit
-		}
 		if mainnet {
 			n.Spec.CPULimit = DefaultMainnetNodeCPULimit
 		}
@@ -60,9 +53,6 @@ func (n *Node) Default() {
 	}
 
 	if n.Spec.Memory == "" {
-		if nerpa {
-			n.Spec.Memory = DefaultNerpaNodeMemoryRequest
-		}
 		if mainnet {
 			n.Spec.Memory = DefaultMainnetNodeMemoryRequest
 		}
@@ -72,9 +62,6 @@ func (n *Node) Default() {
 	}
 
 	if n.Spec.MemoryLimit == "" {
-		if nerpa {
-			n.Spec.MemoryLimit = DefaultNerpaNodeMemoryLimit
-		}
 		if mainnet {
 			n.Spec.MemoryLimit = DefaultMainnetNodeMemoryLimit
 		}
@@ -84,9 +71,6 @@ func (n *Node) Default() {
 	}
 
 	if n.Spec.Storage == "" {
-		if nerpa {
-			n.Spec.Storage = DefaultNerpaNodeStorageRequest
-		}
 		if mainnet {
 			n.Spec.Storage = DefaultMainnetNodeStorageRequest
 		}

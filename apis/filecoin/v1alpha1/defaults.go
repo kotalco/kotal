@@ -9,16 +9,6 @@ const (
 	DefaultHost = "0.0.0.0"
 	// DefaultAPIRequestTimeout is the default API request timeout
 	DefaultAPIRequestTimeout uint = 30
-	// DefaultNerpaNodeCPURequest is the default nerpa node cpu request
-	DefaultNerpaNodeCPURequest = "4"
-	// DefaultNerpaNodeCPULimit is the default nerpa node cpu limit
-	DefaultNerpaNodeCPULimit = "8"
-	// DefaultNerpaNodeMemoryRequest is the default nerpa node memory request
-	DefaultNerpaNodeMemoryRequest = "8Gi"
-	// DefaultNerpaNodeMemoryLimit is the default nerpa node memory limit
-	DefaultNerpaNodeMemoryLimit = "16Gi"
-	// DefaultNerpaNodeStorageRequest is the default nerpa node storage
-	DefaultNerpaNodeStorageRequest = "100Gi"
 
 	// DefaultMainnetNodeCPURequest is the default mainnet node cpu request
 	DefaultMainnetNodeCPURequest = "8"

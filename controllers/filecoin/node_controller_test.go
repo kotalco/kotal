@@ -26,12 +26,12 @@ var _ = Describe("kusama node controller", func() {
 	}
 
 	key := types.NamespacedName{
-		Name:      "nerpa-node",
+		Name:      "calibration-node",
 		Namespace: ns.Name,
 	}
 
 	spec := filecoinv1alpha1.NodeSpec{
-		Network: filecoinv1alpha1.NerpaNetwork,
+		Network: filecoinv1alpha1.CalibrationNetwork,
 		API:     true,
 	}
 
@@ -85,12 +85,12 @@ var _ = Describe("kusama node controller", func() {
 		fetched := &appsv1.StatefulSet{}
 		expectedResources := corev1.ResourceRequirements{
 			Requests: corev1.ResourceList{
-				corev1.ResourceCPU:    resource.MustParse(filecoinv1alpha1.DefaultNerpaNodeCPURequest),
-				corev1.ResourceMemory: resource.MustParse(filecoinv1alpha1.DefaultNerpaNodeMemoryRequest),
+				corev1.ResourceCPU:    resource.MustParse(filecoinv1alpha1.DefaultCalibrationNodeCPURequest),
+				corev1.ResourceMemory: resource.MustParse(filecoinv1alpha1.DefaultCalibrationNodeMemoryRequest),
 			},
 			Limits: corev1.ResourceList{
-				corev1.ResourceCPU:    resource.MustParse(filecoinv1alpha1.DefaultNerpaNodeCPULimit),
-				corev1.ResourceMemory: resource.MustParse(filecoinv1alpha1.DefaultNerpaNodeMemoryLimit),
+				corev1.ResourceCPU:    resource.MustParse(filecoinv1alpha1.DefaultCalibrationNodeCPULimit),
+				corev1.ResourceMemory: resource.MustParse(filecoinv1alpha1.DefaultCalibrationNodeMemoryLimit),
 			},
 		}
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
@@ -111,7 +111,7 @@ var _ = Describe("kusama node controller", func() {
 		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
 		expectedResources := corev1.ResourceRequirements{
 			Requests: corev1.ResourceList{
-				corev1.ResourceStorage: resource.MustParse(filecoinv1alpha1.DefaultNerpaNodeStorageRequest),
+				corev1.ResourceStorage: resource.MustParse(filecoinv1alpha1.DefaultCalibrationNodeStorageRequest),
 			},
 		}
 		Expect(fetched.Spec.Resources).To(Equal(expectedResources))

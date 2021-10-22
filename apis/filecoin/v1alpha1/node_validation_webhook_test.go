@@ -27,14 +27,14 @@ var _ = Describe("Filecoin node validation", func() {
 			},
 			NewNode: &Node{
 				Spec: NodeSpec{
-					Network: NerpaNetwork,
+					Network: CalibrationNetwork,
 				},
 			},
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.network",
-					BadValue: NerpaNetwork,
+					BadValue: CalibrationNetwork,
 					Detail:   "field is immutable",
 				},
 			},

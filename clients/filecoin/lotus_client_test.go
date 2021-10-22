@@ -12,18 +12,18 @@ import (
 var _ = Describe("Lotus Filecoin Client", func() {
 	node := filecoinv1alpha1.Node{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "nerpa-node",
+			Name:      "calibration-node",
 			Namespace: "filecoin",
 		},
 		Spec: filecoinv1alpha1.NodeSpec{
-			Network: filecoinv1alpha1.NerpaNetwork,
+			Network: filecoinv1alpha1.CalibrationNetwork,
 		},
 	}
 
 	client := NewClient(&node)
 
 	It("Should get correct image", func() {
-		Expect(client.Image()).To(Equal(DefaultLotusNerpaImage))
+		Expect(client.Image()).To(Equal(DefaultLotusCalibrationImage))
 		node.Spec.Network = filecoinv1alpha1.CalibrationNetwork
 		Expect(client.Image()).To(Equal(DefaultLotusCalibrationImage))
 		node.Spec.Network = filecoinv1alpha1.MainNetwork
