@@ -17,11 +17,11 @@ const (
 	// EnvLotusImage is the environment variable used for lotus filecoin client image
 	EnvLotusImage = "LOTUS_IMAGE"
 	// DefaultLotusImage is the default lotus client image
-	DefaultLotusImage = "kotalco/lotus:v1.11.3"
+	DefaultLotusImage = "kotalco/lotus:v1.12.0"
 	// DefaultLotusNerpaImage is the default lotus client image for nerpa network
 	DefaultLotusNerpaImage = "kotalco/lotus:v1.11.3-nerpa"
 	// DefaultLotusCalibrationImage is the default lotus client image for calibration network
-	DefaultLotusCalibrationImage = "kotalco/lotus:v1.11.3-calibration"
+	DefaultLotusCalibrationImage = "kotalco/lotus:v1.12.0-calibration"
 	//  LotusHomeDir is lotus client image home dir
 	LotusHomeDir = "/home/filecoin"
 )
