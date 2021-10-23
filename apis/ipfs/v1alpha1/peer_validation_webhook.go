@@ -34,6 +34,11 @@ func (p *Peer) ValidateUpdate(old runtime.Object) error {
 
 	peerlog.Info("validate update", "name", p.Name)
 
+	if oldPeer.Spec.SwarmKeySecret != p.Spec.SwarmKeySecret {
+		err := field.Invalid(field.NewPath("spec").Child("swarmKeySecret"), p.Spec.SwarmKeySecret, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
 	allErrors = append(allErrors, p.Spec.Resources.ValidateUpdate(&oldPeer.Spec.Resources)...)
 
 	if len(allErrors) == 0 {
