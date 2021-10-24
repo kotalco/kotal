@@ -3,7 +3,7 @@ kind: Peer
 metadata:
   name: peer-sample
 spec:
-  swarmKeySecret: my-swarm-key
+  swarmKeySecretName: my-swarm-key
   routing: dhtclient
   apiPort: 8999
   apiHost: "127.0.0.2"

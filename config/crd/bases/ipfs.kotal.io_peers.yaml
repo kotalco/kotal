@@ -115,8 +115,8 @@ spec:
                 - dhtclient
                 - dhtserver
                 type: string
-              swarmKeySecret:
-                description: SwarmKeySecret is the k8s secret holding swarm key
+              swarmKeySecretName:
+                description: SwarmKeySecretName is the k8s secret holding swarm key
                 type: string
             type: object
           status:

@@ -33,10 +33,10 @@ var _ = Describe("IPFS peer controller", func() {
 	}
 
 	spec := ipfsv1alpha1.PeerSpec{
-		APIPort:        3333,
-		GatewayPort:    4444,
-		Routing:        ipfsv1alpha1.DHTClientRouting,
-		SwarmKeySecret: "my-swarm",
+		APIPort:            3333,
+		GatewayPort:        4444,
+		Routing:            ipfsv1alpha1.DHTClientRouting,
+		SwarmKeySecretName: "my-swarm",
 	}
 
 	toCreate := &ipfsv1alpha1.Peer{

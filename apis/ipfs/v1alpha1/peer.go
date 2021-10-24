@@ -21,8 +21,8 @@ type PeerSpec struct {
 	GatewayHost string `json:"gatewayHost,omitempty"`
 	// Routing is the content routing mechanism
 	Routing RoutingMechanism `json:"routing,omitempty"`
-	// SwarmKeySecret is the k8s secret holding swarm key
-	SwarmKeySecret string `json:"swarmKeySecret,omitempty"`
+	// SwarmKeySecretName is the k8s secret holding swarm key
+	SwarmKeySecretName string `json:"swarmKeySecretName,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

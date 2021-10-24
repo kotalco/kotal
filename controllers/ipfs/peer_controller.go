@@ -301,12 +301,12 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 	initContainers := []corev1.Container{}
 
 	// copy swarm key before init ipfs
-	if peer.Spec.SwarmKeySecret != "" {
+	if peer.Spec.SwarmKeySecretName != "" {
 		volumes = append(volumes, corev1.Volume{
 			Name: "swarm-key",
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
-					SecretName: peer.Spec.SwarmKeySecret,
+					SecretName: peer.Spec.SwarmKeySecretName,
 				},
 			},
 		})

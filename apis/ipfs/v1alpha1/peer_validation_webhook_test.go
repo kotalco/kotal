@@ -120,18 +120,18 @@ var _ = Describe("IPFS peer validation", func() {
 			Title: "Peer #4",
 			Peer: &Peer{
 				Spec: PeerSpec{
-					SwarmKeySecret: "my-swarm-key",
+					SwarmKeySecretName: "my-swarm-key",
 				},
 			},
 			NewPeer: &Peer{
 				Spec: PeerSpec{
-					SwarmKeySecret: "your-swarm-key",
+					SwarmKeySecretName: "your-swarm-key",
 				},
 			},
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.swarmKeySecret",
+					Field:    "spec.swarmKeySecretName",
 					BadValue: "your-swarm-key",
 					Detail:   "field is immutable",
 				},
