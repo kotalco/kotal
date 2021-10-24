@@ -1,6 +1,8 @@
 package v1alpha1
 
 import (
+	"strings"
+
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -27,6 +29,16 @@ func (p *Peer) ValidateCreate() error {
 	return apierrors.NewInvalid(schema.GroupKind{}, p.Name, allErrors)
 }
 
+// initProfilesChanged returns true if initial profiles changed
+func initProfilesChanged(old, peer *Peer) bool {
+	for i, profile := range old.Spec.InitProfiles {
+		if peer.Spec.InitProfiles[i] != profile {
+			return true
+		}
+	}
+	return false
+}
+
 // ValidateUpdate validates ipfs peers while being updated
 func (p *Peer) ValidateUpdate(old runtime.Object) error {
 	var allErrors field.ErrorList
@@ -36,6 +48,15 @@ func (p *Peer) ValidateUpdate(old runtime.Object) error {
 
 	if oldPeer.Spec.SwarmKeySecret != p.Spec.SwarmKeySecret {
 		err := field.Invalid(field.NewPath("spec").Child("swarmKeySecret"), p.Spec.SwarmKeySecret, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
+	if len(oldPeer.Spec.InitProfiles) != len(p.Spec.InitProfiles) || initProfilesChanged(oldPeer, p) {
+		profiles := []string{}
+		for _, profile := range p.Spec.InitProfiles {
+			profiles = append(profiles, string(profile))
+		}
+		err := field.Invalid(field.NewPath("spec").Child("initProfiles"), strings.Join(profiles, ","), "field is immutable")
 		allErrors = append(allErrors, err)
 	}
 

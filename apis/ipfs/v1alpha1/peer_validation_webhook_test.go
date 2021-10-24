@@ -137,6 +137,33 @@ var _ = Describe("IPFS peer validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Peer #5",
+			Peer: &Peer{
+				Spec: PeerSpec{
+					InitProfiles: []Profile{
+						ServerProfile,
+						BadgerDSProfile,
+					},
+				},
+			},
+			NewPeer: &Peer{
+				Spec: PeerSpec{
+					InitProfiles: []Profile{
+						TestProfile,
+						ServerProfile,
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.initProfiles",
+					BadValue: "test,server",
+					Detail:   "field is immutable",
+				},
+			},
+		},
 	}
 
 	Context("While creating peer", func() {
