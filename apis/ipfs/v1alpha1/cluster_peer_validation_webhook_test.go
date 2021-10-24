@@ -100,6 +100,27 @@ var _ = Describe("IPFS cluster peer validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Cluster Peer #2",
+			Peer: &ClusterPeer{
+				Spec: ClusterPeerSpec{
+					Consensus: CRDT,
+				},
+			},
+			NewPeer: &ClusterPeer{
+				Spec: ClusterPeerSpec{
+					Consensus: Raft,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.consensus",
+					BadValue: Raft,
+					Detail:   "field is immutable",
+				},
+			},
+		},
 	}
 
 	Context("While creating cluster peer", func() {

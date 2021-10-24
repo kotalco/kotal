@@ -55,6 +55,11 @@ func (r *ClusterPeer) ValidateUpdate(old runtime.Object) error {
 
 	clusterpeerlog.Info("validate update", "name", r.Name)
 
+	if oldClusterPeer.Spec.Consensus != r.Spec.Consensus {
+		err := field.Invalid(field.NewPath("spec").Child("consensus"), r.Spec.Consensus, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
 	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldClusterPeer.Spec.Resources)...)
 
