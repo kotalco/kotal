@@ -12,12 +12,33 @@ import (
 
 var _ webhook.Validator = &ClusterPeer{}
 
+// validate validates a node with a given path
+func (r *ClusterPeer) validate() field.ErrorList {
+	var nodeErrors field.ErrorList
+
+	// privateKeySecretName is required if id is given
+	if r.Spec.ID != "" && r.Spec.PrivateKeySecretName == "" {
+		err := field.Invalid(field.NewPath("spec").Child("privateKeySecretName"), "", "must provide privateKeySecretName if id is provided")
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	// id is required if privateKeySecretName is given
+	if r.Spec.PrivateKeySecretName != "" && r.Spec.ID == "" {
+		err := field.Invalid(field.NewPath("spec").Child("id"), "", "must provide id if privateKeySecretName is provided")
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	return nodeErrors
+
+}
+
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (r *ClusterPeer) ValidateCreate() error {
 	var allErrors field.ErrorList
 
 	clusterpeerlog.Info("validate create", "name", r.Name)
 
+	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
@@ -34,6 +55,7 @@ func (r *ClusterPeer) ValidateUpdate(old runtime.Object) error {
 
 	clusterpeerlog.Info("validate update", "name", r.Name)
 
+	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldClusterPeer.Spec.Resources)...)
 
 	if len(allErrors) == 0 {
