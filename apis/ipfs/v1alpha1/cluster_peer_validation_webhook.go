@@ -60,6 +60,11 @@ func (r *ClusterPeer) ValidateUpdate(old runtime.Object) error {
 		allErrors = append(allErrors, err)
 	}
 
+	if oldClusterPeer.Spec.ID != r.Spec.ID {
+		err := field.Invalid(field.NewPath("spec").Child("id"), r.Spec.ID, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
 	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldClusterPeer.Spec.Resources)...)
 

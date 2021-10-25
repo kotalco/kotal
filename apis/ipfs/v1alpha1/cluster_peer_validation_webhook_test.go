@@ -101,7 +101,7 @@ var _ = Describe("IPFS cluster peer validation", func() {
 			},
 		},
 		{
-			Title: "Cluster Peer #2",
+			Title: "Cluster Peer #3",
 			Peer: &ClusterPeer{
 				Spec: ClusterPeerSpec{
 					Consensus: CRDT,
@@ -117,6 +117,29 @@ var _ = Describe("IPFS cluster peer validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.consensus",
 					BadValue: Raft,
+					Detail:   "field is immutable",
+				},
+			},
+		},
+		{
+			Title: "Cluster Peer #4",
+			Peer: &ClusterPeer{
+				Spec: ClusterPeerSpec{
+					PrivateKeySecretName: "my-cluster-privatekey",
+					ID:                   "12D3KooWBcEtY8GH4mNkri9kM3haeWhEXtQV7mi81ErWrqLYGuiq",
+				},
+			},
+			NewPeer: &ClusterPeer{
+				Spec: ClusterPeerSpec{
+					PrivateKeySecretName: "my-cluster-privatekey",
+					ID:                   "12D3KooWBcEtY8GH4mNkri9kM3haeWhEXtQV7mi81ErWrqLYGuir",
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.id",
+					BadValue: "12D3KooWBcEtY8GH4mNkri9kM3haeWhEXtQV7mi81ErWrqLYGuir",
 					Detail:   "field is immutable",
 				},
 			},
