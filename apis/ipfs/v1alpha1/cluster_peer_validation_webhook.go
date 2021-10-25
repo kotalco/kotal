@@ -65,6 +65,11 @@ func (r *ClusterPeer) ValidateUpdate(old runtime.Object) error {
 		allErrors = append(allErrors, err)
 	}
 
+	if oldClusterPeer.Spec.PrivateKeySecretName != r.Spec.PrivateKeySecretName {
+		err := field.Invalid(field.NewPath("spec").Child("privateKeySecretName"), r.Spec.PrivateKeySecretName, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
 	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldClusterPeer.Spec.Resources)...)
 

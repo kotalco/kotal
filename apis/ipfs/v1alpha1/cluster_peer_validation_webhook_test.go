@@ -144,6 +144,29 @@ var _ = Describe("IPFS cluster peer validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Cluster Peer #5",
+			Peer: &ClusterPeer{
+				Spec: ClusterPeerSpec{
+					PrivateKeySecretName: "my-cluster-privatekey",
+					ID:                   "12D3KooWBcEtY8GH4mNkri9kM3haeWhEXtQV7mi81ErWrqLYGuir",
+				},
+			},
+			NewPeer: &ClusterPeer{
+				Spec: ClusterPeerSpec{
+					PrivateKeySecretName: "your-cluster-privatekey",
+					ID:                   "12D3KooWBcEtY8GH4mNkri9kM3haeWhEXtQV7mi81ErWrqLYGuir",
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.privateKeySecretName",
+					BadValue: "your-cluster-privatekey",
+					Detail:   "field is immutable",
+				},
+			},
+		},
 	}
 
 	Context("While creating cluster peer", func() {
