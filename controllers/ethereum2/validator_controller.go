@@ -318,16 +318,30 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 			importKeystoreContainer := corev1.Container{
 				Name:  fmt.Sprintf("import-keystore-%s", keystore.SecretName),
 				Image: img,
-				Args: []string{
-					"accounts",
-					"import",
-					ethereum2Clients.PrysmAcceptTermsOfUse,
-					fmt.Sprintf("--%s", validator.Spec.Network),
-					fmt.Sprintf("%s=%s/prysm-wallet", ethereum2Clients.PrysmWalletDir, shared.PathData(homeDir)),
-					fmt.Sprintf("%s=%s/keystore-%d.json", ethereum2Clients.PrysmKeysDir, keyDir, i),
-					fmt.Sprintf("%s=%s/password.txt", ethereum2Clients.PrysmAccountPasswordFile, keyDir),
-					fmt.Sprintf("%s=%s/prysm-wallet/prysm-wallet-password.txt", ethereum2Clients.PrysmWalletPasswordFile, shared.PathSecrets(homeDir)),
+				Env: []corev1.EnvVar{
+					{
+						Name:  "KOTAL_NETWORK",
+						Value: validator.Spec.Network,
+					},
+					{
+						Name:  "KOTAL_DATA_PATH",
+						Value: shared.PathData(homeDir),
+					},
+					{
+						Name:  "KOTAL_KEY_DIR",
+						Value: keyDir,
+					},
+					{
+						Name:  "KOTAL_KEYSTORE_INDEX",
+						Value: fmt.Sprintf("%d", i),
+					},
+					{
+						Name:  "KOTAL_SECRETS_PATH",
+						Value: shared.PathSecrets(homeDir),
+					},
 				},
+				Command:      []string{"/bin/sh"},
+				Args:         []string{fmt.Sprintf("%s/prysm_import_keystore.sh", shared.PathConfig(homeDir))},
 				VolumeMounts: mounts,
 			}
 			initContainers = append(initContainers, importKeystoreContainer)
@@ -340,23 +354,26 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 			importKeystoreContainer := corev1.Container{
 				Name:  fmt.Sprintf("import-keystore-%s", keystore.SecretName),
 				Image: img,
-				Command: []string{
-					"lighthouse",
-					"account",
-					"validator",
-					"import",
+				Env: []corev1.EnvVar{
+					{
+						Name:  "KOTAL_NETWORK",
+						Value: validator.Spec.Network,
+					},
+					{
+						Name:  "KOTAL_DATA_PATH",
+						Value: shared.PathData(homeDir),
+					},
+					{
+						Name:  "KOTAL_KEY_DIR",
+						Value: keyDir,
+					},
+					{
+						Name:  "KOTAL_KEYSTORE_INDEX",
+						Value: fmt.Sprintf("%d", i),
+					},
 				},
-				Args: []string{
-					ethereum2Clients.LighthouseDataDir,
-					shared.PathData(homeDir),
-					ethereum2Clients.LighthouseNetwork,
-					validator.Spec.Network,
-					ethereum2Clients.LighthouseKeystore,
-					fmt.Sprintf("%s/keystore-%d.json", keyDir, i),
-					ethereum2Clients.LighthouseReusePassword,
-					ethereum2Clients.LighthousePasswordFile,
-					fmt.Sprintf("%s/password.txt", keyDir),
-				},
+				Command:      []string{"/bin/sh"},
+				Args:         []string{fmt.Sprintf("%s/lighthouse_import_keystore.sh", shared.PathConfig(homeDir))},
 				VolumeMounts: mounts,
 			}
 			initContainers = append(initContainers, importKeystoreContainer)
@@ -371,20 +388,18 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 		copyValidators := corev1.Container{
 			Name:  "copy-validators",
 			Image: img,
-			Command: []string{
-				"/bin/sh",
-				"-c",
+			Env: []corev1.EnvVar{
+				{
+					Name:  "KOTAL_SECRETS_PATH",
+					Value: shared.PathSecrets(homeDir),
+				},
+				{
+					Name:  "KOTAL_VALIDATORS_PATH",
+					Value: validatorsPath,
+				},
 			},
-			Args: []string{
-				fmt.Sprintf(`
-					mkdir -p %s
-					cp -RL %s/validator-keys %s &&
-					cp -RL %s/validator-secrets %s`,
-					validatorsPath,
-					shared.PathSecrets(homeDir), validatorsPath,
-					shared.PathSecrets(homeDir), validatorsPath,
-				),
-			},
+			Command:      []string{"/bin/sh"},
+			Args:         []string{fmt.Sprintf("%s/nimbus_copy_validators.sh", shared.PathConfig(homeDir))},
 			VolumeMounts: mounts,
 		}
 		initContainers = append(initContainers, copyValidators)
