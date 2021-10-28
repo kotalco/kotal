@@ -19,7 +19,7 @@ const (
 	// EnvPrysmBeaconNodeImage is the environment variable used for Prysmatic Labs beacon node image
 	EnvPrysmBeaconNodeImage = "PRYSM_BEACON_NODE_IMAGE"
 	// DefaultPrysmBeaconNodeImage is Prysmatic Labs beacon node image
-	DefaultPrysmBeaconNodeImage = "gcr.io/prysmaticlabs/prysm/beacon-chain:v2.0.1"
+	DefaultPrysmBeaconNodeImage = "kotalco/prysm:v2.0.2"
 )
 
 // HomeDir returns container home directory
@@ -76,6 +76,7 @@ func (t *PrysmBeaconNode) Args() (args []string) {
 
 // Command returns command for running the client
 func (t *PrysmBeaconNode) Command() (command []string) {
+	command = []string{"beacon-chain"}
 	return
 }
 

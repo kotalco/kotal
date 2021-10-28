@@ -18,7 +18,7 @@ const (
 	// EnvPrysmValidatorImage is the environment variable used for Prysmatic Labs validator client image
 	EnvPrysmValidatorImage = "PRYSM_VALIDATOR_CLIENT_IMAGE"
 	// DefaultPrysmValidatorImage is Prysmatic Labs validator client image
-	DefaultPrysmValidatorImage = "gcr.io/prysmaticlabs/prysm/validator:v2.0.1"
+	DefaultPrysmValidatorImage = "kotalco/prysm:v2.0.2"
 )
 
 // HomeDir returns container home directory
@@ -54,6 +54,7 @@ func (t *PrysmValidatorClient) Args() (args []string) {
 
 // Command returns command for running the client
 func (t *PrysmValidatorClient) Command() (command []string) {
+	command = []string{"validator"}
 	return
 }
 
