@@ -22,6 +22,18 @@ rules:
   resources:
   - configmaps
   - persistentvolumeclaims
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - persistentvolumeclaims
   - secrets
   - services
   verbs:
@@ -37,17 +49,6 @@ rules:
   - configmaps
   - persistentvolumeclaims
   - services
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - persistentvolumeclaims
   verbs:
   - create
   - delete

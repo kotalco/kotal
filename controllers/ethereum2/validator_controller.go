@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
 
 	"github.com/go-logr/logr"
@@ -25,10 +26,19 @@ type ValidatorReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+var (
+	//go:embed prysm_import_keystore.sh
+	PrysmImportKeyStore string
+	//go:embed lighthouse_import_keystore.sh
+	LighthouseImportKeyStore string
+	//go:embed nimbus_copy_validators.sh
+	NimbusCopyValidators string
+)
+
 // +kubebuilder:rbac:groups=ethereum2.kotal.io,resources=validators,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=ethereum2.kotal.io,resources=validators/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
-// +kubebuilder:rbac:groups=core,resources=persistentvolumeclaims,verbs=watch;get;create;update;list;delete
+// +kubebuilder:rbac:groups=core,resources=configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 // Reconcile reconciles Ethereum 2.0 validator client
 func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
@@ -45,6 +55,10 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	}
 
 	shared.UpdateLabels(&validator, string(validator.Spec.Client))
+
+	if err = r.reconcileConfigmap(ctx, &validator); err != nil {
+		return
+	}
 
 	if err = r.reconcilePVC(ctx, &validator); err != nil {
 		return
@@ -119,6 +133,18 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 		},
 	}
 	volumes = append(volumes, dataVolume)
+
+	configVolume := corev1.Volume{
+		Name: "config",
+		VolumeSource: corev1.VolumeSource{
+			ConfigMap: &corev1.ConfigMapVolumeSource{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: validator.Name,
+				},
+			},
+		},
+	}
+	volumes = append(volumes, configVolume)
 
 	// validator key/secret volumes
 	for i, keystore := range validator.Spec.Keystores {
@@ -236,6 +262,12 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 		MountPath: shared.PathData(homeDir),
 	}
 	mounts = append(mounts, dataMount)
+
+	configMount := corev1.VolumeMount{
+		Name:      "config",
+		MountPath: shared.PathConfig(homeDir),
+	}
+	mounts = append(mounts, configMount)
 
 	for _, keystore := range validator.Spec.Keystores {
 
@@ -425,11 +457,53 @@ func (r *ValidatorReconciler) reconcileStatefulset(ctx context.Context, validato
 	return err
 }
 
+// specConfigmap updates validator configmap spec
+func (r *ValidatorReconciler) specConfigmap(validator *ethereum2v1alpha1.Validator, configmap *corev1.ConfigMap) {
+	if configmap.Data == nil {
+		configmap.Data = map[string]string{}
+	}
+
+	switch validator.Spec.Client {
+	case ethereum2v1alpha1.PrysmClient:
+		configmap.Data["prysm_import_keystore.sh"] = PrysmImportKeyStore
+	case ethereum2v1alpha1.LighthouseClient:
+		configmap.Data["lighthouse_import_keystore.sh"] = LighthouseImportKeyStore
+	case ethereum2v1alpha1.NimbusClient:
+		configmap.Data["nimbus_copy_validators.sh"] = NimbusCopyValidators
+	}
+
+}
+
+// reconcileConfigmap reconciles validator config map
+func (r *ValidatorReconciler) reconcileConfigmap(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
+
+	configmap := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      validator.Name,
+			Namespace: validator.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
+		if err := ctrl.SetControllerReference(validator, configmap, r.Scheme); err != nil {
+			r.Log.Error(err, "Unable to set controller reference on validator configmap")
+			return err
+		}
+
+		r.specConfigmap(validator, configmap)
+
+		return nil
+	})
+
+	return err
+}
+
 // SetupWithManager adds reconciler to the manager
 func (r *ValidatorReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ethereum2v1alpha1.Validator{}).
 		Owns(&appsv1.StatefulSet{}).
+		Owns(&corev1.ConfigMap{}).
 		Owns(&corev1.PersistentVolumeClaim{}).
 		Complete(r)
 }
