@@ -5,7 +5,7 @@ const (
 	// TekuHomeDir is teku home directory
 	TekuHomeDir = "/opt/teku"
 	// PrysmHomeDir is prysm home directory
-	PrysmHomeDir = "/home/.eth2"
+	PrysmHomeDir = "/home/prysm"
 	// NimbusHomeDir is nimbus home directory
 	NimbusHomeDir = "/home/nimbus"
 	// LighthouseHomeDir is lighthouse home directory
