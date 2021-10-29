@@ -35,7 +35,7 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 			TekuDataPath,
 			shared.PathData(client.HomeDir()),
 			TekuNetwork,
-			"mainnet",
+			"auto",
 			TekuBeaconNodeEndpoint,
 			"http://localhost:9988",
 			TekuGraffiti,

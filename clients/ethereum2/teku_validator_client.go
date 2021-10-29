@@ -35,7 +35,7 @@ func (t *TekuValidatorClient) Args() (args []string) {
 
 	args = append(args, TekuDataPath, shared.PathData(t.HomeDir()))
 
-	args = append(args, TekuNetwork, validator.Spec.Network)
+	args = append(args, TekuNetwork, "auto")
 
 	args = append(args, TekuValidatorsKeystoreLockingEnabled, "false")
 
