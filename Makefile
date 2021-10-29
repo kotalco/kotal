@@ -16,7 +16,7 @@ all: manager
 # Run tests
 # remove zz_generated files from test coverage report
 test: generate fmt vet manifests
-	ACK_GINKGO_DEPRECATIONS=1.16.4 go test -v -coverprofile cover.out.tmp ./...
+	KUBEBUILDER_CONTROLPLANE_START_TIMEOUT=100s ACK_GINKGO_DEPRECATIONS=1.16.4 go test -v -coverprofile cover.out.tmp ./...
 	cat cover.out.tmp | grep -v zz_generated > cover.out
 
 cover:
