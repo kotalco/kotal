@@ -189,4 +189,240 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 		})
 
 	})
+
+	Context("Prysm validator client", func() {
+		ns := &corev1.Namespace{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "prysm",
+			},
+		}
+
+		key := types.NamespacedName{
+			Name:      "prysm-validator",
+			Namespace: ns.Name,
+		}
+
+		spec := ethereum2v1alpha1.ValidatorSpec{
+			Network:              "mainnet",
+			Client:               ethereum2v1alpha1.PrysmClient,
+			BeaconEndpoints:      []string{"http://10.96.130.88:9999"},
+			Graffiti:             "testing Kotal validator controller",
+			WalletPasswordSecret: "my-wallet-password",
+			Keystores: []ethereum2v1alpha1.Keystore{
+				{
+					SecretName: "my-validator",
+				},
+			},
+		}
+
+		toCreate := &ethereum2v1alpha1.Validator{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      key.Name,
+				Namespace: key.Namespace,
+			},
+			Spec: spec,
+		}
+
+		t := true
+
+		validatorOwnerReference := metav1.OwnerReference{
+			APIVersion:         "ethereum2.kotal.io/v1alpha1",
+			Kind:               "Validator",
+			Name:               toCreate.Name,
+			Controller:         &t,
+			BlockOwnerDeletion: &t,
+		}
+
+		client, _ := ethereum2Clients.NewClient(toCreate)
+
+		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
+			Expect(k8sClient.Create(context.TODO(), ns))
+		})
+
+		It("Should create validator client", func() {
+			if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+				toCreate.Default()
+			}
+			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
+		})
+
+		It("should get validator client", func() {
+			fetched := &ethereum2v1alpha1.Validator{}
+			Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+			Expect(fetched.Spec).To(Equal(toCreate.Spec))
+			validatorOwnerReference.UID = fetched.GetUID()
+			time.Sleep(5 * time.Second)
+		})
+
+		It("Should create statefulset", func() {
+			validatorSts := &appsv1.StatefulSet{}
+
+			Expect(k8sClient.Get(context.Background(), key, validatorSts)).To(Succeed())
+			Expect(validatorSts.GetOwnerReferences()).To(ContainElement(validatorOwnerReference))
+			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+			// container volume mounts
+			Expect(validatorSts.Spec.Template.Spec.Containers[0].VolumeMounts).To(ContainElements(
+				corev1.VolumeMount{
+					Name:      "data",
+					MountPath: shared.PathData(ethereum2Clients.PrysmHomeDir),
+				},
+				corev1.VolumeMount{
+					Name:      "config",
+					MountPath: shared.PathConfig(ethereum2Clients.PrysmHomeDir),
+				},
+				corev1.VolumeMount{
+					Name:      "my-validator",
+					MountPath: fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(ethereum2Clients.PrysmHomeDir), "my-validator"),
+				},
+				corev1.VolumeMount{
+					Name:      "my-wallet-password",
+					ReadOnly:  true,
+					MountPath: fmt.Sprintf("%s/prysm-wallet", shared.PathSecrets(ethereum2Clients.PrysmHomeDir)),
+				},
+			))
+			// container volume
+			mode := corev1.ConfigMapVolumeSourceDefaultMode
+			Expect(validatorSts.Spec.Template.Spec.Volumes).To(ContainElements(
+				corev1.Volume{
+					Name: "data",
+					VolumeSource: corev1.VolumeSource{
+						PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+							ClaimName: validatorSts.Name,
+						},
+					},
+				},
+				corev1.Volume{
+					Name: "config",
+					VolumeSource: corev1.VolumeSource{
+						ConfigMap: &corev1.ConfigMapVolumeSource{
+							LocalObjectReference: corev1.LocalObjectReference{Name: validatorSts.Name},
+							DefaultMode:          &mode,
+						},
+					},
+				},
+				corev1.Volume{
+					Name: "my-validator",
+					VolumeSource: corev1.VolumeSource{
+						Secret: &corev1.SecretVolumeSource{
+							SecretName: "my-validator",
+							Items: []corev1.KeyToPath{
+								{
+									Key:  "keystore",
+									Path: "keystore-0.json",
+								},
+								{
+									Key:  "password",
+									Path: "password.txt",
+								},
+							},
+							DefaultMode: &mode,
+						},
+					},
+				},
+				corev1.Volume{
+					Name: "my-wallet-password",
+					VolumeSource: corev1.VolumeSource{
+						Secret: &corev1.SecretVolumeSource{
+							SecretName: "my-wallet-password",
+							Items: []corev1.KeyToPath{
+								{
+									Key:  "password",
+									Path: "prysm-wallet-password.txt",
+								},
+							},
+							DefaultMode: &mode,
+						},
+					},
+				},
+			))
+			// init containers
+			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ethereum2Clients.DefaultPrysmValidatorImage))
+			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Env).To(ContainElements(
+				corev1.EnvVar{
+					Name:  "KOTAL_NETWORK",
+					Value: "mainnet",
+				},
+				corev1.EnvVar{
+					Name:  "KOTAL_DATA_PATH",
+					Value: shared.PathData(ethereum2Clients.PrysmHomeDir),
+				},
+				corev1.EnvVar{
+					Name:  "KOTAL_KEY_DIR",
+					Value: fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(ethereum2Clients.PrysmHomeDir), "my-validator"),
+				},
+				corev1.EnvVar{
+					Name:  "KOTAL_KEYSTORE_INDEX",
+					Value: "0",
+				},
+				corev1.EnvVar{
+					Name:  "KOTAL_SECRETS_PATH",
+					Value: shared.PathSecrets(ethereum2Clients.PrysmHomeDir),
+				},
+			))
+			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Command).To(ConsistOf("/bin/sh"))
+			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Args).To(ConsistOf(
+				fmt.Sprintf("%s/prysm_import_keystore.sh", shared.PathConfig(ethereum2Clients.PrysmHomeDir))),
+			)
+			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].VolumeMounts).To(ContainElements(
+				corev1.VolumeMount{
+					Name:      "data",
+					MountPath: shared.PathData(ethereum2Clients.PrysmHomeDir),
+				},
+				corev1.VolumeMount{
+					Name:      "config",
+					MountPath: shared.PathConfig(ethereum2Clients.PrysmHomeDir),
+				},
+				corev1.VolumeMount{
+					Name:      "my-validator",
+					MountPath: fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(ethereum2Clients.PrysmHomeDir), "my-validator"),
+				},
+				corev1.VolumeMount{
+					Name:      "my-wallet-password",
+					ReadOnly:  true,
+					MountPath: fmt.Sprintf("%s/prysm-wallet", shared.PathSecrets(ethereum2Clients.PrysmHomeDir)),
+				},
+			))
+
+		})
+
+		It("Should allocate correct resources to validator statefulset", func() {
+			validatorSts := &appsv1.StatefulSet{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereum2v1alpha1.DefaultCPURequest),
+					corev1.ResourceMemory: resource.MustParse(ethereum2v1alpha1.DefaultMemoryRequest),
+				},
+				Limits: corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse(ethereum2v1alpha1.DefaultCPULimit),
+					corev1.ResourceMemory: resource.MustParse(ethereum2v1alpha1.DefaultMemoryLimit),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), key, validatorSts)).To(Succeed())
+			Expect(validatorSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+		})
+
+		It("Should create validator configmap", func() {
+			configmap := &corev1.ConfigMap{}
+			Expect(k8sClient.Get(context.Background(), key, configmap)).To(Succeed())
+			Expect(configmap.GetOwnerReferences()).To(ContainElement(validatorOwnerReference))
+			Expect(configmap.Data).To(HaveKey("prysm_import_keystore.sh"))
+		})
+
+		It("Should create data persistent volume with correct resources", func() {
+			validatorPVC := &corev1.PersistentVolumeClaim{}
+			expectedResources := corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse(ethereum2v1alpha1.DefaultStorage),
+				},
+			}
+			Expect(k8sClient.Get(context.Background(), key, validatorPVC)).To(Succeed())
+			Expect(validatorPVC.GetOwnerReferences()).To(ContainElement(validatorOwnerReference))
+			Expect(validatorPVC.Spec.Resources).To(Equal(expectedResources))
+		})
+
+		It(fmt.Sprintf("Should delete %s namespace", ns.Name), func() {
+			Expect(k8sClient.Delete(context.Background(), ns)).To(Succeed())
+		})
+
+	})
 })
