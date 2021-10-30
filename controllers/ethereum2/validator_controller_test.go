@@ -15,6 +15,7 @@ import (
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	ethereum2Clients "github.com/kotalco/kotal/clients/ethereum2"
+	"github.com/kotalco/kotal/controllers/shared"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -25,7 +26,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 	Context("Teku validator client", func() {
 		ns := &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "validator-client",
+				Name: "teku",
 			},
 		}
 
@@ -85,12 +86,68 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			time.Sleep(5 * time.Second)
 		})
 
-		It("Should create statefulset with correct arguments", func() {
+		It("Should create statefulset", func() {
 			validatorSts := &appsv1.StatefulSet{}
 
 			Expect(k8sClient.Get(context.Background(), key, validatorSts)).To(Succeed())
 			Expect(validatorSts.GetOwnerReferences()).To(ContainElement(validatorOwnerReference))
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+			// container volume mounts
+			Expect(validatorSts.Spec.Template.Spec.Containers[0].VolumeMounts).To(ContainElements(
+				corev1.VolumeMount{
+					Name:      "data",
+					MountPath: shared.PathData(ethereum2Clients.TekuHomeDir),
+				},
+				corev1.VolumeMount{
+					Name:      "config",
+					MountPath: shared.PathConfig(ethereum2Clients.TekuHomeDir),
+				},
+				corev1.VolumeMount{
+					Name:      "my-validator",
+					MountPath: fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(ethereum2Clients.TekuHomeDir), "my-validator"),
+				},
+			))
+			// container volume
+			mode := corev1.ConfigMapVolumeSourceDefaultMode
+			Expect(validatorSts.Spec.Template.Spec.Volumes).To(ContainElements(
+				corev1.Volume{
+					Name: "data",
+					VolumeSource: corev1.VolumeSource{
+						PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+							ClaimName: validatorSts.Name,
+						},
+					},
+				},
+				corev1.Volume{
+					Name: "config",
+					VolumeSource: corev1.VolumeSource{
+						ConfigMap: &corev1.ConfigMapVolumeSource{
+							LocalObjectReference: corev1.LocalObjectReference{Name: validatorSts.Name},
+							DefaultMode:          &mode,
+						},
+					},
+				},
+				corev1.Volume{
+					Name: "my-validator",
+					VolumeSource: corev1.VolumeSource{
+						Secret: &corev1.SecretVolumeSource{
+							SecretName: "my-validator",
+							Items: []corev1.KeyToPath{
+								{
+									Key:  "keystore",
+									Path: "keystore-0.json",
+								},
+								{
+									Key:  "password",
+									Path: "password.txt",
+								},
+							},
+							DefaultMode: &mode,
+						},
+					},
+				},
+			))
+			// teku doesn't require init containers
 		})
 
 		It("Should allocate correct resources to validator statefulset", func() {
@@ -107,6 +164,12 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			}
 			Expect(k8sClient.Get(context.Background(), key, validatorSts)).To(Succeed())
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].Resources).To(Equal(expectedResources))
+		})
+
+		It("Should create validator configmap", func() {
+			configmap := &corev1.ConfigMap{}
+			Expect(k8sClient.Get(context.Background(), key, configmap)).To(Succeed())
+			Expect(configmap.GetOwnerReferences()).To(ContainElement(validatorOwnerReference))
 		})
 
 		It("Should create data persistent volume with correct resources", func() {
