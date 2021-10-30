@@ -60,7 +60,6 @@ spec:
                 enum:
                 - besu
                 - geth
-                - parity
                 - nethermind
                 type: string
               coinbase:

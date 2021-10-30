@@ -23,8 +23,6 @@ func NewClient(node *ethereumv1alpha1.Node) (EthereumClient, error) {
 		return &BesuClient{node}, nil
 	case ethereumv1alpha1.GethClient:
 		return &GethClient{node}, nil
-	case ethereumv1alpha1.ParityClient:
-		return &ParityClient{&ParityGenesis{}, node}, nil
 	case ethereumv1alpha1.NethermindClient:
 		return &NethermindClient{&ParityGenesis{}, node}, nil
 	default:

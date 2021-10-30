@@ -40,8 +40,8 @@ func (n *Node) validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
-	// validate off, fatal and all logs not supported by parity
-	if (n.Spec.Client == ParityClient || n.Spec.Client == NethermindClient) && (n.Spec.Logging == NoLogs || n.Spec.Logging == FatalLogs || n.Spec.Logging == AllLogs) {
+	// validate off, fatal and all logs not supported by nethermind
+	if n.Spec.Client == NethermindClient && (n.Spec.Logging == NoLogs || n.Spec.Logging == FatalLogs || n.Spec.Logging == AllLogs) {
 		err := field.Invalid(path.Child("logging"), n.Spec.Logging, fmt.Sprintf("not supported by client %s", n.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
 	}
@@ -71,8 +71,8 @@ func (n *Node) validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
-	// validate parity and nethermind doesn't support GraphQL
-	if n.Spec.GraphQL && (n.Spec.Client == ParityClient || n.Spec.Client == NethermindClient) {
+	// validate nethermind doesn't support GraphQL
+	if n.Spec.GraphQL && n.Spec.Client == NethermindClient {
 		err := field.Invalid(path.Child("client"), n.Spec.Client, "client doesn't support GraphQL")
 		nodeErrors = append(nodeErrors, err)
 	}
@@ -110,12 +110,6 @@ func (n *Node) validate() field.ErrorList {
 	// validate account must be imported if coinbase is provided
 	if n.Spec.Client != BesuClient && n.Spec.Coinbase != "" && n.Spec.Import == nil {
 		err := field.Invalid(path.Child("import"), "", "must import coinbase account")
-		nodeErrors = append(nodeErrors, err)
-	}
-
-	// validate parity doesn't support PoW mining
-	if privateNetwork && n.Spec.Client == ParityClient && n.Spec.Genesis.Ethash != nil && n.Spec.Miner {
-		err := field.Invalid(path.Child("client"), n.Spec.Client, "client doesn't support mining")
 		nodeErrors = append(nodeErrors, err)
 	}
 

@@ -30,7 +30,7 @@ For each protocol, kotal supports at least 1 client (reference client), client c
 
 | Protocol         | Client(s)                                                                                                                                                                                        |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Ethereum**     | [Hyperledger Besu](https://github.com/hyperledger/besu), [Go-Ethereum](https://github.com/ethereum/go-ethereum), [Open Ethereum](https://github.com/openethereum/openethereum)                   |
+| **Ethereum**     | [Hyperledger Besu](https://github.com/hyperledger/besu), [Go-Ethereum](https://github.com/ethereum/go-ethereum), [Nethermind](https://github.com/NethermindEth/nethermind)                       |
 | **Ethereum 2.0** | [Teku](https://github.com/ConsenSys/teku), [Prysm](https://github.com/prysmaticlabs/prysm), [Lighthouse](https://github.com/sigp/lighthouse), [Nimbus](https://github.com/status-im/nimbus-eth2) |
 | **Filecoin**     | [Lotus](https://github.com/filecoin-project/lotus)                                                                                                                                               |
 | **IFPS**         | [go-ipfs](https://github.com/ipfs/go-ipfs), [ipfs-cluster-service](https://github.com/ipfs/ipfs-cluster)                                                                                         |

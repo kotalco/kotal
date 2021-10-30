@@ -35,8 +35,6 @@ var (
 	GethInitGenesisScript string
 	//go:embed geth_import_account.sh
 	gethImportAccountScript string
-	//go:embed parity_import_account.sh
-	parityImportAccountScript string
 	//go:embed nethermind_convert_enode_privatekey.sh
 	nethermindConvertEnodePrivateKeyScript string
 	//go:embed nethermind_copy_keystore.sh
@@ -211,8 +209,6 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha
 			enodeURL = "call net_enode JSON-RPC method"
 		case ethereumv1alpha1.GethClient:
 			enodeURL = "call admin_nodeInfo JSON-RPC method"
-		case ethereumv1alpha1.ParityClient:
-			enodeURL = "call parity_enode JSON-RPC method"
 		case ethereumv1alpha1.NethermindClient:
 			enodeURL = "call net_localEnode JSON-RPC method"
 		}
@@ -242,9 +238,6 @@ func (r *NodeReconciler) specConfigmap(node *ethereumv1alpha1.Node, configmap *c
 		importAccountScript = gethImportAccountScript
 	case ethereumv1alpha1.BesuClient:
 		key = "static-nodes.json"
-	case ethereumv1alpha1.ParityClient:
-		key = "static-nodes"
-		importAccountScript = parityImportAccountScript
 	case ethereumv1alpha1.NethermindClient:
 		key = "static-nodes.json"
 	}
@@ -424,8 +417,8 @@ func (r *NodeReconciler) createNodeVolumes(node *ethereumv1alpha1.Node) []corev1
 		}
 		projections = append(projections, passwordProjection)
 
-		// parity & nethermind : account keystore
-		if node.Spec.Client == ethereumv1alpha1.ParityClient || node.Spec.Client == ethereumv1alpha1.NethermindClient {
+		// nethermind : account keystore
+		if node.Spec.Client == ethereumv1alpha1.NethermindClient {
 			accountKeystoreProjection := corev1.VolumeProjection{
 				Secret: &corev1.SecretProjection{
 					LocalObjectReference: corev1.LocalObjectReference{
@@ -591,31 +584,6 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 			initContainers = append(initContainers, importAccount)
 		}
 
-	} else if node.Spec.Client == ethereumv1alpha1.ParityClient {
-		if node.Spec.Import != nil {
-			importAccount := corev1.Container{
-				Name:  "import-account",
-				Image: img,
-				Env: []corev1.EnvVar{
-					{
-						Name:  EnvDataPath,
-						Value: shared.PathData(homedir),
-					},
-					{
-						Name:  EnvConfigPath,
-						Value: shared.PathConfig(homedir),
-					},
-					{
-						Name:  EnvSecretsPath,
-						Value: shared.PathSecrets(homedir),
-					},
-				},
-				Command:      []string{"/bin/sh"},
-				Args:         []string{fmt.Sprintf("%s/import-account.sh", shared.PathConfig(homedir))},
-				VolumeMounts: volumeMounts,
-			}
-			initContainers = append(initContainers, importAccount)
-		}
 	} else if node.Spec.Client == ethereumv1alpha1.NethermindClient {
 		if node.Spec.NodePrivateKeySecretName != "" {
 			convertEnodePrivateKey := corev1.Container{
@@ -724,12 +692,11 @@ func (r *NodeReconciler) getSecret(ctx context.Context, name types.NamespacedNam
 	return
 }
 
-// specSecret creates keystore from account private key for parity client
+// specSecret creates keystore from account private key for nethermind client
 func (r *NodeReconciler) specSecret(ctx context.Context, node *ethereumv1alpha1.Node, secret *corev1.Secret) error {
 	secret.ObjectMeta.Labels = node.GetLabels()
-	client := node.Spec.Client
-	clientRequiresKeystore := client == ethereumv1alpha1.ParityClient || client == ethereumv1alpha1.NethermindClient
-	if node.Spec.Import != nil && clientRequiresKeystore {
+
+	if node.Spec.Import != nil && node.Spec.Client == ethereumv1alpha1.NethermindClient {
 		key := types.NamespacedName{
 			Name:      node.Spec.Import.PrivateKeySecretName,
 			Namespace: node.Namespace,
