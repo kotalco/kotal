@@ -62,6 +62,32 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Validator #3",
+			Validator: &Validator{
+				Spec: ValidatorSpec{
+					Network:  "mainnet",
+					Client:   LighthouseClient,
+					Graffiti: "Kotal is amazing",
+					BeaconEndpoints: []string{
+						"http://10.96.130.88:9999",
+					},
+					Keystores: []Keystore{
+						{
+							SecretName: "my-validator",
+						},
+					},
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.keystores[0].publicKey",
+					BadValue: "",
+					Detail:   "keystore public key is required if client is lighthouse",
+				},
+			},
+		},
 	}
 
 	updateCases := []struct {

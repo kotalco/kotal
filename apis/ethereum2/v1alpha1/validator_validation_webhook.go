@@ -33,6 +33,16 @@ func (r *Validator) validate() field.ErrorList {
 		validatorErrors = append(validatorErrors, err)
 	}
 
+	if r.Spec.Client == LighthouseClient {
+		for i, keystore := range r.Spec.Keystores {
+			if keystore.PublicKey == "" {
+				msg := "keystore public key is required if client is lighthouse"
+				err := field.Invalid(field.NewPath("spec").Child("keystores").Index(i).Child("publicKey"), "", msg)
+				validatorErrors = append(validatorErrors, err)
+			}
+		}
+	}
+
 	return validatorErrors
 }
 
