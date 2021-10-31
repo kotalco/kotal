@@ -447,6 +447,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			Keystores: []ethereum2v1alpha1.Keystore{
 				{
 					SecretName: "my-validator",
+					PublicKey:  "0x83dbb18e088cb16a07fca598db2ac24da3e8549601eedd75eb28d8a9d4be405f49f7dbdcad5c9d7df54a8a40a143e852",
 				},
 			},
 		}
