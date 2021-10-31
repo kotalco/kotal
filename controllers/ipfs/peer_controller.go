@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -15,6 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	ipfsClients "github.com/kotalco/kotal/clients/ipfs"
@@ -24,7 +24,6 @@ import (
 // PeerReconciler reconciles a Peer object
 type PeerReconciler struct {
 	client.Client
-	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
@@ -86,7 +85,7 @@ func (r *PeerReconciler) updateStatus(ctx context.Context, peer *ipfsv1alpha1.Pe
 	peer.Status.Client = "go-ipfs"
 
 	if err := r.Status().Update(ctx, peer); err != nil {
-		r.Log.Error(err, "unable to update peer status")
+		log.FromContext(ctx).Error(err, "unable to update peer status")
 		return err
 	}
 

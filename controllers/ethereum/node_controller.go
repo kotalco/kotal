@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -16,6 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	ethereumClients "github.com/kotalco/kotal/clients/ethereum"
@@ -26,7 +26,6 @@ import (
 // NodeReconciler reconciles a Node object
 type NodeReconciler struct {
 	client.Client
-	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
@@ -125,6 +124,7 @@ func (r *NodeReconciler) getEnodeURL(ctx context.Context, enode, ns string) (str
 
 // updateStaticNodes replaces Ethereum node references with their enodeURL
 func (r *NodeReconciler) updateStaticNodes(ctx context.Context, node *ethereumv1alpha1.Node) {
+	log := log.FromContext(ctx)
 	for i, enode := range node.Spec.StaticNodes {
 		if !strings.HasPrefix(string(enode), "enode://") {
 			enodeURL, err := r.getEnodeURL(ctx, string(enode), node.Namespace)
@@ -132,10 +132,10 @@ func (r *NodeReconciler) updateStaticNodes(ctx context.Context, node *ethereumv1
 				// remove static node reference, so it won't be included into static nodes file
 				// don't return the error, node maybe not up and running yet
 				node.Spec.StaticNodes = append(node.Spec.StaticNodes[:i], node.Spec.StaticNodes[i+1:]...)
-				r.Log.Error(err, "failed to get static node")
+				log.Error(err, "failed to get static node")
 				continue
 			}
-			r.Log.Info("static node enodeURL", string(enode), enodeURL)
+			log.Info("static node enodeURL", string(enode), enodeURL)
 			// replace reference with actual enode url
 			if strings.HasPrefix(enodeURL, "enode://") {
 				node.Spec.StaticNodes[i] = ethereumv1alpha1.Enode(enodeURL)
@@ -149,6 +149,7 @@ func (r *NodeReconciler) updateStaticNodes(ctx context.Context, node *ethereumv1
 
 // updateBootnodes replaces Ethereum node references with their enodeURL
 func (r *NodeReconciler) updateBootnodes(ctx context.Context, node *ethereumv1alpha1.Node) {
+	log := log.FromContext(ctx)
 	for i, enode := range node.Spec.Bootnodes {
 		if !strings.HasPrefix(string(enode), "enode://") {
 			enodeURL, err := r.getEnodeURL(ctx, string(enode), node.Namespace)
@@ -156,10 +157,10 @@ func (r *NodeReconciler) updateBootnodes(ctx context.Context, node *ethereumv1al
 				// remove bootnode reference, so it won't be included into bootnodes
 				// don't return the error, node maybe not up and running yet
 				node.Spec.Bootnodes = append(node.Spec.Bootnodes[:i], node.Spec.Bootnodes[i+1:]...)
-				r.Log.Error(err, "failed to get bootnode")
+				log.Error(err, "failed to get bootnode")
 				continue
 			}
-			r.Log.Info("bootnode enodeURL", string(enode), enodeURL)
+			log.Info("bootnode enodeURL", string(enode), enodeURL)
 			// replace reference with actual enode url
 			if strings.HasPrefix(enodeURL, "enode://") {
 				node.Spec.Bootnodes[i] = ethereumv1alpha1.Enode(enodeURL)
@@ -173,8 +174,9 @@ func (r *NodeReconciler) updateBootnodes(ctx context.Context, node *ethereumv1al
 
 // updateStatus updates network status
 func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha1.Node, enodeURL string) error {
-
 	var consensus, network string
+
+	log := log.FromContext(ctx)
 
 	if node.Spec.Genesis == nil {
 		switch node.Spec.Network {
@@ -217,7 +219,7 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha
 	node.Status.EnodeURL = enodeURL
 
 	if err := r.Status().Update(ctx, node); err != nil {
-		r.Log.Error(err, "unable to update node status")
+		log.Error(err, "unable to update node status")
 		return err
 	}
 
@@ -277,6 +279,8 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv
 
 	var genesis string
 
+	log := log.FromContext(ctx)
+
 	configmap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      node.Name,
@@ -302,7 +306,7 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *ethereumv
 
 	_, err = ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
 		if err := ctrl.SetControllerReference(node, configmap, r.Scheme); err != nil {
-			r.Log.Error(err, "Unable to set controller reference on genesis configmap")
+			log.Error(err, "Unable to set controller reference on genesis configmap")
 			return err
 		}
 

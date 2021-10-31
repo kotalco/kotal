@@ -81,7 +81,6 @@ var _ = BeforeSuite(func() {
 	// start beacon node reconciler
 	beaconNodeReconciler := &BeaconNodeReconciler{
 		Client: k8sManager.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("node"),
 		Scheme: scheme.Scheme,
 	}
 	beaconNodeReconciler.SetupWithManager(k8sManager)
@@ -90,7 +89,6 @@ var _ = BeforeSuite(func() {
 	// start validator reconciler
 	validatorReconciler := &ValidatorReconciler{
 		Client: k8sManager.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("validator"),
 		Scheme: scheme.Scheme,
 	}
 	validatorReconciler.SetupWithManager(k8sManager)

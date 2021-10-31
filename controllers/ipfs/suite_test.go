@@ -82,7 +82,6 @@ var _ = BeforeSuite(func() {
 	// start peer reconciler
 	peerReconciler := &PeerReconciler{
 		Client: k8sManager.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("peer"),
 		Scheme: scheme.Scheme,
 	}
 	peerReconciler.SetupWithManager(k8sManager)
@@ -91,7 +90,6 @@ var _ = BeforeSuite(func() {
 	// start cluster peer reconciler
 	clusterPeerReconciler := &ClusterPeerReconciler{
 		Client: k8sManager.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("clusterpeer"),
 		Scheme: scheme.Scheme,
 	}
 	clusterPeerReconciler.SetupWithManager(k8sManager)

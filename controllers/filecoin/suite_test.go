@@ -81,7 +81,6 @@ var _ = BeforeSuite(func() {
 	// start node reconciler
 	nodeReconciler := &NodeReconciler{
 		Client: k8sManager.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("node"),
 		Scheme: scheme.Scheme,
 	}
 	nodeReconciler.SetupWithManager(k8sManager)

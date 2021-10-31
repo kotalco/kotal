@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -15,6 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	ipfsClients "github.com/kotalco/kotal/clients/ipfs"
@@ -24,7 +24,6 @@ import (
 // ClusterPeerReconciler reconciles a ClusterPeer object
 type ClusterPeerReconciler struct {
 	client.Client
-	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
@@ -83,7 +82,7 @@ func (r *ClusterPeerReconciler) updateStatus(ctx context.Context, peer *ipfsv1al
 	peer.Status.Client = "ipfs-cluster-service"
 
 	if err := r.Status().Update(ctx, peer); err != nil {
-		r.Log.Error(err, "unable to update cluster peer status")
+		log.FromContext(ctx).Error(err, "unable to update cluster peer status")
 		return err
 	}
 

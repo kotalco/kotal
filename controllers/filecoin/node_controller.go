@@ -5,7 +5,6 @@ import (
 	_ "embed"
 	"fmt"
 
-	"github.com/go-logr/logr"
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
 	filecoinClients "github.com/kotalco/kotal/clients/filecoin"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -17,12 +16,12 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 // NodeReconciler reconciles a Node object
 type NodeReconciler struct {
 	client.Client
-	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
@@ -77,11 +76,10 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 // updateStatus updates filecoin node status
 func (r *NodeReconciler) updateStatus(ctx context.Context, node *filecoinv1alpha1.Node) error {
-	// TODO: update after multi-client support
 	node.Status.Client = "lotus"
 
 	if err := r.Status().Update(ctx, node); err != nil {
-		r.Log.Error(err, "unable to update filecoin node status")
+		log.FromContext(ctx).Error(err, "unable to update filecoin node status")
 		return err
 	}
 

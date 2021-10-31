@@ -5,7 +5,6 @@ import (
 	_ "embed"
 	"fmt"
 
-	"github.com/go-logr/logr"
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
 	polkadotClients "github.com/kotalco/kotal/clients/polkadot"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -22,7 +21,6 @@ import (
 // NodeReconciler reconciles a Node object
 type NodeReconciler struct {
 	client.Client
-	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 

@@ -5,7 +5,6 @@ import (
 	_ "embed"
 	"fmt"
 
-	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -13,6 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	ethereum2Clients "github.com/kotalco/kotal/clients/ethereum2"
@@ -22,7 +22,6 @@ import (
 // ValidatorReconciler reconciles a Validator object
 type ValidatorReconciler struct {
 	client.Client
-	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
@@ -501,7 +500,7 @@ func (r *ValidatorReconciler) reconcileConfigmap(ctx context.Context, validator 
 
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
 		if err := ctrl.SetControllerReference(validator, configmap, r.Scheme); err != nil {
-			r.Log.Error(err, "Unable to set controller reference on validator configmap")
+			log.FromContext(ctx).Error(err, "Unable to set controller reference on validator configmap")
 			return err
 		}
 

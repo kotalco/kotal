@@ -5,7 +5,6 @@ go 1.17
 require (
 	github.com/BurntSushi/toml v0.4.1
 	github.com/ethereum/go-ethereum v1.10.11
-	github.com/go-logr/logr v0.4.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.16.0
 	k8s.io/api v0.22.3
@@ -23,6 +22,7 @@ require (
 	github.com/deckarep/golang-set v0.0.0-20180603214616-504e848d77ea // indirect
 	github.com/evanphx/json-patch v4.11.0+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
+	github.com/go-logr/logr v0.4.0 // indirect
 	github.com/go-logr/zapr v0.4.0 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
