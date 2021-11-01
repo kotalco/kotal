@@ -9,6 +9,7 @@ resources:
   - bases/ipfs.kotal.io_peers.yaml
   - bases/ipfs.kotal.io_clusterpeers.yaml
   - bases/polkadot.kotal.io_nodes.yaml
+  - bases/chainlink.kotal.io_nodes.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:
