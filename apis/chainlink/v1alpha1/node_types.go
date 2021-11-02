@@ -6,7 +6,8 @@ import (
 
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
-	Foo string `json:"foo,omitempty"`
+	// EthereumChainId is ethereum chain id
+	EthereumChainId uint `json:"ethereumChainId"`
 }
 
 // NodeStatus defines the observed state of Node

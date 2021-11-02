@@ -32,8 +32,11 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
-              foo:
-                type: string
+              ethereumChainId:
+                description: EthereumChainId is ethereum chain id
+                type: integer
+            required:
+            - ethereumChainId
             type: object
           status:
             description: NodeStatus defines the observed state of Node
