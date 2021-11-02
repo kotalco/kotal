@@ -7,6 +7,7 @@ import (
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // TekuBeaconNode is ConsenSys Pegasys Ethereum 2.0 client
@@ -62,6 +63,11 @@ func (t *TekuBeaconNode) Args() (args []string) {
 // Command returns command for running the client
 func (t *TekuBeaconNode) Command() (command []string) {
 	return
+}
+
+// Command returns environment variables for running the client
+func (t *TekuBeaconNode) Env() []corev1.EnvVar {
+	return nil
 }
 
 // Image returns teku docker image

@@ -4,6 +4,7 @@ import (
 	"os"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // GoIPFSClient is go-ipfs client
@@ -33,6 +34,11 @@ func (c *GoIPFSClient) Image() string {
 // Command is go-ipfs entrypoint
 func (c *GoIPFSClient) Command() []string {
 	return []string{"ipfs"}
+}
+
+// Command returns environment variables for the client
+func (c *GoIPFSClient) Env() []corev1.EnvVar {
+	return nil
 }
 
 // Args returns go-ipfs args

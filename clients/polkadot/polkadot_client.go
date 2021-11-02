@@ -7,6 +7,7 @@ import (
 
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // PolkadotClient is parity Polkadot client
@@ -31,6 +32,11 @@ func (c *PolkadotClient) Image() string {
 		return DefaultPolkadotImage
 	}
 	return os.Getenv(EnvPolkadotImage)
+}
+
+// Command returns environment variables for the client
+func (c *PolkadotClient) Env() []corev1.EnvVar {
+	return nil
 }
 
 // Command is go-ipfs entrypoint

@@ -6,6 +6,7 @@ import (
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // PrysmValidatorClient is Prysmatic labs validator client
@@ -24,6 +25,11 @@ const (
 // HomeDir returns container home directory
 func (t *PrysmValidatorClient) HomeDir() string {
 	return PrysmHomeDir
+}
+
+// Command returns environment variables for the client
+func (t *PrysmValidatorClient) Env() []corev1.EnvVar {
+	return nil
 }
 
 // Args returns command line arguments required for client

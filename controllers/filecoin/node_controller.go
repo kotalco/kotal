@@ -204,13 +204,14 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *filecoi
 	client := filecoinClients.NewClient(node)
 	img := client.Image()
 	args := client.Args()
+	env := client.Env()
 	homeDir := client.HomeDir()
 
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		if err := r.specStatefulSet(node, sts, img, homeDir, args); err != nil {
+		if err := r.specStatefulSet(node, sts, img, homeDir, args, env); err != nil {
 			return err
 		}
 		return nil
@@ -247,7 +248,7 @@ func (r *NodeReconciler) specService(node *filecoinv1alpha1.Node, svc *corev1.Se
 }
 
 // specStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv1.StatefulSet, img, homeDir string, args []string) error {
+func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv1.StatefulSet, img, homeDir string, args []string, env []corev1.EnvVar) error {
 	labels := node.Labels
 
 	sts.ObjectMeta.Labels = labels
@@ -295,12 +296,7 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 						Name:  "node",
 						Image: img,
 						Args:  args,
-						Env: []corev1.EnvVar{
-							{
-								Name:  "LOTUS_PATH",
-								Value: shared.PathData(homeDir),
-							},
-						},
+						Env:   env,
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      node.Name,

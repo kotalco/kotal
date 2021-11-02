@@ -6,6 +6,7 @@ import (
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // LighthouseValidatorClient is SigmaPrime Ethereum 2.0 validator client
@@ -24,6 +25,11 @@ const (
 // HomeDir returns container home directory
 func (t *LighthouseValidatorClient) HomeDir() string {
 	return LighthouseHomeDir
+}
+
+// Command returns environment variables for the client
+func (t *LighthouseValidatorClient) Env() []corev1.EnvVar {
+	return nil
 }
 
 // Args returns command line arguments required for client

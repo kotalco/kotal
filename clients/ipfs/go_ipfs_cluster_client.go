@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // GoIPFSClusterClient is ipfs cluster service client
@@ -33,6 +34,11 @@ func (c *GoIPFSClusterClient) Image() string {
 // Command returns go ipfs cluster entrypoint
 func (c *GoIPFSClusterClient) Command() []string {
 	return []string{"ipfs-cluster-service"}
+}
+
+// Command returns environment variables for the client
+func (c *GoIPFSClusterClient) Env() []corev1.EnvVar {
+	return nil
 }
 
 // Arg returns go ipfs cluster arguments

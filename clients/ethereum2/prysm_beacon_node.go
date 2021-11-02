@@ -7,6 +7,7 @@ import (
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // PrysmBeaconNode is Prysmatic Labs Ethereum 2.0 client
@@ -25,6 +26,11 @@ const (
 // HomeDir returns container home directory
 func (t *PrysmBeaconNode) HomeDir() string {
 	return PrysmHomeDir
+}
+
+// Command returns environment variables for running the client
+func (t *PrysmBeaconNode) Env() []corev1.EnvVar {
+	return nil
 }
 
 // Args returns command line arguments required for client

@@ -7,6 +7,7 @@ import (
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // TekuValidatorClient is Teku validator client
@@ -24,6 +25,11 @@ const (
 // HomeDir returns container home directory
 func (t *TekuValidatorClient) HomeDir() string {
 	return TekuHomeDir
+}
+
+// Command returns environment variables for running the client
+func (t *TekuValidatorClient) Env() []corev1.EnvVar {
+	return nil
 }
 
 // Args returns command line arguments required for client

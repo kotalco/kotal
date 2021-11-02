@@ -4,6 +4,8 @@ import (
 	"os"
 
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // LotusClient is lotus filecoin client
@@ -40,6 +42,16 @@ func (c *LotusClient) Image() string {
 // Command is lotus image command
 func (c *LotusClient) Command() []string {
 	return nil
+}
+
+// Command returns environment variables for the client
+func (c *LotusClient) Env() []corev1.EnvVar {
+	return []corev1.EnvVar{
+		{
+			Name:  "LOTUS_PATH",
+			Value: shared.PathData(c.HomeDir()),
+		},
+	}
 }
 
 // Args returns lotus client args from node spec
