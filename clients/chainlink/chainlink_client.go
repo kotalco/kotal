@@ -63,6 +63,10 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 			Name:  EnvLinkContractAddress,
 			Value: node.Spec.LinkContractAddress,
 		},
+		{
+			Name:  EnvDatabaseURL,
+			Value: node.Spec.DatabaseURL,
+		},
 	}
 
 	return env

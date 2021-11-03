@@ -9,4 +9,6 @@ const (
 	EnvEthereumURL = "ETH_URL"
 	// EnvLinkContractAddress is the environment variable for chainlink contract address
 	EnvLinkContractAddress = "LINK_CONTRACT_ADDRESS"
+	// EnvDatabaseURL is the environment variable for database connection string
+	EnvDatabaseURL = "DATABASE_URL"
 )

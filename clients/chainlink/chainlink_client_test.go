@@ -15,6 +15,7 @@ var _ = Describe("Chainlink Client", func() {
 			EthereumChainId:     1,
 			EthereumWSEndpoint:  "ws://my-eth-node:8546",
 			LinkContractAddress: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709",
+			DatabaseURL:         "postgresql://postgres:secret@postgres:5432/postgres",
 		},
 	}
 
@@ -52,6 +53,10 @@ var _ = Describe("Chainlink Client", func() {
 			corev1.EnvVar{
 				Name:  EnvLinkContractAddress,
 				Value: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709",
+			},
+			corev1.EnvVar{
+				Name:  EnvDatabaseURL,
+				Value: "postgresql://postgres:secret@postgres:5432/postgres",
 			},
 		))
 	})
