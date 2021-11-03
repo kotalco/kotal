@@ -1,6 +1,7 @@
 package chainlink
 
 import (
+	"fmt"
 	"os"
 
 	chainlinkv1alpha1 "github.com/kotalco/kotal/apis/chainlink/v1alpha1"
@@ -38,12 +39,24 @@ func (c *ChainlinkClient) Command() []string {
 }
 
 // Args returns chainlink args
-func (c *ChainlinkClient) Args() (args []string) {
+func (c *ChainlinkClient) Args() []string {
 	return []string{"local", "node"}
 }
 
 func (c *ChainlinkClient) Env() []corev1.EnvVar {
-	return nil
+	env := []corev1.EnvVar{
+		{
+			// TODO: update root to data dir
+			Name:  EnvRoot,
+			Value: "/",
+		},
+		{
+			Name:  EnvChainID,
+			Value: fmt.Sprintf("%d", c.node.Spec.EthereumChainId),
+		},
+	}
+
+	return env
 }
 
 // HomeDir returns chainlink image home directory
