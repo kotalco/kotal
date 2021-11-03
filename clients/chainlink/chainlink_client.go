@@ -44,6 +44,7 @@ func (c *ChainlinkClient) Args() []string {
 }
 
 func (c *ChainlinkClient) Env() []corev1.EnvVar {
+	node := c.node
 	env := []corev1.EnvVar{
 		{
 			// TODO: update root to data dir
@@ -52,7 +53,11 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 		},
 		{
 			Name:  EnvChainID,
-			Value: fmt.Sprintf("%d", c.node.Spec.EthereumChainId),
+			Value: fmt.Sprintf("%d", node.Spec.EthereumChainId),
+		},
+		{
+			Name:  EnvEthereumURL,
+			Value: node.Spec.EthereumWSEndpoint,
 		},
 	}
 
