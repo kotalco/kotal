@@ -10,6 +10,8 @@ type NodeSpec struct {
 	EthereumChainId uint `json:"ethereumChainId"`
 	// EthereumWSEndpoint is ethereum websocket endpoint
 	EthereumWSEndpoint string `json:"ethereumWsEndpoint"`
+	// LinkContractAddress is link contract address
+	LinkContractAddress string `json:"linkContractAddress"`
 }
 
 // NodeStatus defines the observed state of Node
