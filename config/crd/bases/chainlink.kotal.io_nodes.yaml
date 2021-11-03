@@ -41,6 +41,9 @@ spec:
               ethereumWsEndpoint:
                 description: EthereumWSEndpoint is ethereum websocket endpoint
                 type: string
+              keystorePasswordSecretName:
+                description: KeystorePasswordSecretName is k8s secret name that holds keystore password
+                type: string
               linkContractAddress:
                 description: LinkContractAddress is link contract address
                 type: string
@@ -48,6 +51,7 @@ spec:
             - databaseURL
             - ethereumChainId
             - ethereumWsEndpoint
+            - keystorePasswordSecretName
             - linkContractAddress
             type: object
           status:

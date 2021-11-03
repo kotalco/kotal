@@ -14,6 +14,8 @@ type NodeSpec struct {
 	LinkContractAddress string `json:"linkContractAddress"`
 	// DatabaseURL is postgres database connection URL
 	DatabaseURL string `json:"databaseURL"`
+	// KeystorePasswordSecretName is k8s secret name that holds keystore password
+	KeystorePasswordSecretName string `json:"keystorePasswordSecretName"`
 }
 
 // NodeStatus defines the observed state of Node
