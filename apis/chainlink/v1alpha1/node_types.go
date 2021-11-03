@@ -8,6 +8,8 @@ import (
 type NodeSpec struct {
 	// EthereumChainId is ethereum chain id
 	EthereumChainId uint `json:"ethereumChainId"`
+	// EthereumWSEndpoint is ethereum websocket endpoint
+	EthereumWSEndpoint string `json:"ethereumWsEndpoint"`
 }
 
 // NodeStatus defines the observed state of Node
