@@ -59,6 +59,10 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 			Name:  EnvEthereumURL,
 			Value: node.Spec.EthereumWSEndpoint,
 		},
+		{
+			Name:  EnvLinkContractAddress,
+			Value: node.Spec.LinkContractAddress,
+		},
 	}
 
 	return env

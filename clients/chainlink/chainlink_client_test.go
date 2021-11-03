@@ -12,8 +12,9 @@ import (
 var _ = Describe("Chainlink Client", func() {
 	node := &chainlinkv1alpha1.Node{
 		Spec: chainlinkv1alpha1.NodeSpec{
-			EthereumChainId:    1,
-			EthereumWSEndpoint: "ws://my-eth-node:8546",
+			EthereumChainId:     1,
+			EthereumWSEndpoint:  "ws://my-eth-node:8546",
+			LinkContractAddress: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709",
 		},
 	}
 
@@ -47,6 +48,10 @@ var _ = Describe("Chainlink Client", func() {
 			corev1.EnvVar{
 				Name:  EnvEthereumURL,
 				Value: "ws://my-eth-node:8546",
+			},
+			corev1.EnvVar{
+				Name:  EnvLinkContractAddress,
+				Value: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709",
 			},
 		))
 	})

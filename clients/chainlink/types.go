@@ -7,4 +7,6 @@ const (
 	EnvChainID = "ETH_CHAIN_ID"
 	// EnvEthereumURL is the environment variable for ethereum websocket url
 	EnvEthereumURL = "ETH_URL"
+	// EnvLinkContractAddress is the environment variable for chainlink contract address
+	EnvLinkContractAddress = "LINK_CONTRACT_ADDRESS"
 )
