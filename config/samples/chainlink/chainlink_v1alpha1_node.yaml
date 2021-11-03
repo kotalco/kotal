@@ -1,8 +1,38 @@
+# DON'T USE THIS DATABASE IN PRODUCTION
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  containers:
+    - name: postgres
+      image: postgres
+      env:
+        - name: POSTGRES_PASSWORD
+          value: secret
+      ports:
+        - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+---
 apiVersion: chainlink.kotal.io/v1alpha1
 kind: Node
 metadata:
   name: node-sample
 spec:
   ethereumChainId: 1
-  ethereumWsEndpoint: "ws://my-eth-node:8546"
+  ethereumWsEndpoint: "wss://my-eth-node:8546"
   linkContractAddress: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709"
+  databaseURL: "postgresql://postgres:secret@postgres:5432/postgres"

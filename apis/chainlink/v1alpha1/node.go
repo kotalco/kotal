@@ -12,6 +12,8 @@ type NodeSpec struct {
 	EthereumWSEndpoint string `json:"ethereumWsEndpoint"`
 	// LinkContractAddress is link contract address
 	LinkContractAddress string `json:"linkContractAddress"`
+	// DatabaseURL is postgres database connection URL
+	DatabaseURL string `json:"databaseURL"`
 }
 
 // NodeStatus defines the observed state of Node

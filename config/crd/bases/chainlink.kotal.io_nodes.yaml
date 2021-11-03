@@ -32,6 +32,9 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
+              databaseURL:
+                description: DatabaseURL is postgres database connection URL
+                type: string
               ethereumChainId:
                 description: EthereumChainId is ethereum chain id
                 type: integer
@@ -42,6 +45,7 @@ spec:
                 description: LinkContractAddress is link contract address
                 type: string
             required:
+            - databaseURL
             - ethereumChainId
             - ethereumWsEndpoint
             - linkContractAddress
