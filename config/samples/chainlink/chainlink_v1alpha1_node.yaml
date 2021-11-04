@@ -27,6 +27,14 @@ spec:
       port: 5432
       targetPort: 5432
 ---
+# WARNING: DON'T use the following secrets in production
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keystore-password
+stringData:
+  password: secret
+---
 apiVersion: chainlink.kotal.io/v1alpha1
 kind: Node
 metadata:
@@ -36,3 +44,4 @@ spec:
   ethereumWsEndpoint: "wss://my-eth-node:8546"
   linkContractAddress: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709"
   databaseURL: "postgresql://postgres:secret@postgres:5432/postgres"
+  keystorePasswordSecretName: "keystore-password"

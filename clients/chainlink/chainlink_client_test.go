@@ -69,6 +69,8 @@ var _ = Describe("Chainlink Client", func() {
 		Expect(client.Args()).To(ContainElements(
 			"local",
 			"node",
+			ChainlinkPassword,
+			"/secrets/password",
 		))
 	})
 

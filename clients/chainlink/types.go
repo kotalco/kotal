@@ -1,5 +1,6 @@
 package chainlink
 
+// environment variables
 const (
 	// EnvRoot is the environment variable for root directory
 	EnvRoot = "ROOT"
@@ -11,4 +12,10 @@ const (
 	EnvLinkContractAddress = "LINK_CONTRACT_ADDRESS"
 	// EnvDatabaseURL is the environment variable for database connection string
 	EnvDatabaseURL = "DATABASE_URL"
+)
+
+// arguments
+const (
+	// ChainlinkPassword is the argument used to locate keystore password file
+	ChainlinkPassword = "--password"
 )

@@ -96,6 +96,22 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 						Command: command,
 						Args:    args,
 						Env:     env,
+						VolumeMounts: []corev1.VolumeMount{
+							{
+								Name:      "keystore-password",
+								MountPath: "/secrets",
+							},
+						},
+					},
+				},
+				Volumes: []corev1.Volume{
+					{
+						Name: "keystore-password",
+						VolumeSource: corev1.VolumeSource{
+							Secret: &corev1.SecretVolumeSource{
+								SecretName: node.Spec.KeystorePasswordSecretName,
+							},
+						},
 					},
 				},
 			},

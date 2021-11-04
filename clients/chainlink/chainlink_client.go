@@ -40,7 +40,11 @@ func (c *ChainlinkClient) Command() []string {
 
 // Args returns chainlink args
 func (c *ChainlinkClient) Args() []string {
-	return []string{"local", "node"}
+	args := []string{"local", "node"}
+
+	args = append(args, ChainlinkPassword, "/secrets/password")
+
+	return args
 }
 
 func (c *ChainlinkClient) Env() []corev1.EnvVar {
