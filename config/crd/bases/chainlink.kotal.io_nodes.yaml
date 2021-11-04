@@ -32,6 +32,19 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
+              apiCredentials:
+                description: APICredentials is api credentials
+                properties:
+                  email:
+                    description: Email is user email
+                    type: string
+                  passwordSecretName:
+                    description: PasswordSecretName is the k8s secret name that holds password
+                    type: string
+                required:
+                - email
+                - passwordSecretName
+                type: object
               databaseURL:
                 description: DatabaseURL is postgres database connection URL
                 type: string
@@ -48,6 +61,7 @@ spec:
                 description: LinkContractAddress is link contract address
                 type: string
             required:
+            - apiCredentials
             - databaseURL
             - ethereumChainId
             - ethereumWsEndpoint

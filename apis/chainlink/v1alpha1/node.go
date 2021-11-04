@@ -4,6 +4,14 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// APICredentials is api credentials
+type APICredentials struct {
+	// Email is user email
+	Email string `json:"email"`
+	// PasswordSecretName is the k8s secret name that holds password
+	PasswordSecretName string `json:"passwordSecretName"`
+}
+
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// EthereumChainId is ethereum chain id
@@ -16,6 +24,8 @@ type NodeSpec struct {
 	DatabaseURL string `json:"databaseURL"`
 	// KeystorePasswordSecretName is k8s secret name that holds keystore password
 	KeystorePasswordSecretName string `json:"keystorePasswordSecretName"`
+	// APICredentials is api credentials
+	APICredentials APICredentials `json:"apiCredentials"`
 }
 
 // NodeStatus defines the observed state of Node
