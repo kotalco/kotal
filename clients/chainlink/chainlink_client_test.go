@@ -40,7 +40,7 @@ var _ = Describe("Chainlink Client", func() {
 		Expect(client.Env()).To(ContainElements(
 			corev1.EnvVar{
 				Name:  EnvRoot,
-				Value: "/",
+				Value: "/.chainlink",
 			},
 			corev1.EnvVar{
 				Name:  EnvChainID,
@@ -70,7 +70,9 @@ var _ = Describe("Chainlink Client", func() {
 			"local",
 			"node",
 			ChainlinkPassword,
-			"/secrets/password",
+			"/secrets/keystore-password",
+			ChainlinkAPI,
+			"/.chainlink/.api",
 		))
 	})
 

@@ -18,4 +18,6 @@ const (
 const (
 	// ChainlinkPassword is the argument used to locate keystore password file
 	ChainlinkPassword = "--password"
+	// ChainlinkAPI is the argument used to locate api credentials file
+	ChainlinkAPI = "--api"
 )

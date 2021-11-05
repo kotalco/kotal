@@ -132,6 +132,42 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 				Labels: labels,
 			},
 			Spec: corev1.PodSpec{
+				InitContainers: []corev1.Container{
+					{
+						Name:    "copy-api-credentials",
+						Image:   "busybox",
+						Command: []string{"/bin/sh"},
+						Env: []corev1.EnvVar{
+							{
+								Name:  "KOTAL_DATA_PATH",
+								Value: "/.chainlink",
+							},
+							{
+								Name:  "KOTAL_EMAIL",
+								Value: node.Spec.APICredentials.Email,
+							},
+							{
+								Name:  "KOTAL_SECRETS_PATH",
+								Value: "/secrets",
+							},
+						},
+						Args: []string{"/config/copy_api_credentials.sh"},
+						VolumeMounts: []corev1.VolumeMount{
+							{
+								Name:      "data",
+								MountPath: "/.chainlink",
+							},
+							{
+								Name:      "config",
+								MountPath: "/config",
+							},
+							{
+								Name:      "secrets",
+								MountPath: "/secrets",
+							},
+						},
+					},
+				},
 				// TODO: use shared security context
 				Containers: []corev1.Container{
 					{
@@ -142,18 +178,65 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 						Env:     env,
 						VolumeMounts: []corev1.VolumeMount{
 							{
-								Name:      "keystore-password",
+								Name:      "secrets",
 								MountPath: "/secrets",
+							},
+							{
+								Name:      "data",
+								MountPath: "/.chainlink",
 							},
 						},
 					},
 				},
 				Volumes: []corev1.Volume{
 					{
-						Name: "keystore-password",
+						Name: "data",
 						VolumeSource: corev1.VolumeSource{
-							Secret: &corev1.SecretVolumeSource{
-								SecretName: node.Spec.KeystorePasswordSecretName,
+							EmptyDir: &corev1.EmptyDirVolumeSource{},
+						},
+					},
+					{
+						Name: "secrets",
+						VolumeSource: corev1.VolumeSource{
+							Projected: &corev1.ProjectedVolumeSource{
+								Sources: []corev1.VolumeProjection{
+									{
+										Secret: &corev1.SecretProjection{
+											LocalObjectReference: corev1.LocalObjectReference{
+												Name: node.Spec.KeystorePasswordSecretName,
+											},
+											Items: []corev1.KeyToPath{
+												{
+													Key:  "password",
+													Path: "keystore-password",
+												},
+											},
+										},
+									},
+									{
+										Secret: &corev1.SecretProjection{
+											LocalObjectReference: corev1.LocalObjectReference{
+												Name: node.Spec.APICredentials.PasswordSecretName,
+											},
+											Items: []corev1.KeyToPath{
+												{
+													Key:  "password",
+													Path: "api-password",
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+					{
+						Name: "config",
+						VolumeSource: corev1.VolumeSource{
+							ConfigMap: &corev1.ConfigMapVolumeSource{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: node.Name,
+								},
 							},
 						},
 					},

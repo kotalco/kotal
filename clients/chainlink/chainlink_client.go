@@ -42,7 +42,8 @@ func (c *ChainlinkClient) Command() []string {
 func (c *ChainlinkClient) Args() []string {
 	args := []string{"local", "node"}
 
-	args = append(args, ChainlinkPassword, "/secrets/password")
+	args = append(args, ChainlinkPassword, "/secrets/keystore-password")
+	args = append(args, ChainlinkAPI, "/.chainlink/.api")
 
 	return args
 }
@@ -53,7 +54,7 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 		{
 			// TODO: update root to data dir
 			Name:  EnvRoot,
-			Value: "/",
+			Value: "/.chainlink",
 		},
 		{
 			Name:  EnvChainID,
