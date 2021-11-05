@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	_ "embed"
 
 	chainlinkv1alpha1 "github.com/kotalco/kotal/apis/chainlink/v1alpha1"
 	chainlinkClients "github.com/kotalco/kotal/clients/chainlink"
@@ -19,6 +20,11 @@ type NodeReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+var (
+	//go:embed copy_api_credentials.sh
+	CopyAPICredentials string
+)
+
 // +kubebuilder:rbac:groups=chainlink.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=chainlink.kotal.io,resources=nodes/status,verbs=get;update;patch
 
@@ -31,11 +37,49 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	if err = r.reconcileConfigmap(ctx, &node); err != nil {
+		return
+	}
+
 	if err = r.reconcileStatefulset(ctx, &node); err != nil {
 		return
 	}
 
 	return
+}
+
+// reconcileConfigmap reconciles chainlink node configmap
+func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *chainlinkv1alpha1.Node) error {
+	config := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, config, func() error {
+		if err := ctrl.SetControllerReference(node, config, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specConfigmap(node, config)
+
+		return nil
+	})
+
+	return err
+
+}
+
+// specConfigmap updates chainlink node configmap spec
+func (r *NodeReconciler) specConfigmap(node *chainlinkv1alpha1.Node, config *corev1.ConfigMap) {
+	config.ObjectMeta.Labels = node.Labels
+
+	if config.Data == nil {
+		config.Data = make(map[string]string)
+	}
+
+	config.Data["copy_api_credentials.sh"] = CopyAPICredentials
 }
 
 // reconcileStatefulset reconciles node statefulset
