@@ -11,7 +11,7 @@ spec:
       image: postgres
       env:
         - name: POSTGRES_PASSWORD
-          value: secret
+          value: fE2xXKDnR3ns489X
       ports:
         - containerPort: 5432
 ---
@@ -28,12 +28,13 @@ spec:
       targetPort: 5432
 ---
 # WARNING: DON'T use the following secrets in production
+# this password is used by keystore and api credentials
 apiVersion: v1
 kind: Secret
 metadata:
-  name: keystore-password
+  name: my-password
 stringData:
-  password: secret
+  password: fE2xXKDnR3ns489X
 ---
 apiVersion: chainlink.kotal.io/v1alpha1
 kind: Node
@@ -41,7 +42,11 @@ metadata:
   name: node-sample
 spec:
   ethereumChainId: 1
+  # deploy my-eth-node Ethereum node and enable websocket before deploying chainlink node
   ethereumWsEndpoint: "wss://my-eth-node:8546"
   linkContractAddress: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709"
-  databaseURL: "postgresql://postgres:secret@postgres:5432/postgres"
-  keystorePasswordSecretName: "keystore-password"
+  databaseURL: "postgresql://postgres:fE2xXKDnR3ns489X@postgres:5432/postgres?sslmode=disable"
+  keystorePasswordSecretName: "my-password"
+  apiCredentials:
+    email: "mostafa@kotal.co"
+    passwordSecretName: "my-password"
