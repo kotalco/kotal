@@ -41,6 +41,11 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	// default the node if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		node.Default()
+	}
+
 	if err = r.reconcileConfigmap(ctx, &node); err != nil {
 		return
 	}
