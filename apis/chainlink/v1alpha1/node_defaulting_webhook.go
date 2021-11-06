@@ -12,4 +12,24 @@ var _ webhook.Defaulter = &Node{}
 func (r *Node) Default() {
 	nodelog.Info("default", "name", r.Name)
 
+	if r.Spec.CPU == "" {
+		r.Spec.CPU = DefaultNodeCPURequest
+	}
+
+	if r.Spec.CPULimit == "" {
+		r.Spec.CPULimit = DefaultNodeCPULimit
+	}
+
+	if r.Spec.Memory == "" {
+		r.Spec.Memory = DefaultNodeMemoryRequest
+	}
+
+	if r.Spec.MemoryLimit == "" {
+		r.Spec.MemoryLimit = DefaultNodeMemoryLimit
+	}
+
+	if r.Spec.Storage == "" {
+		r.Spec.Storage = DefaultNodeStorageRequest
+	}
+
 }
