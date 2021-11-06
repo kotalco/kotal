@@ -177,7 +177,7 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 						},
 					},
 				},
-				// TODO: use shared security context
+				SecurityContext: shared.SecurityContext(),
 				Containers: []corev1.Container{
 					{
 						Name:    "node",
