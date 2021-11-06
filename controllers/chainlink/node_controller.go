@@ -260,7 +260,7 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 func (r *NodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&chainlinkv1alpha1.Node{}).
-		For(&appsv1.StatefulSet{}).
-		For(&corev1.ConfigMap{}).
+		Owns(&appsv1.StatefulSet{}).
+		Owns(&corev1.ConfigMap{}).
 		Complete(r)
 }
