@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"github.com/kotalco/kotal/apis/shared"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -26,6 +27,8 @@ type NodeSpec struct {
 	KeystorePasswordSecretName string `json:"keystorePasswordSecretName"`
 	// APICredentials is api credentials
 	APICredentials APICredentials `json:"apiCredentials"`
+	// Resources is node compute and storage resources
+	shared.Resources `json:"resources,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
