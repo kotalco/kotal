@@ -5,6 +5,7 @@ import (
 	"os"
 
 	chainlinkv1alpha1 "github.com/kotalco/kotal/apis/chainlink/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -42,8 +43,8 @@ func (c *ChainlinkClient) Command() []string {
 func (c *ChainlinkClient) Args() []string {
 	args := []string{"local", "node"}
 
-	args = append(args, ChainlinkPassword, "/secrets/keystore-password")
-	args = append(args, ChainlinkAPI, "/.chainlink/.api")
+	args = append(args, ChainlinkPassword, fmt.Sprintf("%s/keystore-password", shared.PathSecrets(c.HomeDir())))
+	args = append(args, ChainlinkAPI, fmt.Sprintf("%s/.api", shared.PathData(c.HomeDir())))
 
 	return args
 }
@@ -54,7 +55,7 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 		{
 			// TODO: update root to data dir
 			Name:  EnvRoot,
-			Value: "/.chainlink",
+			Value: shared.PathData(c.HomeDir()),
 		},
 		{
 			Name:  EnvChainID,

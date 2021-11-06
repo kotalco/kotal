@@ -1,9 +1,11 @@
 package chainlink
 
 import (
+	"fmt"
 	"os"
 
 	chainlinkv1alpha1 "github.com/kotalco/kotal/apis/chainlink/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
@@ -40,7 +42,7 @@ var _ = Describe("Chainlink Client", func() {
 		Expect(client.Env()).To(ContainElements(
 			corev1.EnvVar{
 				Name:  EnvRoot,
-				Value: "/.chainlink",
+				Value: shared.PathData(client.HomeDir()),
 			},
 			corev1.EnvVar{
 				Name:  EnvChainID,
@@ -70,9 +72,9 @@ var _ = Describe("Chainlink Client", func() {
 			"local",
 			"node",
 			ChainlinkPassword,
-			"/secrets/keystore-password",
+			fmt.Sprintf("%s/keystore-password", shared.PathSecrets(client.HomeDir())),
 			ChainlinkAPI,
-			"/.chainlink/.api",
+			fmt.Sprintf("%s/.api", shared.PathData(client.HomeDir())),
 		))
 	})
 

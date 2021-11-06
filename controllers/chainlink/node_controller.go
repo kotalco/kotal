@@ -3,9 +3,11 @@ package controllers
 import (
 	"context"
 	_ "embed"
+	"fmt"
 
 	chainlinkv1alpha1 "github.com/kotalco/kotal/apis/chainlink/v1alpha1"
 	chainlinkClients "github.com/kotalco/kotal/clients/chainlink"
+	"github.com/kotalco/kotal/controllers/shared"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -115,6 +117,11 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *chainli
 // specStatefulSet updates node statefulset spec
 func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *appsv1.StatefulSet, image, homeDir string, command, args []string, env []corev1.EnvVar) error {
 
+	// chainlink chmod the root dir
+	// we mount data volume at home dir
+	// chainlink root dir will be mounted at $data/kotal-data
+	dataMountPath := homeDir
+
 	// TODO: use shared node labels
 	labels := map[string]string{
 		"name": node.Name,
@@ -140,7 +147,7 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 						Env: []corev1.EnvVar{
 							{
 								Name:  "KOTAL_DATA_PATH",
-								Value: "/.chainlink",
+								Value: shared.PathData(homeDir),
 							},
 							{
 								Name:  "KOTAL_EMAIL",
@@ -148,22 +155,22 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 							},
 							{
 								Name:  "KOTAL_SECRETS_PATH",
-								Value: "/secrets",
+								Value: shared.PathSecrets(homeDir),
 							},
 						},
-						Args: []string{"/config/copy_api_credentials.sh"},
+						Args: []string{fmt.Sprintf("%s/copy_api_credentials.sh", shared.PathConfig(homeDir))},
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",
-								MountPath: "/.chainlink",
+								MountPath: dataMountPath,
 							},
 							{
 								Name:      "config",
-								MountPath: "/config",
+								MountPath: shared.PathConfig(homeDir),
 							},
 							{
 								Name:      "secrets",
-								MountPath: "/secrets",
+								MountPath: shared.PathSecrets(homeDir),
 							},
 						},
 					},
@@ -179,11 +186,11 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "secrets",
-								MountPath: "/secrets",
+								MountPath: shared.PathSecrets(homeDir),
 							},
 							{
 								Name:      "data",
-								MountPath: "/.chainlink",
+								MountPath: dataMountPath,
 							},
 						},
 					},
