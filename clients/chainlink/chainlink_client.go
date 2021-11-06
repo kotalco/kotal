@@ -19,10 +19,10 @@ const (
 	// EnvChainlinkImage is the environment variable used for chainlink client image
 	EnvChainlinkImage = "CHAINLINK_IMAGE"
 	// DefaultChainlinkImage is the default chainlink client image
-	DefaultChainlinkImage = "smartcontract/chainlink:1.0.0"
+	DefaultChainlinkImage = "kotalco/chainlink:v1.0.0"
 	// ChainlinkHomeDir is chainlink image home dir
 	// TODO: update the home directory
-	ChainlinkHomeDir = "/"
+	ChainlinkHomeDir = "/home/chainlink"
 )
 
 // Image returns chainlink image
