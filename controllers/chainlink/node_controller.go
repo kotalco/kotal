@@ -31,7 +31,7 @@ var (
 // +kubebuilder:rbac:groups=chainlink.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=chainlink.kotal.io,resources=nodes/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
-// +kubebuilder:rbac:groups=core,resources=configmaps,verbs=watch;get;create;update;list;delete
+// +kubebuilder:rbac:groups=core,resources=configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 
@@ -48,6 +48,10 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	}
 
 	if err = r.reconcileConfigmap(ctx, &node); err != nil {
+		return
+	}
+
+	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return
 	}
 
@@ -217,7 +221,9 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 					{
 						Name: "data",
 						VolumeSource: corev1.VolumeSource{
-							EmptyDir: &corev1.EmptyDirVolumeSource{},
+							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+								ClaimName: node.Name,
+							},
 						},
 					},
 					{
@@ -273,10 +279,57 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 	return nil
 }
 
+// reconcilePVC reconciles chainlink node persistent volume claim
+func (r *NodeReconciler) reconcilePVC(ctx context.Context, node *chainlinkv1alpha1.Node) error {
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
+		if err := ctrl.SetControllerReference(node, pvc, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specPVC(node, pvc)
+
+		return nil
+	})
+
+	return err
+}
+
+// specPVC updates chainlink persistent volume claim
+func (r *NodeReconciler) specPVC(node *chainlinkv1alpha1.Node, pvc *corev1.PersistentVolumeClaim) {
+	request := corev1.ResourceList{
+		corev1.ResourceStorage: resource.MustParse(node.Spec.Storage),
+	}
+
+	// spec is immutable after creation except resources.requests for bound claims
+	if !pvc.CreationTimestamp.IsZero() {
+		pvc.Spec.Resources.Requests = request
+		return
+	}
+
+	pvc.ObjectMeta.Labels = node.Labels
+	pvc.Spec = corev1.PersistentVolumeClaimSpec{
+		AccessModes: []corev1.PersistentVolumeAccessMode{
+			corev1.ReadWriteOnce,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: request,
+		},
+		StorageClassName: node.Spec.StorageClass,
+	}
+}
+
 func (r *NodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&chainlinkv1alpha1.Node{}).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.ConfigMap{}).
+		Owns(&corev1.PersistentVolumeClaim{}).
 		Complete(r)
 }
