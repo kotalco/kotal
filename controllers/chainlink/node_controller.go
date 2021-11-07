@@ -10,6 +10,7 @@ import (
 	"github.com/kotalco/kotal/controllers/shared"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -190,6 +191,16 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 						Command: command,
 						Args:    args,
 						Env:     env,
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPU),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.Resources.Memory),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.Resources.MemoryLimit),
+							},
+						},
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "secrets",
