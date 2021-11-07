@@ -50,3 +50,8 @@ spec:
   apiCredentials:
     email: "mostafa@kotal.co"
     passwordSecretName: "my-password"
+  resources:
+    cpu: "1"
+    cpuLimit: "2"
+    memory: "1Gi"
+    memoryLimit: "2Gi"
