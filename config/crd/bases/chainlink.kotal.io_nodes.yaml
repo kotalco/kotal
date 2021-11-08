@@ -45,6 +45,9 @@ spec:
                 - email
                 - passwordSecretName
                 type: object
+              certSecretName:
+                description: certSecretName is k8s secret name that holds tls.key and tls.cert
+                type: string
               databaseURL:
                 description: DatabaseURL is postgres database connection URL
                 type: string
