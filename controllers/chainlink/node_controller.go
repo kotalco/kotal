@@ -47,6 +47,8 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
+	shared.UpdateLabels(&node, "chainlink")
+
 	if err = r.reconcileConfigmap(ctx, &node); err != nil {
 		return
 	}
@@ -134,21 +136,16 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 	// chainlink root dir will be mounted at $data/kotal-data
 	dataMountPath := homeDir
 
-	// TODO: use shared node labels
-	labels := map[string]string{
-		"name": node.Name,
-	}
-
-	sts.ObjectMeta.Labels = labels
+	sts.ObjectMeta.Labels = node.Labels
 
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
-			MatchLabels: labels,
+			MatchLabels: node.Labels,
 		},
 		ServiceName: node.Name,
 		Template: corev1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
-				Labels: labels,
+				Labels: node.Labels,
 			},
 			Spec: corev1.PodSpec{
 				InitContainers: []corev1.Container{
