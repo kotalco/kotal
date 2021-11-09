@@ -39,6 +39,11 @@ func (r *BeaconNode) validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	if r.Spec.CertSecretName != "" && r.Spec.Client != PrysmClient {
+		err := field.Invalid(path.Child("certSecretName"), r.Spec.CertSecretName, fmt.Sprintf("not supported by %s client", r.Spec.Client))
+		nodeErrors = append(nodeErrors, err)
+	}
+
 	// rpc is always on in prysm
 	if r.Spec.Client == PrysmClient && !r.Spec.RPC {
 		err := field.Invalid(path.Child("rpc"), r.Spec.RPC, "can't be disabled in prysm client")

@@ -163,6 +163,24 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Node #9",
+			Node: &BeaconNode{
+				Spec: BeaconNodeSpec{
+					Network:        "mainnet",
+					Client:         TekuClient,
+					CertSecretName: "my-cert",
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.certSecretName",
+					BadValue: "my-cert",
+					Detail:   "not supported by teku client",
+				},
+			},
+		},
 	}
 
 	updateCases := []struct {
