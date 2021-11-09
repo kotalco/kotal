@@ -1,3 +1,25 @@
+# Assuming cert manager is installed in the environment
+# we will use cert manager to issue certificates
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: self-signed-issuer
+spec:
+  selfSigned: {}
+---
+# create certificate for prysm beacon node
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: beaconnode-cert
+spec:
+  dnsNames:
+    - "prysm-beacon-node.svc"
+    - "prysm-beacon-node.svc.cluster.local"
+  secretName: beaconnode-cert
+  issuerRef:
+    name: self-signed-issuer
+---
 apiVersion: ethereum2.kotal.io/v1alpha1
 kind: BeaconNode
 metadata:
@@ -12,6 +34,7 @@ spec:
   eth1Endpoints:
     - http://localhost:8545
     - http://localhost:8546
+  certSecretName: "beaconnode-cert"
   resources:
     # these resources are only for testing
     # change resources depending on your use case
