@@ -72,6 +72,11 @@ const (
 	// PrysmGRPCGatewayCorsDomains is the argument used to whitelist domains for cross domain requests
 	PrysmGRPCGatewayCorsDomains = "--grpc-gateway-corsdomain"
 
+	// PrysmTLSCert is the argument used to locate tls certificate
+	PrysmTLSCert = "--tls-cert"
+	// PrysmTLSKey is the argument used to locate tls key
+	PrysmTLSKey = "--tls-key"
+
 	// PrysmBeaconRPCProvider is the argument used for beacon node rpc endpoint
 	PrysmBeaconRPCProvider = "--beacon-rpc-provider"
 	// PrysmGraffiti is the argument used to include in proposed blocks

@@ -72,6 +72,11 @@ func (t *PrysmBeaconNode) Args() (args []string) {
 		args = append(args, PrysmDisableGRPC)
 	}
 
+	if node.Spec.CertSecretName != "" {
+		args = append(args, PrysmTLSCert, fmt.Sprintf("%s/tls.crt", shared.PathSecrets(t.HomeDir())))
+		args = append(args, PrysmTLSKey, fmt.Sprintf("%s/tls.key", shared.PathSecrets(t.HomeDir())))
+	}
+
 	if node.Spec.P2PPort != 0 {
 		args = append(args, PrysmP2PTCPPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 		args = append(args, PrysmP2PUDPPort, fmt.Sprintf("%d", node.Spec.P2PPort))

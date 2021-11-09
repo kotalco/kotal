@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -113,7 +114,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 			},
 		},
 		{
-			title: "beacon node syncing mainnet with eth1 endpoint and grpc with port",
+			title: "beacon node syncing mainnet with eth1 endpoint, certificate and grpc with port",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:  ethereum2v1alpha1.PrysmClient,
@@ -123,8 +124,9 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 						"https://localhost:8546",
 						"https://localhost:8547",
 					},
-					GRPC:     true,
-					GRPCPort: 4445,
+					GRPC:           true,
+					GRPCPort:       4445,
+					CertSecretName: "my-certificate",
 				},
 			},
 			result: []string{
@@ -141,6 +143,10 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 				"4445",
 				PrysmGRPCGatewayCorsDomains,
 				"*",
+				PrysmTLSCert,
+				fmt.Sprintf("%s/tls.crt", shared.PathSecrets(PrysmHomeDir)),
+				PrysmTLSKey,
+				fmt.Sprintf("%s/tls.key", shared.PathSecrets(PrysmHomeDir)),
 			},
 		},
 		{
