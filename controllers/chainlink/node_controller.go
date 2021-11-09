@@ -98,6 +98,104 @@ func (r *NodeReconciler) specConfigmap(node *chainlinkv1alpha1.Node, config *cor
 	config.Data["copy_api_credentials.sh"] = CopyAPICredentials
 }
 
+func (r *NodeReconciler) createVolumes(node *chainlinkv1alpha1.Node) []corev1.Volume {
+	volumes := []corev1.Volume{}
+
+	// data volume
+	volumes = append(volumes, corev1.Volume{
+		Name: "data",
+		VolumeSource: corev1.VolumeSource{
+			PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+				ClaimName: node.Name,
+			},
+		},
+	})
+
+	// config volume
+	volumes = append(volumes, corev1.Volume{
+		Name: "config",
+		VolumeSource: corev1.VolumeSource{
+			ConfigMap: &corev1.ConfigMapVolumeSource{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Name,
+				},
+			},
+		},
+	})
+
+	// projected volume sources
+	sources := []corev1.VolumeProjection{
+		{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.KeystorePasswordSecretName,
+				},
+				Items: []corev1.KeyToPath{
+					{
+						Key:  "password",
+						Path: "keystore-password",
+					},
+				},
+			},
+		},
+		{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.APICredentials.PasswordSecretName,
+				},
+				Items: []corev1.KeyToPath{
+					{
+						Key:  "password",
+						Path: "api-password",
+					},
+				},
+			},
+		},
+	}
+
+	if node.Spec.CertSecretName != "" {
+		sources = append(sources, corev1.VolumeProjection{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.CertSecretName,
+				},
+			},
+		})
+	}
+
+	// secrets volume
+	volumes = append(volumes, corev1.Volume{
+		Name: "secrets",
+		VolumeSource: corev1.VolumeSource{
+			Projected: &corev1.ProjectedVolumeSource{
+				Sources: sources,
+			},
+		},
+	})
+
+	return volumes
+}
+
+func (r *NodeReconciler) createVolumeMounts(node *chainlinkv1alpha1.Node, homeDir string) []corev1.VolumeMount {
+	// chainlink chmod the root dir
+	// we mount data volume at home dir
+	// chainlink root dir will be mounted at $data/kotal-data
+	return []corev1.VolumeMount{
+		{
+			Name:      "data",
+			MountPath: homeDir,
+		},
+		{
+			Name:      "config",
+			MountPath: shared.PathConfig(homeDir),
+		},
+		{
+			Name:      "secrets",
+			MountPath: shared.PathSecrets(homeDir),
+		},
+	}
+}
+
 // reconcileStatefulset reconciles node statefulset
 func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *chainlinkv1alpha1.Node) error {
 	sts := &appsv1.StatefulSet{
@@ -131,11 +229,6 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *chainli
 // specStatefulSet updates node statefulset spec
 func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *appsv1.StatefulSet, image, homeDir string, command, args []string, env []corev1.EnvVar) error {
 
-	// chainlink chmod the root dir
-	// we mount data volume at home dir
-	// chainlink root dir will be mounted at $data/kotal-data
-	dataMountPath := homeDir
-
 	sts.ObjectMeta.Labels = node.Labels
 
 	sts.Spec = appsv1.StatefulSetSpec{
@@ -148,6 +241,7 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 				Labels: node.Labels,
 			},
 			Spec: corev1.PodSpec{
+				SecurityContext: shared.SecurityContext(),
 				InitContainers: []corev1.Container{
 					{
 						Name:    "copy-api-credentials",
@@ -167,24 +261,10 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 								Value: shared.PathSecrets(homeDir),
 							},
 						},
-						Args: []string{fmt.Sprintf("%s/copy_api_credentials.sh", shared.PathConfig(homeDir))},
-						VolumeMounts: []corev1.VolumeMount{
-							{
-								Name:      "data",
-								MountPath: dataMountPath,
-							},
-							{
-								Name:      "config",
-								MountPath: shared.PathConfig(homeDir),
-							},
-							{
-								Name:      "secrets",
-								MountPath: shared.PathSecrets(homeDir),
-							},
-						},
+						Args:         []string{fmt.Sprintf("%s/copy_api_credentials.sh", shared.PathConfig(homeDir))},
+						VolumeMounts: r.createVolumeMounts(node, homeDir),
 					},
 				},
-				SecurityContext: shared.SecurityContext(),
 				Containers: []corev1.Container{
 					{
 						Name:    "node",
@@ -202,73 +282,10 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 								corev1.ResourceMemory: resource.MustParse(node.Spec.Resources.MemoryLimit),
 							},
 						},
-						VolumeMounts: []corev1.VolumeMount{
-							{
-								Name:      "secrets",
-								MountPath: shared.PathSecrets(homeDir),
-							},
-							{
-								Name:      "data",
-								MountPath: dataMountPath,
-							},
-						},
+						VolumeMounts: r.createVolumeMounts(node, homeDir),
 					},
 				},
-				Volumes: []corev1.Volume{
-					{
-						Name: "data",
-						VolumeSource: corev1.VolumeSource{
-							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-								ClaimName: node.Name,
-							},
-						},
-					},
-					{
-						Name: "secrets",
-						VolumeSource: corev1.VolumeSource{
-							Projected: &corev1.ProjectedVolumeSource{
-								Sources: []corev1.VolumeProjection{
-									{
-										Secret: &corev1.SecretProjection{
-											LocalObjectReference: corev1.LocalObjectReference{
-												Name: node.Spec.KeystorePasswordSecretName,
-											},
-											Items: []corev1.KeyToPath{
-												{
-													Key:  "password",
-													Path: "keystore-password",
-												},
-											},
-										},
-									},
-									{
-										Secret: &corev1.SecretProjection{
-											LocalObjectReference: corev1.LocalObjectReference{
-												Name: node.Spec.APICredentials.PasswordSecretName,
-											},
-											Items: []corev1.KeyToPath{
-												{
-													Key:  "password",
-													Path: "api-password",
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-					{
-						Name: "config",
-						VolumeSource: corev1.VolumeSource{
-							ConfigMap: &corev1.ConfigMapVolumeSource{
-								LocalObjectReference: corev1.LocalObjectReference{
-									Name: node.Name,
-								},
-							},
-						},
-					},
-				},
+				Volumes: r.createVolumes(node),
 			},
 		},
 	}
