@@ -2,6 +2,12 @@ package v1alpha1
 
 // Resources
 const (
+	// DefaultTLSPort is the default tls port
+	DefaultTLSPort uint = 6689
+)
+
+// Resources
+const (
 	// DefaultNodeCPURequest is the cpu requested by chainlink node
 	DefaultNodeCPURequest = "2"
 	// DefaultNodeCPULimit is the cpu limit for chainlink node

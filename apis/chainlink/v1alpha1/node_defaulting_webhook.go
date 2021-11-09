@@ -32,4 +32,8 @@ func (r *Node) Default() {
 		r.Spec.Storage = DefaultNodeStorageRequest
 	}
 
+	if r.Spec.CertSecretName != "" && r.Spec.TLSPort == 0 {
+		r.Spec.TLSPort = DefaultTLSPort
+	}
+
 }

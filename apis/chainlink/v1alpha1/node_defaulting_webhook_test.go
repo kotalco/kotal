@@ -13,11 +13,15 @@ var _ = Describe("Chainlink node defaulting", func() {
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "my-node",
 			},
-			Spec: NodeSpec{},
+			Spec: NodeSpec{
+				CertSecretName: "my-certificate",
+			},
 		}
 
 		node.Default()
 
+		Expect(node.Spec.TLSPort).To(Equal(DefaultTLSPort))
+		// resources
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultNodeCPURequest))
 		Expect(node.Spec.Resources.CPULimit).To(Equal(DefaultNodeCPULimit))
 		Expect(node.Spec.Resources.Memory).To(Equal(DefaultNodeMemoryRequest))
