@@ -46,7 +46,7 @@ spec:
                 - passwordSecretName
                 type: object
               certSecretName:
-                description: certSecretName is k8s secret name that holds tls.key and tls.cert
+                description: CertSecretName is k8s secret name that holds tls.key and tls.cert
                 type: string
               databaseURL:
                 description: DatabaseURL is postgres database connection URL
@@ -90,6 +90,9 @@ spec:
                     description: StorageClass is the volume storage class
                     type: string
                 type: object
+              tlsPort:
+                description: TLSPort is port used for HTTPS connections
+                type: integer
             required:
             - apiCredentials
             - databaseURL

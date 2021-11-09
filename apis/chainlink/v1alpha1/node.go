@@ -27,8 +27,10 @@ type NodeSpec struct {
 	KeystorePasswordSecretName string `json:"keystorePasswordSecretName"`
 	// APICredentials is api credentials
 	APICredentials APICredentials `json:"apiCredentials"`
-	// certSecretName is k8s secret name that holds tls.key and tls.cert
+	// CertSecretName is k8s secret name that holds tls.key and tls.cert
 	CertSecretName string `json:"certSecretName,omitempty"`
+	// TLSPort is port used for HTTPS connections
+	TLSPort uint `json:"tlsPort,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
