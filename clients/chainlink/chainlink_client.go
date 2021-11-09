@@ -75,6 +75,19 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 		},
 	}
 
+	if c.node.Spec.CertSecretName != "" {
+		env = append(env,
+			corev1.EnvVar{
+				Name:  EnvTLSCertPath,
+				Value: fmt.Sprintf("%s/tls.crt", shared.PathSecrets(c.HomeDir())),
+			},
+			corev1.EnvVar{
+				Name:  EnvTLSKeyPath,
+				Value: fmt.Sprintf("%s/tls.key", shared.PathSecrets(c.HomeDir())),
+			},
+		)
+	}
+
 	return env
 }
 

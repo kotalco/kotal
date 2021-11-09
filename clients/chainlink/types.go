@@ -12,6 +12,10 @@ const (
 	EnvLinkContractAddress = "LINK_CONTRACT_ADDRESS"
 	// EnvDatabaseURL is the environment variable for database connection string
 	EnvDatabaseURL = "DATABASE_URL"
+	// EnvTLSCertPath is the environment variable for tls cert
+	EnvTLSCertPath = "TLS_CERT_PATH"
+	// EnvTLSKeyPath is the environment variable for tls key
+	EnvTLSKeyPath = "TLS_KEY_PATH"
 )
 
 // arguments
