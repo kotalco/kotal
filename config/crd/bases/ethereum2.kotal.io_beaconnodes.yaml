@@ -39,6 +39,9 @@ spec:
           spec:
             description: BeaconNodeSpec defines the desired state of BeaconNode
             properties:
+              certSecretName:
+                description: CertSecretName is k8s secret name that holds tls.key and tls.cert
+                type: string
               client:
                 description: Client is the Ethereum 2.0 client to use
                 enum:

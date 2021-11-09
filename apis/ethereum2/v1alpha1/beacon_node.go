@@ -35,6 +35,9 @@ type BeaconNodeSpec struct {
 	// GRPCPort is GRPC gateway server port
 	GRPCPort uint `json:"grpcPort,omitempty"`
 
+	// CertSecretName is k8s secret name that holds tls.key and tls.cert
+	CertSecretName string `json:"certSecretName,omitempty"`
+
 	// Hosts is a list of hostnames to to whitelist for API access
 	Hosts []string `json:"hosts,omitempty"`
 	// CORSDomains is the domains from which to accept cross origin requests
