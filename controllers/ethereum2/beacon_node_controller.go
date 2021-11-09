@@ -226,11 +226,37 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 		mountPath = homeDir
 	}
 
+	volumes := []corev1.Volume{
+		{
+			Name: "data",
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: node.Name,
+				},
+			},
+		},
+	}
+
 	mounts := []corev1.VolumeMount{
 		{
 			Name:      "data",
 			MountPath: mountPath,
 		},
+	}
+
+	if node.Spec.CertSecretName != "" {
+		volumes = append(volumes, corev1.Volume{
+			Name: "cert",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: node.Spec.CertSecretName,
+				},
+			},
+		})
+		mounts = append(mounts, corev1.VolumeMount{
+			Name:      "cert",
+			MountPath: shared.PathSecrets(homeDir),
+		})
 	}
 
 	initContainers := []corev1.Container{}
@@ -287,16 +313,7 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 						},
 					},
 				},
-				Volumes: []corev1.Volume{
-					{
-						Name: "data",
-						VolumeSource: corev1.VolumeSource{
-							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-								ClaimName: node.Name,
-							},
-						},
-					},
-				},
+				Volumes: volumes,
 			},
 		},
 	}
