@@ -1,3 +1,25 @@
+# Assuming cert manager is installed in the environment
+# we will use cert manager to issue certificates
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: self-signed-issuer
+spec:
+  selfSigned: {}
+---
+# create certificate for chainlink node
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: chainlink-node-cert
+spec:
+  dnsNames:
+    - "chainlink-node.svc"
+    - "chainlink-node.svc.cluster.local"
+  secretName: chainlink-node-cert
+  issuerRef:
+    name: self-signed-issuer
+---
 # DON'T USE THIS DATABASE IN PRODUCTION
 apiVersion: v1
 kind: Pod
@@ -39,7 +61,7 @@ stringData:
 apiVersion: chainlink.kotal.io/v1alpha1
 kind: Node
 metadata:
-  name: node-sample
+  name: chainlink-node
 spec:
   ethereumChainId: 1
   # deploy my-eth-node Ethereum node and enable websocket before deploying chainlink node
@@ -47,6 +69,7 @@ spec:
   linkContractAddress: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709"
   databaseURL: "postgresql://postgres:fE2xXKDnR3ns489X@postgres:5432/postgres?sslmode=disable"
   keystorePasswordSecretName: "my-password"
+  certSecretName: "chainlink-node-cert"
   apiCredentials:
     email: "mostafa@kotal.co"
     passwordSecretName: "my-password"
