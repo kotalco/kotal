@@ -14,8 +14,13 @@ import (
 var _ = Describe("Chainlink Client", func() {
 	node := &chainlinkv1alpha1.Node{
 		Spec: chainlinkv1alpha1.NodeSpec{
-			EthereumChainId:     1,
-			EthereumWSEndpoint:  "ws://my-eth-node:8546",
+			EthereumChainId:    1,
+			EthereumWSEndpoint: "ws://my-eth-node:8546",
+			EthereumHTTPEndpoints: []string{
+				"http://my-eth-node:8545",
+				"http://my-eth-node2:8545",
+				"http://my-eth-node3:8545",
+			},
 			LinkContractAddress: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709",
 			DatabaseURL:         "postgresql://postgres:secret@postgres:5432/postgres",
 			CertSecretName:      "my-certificate",
@@ -68,6 +73,14 @@ var _ = Describe("Chainlink Client", func() {
 			corev1.EnvVar{
 				Name:  EnvTLSKeyPath,
 				Value: fmt.Sprintf("%s/tls.key", shared.PathSecrets(client.HomeDir())),
+			},
+			corev1.EnvVar{
+				Name:  EnvHTTPURL,
+				Value: "http://my-eth-node:8545",
+			},
+			corev1.EnvVar{
+				Name:  EnvSecondaryURLs,
+				Value: "http://my-eth-node2:8545,http://my-eth-node3:8545",
 			},
 		))
 	})

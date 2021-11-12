@@ -3,6 +3,7 @@ package chainlink
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	chainlinkv1alpha1 "github.com/kotalco/kotal/apis/chainlink/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -86,6 +87,24 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 				Value: fmt.Sprintf("%s/tls.key", shared.PathSecrets(c.HomeDir())),
 			},
 		)
+	}
+
+	extraEndpoints := []string{}
+	for i, endpoint := range c.node.Spec.EthereumHTTPEndpoints {
+		if i == 0 {
+			env = append(env, corev1.EnvVar{
+				Name:  EnvHTTPURL,
+				Value: endpoint,
+			})
+		} else {
+			extraEndpoints = append(extraEndpoints, endpoint)
+		}
+	}
+	if len(extraEndpoints) != 0 {
+		env = append(env, corev1.EnvVar{
+			Name:  EnvSecondaryURLs,
+			Value: strings.Join(extraEndpoints, ","),
+		})
 	}
 
 	return env
