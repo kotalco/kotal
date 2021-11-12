@@ -90,6 +90,10 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 				Name:  EnvTLSKeyPath,
 				Value: fmt.Sprintf("%s/tls.key", shared.PathSecrets(c.HomeDir())),
 			},
+			corev1.EnvVar{
+				Name:  EnvTLSPort,
+				Value: fmt.Sprintf("%d", node.Spec.TLSPort),
+			},
 		)
 	}
 

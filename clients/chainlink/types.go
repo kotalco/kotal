@@ -16,6 +16,8 @@ const (
 	EnvTLSCertPath = "TLS_CERT_PATH"
 	// EnvTLSKeyPath is the environment variable for tls key
 	EnvTLSKeyPath = "TLS_KEY_PATH"
+	// EnvTLSPort is the environment variable for tls port
+	EnvTLSPort = "CHAINLINK_TLS_PORT"
 	// EnvHTTPURL is the environment variable for http url
 	EnvHTTPURL = "ETH_HTTP_URL"
 	// EnvSecondaryURLs is the environment variable for extra http urls

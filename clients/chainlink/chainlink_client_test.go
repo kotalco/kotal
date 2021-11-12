@@ -24,6 +24,7 @@ var _ = Describe("Chainlink Client", func() {
 			LinkContractAddress: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709",
 			DatabaseURL:         "postgresql://postgres:secret@postgres:5432/postgres",
 			CertSecretName:      "my-certificate",
+			TLSPort:             9999,
 			Logging:             chainlinkv1alpha1.PanicLogs,
 		},
 	}
@@ -74,6 +75,10 @@ var _ = Describe("Chainlink Client", func() {
 			corev1.EnvVar{
 				Name:  EnvTLSKeyPath,
 				Value: fmt.Sprintf("%s/tls.key", shared.PathSecrets(client.HomeDir())),
+			},
+			corev1.EnvVar{
+				Name:  EnvTLSPort,
+				Value: "9999",
 			},
 			corev1.EnvVar{
 				Name:  EnvHTTPURL,
