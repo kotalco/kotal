@@ -19,6 +19,8 @@ type NodeSpec struct {
 	EthereumChainId uint `json:"ethereumChainId"`
 	// EthereumWSEndpoint is ethereum websocket endpoint
 	EthereumWSEndpoint string `json:"ethereumWsEndpoint"`
+	// EthereumHTTPEndpoints is ethereum http endpoints
+	EthereumHTTPEndpoints []string `json:"ethereumHttpEndpoints,omitempty"`
 	// LinkContractAddress is link contract address
 	LinkContractAddress string `json:"linkContractAddress"`
 	// DatabaseURL is postgres database connection URL

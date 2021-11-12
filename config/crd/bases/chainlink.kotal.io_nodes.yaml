@@ -54,6 +54,11 @@ spec:
               ethereumChainId:
                 description: EthereumChainId is ethereum chain id
                 type: integer
+              ethereumHttpEndpoints:
+                description: EthereumHTTPEndpoints is ethereum http endpoints
+                items:
+                  type: string
+                type: array
               ethereumWsEndpoint:
                 description: EthereumWSEndpoint is ethereum websocket endpoint
                 type: string
