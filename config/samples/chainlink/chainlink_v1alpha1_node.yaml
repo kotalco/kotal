@@ -64,8 +64,12 @@ metadata:
   name: chainlink-node
 spec:
   ethereumChainId: 1
-  # deploy my-eth-node Ethereum node and enable websocket before deploying chainlink node
+  # deploy Ethereum node and enable websocket server
   ethereumWsEndpoint: "wss://my-eth-node:8546"
+  # deploy 2 Ethereum nodes and enable HTTP JSON-RPC server
+  ethereumHttpEndpoints:
+    - "http://my-eth-node:8545"
+    - "http://my-eth-node2:8545"
   linkContractAddress: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709"
   databaseURL: "postgresql://postgres:fE2xXKDnR3ns489X@postgres:5432/postgres?sslmode=disable"
   keystorePasswordSecretName: "my-password"
