@@ -20,6 +20,8 @@ const (
 	EnvHTTPURL = "ETH_HTTP_URL"
 	// EnvSecondaryURLs is the environment variable for extra http urls
 	EnvSecondaryURLs = "ETH_SECONDARY_URLS"
+	// EnvLogLevel is the environment variable for logging verbosity
+	EnvLogLevel = "LOG_LEVEL"
 )
 
 // arguments

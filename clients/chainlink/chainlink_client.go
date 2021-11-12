@@ -74,6 +74,10 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 			Name:  EnvDatabaseURL,
 			Value: node.Spec.DatabaseURL,
 		},
+		{
+			Name:  EnvLogLevel,
+			Value: string(c.node.Spec.Logging),
+		},
 	}
 
 	if c.node.Spec.CertSecretName != "" {

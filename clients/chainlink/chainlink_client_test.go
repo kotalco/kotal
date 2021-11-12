@@ -24,6 +24,7 @@ var _ = Describe("Chainlink Client", func() {
 			LinkContractAddress: "0x01BE23585060835E02B77ef475b0Cc51aA1e0709",
 			DatabaseURL:         "postgresql://postgres:secret@postgres:5432/postgres",
 			CertSecretName:      "my-certificate",
+			Logging:             chainlinkv1alpha1.PanicLogs,
 		},
 	}
 
@@ -81,6 +82,10 @@ var _ = Describe("Chainlink Client", func() {
 			corev1.EnvVar{
 				Name:  EnvSecondaryURLs,
 				Value: "http://my-eth-node2:8545,http://my-eth-node3:8545",
+			},
+			corev1.EnvVar{
+				Name:  EnvLogLevel,
+				Value: string(chainlinkv1alpha1.PanicLogs),
 			},
 		))
 	})
