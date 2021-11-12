@@ -13,6 +13,23 @@ type APICredentials struct {
 	PasswordSecretName string `json:"passwordSecretName"`
 }
 
+// VerbosityLevel is logging verbosity levels
+// +kubebuilder:validation:Enum=debug;info;warn;error;panic
+type VerbosityLevel string
+
+const (
+	// DebugLogs outputs only debugging logs
+	DebugLogs VerbosityLevel = "debug"
+	// InfoLogs outputs only informational logs
+	InfoLogs VerbosityLevel = "info"
+	// WarnLogs outputs only warning logs
+	WarnLogs VerbosityLevel = "warn"
+	// ErrorLogs outputs only error logs
+	ErrorLogs VerbosityLevel = "error"
+	// PanicLogs outputs only panic logs
+	PanicLogs VerbosityLevel = "panic"
+)
+
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// EthereumChainId is ethereum chain id
@@ -33,6 +50,8 @@ type NodeSpec struct {
 	CertSecretName string `json:"certSecretName,omitempty"`
 	// TLSPort is port used for HTTPS connections
 	TLSPort uint `json:"tlsPort,omitempty"`
+	// Logging is logging verboisty level
+	Logging VerbosityLevel `json:"logging,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

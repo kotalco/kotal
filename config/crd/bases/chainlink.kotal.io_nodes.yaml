@@ -68,6 +68,15 @@ spec:
               linkContractAddress:
                 description: LinkContractAddress is link contract address
                 type: string
+              logging:
+                description: Logging is logging verboisty level
+                enum:
+                - debug
+                - info
+                - warn
+                - error
+                - panic
+                type: string
               resources:
                 description: Resources is node compute and storage resources
                 properties:
