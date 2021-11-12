@@ -45,6 +45,7 @@ func (r *Node) ValidateCreate() error {
 	nodelog.Info("validate create", "name", r.Name)
 
 	allErrors = append(allErrors, r.validate()...)
+	allErrors = append(allErrors, r.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
 		return nil
@@ -61,6 +62,7 @@ func (r *Node) ValidateUpdate(old runtime.Object) error {
 	nodelog.Info("validate update", "name", r.Name)
 
 	allErrors = append(allErrors, r.validate()...)
+	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
 	if r.Spec.Network != oldNode.Spec.Network {
 		err := field.Invalid(field.NewPath("spec").Child("network"), r.Spec.Network, "field is immutable")
