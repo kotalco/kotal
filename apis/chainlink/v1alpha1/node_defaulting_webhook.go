@@ -36,4 +36,8 @@ func (r *Node) Default() {
 		r.Spec.TLSPort = DefaultTLSPort
 	}
 
+	if r.Spec.Logging == "" {
+		r.Spec.Logging = InfoLogs
+	}
+
 }

@@ -21,6 +21,7 @@ var _ = Describe("Chainlink node defaulting", func() {
 		node.Default()
 
 		Expect(node.Spec.TLSPort).To(Equal(DefaultTLSPort))
+		Expect(node.Spec.Logging).To(Equal(InfoLogs))
 		// resources
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultNodeCPURequest))
 		Expect(node.Spec.Resources.CPULimit).To(Equal(DefaultNodeCPULimit))
