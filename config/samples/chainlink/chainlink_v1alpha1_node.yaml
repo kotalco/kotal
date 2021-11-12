@@ -74,6 +74,8 @@ spec:
   databaseURL: "postgresql://postgres:fE2xXKDnR3ns489X@postgres:5432/postgres?sslmode=disable"
   keystorePasswordSecretName: "my-password"
   certSecretName: "chainlink-node-cert"
+  tlsPort: 9999
+  logging: debug
   apiCredentials:
     email: "mostafa@kotal.co"
     passwordSecretName: "my-password"
