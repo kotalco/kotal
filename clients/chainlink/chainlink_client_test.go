@@ -27,6 +27,7 @@ var _ = Describe("Chainlink Client", func() {
 			TLSPort:             9999,
 			Logging:             chainlinkv1alpha1.PanicLogs,
 			CORSDomains:         []string{"*"},
+			SecureCookies:       true,
 		},
 	}
 
@@ -96,6 +97,10 @@ var _ = Describe("Chainlink Client", func() {
 			corev1.EnvVar{
 				Name:  EnvAllowOrigins,
 				Value: "*",
+			},
+			corev1.EnvVar{
+				Name:  EnvSecureCookies,
+				Value: "true",
 			},
 		))
 	})

@@ -82,6 +82,10 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 			Name:  EnvAllowOrigins,
 			Value: strings.Join(c.node.Spec.CORSDomains, ","),
 		},
+		{
+			Name:  EnvSecureCookies,
+			Value: fmt.Sprintf("%t", c.node.Spec.SecureCookies),
+		},
 	}
 
 	if c.node.Spec.CertSecretName != "" {

@@ -26,6 +26,8 @@ const (
 	EnvLogLevel = "LOG_LEVEL"
 	// EnvAllowOrigins is the environment variable for allowing cross origin requests from domains
 	EnvAllowOrigins = "ALLOW_ORIGINS"
+	// EnvSecureCookies is the environment variable for allowing cross origin requests from domains
+	EnvSecureCookies = "SECURE_COOKIES"
 )
 
 // arguments
