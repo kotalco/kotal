@@ -48,6 +48,11 @@ spec:
               certSecretName:
                 description: CertSecretName is k8s secret name that holds tls.key and tls.cert
                 type: string
+              corsDomains:
+                description: CORSDomains is the domains from which to accept cross origin requests
+                items:
+                  type: string
+                type: array
               databaseURL:
                 description: DatabaseURL is postgres database connection URL
                 type: string

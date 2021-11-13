@@ -92,6 +92,11 @@ func (in *NodeSpec) DeepCopyInto(out *NodeSpec) {
 		copy(*out, *in)
 	}
 	out.APICredentials = in.APICredentials
+	if in.CORSDomains != nil {
+		in, out := &in.CORSDomains, &out.CORSDomains
+		*out = make([]string, len(*in))
+		copy(*out, *in)
+	}
 	in.Resources.DeepCopyInto(&out.Resources)
 }
 

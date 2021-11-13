@@ -46,6 +46,8 @@ type NodeSpec struct {
 	KeystorePasswordSecretName string `json:"keystorePasswordSecretName"`
 	// APICredentials is api credentials
 	APICredentials APICredentials `json:"apiCredentials"`
+	// CORSDomains is the domains from which to accept cross origin requests
+	CORSDomains []string `json:"corsDomains,omitempty"`
 	// CertSecretName is k8s secret name that holds tls.key and tls.cert
 	CertSecretName string `json:"certSecretName,omitempty"`
 	// TLSPort is port used for HTTPS connections
