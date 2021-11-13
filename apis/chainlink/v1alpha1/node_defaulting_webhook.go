@@ -40,4 +40,8 @@ func (r *Node) Default() {
 		r.Spec.Logging = InfoLogs
 	}
 
+	if len(r.Spec.CORSDomains) == 0 {
+		r.Spec.CORSDomains = DefaultCorsDomains
+	}
+
 }

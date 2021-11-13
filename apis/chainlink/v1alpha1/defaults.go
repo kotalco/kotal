@@ -1,9 +1,13 @@
 package v1alpha1
 
-// Resources
 const (
 	// DefaultTLSPort is the default tls port
 	DefaultTLSPort uint = 6689
+)
+
+var (
+	// DefaultCorsDomains is the default cors domains from which to accept requests
+	DefaultCorsDomains = []string{"*"}
 )
 
 // Resources
