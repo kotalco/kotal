@@ -24,6 +24,8 @@ const (
 	EnvSecondaryURLs = "ETH_SECONDARY_URLS"
 	// EnvLogLevel is the environment variable for logging verbosity
 	EnvLogLevel = "LOG_LEVEL"
+	// EnvAllowOrigins is the environment variable for allowing cross origin requests from domains
+	EnvAllowOrigins = "ALLOW_ORIGINS"
 )
 
 // arguments

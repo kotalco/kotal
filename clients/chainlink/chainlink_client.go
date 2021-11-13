@@ -78,6 +78,10 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 			Name:  EnvLogLevel,
 			Value: string(c.node.Spec.Logging),
 		},
+		{
+			Name:  EnvAllowOrigins,
+			Value: strings.Join(c.node.Spec.CORSDomains, ","),
+		},
 	}
 
 	if c.node.Spec.CertSecretName != "" {
