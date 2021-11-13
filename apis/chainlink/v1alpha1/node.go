@@ -52,6 +52,8 @@ type NodeSpec struct {
 	CertSecretName string `json:"certSecretName,omitempty"`
 	// TLSPort is port used for HTTPS connections
 	TLSPort uint `json:"tlsPort,omitempty"`
+	// SecureCookies enables secure cookies for authentication
+	SecureCookies bool `json:"secureCookies,omitempty"`
 	// Logging is logging verboisty level
 	Logging VerbosityLevel `json:"logging,omitempty"`
 	// Resources is node compute and storage resources

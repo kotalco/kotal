@@ -109,6 +109,9 @@ spec:
                     description: StorageClass is the volume storage class
                     type: string
                 type: object
+              secureCookies:
+                description: SecureCookies enables secure cookies for authentication
+                type: boolean
               tlsPort:
                 description: TLSPort is port used for HTTPS connections
                 type: integer
