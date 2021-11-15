@@ -7,7 +7,7 @@ import (
 
 var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 
-	It("Should default beacon node with missing client and p2p port", func() {
+	It("Should default beacon node with missing client and p2p port and logging", func() {
 		node := BeaconNode{
 			Spec: BeaconNodeSpec{
 				Network: "mainnet",
@@ -16,6 +16,7 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		}
 		node.Default()
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
+		Expect(node.Spec.Logging).To(Equal(DefaultLogging))
 	})
 
 	It("Should default beacon node with missing node resources", func() {

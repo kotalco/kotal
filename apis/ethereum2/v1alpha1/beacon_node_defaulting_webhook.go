@@ -14,6 +14,10 @@ func (r *BeaconNode) Default() {
 		r.Spec.P2PPort = DefaultP2PPort
 	}
 
+	if r.Spec.Logging == "" {
+		r.Spec.Logging = DefaultLogging
+	}
+
 	if r.Spec.REST {
 		if r.Spec.RESTPort == 0 {
 			r.Spec.RESTPort = DefaultRestPort

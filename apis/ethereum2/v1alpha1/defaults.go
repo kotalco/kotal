@@ -22,6 +22,8 @@ const (
 	DefaultRestHost = "0.0.0.0"
 	// DefaultGraffiti is the default text to include in proposed blocks
 	DefaultGraffiti = "Powered by Kotal"
+	// DefaultLogging is the default logging verbosity
+	DefaultLogging = InfoLogs
 )
 
 const (
