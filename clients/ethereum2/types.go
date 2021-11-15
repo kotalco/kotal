@@ -73,6 +73,8 @@ const (
 	PrysmP2PUDPPort = "--p2p-udp-port"
 	// PrysmGRPCGatewayCorsDomains is the argument used to whitelist domains for cross domain requests
 	PrysmGRPCGatewayCorsDomains = "--grpc-gateway-corsdomain"
+	// PrysmLogging is the argument used to set logging verbosity level
+	PrysmLogging = "--verbosity"
 
 	// PrysmTLSCert is the argument used to locate tls certificate
 	PrysmTLSCert = "--tls-cert"

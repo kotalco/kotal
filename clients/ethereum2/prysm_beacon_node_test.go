@@ -24,12 +24,15 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 					Client:  ethereum2v1alpha1.PrysmClient,
 					Network: "mainnet",
 					RPC:     true,
+					Logging: ethereum2v1alpha1.WarnLogs,
 				},
 			},
 			result: []string{
 				PrysmAcceptTermsOfUse,
 				PrysmDataDir,
 				"--mainnet",
+				PrysmLogging,
+				string(ethereum2v1alpha1.WarnLogs),
 			},
 		},
 		{
