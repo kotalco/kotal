@@ -1,6 +1,8 @@
 package v1alpha1
 
 import (
+	"fmt"
+
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -36,6 +38,11 @@ func (r *Node) ValidateUpdate(old runtime.Object) error {
 	nodelog.Info("validate update", "name", r.Name)
 
 	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
+
+	if oldNode.Spec.EthereumChainId != r.Spec.EthereumChainId {
+		err := field.Invalid(field.NewPath("spec").Child("ethereumChainId"), fmt.Sprintf("%d", r.Spec.EthereumChainId), "field is immutable")
+		allErrors = append(allErrors, err)
+	}
 
 	if len(allErrors) == 0 {
 		return nil
