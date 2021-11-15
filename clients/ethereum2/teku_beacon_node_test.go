@@ -21,12 +21,15 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:  ethereum2v1alpha1.TekuClient,
 					Network: "mainnet",
+					Logging: ethereum2v1alpha1.ErrorLogs,
 				},
 			},
 			result: []string{
 				TekuDataPath,
 				TekuNetwork,
 				"mainnet",
+				TekuLogging,
+				string(ethereum2v1alpha1.ErrorLogs),
 			},
 		},
 		{

@@ -32,6 +32,8 @@ const (
 	TekuRESTAPICorsOrigins = "--rest-api-cors-origins"
 	// TekuRESTAPIHostAllowlist is the argument used to whitelist hosts for API access
 	TekuRESTAPIHostAllowlist = "--rest-api-host-allowlist"
+	// TekuLogging is the argument used to set logging verbosity level
+	TekuLogging = "--logging"
 
 	// TekuVC is the argument used to run validator client
 	TekuVC = "vc"
