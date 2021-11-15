@@ -73,6 +73,18 @@ spec:
                   type: object
                 minItems: 1
                 type: array
+              logging:
+                description: Logging is logging verboisty level
+                enum:
+                - "off"
+                - fatal
+                - error
+                - warn
+                - info
+                - debug
+                - trace
+                - all
+                type: string
               network:
                 description: Network is the network this validator is validating blocks for
                 type: string

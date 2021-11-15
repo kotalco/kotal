@@ -16,6 +16,8 @@ type ValidatorSpec struct {
 	BeaconEndpoints []string `json:"beaconEndpoints"`
 	// Graffiti is the text to include in proposed blocks
 	Graffiti string `json:"graffiti,omitempty"`
+	// Logging is logging verboisty level
+	Logging VerbosityLevel `json:"logging,omitempty"`
 	// Keystores is a list of Validator keystores
 	// +kubebuilder:validation:MinItems=1
 	Keystores []Keystore `json:"keystores"`
