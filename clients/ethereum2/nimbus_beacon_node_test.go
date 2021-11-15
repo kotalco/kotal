@@ -22,11 +22,13 @@ var _ = Describe("Nimbus Ethereum 2.0 client arguments", func() {
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:  ethereum2v1alpha1.NimbusClient,
 					Network: "mainnet",
+					Logging: ethereum2v1alpha1.DebugLogs,
 				},
 			},
 			result: []string{
 				NimbusNonInteractive,
 				argWithVal(NimbusNetwork, "mainnet"),
+				argWithVal(NimbusLogging, string(ethereum2v1alpha1.DebugLogs)),
 			},
 		},
 		{

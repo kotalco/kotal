@@ -154,6 +154,8 @@ const (
 	NimbusTCPPort = "--tcp-port"
 	// NimbusUDPPort is the argument used for discovery udp port
 	NimbusUDPPort = "--udp-port"
+	// NimbusLogging is the argument used to set logging verbosity level
+	NimbusLogging = "--log-level"
 
 	// NimbusGraffiti is the argument used to include in proposed blocks
 	NimbusGraffiti = "--graffiti"
