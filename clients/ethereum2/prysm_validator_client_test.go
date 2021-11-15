@@ -24,6 +24,7 @@ var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 					},
 				},
 				WalletPasswordSecret: "wallet-password",
+				Logging:              ethereum2v1alpha1.ErrorLogs,
 			},
 		}
 
@@ -44,6 +45,8 @@ var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 			fmt.Sprintf("%s/prysm-wallet", shared.PathData(client.HomeDir())),
 			PrysmWalletPasswordFile,
 			fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", shared.PathSecrets(client.HomeDir())),
+			PrysmLogging,
+			string(ethereum2v1alpha1.ErrorLogs),
 		}))
 
 	})

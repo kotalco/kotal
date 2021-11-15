@@ -41,6 +41,8 @@ func (t *PrysmValidatorClient) Args() (args []string) {
 
 	args = append(args, PrysmDataDir, shared.PathData(t.HomeDir()))
 
+	args = append(args, PrysmLogging, string(t.validator.Spec.Logging))
+
 	args = append(args, PrysmWalletDir, fmt.Sprintf("%s/prysm-wallet", shared.PathData(t.HomeDir())))
 
 	args = append(args, PrysmWalletPasswordFile, fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", shared.PathSecrets(t.HomeDir())))
