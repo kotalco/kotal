@@ -44,6 +44,11 @@ func (r *Node) ValidateUpdate(old runtime.Object) error {
 		allErrors = append(allErrors, err)
 	}
 
+	if oldNode.Spec.LinkContractAddress != r.Spec.LinkContractAddress {
+		err := field.Invalid(field.NewPath("spec").Child("linkContractAddress"), r.Spec.LinkContractAddress, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
 	if len(allErrors) == 0 {
 		return nil
 	}

@@ -25,7 +25,7 @@ var _ = Describe("Chainlink node validation", func() {
 		Errors  field.ErrorList
 	}{
 		{
-			Title: "enabling ws for validator node",
+			Title: "updating ethereum chain ID",
 			OldNode: &Node{
 				ObjectMeta: v1.ObjectMeta{
 					Name: "my-node",
@@ -47,6 +47,33 @@ var _ = Describe("Chainlink node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.ethereumChainId",
 					BadValue: "222",
+					Detail:   "field is immutable",
+				},
+			},
+		},
+		{
+			Title: "updating LINK contract address",
+			OldNode: &Node{
+				ObjectMeta: v1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					LinkContractAddress: "0x514910771af9ca656af840dff83e8264ecf986ca",
+				},
+			},
+			NewNode: &Node{
+				ObjectMeta: v1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					LinkContractAddress: "0x326c977e6efc84e512bb9c30f76e30c160ed06fb",
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.linkContractAddress",
+					BadValue: "0x326c977e6efc84e512bb9c30f76e30c160ed06fb",
 					Detail:   "field is immutable",
 				},
 			},
