@@ -41,4 +41,8 @@ func (r *Validator) DefaultNodeResources() {
 	if r.Spec.Resources.Storage == "" {
 		r.Spec.Resources.Storage = DefaultStorage
 	}
+
+	if r.Spec.Logging == "" {
+		r.Spec.Logging = DefaultLogging
+	}
 }

@@ -15,6 +15,7 @@ var _ = Describe("Ethereum 2.0 validator client defaulting", func() {
 		}
 		node.Default()
 		Expect(node.Spec.Graffiti).To(Equal(DefaultGraffiti))
+		Expect(node.Spec.Logging).To(Equal(DefaultLogging))
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultCPURequest))
 		Expect(node.Spec.Resources.CPULimit).To(Equal(DefaultCPULimit))
 		Expect(node.Spec.Resources.Memory).To(Equal(DefaultMemoryRequest))
