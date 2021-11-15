@@ -22,12 +22,15 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:  ethereum2v1alpha1.LighthouseClient,
 					Network: "mainnet",
+					Logging: ethereum2v1alpha1.TraceLogs,
 				},
 			},
 			result: []string{
 				LighthouseDataDir,
 				LighthouseNetwork,
 				"mainnet",
+				LighthouseDebugLevel,
+				string(ethereum2v1alpha1.TraceLogs),
 			},
 		},
 		{

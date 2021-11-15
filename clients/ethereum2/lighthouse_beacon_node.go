@@ -40,6 +40,8 @@ func (t *LighthouseBeaconNode) Args() (args []string) {
 
 	args = append(args, LighthouseDataDir, shared.PathData(t.HomeDir()))
 
+	args = append(args, LighthouseDebugLevel, string(t.node.Spec.Logging))
+
 	args = append(args, LighthouseNetwork, node.Spec.Network)
 
 	if len(node.Spec.Eth1Endpoints) != 0 {

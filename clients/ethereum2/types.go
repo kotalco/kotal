@@ -117,6 +117,8 @@ const (
 	LighthousePort = "--port"
 	// LighthouseDiscoveryPort is the argument used for discovery udp port
 	LighthouseDiscoveryPort = "--discovery-port"
+	// LighthouseDebugLevel is the argument used to set logging verbosity level
+	LighthouseDebugLevel = "--debug-level"
 
 	// LighthouseBeaconNodeEndpoints is the argument used for beacon node endpoint
 	LighthouseBeaconNodeEndpoints = "--beacon-nodes"
