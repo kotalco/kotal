@@ -74,6 +74,18 @@ spec:
                 items:
                   type: string
                 type: array
+              logging:
+                description: Logging is logging verboisty level
+                enum:
+                - "off"
+                - fatal
+                - error
+                - warn
+                - info
+                - debug
+                - trace
+                - all
+                type: string
               network:
                 description: Network is the network to join
                 type: string
