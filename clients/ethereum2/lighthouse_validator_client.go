@@ -39,6 +39,8 @@ func (t *LighthouseValidatorClient) Args() (args []string) {
 
 	args = append(args, LighthouseDataDir, shared.PathData(t.HomeDir()))
 
+	args = append(args, LighthouseDebugLevel, string(t.validator.Spec.Logging))
+
 	args = append(args, LighthouseNetwork, validator.Spec.Network)
 
 	if len(validator.Spec.BeaconEndpoints) != 0 {
