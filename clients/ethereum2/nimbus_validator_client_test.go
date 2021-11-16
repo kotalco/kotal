@@ -23,6 +23,7 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 						SecretName: "my-validator",
 					},
 				},
+				Logging: ethereum2v1alpha1.FatalLogs,
 			},
 		}
 
@@ -32,6 +33,7 @@ var _ = Describe("Nimbus Ethereum 2.0 validator client arguments", func() {
 
 		Expect(args).To(ContainElements([]string{
 			NimbusNonInteractive,
+			argWithVal(NimbusLogging, string(validator.Spec.Logging)),
 			argWithVal(NimbusDataDir, shared.PathData(client.HomeDir())),
 			argWithVal(NimbusBeaconNodes, "http://nimbus-beacon-node"),
 			argWithVal(NimbusGraffiti, "Validated by Kotal"),

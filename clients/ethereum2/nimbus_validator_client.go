@@ -40,6 +40,8 @@ func (t *NimbusValidatorClient) Args() (args []string) {
 
 	args = append(args, NimbusNonInteractive)
 
+	args = append(args, argWithVal(NimbusLogging, string(t.validator.Spec.Logging)))
+
 	args = append(args, argWithVal(NimbusDataDir, shared.PathData(t.HomeDir())))
 
 	args = append(args, argWithVal(NimbusValidatorsDir, fmt.Sprintf("%s/kotal-validators/validator-keys", shared.PathData(t.HomeDir()))))
