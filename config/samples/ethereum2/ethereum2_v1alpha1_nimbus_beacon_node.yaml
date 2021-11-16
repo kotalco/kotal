@@ -5,6 +5,7 @@ metadata:
 spec:
   network: pyrmont
   client: nimbus
+  logging: info
   rpc: true
   rpcPort: 8888
   eth1Endpoints:

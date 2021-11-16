@@ -5,6 +5,7 @@ metadata:
 spec:
   network: mainnet
   client: teku
+  logging: info
   rest: true
   restPort: 8888
   eth1Endpoints:

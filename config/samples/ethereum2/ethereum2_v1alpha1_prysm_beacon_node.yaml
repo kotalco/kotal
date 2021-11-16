@@ -27,6 +27,7 @@ metadata:
 spec:
   network: pyrmont
   client: prysm
+  logging: info
   rpc: true
   rpcPort: 8888
   grpc: true

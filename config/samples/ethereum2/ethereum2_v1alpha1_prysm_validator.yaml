@@ -5,6 +5,7 @@ metadata:
 spec:
   client: prysm
   network: mainnet
+  logging: info
   beaconEndpoints:
     # it gives too many colons error when protocol (https://) is added
     - prysm-beacon-node:8888

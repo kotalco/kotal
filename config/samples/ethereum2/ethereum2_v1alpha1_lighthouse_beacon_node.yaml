@@ -5,6 +5,7 @@ metadata:
 spec:
   network: pyrmont
   client: lighthouse
+  logging: info
   rest: true
   restPort: 8888
   eth1Endpoints:

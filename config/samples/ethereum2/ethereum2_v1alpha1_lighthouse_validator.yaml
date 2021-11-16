@@ -5,6 +5,7 @@ metadata:
 spec:
   client: lighthouse
   network: mainnet
+  logging: info
   beaconEndpoints:
     - http://10.96.130.88:9999
   graffiti: Validated by Kotal
