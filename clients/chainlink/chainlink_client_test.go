@@ -26,6 +26,7 @@ var _ = Describe("Chainlink Client", func() {
 			CertSecretName:      "my-certificate",
 			TLSPort:             9999,
 			P2PPort:             4444,
+			APIPort:             7777,
 			Logging:             chainlinkv1alpha1.PanicLogs,
 			CORSDomains:         []string{"*"},
 			SecureCookies:       true,
@@ -86,6 +87,10 @@ var _ = Describe("Chainlink Client", func() {
 			corev1.EnvVar{
 				Name:  EnvP2PListenPort,
 				Value: "4444",
+			},
+			corev1.EnvVar{
+				Name:  EnvPort,
+				Value: "7777",
 			},
 			corev1.EnvVar{
 				Name:  EnvHTTPURL,

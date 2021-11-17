@@ -91,6 +91,10 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 			Name:  EnvP2PListenPort,
 			Value: fmt.Sprintf("%d", node.Spec.P2PPort),
 		},
+		{
+			Name:  EnvPort,
+			Value: fmt.Sprintf("%d", node.Spec.APIPort),
+		},
 	}
 
 	if c.node.Spec.CertSecretName != "" {
