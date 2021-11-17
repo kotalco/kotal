@@ -84,6 +84,8 @@ spec:
                 - debug
                 - trace
                 - all
+                - notice
+                - crit
                 type: string
               network:
                 description: Network is the network this validator is validating blocks for

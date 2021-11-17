@@ -85,6 +85,8 @@ spec:
                 - debug
                 - trace
                 - all
+                - notice
+                - crit
                 type: string
               network:
                 description: Network is the network to join
