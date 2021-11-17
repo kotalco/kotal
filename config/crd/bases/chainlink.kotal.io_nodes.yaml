@@ -45,6 +45,9 @@ spec:
                 - email
                 - passwordSecretName
                 type: object
+              apiPort:
+                description: APIPort is port used for node API and GUI
+                type: integer
               certSecretName:
                 description: CertSecretName is k8s secret name that holds tls.key and tls.cert
                 type: string
