@@ -52,6 +52,8 @@ type NodeSpec struct {
 	CertSecretName string `json:"certSecretName,omitempty"`
 	// TLSPort is port used for HTTPS connections
 	TLSPort uint `json:"tlsPort,omitempty"`
+	// p2pPort is port used for p2p communcations
+	p2pPort uint `json:"p2pPort,omitempty"`
 	// SecureCookies enables secure cookies for authentication
 	SecureCookies bool `json:"secureCookies,omitempty"`
 	// Logging is logging verboisty level

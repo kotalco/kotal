@@ -82,6 +82,9 @@ spec:
                 - error
                 - panic
                 type: string
+              p2pPort:
+                description: p2pPort is port used for p2p communcations
+                type: integer
               resources:
                 description: Resources is node compute and storage resources
                 properties:
