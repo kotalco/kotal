@@ -3,6 +3,8 @@ package v1alpha1
 const (
 	// DefaultTLSPort is the default tls port
 	DefaultTLSPort uint = 6689
+	// DefaultP2PPort is the default p2p port
+	DefaultP2PPort uint = 30303
 )
 
 var (

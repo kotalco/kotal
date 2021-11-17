@@ -12,6 +12,10 @@ var _ webhook.Defaulter = &Node{}
 func (r *Node) Default() {
 	nodelog.Info("default", "name", r.Name)
 
+	if r.Spec.P2PPort == 0 {
+		r.Spec.P2PPort = DefaultP2PPort
+	}
+
 	if r.Spec.CPU == "" {
 		r.Spec.CPU = DefaultNodeCPURequest
 	}
