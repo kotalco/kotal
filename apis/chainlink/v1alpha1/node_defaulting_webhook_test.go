@@ -22,6 +22,7 @@ var _ = Describe("Chainlink node defaulting", func() {
 
 		Expect(node.Spec.TLSPort).To(Equal(DefaultTLSPort))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
+		Expect(node.Spec.APIPort).To(Equal(DefaultAPIPort))
 		Expect(node.Spec.Logging).To(Equal(InfoLogs))
 		Expect(node.Spec.CORSDomains).To(Equal(DefaultCorsDomains))
 		// resources

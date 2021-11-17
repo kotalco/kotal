@@ -1,6 +1,8 @@
 package v1alpha1
 
 const (
+	// DefaultAPIPort is the default API and GUI port
+	DefaultAPIPort uint = 6688
 	// DefaultTLSPort is the default tls port
 	DefaultTLSPort uint = 6689
 	// DefaultP2PPort is the default p2p port

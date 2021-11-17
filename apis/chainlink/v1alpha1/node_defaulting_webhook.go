@@ -16,6 +16,10 @@ func (r *Node) Default() {
 		r.Spec.P2PPort = DefaultP2PPort
 	}
 
+	if r.Spec.APIPort == 0 {
+		r.Spec.APIPort = DefaultAPIPort
+	}
+
 	if r.Spec.CPU == "" {
 		r.Spec.CPU = DefaultNodeCPURequest
 	}
