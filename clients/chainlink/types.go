@@ -28,6 +28,8 @@ const (
 	EnvAllowOrigins = "ALLOW_ORIGINS"
 	// EnvSecureCookies is the environment variable for allowing cross origin requests from domains
 	EnvSecureCookies = "SECURE_COOKIES"
+	// EnvP2PListenPort is the environment variable for allowing cross origin requests from domains
+	EnvP2PListenPort = "P2P_LISTEN_PORT"
 )
 
 // arguments

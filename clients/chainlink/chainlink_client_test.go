@@ -25,6 +25,7 @@ var _ = Describe("Chainlink Client", func() {
 			DatabaseURL:         "postgresql://postgres:secret@postgres:5432/postgres",
 			CertSecretName:      "my-certificate",
 			TLSPort:             9999,
+			P2PPort:             4444,
 			Logging:             chainlinkv1alpha1.PanicLogs,
 			CORSDomains:         []string{"*"},
 			SecureCookies:       true,
@@ -81,6 +82,10 @@ var _ = Describe("Chainlink Client", func() {
 			corev1.EnvVar{
 				Name:  EnvTLSPort,
 				Value: "9999",
+			},
+			corev1.EnvVar{
+				Name:  EnvP2PListenPort,
+				Value: "4444",
 			},
 			corev1.EnvVar{
 				Name:  EnvHTTPURL,

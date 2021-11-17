@@ -86,6 +86,11 @@ func (c *ChainlinkClient) Env() []corev1.EnvVar {
 			Name:  EnvSecureCookies,
 			Value: fmt.Sprintf("%t", c.node.Spec.SecureCookies),
 		},
+		// TODO: update with P2P_ANNOUNCE_PORT
+		{
+			Name:  EnvP2PListenPort,
+			Value: fmt.Sprintf("%d", node.Spec.P2PPort),
+		},
 	}
 
 	if c.node.Spec.CertSecretName != "" {
