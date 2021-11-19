@@ -16,6 +16,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 var _ = Describe("Chainlink node controller", func() {
@@ -157,6 +158,29 @@ var _ = Describe("Chainlink node controller", func() {
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
 		Expect(fetched.Data).To(HaveKey("copy_api_credentials.sh"))
+
+	})
+
+	It("Should create node service", func() {
+		fetched := &corev1.Service{}
+		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
+		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
+		Expect(fetched.Spec.Ports).To(ContainElements(
+			[]corev1.ServicePort{
+				{
+					Name:       "p2p",
+					Port:       int32(toCreate.Spec.P2PPort),
+					TargetPort: intstr.FromInt(int(toCreate.Spec.P2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+				{
+					Name:       "api",
+					Port:       int32(toCreate.Spec.APIPort),
+					TargetPort: intstr.FromInt(int(toCreate.Spec.APIPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+			},
+		))
 
 	})
 
