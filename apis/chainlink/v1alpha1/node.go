@@ -65,11 +65,17 @@ type NodeSpec struct {
 }
 
 // NodeStatus defines the observed state of Node
-type NodeStatus struct{}
+type NodeStatus struct {
+	Client string `json:"client,omitempty"`
+}
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // Node is the Schema for the nodes API
+// +kubebuilder:printcolumn:name="Client",type=string,JSONPath=".status.client"
+// +kubebuilder:printcolumn:name="EthereumChainId",type=number,JSONPath=".spec.ethereumChainId"
+// +kubebuilder:printcolumn:name="LinkContractAddress",type=string,JSONPath=".spec.linkContractAddress",priority=10
 type Node struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
