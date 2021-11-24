@@ -26,6 +26,11 @@ func (r *Validator) validate() field.ErrorList {
 		validatorErrors = append(validatorErrors, err)
 	}
 
+	if r.Spec.CertSecretName != "" && r.Spec.Client != PrysmClient {
+		err := field.Invalid(field.NewPath("spec").Child("certSecretName"), r.Spec.CertSecretName, fmt.Sprintf("not supported by %s client", r.Spec.Client))
+		validatorErrors = append(validatorErrors, err)
+	}
+
 	// lighthouse is the only client supporting multiple beacon endpoints
 	if r.Spec.Client != LighthouseClient && len(r.Spec.BeaconEndpoints) > 1 {
 		msg := fmt.Sprintf("multiple beacon node endpoints not supported by %s client", r.Spec.Client)

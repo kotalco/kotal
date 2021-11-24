@@ -88,6 +88,24 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 				},
 			},
 		},
+		{
+			Title: "Validator #4",
+			Validator: &Validator{
+				Spec: ValidatorSpec{
+					Network:        "mainnet",
+					Client:         LighthouseClient,
+					CertSecretName: "my-cert",
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.certSecretName",
+					BadValue: "my-cert",
+					Detail:   "not supported by lighthouse client",
+				},
+			},
+		},
 	}
 
 	updateCases := []struct {
