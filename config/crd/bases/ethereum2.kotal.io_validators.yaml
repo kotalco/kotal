@@ -45,6 +45,9 @@ spec:
                   type: string
                 minItems: 1
                 type: array
+              certSecretName:
+                description: CertSecretName is k8s secret name that holds tls.crt
+                type: string
               client:
                 description: Client is the Ethereum 2.0 client to use
                 enum:

@@ -18,6 +18,8 @@ type ValidatorSpec struct {
 	Graffiti string `json:"graffiti,omitempty"`
 	// Logging is logging verboisty level
 	Logging VerbosityLevel `json:"logging,omitempty"`
+	// CertSecretName is k8s secret name that holds tls.crt
+	CertSecretName string `json:"certSecretName,omitempty"`
 	// Keystores is a list of Validator keystores
 	// +kubebuilder:validation:MinItems=1
 	Keystores []Keystore `json:"keystores"`
