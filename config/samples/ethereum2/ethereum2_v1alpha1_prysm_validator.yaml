@@ -10,6 +10,7 @@ spec:
     # it gives too many colons error when protocol (https://) is added
     - prysm-beacon-node:8888
   graffiti: Validated by Kotal
+  certSecretName: "beaconnode-cert"
   walletPasswordSecret: wallet-password
   keystores:
     - secretName: my-validator
