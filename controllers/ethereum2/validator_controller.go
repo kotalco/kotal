@@ -207,6 +207,7 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 		volumes = append(volumes, keystoreVolume)
 
 	}
+	// end of keystores loop
 
 	// nimbus: create projected volume that holds all secrets
 	if validator.Spec.Client == ethereum2v1alpha1.NimbusClient {
@@ -239,6 +240,19 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 			},
 		}
 		volumes = append(volumes, walletPasswordVolume)
+
+		// tls certificate
+		if validator.Spec.CertSecretName != "" {
+			certVolume := corev1.Volume{
+				Name: "cert",
+				VolumeSource: corev1.VolumeSource{
+					Secret: &corev1.SecretVolumeSource{
+						SecretName: validator.Spec.CertSecretName,
+					},
+				},
+			}
+			volumes = append(volumes, certVolume)
+		}
 	}
 
 	return
@@ -285,6 +299,15 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 			MountPath: fmt.Sprintf("%s/prysm-wallet", shared.PathSecrets(homeDir)),
 		}
 		mounts = append(mounts, walletPasswordMount)
+
+		if validator.Spec.CertSecretName != "" {
+			certMount := corev1.VolumeMount{
+				Name:      "cert",
+				ReadOnly:  true,
+				MountPath: fmt.Sprintf("%s/cert", shared.PathSecrets(homeDir)),
+			}
+			mounts = append(mounts, certMount)
+		}
 	}
 
 	// nimbus client

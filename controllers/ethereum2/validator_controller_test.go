@@ -213,6 +213,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 					SecretName: "my-validator",
 				},
 			},
+			CertSecretName: "my-cert",
 		}
 
 		toCreate := &ethereum2v1alpha1.Validator{
@@ -279,6 +280,11 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 					ReadOnly:  true,
 					MountPath: fmt.Sprintf("%s/prysm-wallet", shared.PathSecrets(ethereum2Clients.PrysmHomeDir)),
 				},
+				corev1.VolumeMount{
+					Name:      "cert",
+					ReadOnly:  true,
+					MountPath: fmt.Sprintf("%s/cert", shared.PathSecrets(ethereum2Clients.PrysmHomeDir)),
+				},
 			))
 			// container volume
 			mode := corev1.ConfigMapVolumeSourceDefaultMode
@@ -330,6 +336,15 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 									Path: "prysm-wallet-password.txt",
 								},
 							},
+							DefaultMode: &mode,
+						},
+					},
+				},
+				corev1.Volume{
+					Name: "cert",
+					VolumeSource: corev1.VolumeSource{
+						Secret: &corev1.SecretVolumeSource{
+							SecretName:  toCreate.Spec.CertSecretName,
 							DefaultMode: &mode,
 						},
 					},
