@@ -57,6 +57,10 @@ func (t *PrysmValidatorClient) Args() (args []string) {
 		args = append(args, PrysmGraffiti, validator.Spec.Graffiti)
 	}
 
+	if validator.Spec.CertSecretName != "" {
+		args = append(args, PrysmTLSCert, fmt.Sprintf("%s/cert/tls.crt", shared.PathSecrets(t.HomeDir())))
+	}
+
 	return args
 }
 
