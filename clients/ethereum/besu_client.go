@@ -80,30 +80,27 @@ func (b *BesuClient) Args() (args []string) {
 		appendArg(BesuMinerCoinbase, string(node.Spec.Coinbase))
 	}
 
+	// convert spec rpc modules into format suitable for cli option
+	normalizedAPIs := func(modules []ethereumv1alpha1.API) string {
+		apis := []string{}
+		for _, api := range modules {
+			apis = append(apis, strings.ToUpper(string(api)))
+		}
+		return strings.Join(apis, ",")
+	}
+
 	if node.Spec.RPC {
 		appendArg(BesuRPCHTTPEnabled)
 		appendArg(BesuRPCHTTPHost, DefaultHost)
 		appendArg(BesuRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
-		// JSON-RPC API
-		apis := []string{}
-		for _, api := range node.Spec.RPCAPI {
-			apis = append(apis, string(api))
-		}
-		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg(BesuRPCHTTPAPI, commaSeperatedAPIs)
+		appendArg(BesuRPCHTTPAPI, normalizedAPIs(node.Spec.RPCAPI))
 	}
 
 	if node.Spec.WS {
 		appendArg(BesuRPCWSEnabled)
 		appendArg(BesuRPCWSHost, DefaultHost)
 		appendArg(BesuRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
-		// WebSocket API
-		apis := []string{}
-		for _, api := range node.Spec.WSAPI {
-			apis = append(apis, string(api))
-		}
-		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg(BesuRPCWSAPI, commaSeperatedAPIs)
+		appendArg(BesuRPCWSAPI, normalizedAPIs(node.Spec.WSAPI))
 	}
 
 	if node.Spec.GraphQL {
