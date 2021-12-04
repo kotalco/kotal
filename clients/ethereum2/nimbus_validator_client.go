@@ -20,7 +20,7 @@ const (
 	// EnvNimbusValidatorImage is the environment variable used for Status Ethereum 2.0 validator client image
 	EnvNimbusValidatorImage = "NIMBUS_VALIDATOR_CLIENT_IMAGE"
 	// DefaultNimbusValidatorImage is the default Status Ethereum 2.0 validator client image
-	DefaultNimbusValidatorImage = "kotalco/nimbus:v1.5.1"
+	DefaultNimbusValidatorImage = "kotalco/nimbus:v1.5.4"
 )
 
 // HomeDir returns container home directory

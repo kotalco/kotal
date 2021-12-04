@@ -20,7 +20,7 @@ const (
 	// EnvPrysmBeaconNodeImage is the environment variable used for Prysmatic Labs beacon node image
 	EnvPrysmBeaconNodeImage = "PRYSM_BEACON_NODE_IMAGE"
 	// DefaultPrysmBeaconNodeImage is Prysmatic Labs beacon node image
-	DefaultPrysmBeaconNodeImage = "kotalco/prysm:v2.0.2"
+	DefaultPrysmBeaconNodeImage = "kotalco/prysm:v2.0.4"
 )
 
 // HomeDir returns container home directory

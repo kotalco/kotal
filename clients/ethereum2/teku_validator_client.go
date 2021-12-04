@@ -19,7 +19,7 @@ const (
 	// EnvTekuValidatorImage is the environment variable used for PegaSys Teku validator client image
 	EnvTekuValidatorImage = "TEKU_VALIDATOR_CLIENT_IMAGE"
 	// DefaultTekuValidatorImage is PegaSys Teku validator client image
-	DefaultTekuValidatorImage = "consensys/teku:21.9.2"
+	DefaultTekuValidatorImage = "consensys/teku:21.11.1"
 )
 
 // HomeDir returns container home directory
