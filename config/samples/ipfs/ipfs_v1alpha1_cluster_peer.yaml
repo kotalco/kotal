@@ -22,3 +22,6 @@ spec:
   # CLUSTER_SECRET=$(openssl rand -hex 32)
   # kubectl create secret generic cluster-secret --from-literal=secret=$CLUSTER_SECRET
   clusterSecretName: cluster-secret
+  resources:
+    cpu: "1"
+    memory: "1Gi"
