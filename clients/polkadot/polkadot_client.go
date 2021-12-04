@@ -21,7 +21,7 @@ const (
 	// EnvPolkadotImage is the environment variable used for polkadot client image
 	EnvPolkadotImage = "POLKADOT_IMAGE"
 	// DefaultPolkadotImage is the default polkadot client image
-	DefaultPolkadotImage = "parity/polkadot:v0.9.12"
+	DefaultPolkadotImage = "parity/polkadot:v0.9.13"
 	//  PolkadotHomeDir is go ipfs image home dir
 	PolkadotHomeDir = "/polkadot"
 )
