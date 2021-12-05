@@ -329,7 +329,7 @@ var _ = Describe("Ethereum node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.client",
 					BadValue: "besu",
-					Detail:   "must be geth or nethermind if syncMode is light",
+					Detail:   "must be geth if syncMode is light",
 				},
 			},
 		},

@@ -90,13 +90,6 @@ func (n *NethermindClient) Args() (args []string) {
 		appendArg(NethermindFastBlocks, "true")
 		appendArg(NethermindDownloadBodiesInFastSync, "true")
 		appendArg(NethermindDownloadReceiptsInFastSync, "true")
-	case ethereumv1alpha1.LightSynchronization:
-		appendArg(NethermindFastSync, "true")
-		appendArg(NethermindBeamSync, "true")
-		appendArg(NethermindFastBlocks, "true")
-		appendArg(NethermindDownloadHeadersInFastSync, "false")
-		appendArg(NethermindDownloadBodiesInFastSync, "false")
-		appendArg(NethermindDownloadReceiptsInFastSync, "false")
 	}
 
 	if node.Spec.Miner {

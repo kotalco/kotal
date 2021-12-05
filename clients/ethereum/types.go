@@ -215,8 +215,6 @@ const (
 	NethermindP2PPort = "--Network.P2PPort"
 	// NethermindFastSync is the argument used to enable beam sync
 	NethermindFastSync = "--Sync.FastSync"
-	// NethermindBeamSync is the argument used to enable fast sync
-	NethermindBeamSync = "--Sync.BeamSync"
 	// NethermindFastBlocks is the argument used to enable fast blocks sync
 	NethermindFastBlocks = "--Sync.FastBlocks"
 	// NethermindDownloadBodiesInFastSync is the argument used to enable downloading block bodies in fast sync
