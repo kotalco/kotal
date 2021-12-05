@@ -90,6 +90,7 @@ var _ = Describe("Geth Client", func() {
 			Expect(client.Args()).To(ContainElements(
 				GethDataDir,
 				shared.PathData(client.HomeDir()),
+				GethDisableIPC,
 				fmt.Sprintf("--%s", ethereumv1alpha1.MainNetwork),
 				GethLogging,
 				client.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),

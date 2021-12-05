@@ -84,6 +84,8 @@ const (
 	GethNoDiscovery = "--nodiscover"
 	// GethDataDir is the argument used for data path
 	GethDataDir = "--datadir"
+	// GethDisableIPC is the argument used to disable ipc servr
+	GethDisableIPC = "--ipcdisable"
 	// GethP2PPort is the argument used for p2p port
 	GethP2PPort = "--port"
 	// GethBootnodes is the argument used for bootnodes

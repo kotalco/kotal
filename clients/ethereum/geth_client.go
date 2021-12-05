@@ -54,6 +54,7 @@ func (g *GethClient) Args() (args []string) {
 	}
 
 	appendArg(GethDataDir, shared.PathData(g.HomeDir()))
+	appendArg(GethDisableIPC)
 	appendArg(GethP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 	appendArg(GethSyncMode, string(node.Spec.SyncMode))
 	appendArg(GethLogging, g.LoggingArgFromVerbosity(node.Spec.Logging))
