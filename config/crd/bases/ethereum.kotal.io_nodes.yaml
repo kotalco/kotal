@@ -141,6 +141,9 @@ spec:
                   forks:
                     description: Forks is supported forks (network upgrade) and corresponding block number
                     properties:
+                      arrowGlacier:
+                        description: ArrowGlacier fork
+                        type: integer
                       berlin:
                         description: Berlin fork
                         type: integer

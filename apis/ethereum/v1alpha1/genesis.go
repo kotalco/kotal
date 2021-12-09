@@ -128,6 +128,9 @@ type Forks struct {
 
 	// London fork
 	London uint `json:"london,omitempty"`
+
+	// ArrowGlacier fork
+	ArrowGlacier uint `json:"arrowGlacier,omitempty"`
 }
 
 // Account is Ethereum account
