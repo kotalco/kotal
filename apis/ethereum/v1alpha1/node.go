@@ -119,17 +119,20 @@ type NodeSpec struct {
 type Enode string
 
 // SynchronizationMode is the node synchronization mode
-// +kubebuilder:validation:Enum=fast;full;light
+// +kubebuilder:validation:Enum=fast;full;light;snap
 type SynchronizationMode string
 
 const (
+	//SnapSynchronization is the snap synchronization mode
+	SnapSynchronization SynchronizationMode = "snap"
+
 	//FastSynchronization is the fast synchronization mode
 	FastSynchronization SynchronizationMode = "fast"
 
 	//LightSynchronization is the light synchronization mode
 	LightSynchronization SynchronizationMode = "light"
 
-	//FullSynchronization is the fast (non-archival) synchronization mode
+	//FullSynchronization is full archival synchronization mode
 	FullSynchronization SynchronizationMode = "full"
 )
 

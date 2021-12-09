@@ -350,6 +350,7 @@ spec:
                 - fast
                 - full
                 - light
+                - snap
                 type: string
               ws:
                 description: WS is whether web socket server is enabled or not
