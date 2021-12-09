@@ -115,6 +115,7 @@ func (g *Genesis) ValidateForksOrder() field.ErrorList {
 		"muirglacier",
 		"berlin",
 		"london",
+		"arrowglacier",
 	}
 
 	// milestones at the correct order
@@ -130,6 +131,7 @@ func (g *Genesis) ValidateForksOrder() field.ErrorList {
 		forks.MuirGlacier,
 		forks.Berlin,
 		forks.London,
+		forks.ArrowGlacier,
 	}
 
 	for i := 1; i < len(milestones); i++ {
