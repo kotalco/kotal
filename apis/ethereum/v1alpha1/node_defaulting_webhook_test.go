@@ -89,6 +89,34 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node.Spec.Logging).To(Equal(DefaultLogging))
 	})
 
+	It("Should default geth node joining rinkeby", func() {
+		availabilityConfig := AvailabilityConfig{
+			HighlyAvailable: true,
+		}
+
+		node := Node{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "node-1",
+			},
+			Spec: NodeSpec{
+				AvailabilityConfig: availabilityConfig,
+				Client:             GethClient,
+				Network:            RinkebyNetwork,
+			},
+		}
+
+		node.Default()
+		Expect(node.Spec.TopologyKey).To(Equal(DefaultTopologyKey))
+		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
+		Expect(node.Spec.SyncMode).To(Equal(SnapSynchronization))
+		Expect(node.Spec.Resources.CPU).To(Equal(DefaultPublicNetworkNodeCPURequest))
+		Expect(node.Spec.Resources.CPULimit).To(Equal(DefaultPublicNetworkNodeCPULimit))
+		Expect(node.Spec.Resources.Memory).To(Equal(DefaultPublicNetworkNodeMemoryRequest))
+		Expect(node.Spec.Resources.MemoryLimit).To(Equal(DefaultPublicNetworkNodeMemoryLimit))
+		Expect(node.Spec.Resources.Storage).To(Equal(DefaultTestNetworkStorageRequest))
+		Expect(node.Spec.Logging).To(Equal(DefaultLogging))
+	})
+
 	It("Should default nodes joining network pow consensus", func() {
 		node := Node{
 			ObjectMeta: metav1.ObjectMeta{

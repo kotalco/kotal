@@ -29,7 +29,11 @@ func (n *Node) Default() {
 	if n.Spec.SyncMode == "" {
 		// public network
 		if n.Spec.Genesis == nil {
-			n.Spec.SyncMode = FastSynchronization
+			if n.Spec.Client == GethClient {
+				n.Spec.SyncMode = SnapSynchronization
+			} else {
+				n.Spec.SyncMode = FastSynchronization
+			}
 		} else {
 			n.Spec.SyncMode = FullSynchronization
 		}
