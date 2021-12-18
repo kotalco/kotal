@@ -197,6 +197,7 @@ func (b *BesuClient) Genesis() (content string, err error) {
 		"muirGlacierBlock":    genesis.Forks.MuirGlacier,
 		"berlinBlock":         genesis.Forks.Berlin,
 		"londonBlock":         genesis.Forks.London,
+		"arrowGlacierBlock":   genesis.Forks.ArrowGlacier,
 		engine:                consensusConfig,
 	}
 

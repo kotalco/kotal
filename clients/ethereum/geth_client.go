@@ -206,7 +206,8 @@ func (g *GethClient) Genesis() (content string, err error) {
 		"istanbulBlock":       genesis.Forks.Istanbul,
 		"muirGlacierBlock":    genesis.Forks.MuirGlacier,
 		"berlinBlock":         genesis.Forks.Berlin,
-		"londonBlock":         genesis.Forks.Berlin,
+		"londonBlock":         genesis.Forks.London,
+		"arrowGlacierBlock":   genesis.Forks.ArrowGlacier,
 		engine:                consensusConfig,
 	}
 

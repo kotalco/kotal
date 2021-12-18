@@ -50,6 +50,7 @@ func (p *ParityGenesis) Genesis(node *ethereumv1alpha1.Node) (content string, er
 	muirGlacierBlock := hex(genesis.Forks.MuirGlacier)
 	berlinBlock := hex(genesis.Forks.Berlin)
 	londonBlock := hex(genesis.Forks.London)
+	arrowGlacierBlock := hex(genesis.Forks.ArrowGlacier)
 
 	// ethash PoW settings
 	if genesis.Ethash != nil {
@@ -69,6 +70,7 @@ func (p *ParityGenesis) Genesis(node *ethereumv1alpha1.Node) (content string, er
 				constantinopleBlock: "0x1e8480",
 				muirGlacierBlock:    "0x3d0900",
 				londonBlock:         "0xaae60",
+				arrowGlacierBlock:   "0xf4240",
 			},
 		}
 
