@@ -36,6 +36,7 @@ spec:
       muirglacier: 0
       berlin: 0
       london: 0
+      arrowGlacier: 0
     coinbase: "0x071e2c1067c24607ff00ceebbe83a38063bdedd8"
     difficulty: "0x1"
     gasLimit: "0x47b760"
