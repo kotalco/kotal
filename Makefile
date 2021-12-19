@@ -19,6 +19,11 @@ test: generate fmt vet manifests
 	KUBEBUILDER_CONTROLPLANE_START_TIMEOUT=100s ACK_GINKGO_DEPRECATIONS=1.16.4 go test -v -coverprofile cover.out.tmp ./...
 	cat cover.out.tmp | grep -v zz_generated > cover.out
 
+.SILENT: test-multi
+test-multi:
+	chmod +x multi.sh
+	./multi.sh
+
 cover:
 	go tool cover -html=cover.out
 
@@ -69,11 +74,11 @@ docker-build: test
 	docker build . -t ${IMG}
 
 # load image into kind
-load:
+kind-load:
 	kind load docker-image ${IMG}
 
 # Build the docker image
-kind: docker-build load deploy
+kind: kind-load deploy
 
 # load image into minikube registry
 minikube-load:
@@ -81,7 +86,7 @@ minikube-load:
 	minikube cache reload
 
 # Build the docker image
-minikube: docker-build minikube-load deploy
+minikube: minikube-load deploy
 
 
 # Push the docker image
