@@ -33,6 +33,11 @@ func (r *BeaconNode) validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	if !r.Spec.Client.SupportsVerbosityLevel(r.Spec.Logging, false) {
+		err := field.Invalid(path.Child("logging"), r.Spec.Logging, fmt.Sprintf("not supported by %s client", r.Spec.Client))
+		nodeErrors = append(nodeErrors, err)
+	}
+
 	// grpc is supported by prysm only
 	if r.Spec.GRPC && r.Spec.Client != PrysmClient {
 		err := field.Invalid(path.Child("grpc"), r.Spec.GRPC, fmt.Sprintf("not supported by %s client", r.Spec.Client))

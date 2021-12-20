@@ -31,6 +31,11 @@ func (r *Validator) validate() field.ErrorList {
 		validatorErrors = append(validatorErrors, err)
 	}
 
+	if !r.Spec.Client.SupportsVerbosityLevel(r.Spec.Logging, false) {
+		err := field.Invalid(field.NewPath("spec").Child("logging"), r.Spec.Logging, fmt.Sprintf("not supported by %s client", r.Spec.Client))
+		validatorErrors = append(validatorErrors, err)
+	}
+
 	// lighthouse is the only client supporting multiple beacon endpoints
 	if r.Spec.Client != LighthouseClient && len(r.Spec.BeaconEndpoints) > 1 {
 		msg := fmt.Sprintf("multiple beacon node endpoints not supported by %s client", r.Spec.Client)
