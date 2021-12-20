@@ -5,37 +5,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// VerbosityLevel is logging verbosity levels
-// +kubebuilder:validation:Enum=off;fatal;error;warn;info;debug;trace;all;notice;crit;panic;none
-type VerbosityLevel string
-
-const (
-	// NoLogs outputs no logs
-	NoLogs VerbosityLevel = "off"
-	// FatalLogs outputs only fatal logs
-	FatalLogs VerbosityLevel = "fatal"
-	// ErrorLogs outputs only error logs
-	ErrorLogs VerbosityLevel = "error"
-	// WarnLogs outputs only warning logs
-	WarnLogs VerbosityLevel = "warn"
-	// InfoLogs outputs only informational logs
-	InfoLogs VerbosityLevel = "info"
-	// DebugLogs outputs only debugging logs
-	DebugLogs VerbosityLevel = "debug"
-	// TraceLogs outputs only tracing logs
-	TraceLogs VerbosityLevel = "trace"
-	// AllLogs outputs only all logs
-	AllLogs VerbosityLevel = "all"
-	// NoticeLogs outputs only notice logs
-	NoticeLogs VerbosityLevel = "notice"
-	// CriticalLogs outputs only critical logs
-	CriticalLogs VerbosityLevel = "crit"
-	// PanicLogs outputs only panic logs
-	PanicLogs VerbosityLevel = "panic"
-	// NoneLogs outputs no logs
-	NoneLogs VerbosityLevel = "none"
-)
-
 // BeaconNodeSpec defines the desired state of BeaconNode
 type BeaconNodeSpec struct {
 	// Network is the network to join
@@ -70,7 +39,8 @@ type BeaconNodeSpec struct {
 	CertSecretName string `json:"certSecretName,omitempty"`
 
 	// Logging is logging verboisty level
-	Logging VerbosityLevel `json:"logging,omitempty"`
+	// +kubebuilder:validation:Enum=off;fatal;error;warn;info;debug;trace;all;notice;crit;panic;none
+	Logging shared.VerbosityLevel `json:"logging,omitempty"`
 
 	// Hosts is a list of hostnames to to whitelist for API access
 	Hosts []string `json:"hosts,omitempty"`

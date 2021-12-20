@@ -1,5 +1,7 @@
 package v1alpha1
 
+import "github.com/kotalco/kotal/apis/shared"
+
 var (
 	// DefaultAPIs is the default rpc, ws APIs
 	DefaultAPIs []API = []API{Web3API, ETHAPI, NetworkAPI}
@@ -15,7 +17,7 @@ const (
 // Node defaults
 const (
 	// DefaultLogging is the default logging verbosity level
-	DefaultLogging = InfoLogs
+	DefaultLogging = shared.InfoLogs
 	// DefaultP2PPort is the default p2p port
 	DefaultP2PPort uint = 30303
 	// DefaultPublicNetworkSyncMode is the default sync mode for public networks

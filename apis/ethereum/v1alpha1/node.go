@@ -76,7 +76,8 @@ type NodeSpec struct {
 	Miner bool `json:"miner,omitempty"`
 
 	// Logging is logging verboisty level
-	Logging VerbosityLevel `json:"logging,omitempty"`
+	// +kubebuilder:validation:Enum=off;fatal;error;warn;info;debug;trace;all
+	Logging shared.VerbosityLevel `json:"logging,omitempty"`
 
 	// Coinbase is the account to which mining rewards are paid
 	Coinbase EthereumAddress `json:"coinbase,omitempty"`
@@ -134,29 +135,6 @@ const (
 
 	//FullSynchronization is full archival synchronization mode
 	FullSynchronization SynchronizationMode = "full"
-)
-
-// VerbosityLevel is logging verbosity levels
-// +kubebuilder:validation:Enum=off;fatal;error;warn;info;debug;trace;all
-type VerbosityLevel string
-
-const (
-	// NoLogs outputs no logs
-	NoLogs VerbosityLevel = "off"
-	// FatalLogs outputs only fatal logs
-	FatalLogs VerbosityLevel = "fatal"
-	// ErrorLogs outputs only error logs
-	ErrorLogs VerbosityLevel = "error"
-	// WarnLogs outputs only warning logs
-	WarnLogs VerbosityLevel = "warn"
-	// InfoLogs outputs only informational logs
-	InfoLogs VerbosityLevel = "info"
-	// DebugLogs outputs only debugging logs
-	DebugLogs VerbosityLevel = "debug"
-	// TraceLogs outputs only tracing logs
-	TraceLogs VerbosityLevel = "trace"
-	// AllLogs outputs only all logs
-	AllLogs VerbosityLevel = "all"
 )
 
 // API is RPC API to be exposed by RPC or web socket server

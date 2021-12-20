@@ -13,23 +13,6 @@ type APICredentials struct {
 	PasswordSecretName string `json:"passwordSecretName"`
 }
 
-// VerbosityLevel is logging verbosity levels
-// +kubebuilder:validation:Enum=debug;info;warn;error;panic
-type VerbosityLevel string
-
-const (
-	// DebugLogs outputs only debugging logs
-	DebugLogs VerbosityLevel = "debug"
-	// InfoLogs outputs only informational logs
-	InfoLogs VerbosityLevel = "info"
-	// WarnLogs outputs only warning logs
-	WarnLogs VerbosityLevel = "warn"
-	// ErrorLogs outputs only error logs
-	ErrorLogs VerbosityLevel = "error"
-	// PanicLogs outputs only panic logs
-	PanicLogs VerbosityLevel = "panic"
-)
-
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// EthereumChainId is ethereum chain id
@@ -59,7 +42,8 @@ type NodeSpec struct {
 	// SecureCookies enables secure cookies for authentication
 	SecureCookies bool `json:"secureCookies,omitempty"`
 	// Logging is logging verboisty level
-	Logging VerbosityLevel `json:"logging,omitempty"`
+	// +kubebuilder:validation:Enum=debug;info;warn;error;panic
+	Logging shared.VerbosityLevel `json:"logging,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

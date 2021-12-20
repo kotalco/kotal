@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	"fmt"
 
+	"github.com/kotalco/kotal/apis/shared"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -35,13 +36,13 @@ func (n *Node) validate() field.ErrorList {
 	}
 
 	// validate fatal and trace logging not supported by geth
-	if n.Spec.Client == GethClient && (n.Spec.Logging == FatalLogs || n.Spec.Logging == TraceLogs) {
+	if n.Spec.Client == GethClient && (n.Spec.Logging == shared.FatalLogs || n.Spec.Logging == shared.TraceLogs) {
 		err := field.Invalid(path.Child("logging"), n.Spec.Logging, fmt.Sprintf("not supported by client %s", n.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
 	}
 
 	// validate off, fatal and all logs not supported by nethermind
-	if n.Spec.Client == NethermindClient && (n.Spec.Logging == NoLogs || n.Spec.Logging == FatalLogs || n.Spec.Logging == AllLogs) {
+	if n.Spec.Client == NethermindClient && (n.Spec.Logging == shared.NoLogs || n.Spec.Logging == shared.FatalLogs || n.Spec.Logging == shared.AllLogs) {
 		err := field.Invalid(path.Child("logging"), n.Spec.Logging, fmt.Sprintf("not supported by client %s", n.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
 	}

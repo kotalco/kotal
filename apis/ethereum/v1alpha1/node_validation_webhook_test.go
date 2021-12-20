@@ -413,14 +413,14 @@ var _ = Describe("Ethereum node validation", func() {
 				Spec: NodeSpec{
 					Client:  GethClient,
 					Network: RinkebyNetwork,
-					Logging: FatalLogs,
+					Logging: shared.FatalLogs,
 				},
 			},
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.logging",
-					BadValue: FatalLogs,
+					BadValue: shared.FatalLogs,
 					Detail:   "not supported by client geth",
 				},
 			},
@@ -434,14 +434,14 @@ var _ = Describe("Ethereum node validation", func() {
 				Spec: NodeSpec{
 					Client:  GethClient,
 					Network: RinkebyNetwork,
-					Logging: TraceLogs,
+					Logging: shared.TraceLogs,
 				},
 			},
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.logging",
-					BadValue: TraceLogs,
+					BadValue: shared.TraceLogs,
 					Detail:   "not supported by client geth",
 				},
 			},

@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"github.com/kotalco/kotal/apis/shared"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
@@ -45,7 +46,7 @@ func (r *Node) Default() {
 	}
 
 	if r.Spec.Logging == "" {
-		r.Spec.Logging = InfoLogs
+		r.Spec.Logging = shared.InfoLogs
 	}
 
 	if len(r.Spec.CORSDomains) == 0 {

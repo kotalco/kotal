@@ -1,5 +1,7 @@
 package v1alpha1
 
+import "github.com/kotalco/kotal/apis/shared"
+
 var (
 	// DefaultOrigins is the default domains from which to accept cross origin requests
 	DefaultOrigins = []string{"*"}
@@ -23,7 +25,7 @@ const (
 	// DefaultGraffiti is the default text to include in proposed blocks
 	DefaultGraffiti = "Powered by Kotal"
 	// DefaultLogging is the default logging verbosity
-	DefaultLogging = InfoLogs
+	DefaultLogging = shared.InfoLogs
 )
 
 const (
