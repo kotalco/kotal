@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	"github.com/kotalco/kotal/apis/shared"
 
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -185,6 +186,44 @@ const (
 // EthereumClient is the ethereum client running on a given node
 // +kubebuilder:validation:Enum=besu;geth;nethermind
 type EthereumClient string
+
+func (e EthereumClient) SupportsVerbosityLevel(level sharedAPI.VerbosityLevel) bool {
+	switch e {
+	case BesuClient:
+		switch level {
+		case sharedAPI.NoLogs,
+			sharedAPI.FatalLogs,
+			sharedAPI.ErrorLogs,
+			sharedAPI.WarnLogs,
+			sharedAPI.InfoLogs,
+			sharedAPI.DebugLogs,
+			sharedAPI.TraceLogs,
+			sharedAPI.AllLogs:
+			return true
+		}
+	case GethClient:
+		switch level {
+		case sharedAPI.NoLogs,
+			sharedAPI.ErrorLogs,
+			sharedAPI.WarnLogs,
+			sharedAPI.InfoLogs,
+			sharedAPI.DebugLogs,
+			sharedAPI.AllLogs:
+			return true
+		}
+	case NethermindClient:
+		switch level {
+		case sharedAPI.ErrorLogs,
+			sharedAPI.WarnLogs,
+			sharedAPI.InfoLogs,
+			sharedAPI.DebugLogs,
+			sharedAPI.TraceLogs:
+			return true
+		}
+
+	}
+	return false
+}
 
 const (
 	// BesuClient is hyperledger besu ethereum client
