@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -22,7 +23,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:  ethereum2v1alpha1.LighthouseClient,
 					Network: "mainnet",
-					Logging: ethereum2v1alpha1.TraceLogs,
+					Logging: sharedAPI.TraceLogs,
 				},
 			},
 			result: []string{
@@ -30,7 +31,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
 				LighthouseNetwork,
 				"mainnet",
 				LighthouseDebugLevel,
-				string(ethereum2v1alpha1.TraceLogs),
+				string(sharedAPI.TraceLogs),
 			},
 		},
 		{

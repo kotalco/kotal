@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -25,7 +26,7 @@ var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 				},
 				WalletPasswordSecret: "wallet-password",
 				CertSecretName:       "my-cert",
-				Logging:              ethereum2v1alpha1.ErrorLogs,
+				Logging:              sharedAPI.ErrorLogs,
 			},
 		}
 
@@ -47,7 +48,7 @@ var _ = Describe("Prysm Ethereum 2.0 validator client arguments", func() {
 			PrysmWalletPasswordFile,
 			fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", shared.PathSecrets(client.HomeDir())),
 			PrysmLogging,
-			string(ethereum2v1alpha1.ErrorLogs),
+			string(sharedAPI.ErrorLogs),
 			PrysmTLSCert,
 			fmt.Sprintf("%s/cert/tls.crt", shared.PathSecrets(client.HomeDir())),
 		}))

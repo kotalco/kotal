@@ -2,6 +2,7 @@ package ethereum2
 
 import (
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
 
 	. "github.com/onsi/ginkgo"
@@ -20,7 +21,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 					"http://localhost:9988",
 				},
 				Graffiti: "Validated by Kotal",
-				Logging:  ethereum2v1alpha1.WarnLogs,
+				Logging:  sharedAPI.WarnLogs,
 			},
 		}
 
@@ -38,7 +39,7 @@ var _ = Describe("Lighthouse Ethereum 2.0 validator client arguments", func() {
 			LighthouseGraffiti,
 			"Validated by Kotal",
 			LighthouseDebugLevel,
-			string(ethereum2v1alpha1.WarnLogs),
+			string(sharedAPI.WarnLogs),
 		}))
 	})
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -24,7 +24,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 					Client:  ethereum2v1alpha1.PrysmClient,
 					Network: "mainnet",
 					RPC:     true,
-					Logging: ethereum2v1alpha1.WarnLogs,
+					Logging: sharedAPI.WarnLogs,
 				},
 			},
 			result: []string{
@@ -32,7 +32,7 @@ var _ = Describe("Prysm Ethereum 2.0 client arguments", func() {
 				PrysmDataDir,
 				"--mainnet",
 				PrysmLogging,
-				string(ethereum2v1alpha1.WarnLogs),
+				string(sharedAPI.WarnLogs),
 			},
 		},
 		{

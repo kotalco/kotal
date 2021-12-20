@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -21,7 +22,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:  ethereum2v1alpha1.TekuClient,
 					Network: "mainnet",
-					Logging: ethereum2v1alpha1.ErrorLogs,
+					Logging: sharedAPI.ErrorLogs,
 				},
 			},
 			result: []string{
@@ -29,7 +30,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 				TekuNetwork,
 				"mainnet",
 				TekuLogging,
-				string(ethereum2v1alpha1.ErrorLogs),
+				string(sharedAPI.ErrorLogs),
 			},
 		},
 		{
