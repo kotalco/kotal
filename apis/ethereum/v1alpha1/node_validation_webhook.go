@@ -90,8 +90,8 @@ func (n *Node) validate() field.ErrorList {
 	}
 
 	// validate only geth client supports light sync mode
-	if n.Spec.SyncMode == LightSynchronization && n.Spec.Client != GethClient {
-		err := field.Invalid(path.Child("client"), n.Spec.Client, "must be geth if syncMode is light")
+	if (n.Spec.SyncMode == LightSynchronization || n.Spec.SyncMode == SnapSynchronization) && n.Spec.Client != GethClient {
+		err := field.Invalid(path.Child("syncMode"), n.Spec.SyncMode, fmt.Sprintf("not supported by client %s", n.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
 	}
 

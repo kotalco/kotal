@@ -327,9 +327,30 @@ var _ = Describe("Ethereum node validation", func() {
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.client",
-					BadValue: "besu",
-					Detail:   "must be geth if syncMode is light",
+					Field:    "spec.syncMode",
+					BadValue: LightSynchronization,
+					Detail:   "not supported by client besu",
+				},
+			},
+		},
+		{
+			Title: "node #24",
+			Node: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-1",
+				},
+				Spec: NodeSpec{
+					Client:   NethermindClient,
+					Network:  RinkebyNetwork,
+					SyncMode: SnapSynchronization,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.syncMode",
+					BadValue: SnapSynchronization,
+					Detail:   "not supported by client nethermind",
 				},
 			},
 		},
