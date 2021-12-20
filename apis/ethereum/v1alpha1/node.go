@@ -2,8 +2,6 @@ package v1alpha1
 
 import (
 	"github.com/kotalco/kotal/apis/shared"
-
-	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -187,37 +185,37 @@ const (
 // +kubebuilder:validation:Enum=besu;geth;nethermind
 type EthereumClient string
 
-func (e EthereumClient) SupportsVerbosityLevel(level sharedAPI.VerbosityLevel) bool {
+func (e EthereumClient) SupportsVerbosityLevel(level shared.VerbosityLevel) bool {
 	switch e {
 	case BesuClient:
 		switch level {
-		case sharedAPI.NoLogs,
-			sharedAPI.FatalLogs,
-			sharedAPI.ErrorLogs,
-			sharedAPI.WarnLogs,
-			sharedAPI.InfoLogs,
-			sharedAPI.DebugLogs,
-			sharedAPI.TraceLogs,
-			sharedAPI.AllLogs:
+		case shared.NoLogs,
+			shared.FatalLogs,
+			shared.ErrorLogs,
+			shared.WarnLogs,
+			shared.InfoLogs,
+			shared.DebugLogs,
+			shared.TraceLogs,
+			shared.AllLogs:
 			return true
 		}
 	case GethClient:
 		switch level {
-		case sharedAPI.NoLogs,
-			sharedAPI.ErrorLogs,
-			sharedAPI.WarnLogs,
-			sharedAPI.InfoLogs,
-			sharedAPI.DebugLogs,
-			sharedAPI.AllLogs:
+		case shared.NoLogs,
+			shared.ErrorLogs,
+			shared.WarnLogs,
+			shared.InfoLogs,
+			shared.DebugLogs,
+			shared.AllLogs:
 			return true
 		}
 	case NethermindClient:
 		switch level {
-		case sharedAPI.ErrorLogs,
-			sharedAPI.WarnLogs,
-			sharedAPI.InfoLogs,
-			sharedAPI.DebugLogs,
-			sharedAPI.TraceLogs:
+		case shared.ErrorLogs,
+			shared.WarnLogs,
+			shared.InfoLogs,
+			shared.DebugLogs,
+			shared.TraceLogs:
 			return true
 		}
 
