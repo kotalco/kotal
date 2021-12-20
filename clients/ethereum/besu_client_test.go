@@ -5,9 +5,11 @@ import (
 	"os"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -60,7 +62,7 @@ var _ = Describe("Besu Client", func() {
 				StaticNodes:              []ethereumv1alpha1.Enode{enode},
 				P2PPort:                  3333,
 				SyncMode:                 ethereumv1alpha1.LightSynchronization,
-				Logging:                  ethereumv1alpha1.WarnLogs,
+				Logging:                  sharedAPI.WarnLogs,
 				Hosts:                    []string{"whitelisted.host.com"},
 				CORSDomains:              []string{"allowed.domain.com"},
 				RPC:                      true,
@@ -95,7 +97,7 @@ var _ = Describe("Besu Client", func() {
 				BesuNetwork,
 				ethereumv1alpha1.MainNetwork,
 				BesuLogging,
-				client.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+				client.LoggingArgFromVerbosity(sharedAPI.WarnLogs),
 				BesuNodePrivateKey,
 				fmt.Sprintf("%s/nodekey", shared.PathSecrets(client.HomeDir())),
 				BesuStaticNodesFile,

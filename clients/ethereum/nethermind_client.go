@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
 )
 
@@ -27,7 +28,7 @@ type NethermindClient struct {
 
 // LoggingArgFromVerbosity returns logging argument from node verbosity level
 // Nethermind supports TRACE, DEBUG, INFO, WARN, ERROR verbosity levels
-func (n *NethermindClient) LoggingArgFromVerbosity(level ethereumv1alpha1.VerbosityLevel) string {
+func (n *NethermindClient) LoggingArgFromVerbosity(level sharedAPI.VerbosityLevel) string {
 	return strings.ToUpper(string(level))
 }
 

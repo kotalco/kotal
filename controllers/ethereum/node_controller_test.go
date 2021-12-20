@@ -7,6 +7,7 @@ import (
 	"time"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	ethereumClients "github.com/kotalco/kotal/clients/ethereum"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -64,7 +65,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Network:                  "mainnet",
 			NodePrivateKeySecretName: "nodekey",
 			SyncMode:                 ethereumv1alpha1.FullSynchronization,
-			Logging:                  ethereumv1alpha1.NoLogs,
+			Logging:                  sharedAPI.NoLogs,
 		}
 
 		var nodeClient ethereumClients.EthereumClient
@@ -232,7 +233,7 @@ var _ = Describe("Ethereum network controller", func() {
 			Client:                   ethereumv1alpha1.BesuClient,
 			Network:                  "rinkeby",
 			NodePrivateKeySecretName: "nodekey",
-			Logging:                  ethereumv1alpha1.FatalLogs,
+			Logging:                  sharedAPI.FatalLogs,
 		}
 
 		var nodeClient ethereumClients.EthereumClient
@@ -640,7 +641,7 @@ var _ = Describe("Ethereum network controller", func() {
 			},
 			Client:                   ethereumv1alpha1.BesuClient,
 			NodePrivateKeySecretName: "nodekey",
-			Logging:                  ethereumv1alpha1.TraceLogs,
+			Logging:                  sharedAPI.TraceLogs,
 		}
 
 		toCreate := &ethereumv1alpha1.Node{
@@ -850,7 +851,7 @@ var _ = Describe("Ethereum network controller", func() {
 			},
 			Client:                   ethereumv1alpha1.BesuClient,
 			NodePrivateKeySecretName: "nodekey",
-			Logging:                  ethereumv1alpha1.WarnLogs,
+			Logging:                  sharedAPI.WarnLogs,
 		}
 
 		toCreate := &ethereumv1alpha1.Node{

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -60,7 +61,7 @@ var _ = Describe("Geth Client", func() {
 				StaticNodes:              []ethereumv1alpha1.Enode{enode},
 				P2PPort:                  3333,
 				SyncMode:                 ethereumv1alpha1.LightSynchronization,
-				Logging:                  ethereumv1alpha1.WarnLogs,
+				Logging:                  sharedAPI.WarnLogs,
 				Hosts:                    []string{"whitelisted.host.com"},
 				CORSDomains:              []string{"allowed.domain.com"},
 				RPC:                      true,
@@ -93,7 +94,7 @@ var _ = Describe("Geth Client", func() {
 				GethDisableIPC,
 				fmt.Sprintf("--%s", ethereumv1alpha1.MainNetwork),
 				GethLogging,
-				client.LoggingArgFromVerbosity(ethereumv1alpha1.WarnLogs),
+				client.LoggingArgFromVerbosity(sharedAPI.WarnLogs),
 				GethNodeKey,
 				fmt.Sprintf("%s/nodekey", shared.PathSecrets(client.HomeDir())),
 				GethConfig,

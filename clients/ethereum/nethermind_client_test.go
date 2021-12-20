@@ -5,6 +5,7 @@ import (
 	"os"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -55,7 +56,7 @@ var _ = Describe("Nethermind Client", func() {
 				Client:                   ethereumv1alpha1.NethermindClient,
 				Network:                  ethereumv1alpha1.MainNetwork,
 				NodePrivateKeySecretName: "mainnet-nethermind-nodekey",
-				Logging:                  ethereumv1alpha1.WarnLogs,
+				Logging:                  sharedAPI.WarnLogs,
 				RPC:                      true,
 				RPCPort:                  8799,
 				RPCAPI: []ethereumv1alpha1.API{
