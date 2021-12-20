@@ -89,6 +89,8 @@ spec:
                 - all
                 - notice
                 - crit
+                - panic
+                - none
                 type: string
               network:
                 description: Network is the network this validator is validating blocks for

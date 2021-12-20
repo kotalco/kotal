@@ -6,7 +6,7 @@ import (
 )
 
 // VerbosityLevel is logging verbosity levels
-// +kubebuilder:validation:Enum=off;fatal;error;warn;info;debug;trace;all;notice;crit
+// +kubebuilder:validation:Enum=off;fatal;error;warn;info;debug;trace;all;notice;crit;panic;none
 type VerbosityLevel string
 
 const (
@@ -30,6 +30,10 @@ const (
 	NoticeLogs VerbosityLevel = "notice"
 	// CriticalLogs outputs only critical logs
 	CriticalLogs VerbosityLevel = "crit"
+	// PanicLogs outputs only panic logs
+	PanicLogs VerbosityLevel = "panic"
+	// NoneLogs outputs no logs
+	NoneLogs VerbosityLevel = "none"
 )
 
 // BeaconNodeSpec defines the desired state of BeaconNode
