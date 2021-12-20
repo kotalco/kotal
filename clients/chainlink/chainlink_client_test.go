@@ -5,6 +5,7 @@ import (
 	"os"
 
 	chainlinkv1alpha1 "github.com/kotalco/kotal/apis/chainlink/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -27,7 +28,7 @@ var _ = Describe("Chainlink Client", func() {
 			TLSPort:             9999,
 			P2PPort:             4444,
 			APIPort:             7777,
-			Logging:             chainlinkv1alpha1.PanicLogs,
+			Logging:             sharedAPI.PanicLogs,
 			CORSDomains:         []string{"*"},
 			SecureCookies:       true,
 		},
@@ -102,7 +103,7 @@ var _ = Describe("Chainlink Client", func() {
 			},
 			corev1.EnvVar{
 				Name:  EnvLogLevel,
-				Value: string(chainlinkv1alpha1.PanicLogs),
+				Value: string(sharedAPI.PanicLogs),
 			},
 			corev1.EnvVar{
 				Name:  EnvAllowOrigins,
