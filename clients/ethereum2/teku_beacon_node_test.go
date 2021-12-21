@@ -2,6 +2,7 @@ package ethereum2
 
 import (
 	"fmt"
+	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
@@ -30,7 +31,7 @@ var _ = Describe("Teku Ethereum 2.0 client arguments", func() {
 				TekuNetwork,
 				"mainnet",
 				TekuLogging,
-				string(sharedAPI.ErrorLogs),
+				strings.ToUpper(string(sharedAPI.ErrorLogs)),
 			},
 		},
 		{
