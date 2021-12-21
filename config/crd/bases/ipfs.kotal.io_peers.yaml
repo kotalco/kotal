@@ -64,6 +64,7 @@ spec:
                   - lowpower
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               profiles:
                 description: Profiles is the configuration profiles to apply after peer initialization
                 items:
@@ -80,6 +81,7 @@ spec:
                   - lowpower
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               resources:
                 description: Resources is node compute and storage resources
                 properties:

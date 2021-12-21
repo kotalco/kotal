@@ -45,6 +45,7 @@ spec:
                   type: string
                 minItems: 1
                 type: array
+                x-kubernetes-list-type: set
               certSecretName:
                 description: CertSecretName is k8s secret name that holds tls.crt
                 type: string

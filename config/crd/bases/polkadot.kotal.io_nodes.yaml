@@ -44,6 +44,7 @@ spec:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               logging:
                 description: Logging is logging verboisty level
                 enum:

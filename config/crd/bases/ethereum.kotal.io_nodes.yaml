@@ -55,6 +55,7 @@ spec:
                   description: Enode is ethereum node url
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               client:
                 description: Client is ethereum client running on the node
                 enum:
@@ -71,6 +72,7 @@ spec:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               genesis:
                 description: Genesis is genesis block configuration
                 properties:
@@ -251,6 +253,7 @@ spec:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               import:
                 description: import is account to import
                 properties:
@@ -338,6 +341,7 @@ spec:
                   - web3
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               rpcPort:
                 description: RPCPort is HTTP-RPC server listening port
                 type: integer
@@ -347,6 +351,7 @@ spec:
                   description: Enode is ethereum node url
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               syncMode:
                 description: SyncMode is the node synchronization mode
                 enum:
@@ -378,6 +383,7 @@ spec:
                   - web3
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               wsPort:
                 description: WSPort is the web socket server listening port
                 type: integer

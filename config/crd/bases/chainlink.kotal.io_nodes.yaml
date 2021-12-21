@@ -67,6 +67,7 @@ spec:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               databaseURL:
                 description: DatabaseURL is postgres database connection URL
                 type: string
@@ -78,6 +79,7 @@ spec:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               ethereumWsEndpoint:
                 description: EthereumWSEndpoint is ethereum websocket endpoint
                 type: string

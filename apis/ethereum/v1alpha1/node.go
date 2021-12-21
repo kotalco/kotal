@@ -57,12 +57,14 @@ type NodeSpec struct {
 	Import *ImportedAccount `json:"import,omitempty"`
 
 	// Bootnodes is set of ethereum node URLS for p2p discovery bootstrap
+	// +listType=set
 	Bootnodes []Enode `json:"bootnodes,omitempty"`
 
 	// NodePrivateKeySecretName is the secret name holding node private key
 	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
 
 	// StaticNodes is a set of ethereum nodes to maintain connection to
+	// +listType=set
 	StaticNodes []Enode `json:"staticNodes,omitempty"`
 
 	// P2PPort is port used for peer to peer communication
@@ -82,9 +84,11 @@ type NodeSpec struct {
 	Coinbase EthereumAddress `json:"coinbase,omitempty"`
 
 	// Hosts is a list of hostnames to to whitelist for RPC access
+	// +listType=set
 	Hosts []string `json:"hosts,omitempty"`
 
 	// CORSDomains is the domains from which to accept cross origin requests
+	// +listType=set
 	CORSDomains []string `json:"corsDomains,omitempty"`
 
 	// RPC is whether HTTP-RPC server is enabled or not
@@ -94,6 +98,7 @@ type NodeSpec struct {
 	RPCPort uint `json:"rpcPort,omitempty"`
 
 	// RPCAPI is a list of rpc services to enable
+	// +listType=set
 	RPCAPI []API `json:"rpcAPI,omitempty"`
 
 	// WS is whether web socket server is enabled or not
@@ -103,6 +108,7 @@ type NodeSpec struct {
 	WSPort uint `json:"wsPort,omitempty"`
 
 	// WSAPI is a list of WS services to enable
+	// +listType=set
 	WSAPI []API `json:"wsAPI,omitempty"`
 
 	// GraphQL is whether GraphQL server is enabled or not

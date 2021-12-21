@@ -13,6 +13,7 @@ type ValidatorSpec struct {
 	Client Ethereum2Client `json:"client"`
 	// BeaconEndpoints is beacon node endpoints
 	// +kubebuilder:validation:MinItems=1
+	// +listType=set
 	BeaconEndpoints []string `json:"beaconEndpoints"`
 	// Graffiti is the text to include in proposed blocks
 	Graffiti string `json:"graffiti,omitempty"`

@@ -20,6 +20,7 @@ type NodeSpec struct {
 	// EthereumWSEndpoint is ethereum websocket endpoint
 	EthereumWSEndpoint string `json:"ethereumWsEndpoint"`
 	// EthereumHTTPEndpoints is ethereum http endpoints
+	// +listType=set
 	EthereumHTTPEndpoints []string `json:"ethereumHttpEndpoints,omitempty"`
 	// LinkContractAddress is link contract address
 	LinkContractAddress string `json:"linkContractAddress"`
@@ -30,6 +31,7 @@ type NodeSpec struct {
 	// APICredentials is api credentials
 	APICredentials APICredentials `json:"apiCredentials"`
 	// CORSDomains is the domains from which to accept cross origin requests
+	// +listType=set
 	CORSDomains []string `json:"corsDomains,omitempty"`
 	// CertSecretName is k8s secret name that holds tls.key and tls.cert
 	CertSecretName string `json:"certSecretName,omitempty"`

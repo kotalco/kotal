@@ -69,6 +69,7 @@ type NodeSpec struct {
 	// WSPort is Websocket server port
 	WSPort uint `json:"wsPort,omitempty"`
 	// CORSDomains is browser origins allowed to access the JSON-RPC HTTP and WS servers
+	// +listType=set
 	CORSDomains []string `json:"corsDomains,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`

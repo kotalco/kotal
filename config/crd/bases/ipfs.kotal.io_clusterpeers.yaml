@@ -44,6 +44,7 @@ spec:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               clusterSecretName:
                 description: ClusterSecretName is k8s secret holding cluster secret
                 type: string
@@ -94,6 +95,7 @@ spec:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
             required:
             - clusterSecretName
             - peerEndpoint

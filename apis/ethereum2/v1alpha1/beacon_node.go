@@ -12,6 +12,7 @@ type BeaconNodeSpec struct {
 	// Client is the Ethereum 2.0 client to use
 	Client Ethereum2Client `json:"client"`
 	// Eth1Endpoints is Ethereum 1 endpoints
+	// +listType=set
 	Eth1Endpoints []string `json:"eth1Endpoints,omitempty"`
 
 	// REST enables Beacon REST API
@@ -43,8 +44,10 @@ type BeaconNodeSpec struct {
 	Logging shared.VerbosityLevel `json:"logging,omitempty"`
 
 	// Hosts is a list of hostnames to to whitelist for API access
+	// +listType=set
 	Hosts []string `json:"hosts,omitempty"`
 	// CORSDomains is the domains from which to accept cross origin requests
+	// +listType=set
 	CORSDomains []string `json:"corsDomains,omitempty"`
 
 	// P2PPort is p2p and discovery port

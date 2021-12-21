@@ -12,8 +12,10 @@ type ClusterPeerSpec struct {
 	// PrivateKeySecretName is k8s secret holding private key
 	PrivateKeySecretName string `json:"privateKeySecretName,omitempty"`
 	// TrustedPeers is CRDT trusted cluster peers who can manage the pinset
+	// +listType=set
 	TrustedPeers []string `json:"trustedPeers,omitempty"`
 	// BootstrapPeers are ipfs cluster peers to connect to
+	// +listType=set
 	BootstrapPeers []string `json:"bootstrapPeers,omitempty"`
 	// Consensus is ipfs cluster consensus algorithm
 	Consensus ConsensusAlgorithm `json:"consensus,omitempty"`
