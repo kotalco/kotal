@@ -18,7 +18,7 @@ const (
 	// EnvGoIPFSClusterImage is the environment variable used for go ipfs cluster client image
 	EnvGoIPFSClusterImage = "GO_IPFS_CLUSTER_IMAGE"
 	// DefaultGoIPFSClusterImage is the default go ipfs cluster client image
-	DefaultGoIPFSClusterImage = "kotalco/ipfs-cluster:v0.14.1"
+	DefaultGoIPFSClusterImage = "kotalco/ipfs-cluster:v0.14.2"
 	//  GoIPFSClusterHomeDir is go ipfs cluster image home dir
 	GoIPFSClusterHomeDir = "/home/ipfs-cluster"
 )
