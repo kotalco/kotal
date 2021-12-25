@@ -274,7 +274,7 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 	if node.Spec.NodePrivateKeySecretName != "" {
 		convertEnodePrivateKey := corev1.Container{
 			Name:  "convert-node-private-key",
-			Image: "busybox",
+			Image: shared.BusyboxImage,
 			Env: []corev1.EnvVar{
 				{
 					Name:  EnvDataPath,

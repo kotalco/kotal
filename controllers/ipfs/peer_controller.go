@@ -317,7 +317,7 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 
 		initContainers = append(initContainers, corev1.Container{
 			Name:  "copy-swarm-key",
-			Image: "busybox",
+			Image: shared.BusyboxImage,
 			Env: []corev1.EnvVar{
 				{
 					Name:  ipfsClients.EnvIPFSPath,

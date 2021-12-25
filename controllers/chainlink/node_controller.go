@@ -320,7 +320,7 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 				InitContainers: []corev1.Container{
 					{
 						Name:    "copy-api-credentials",
-						Image:   "busybox",
+						Image:   shared.BusyboxImage,
 						Command: []string{"/bin/sh"},
 						Env: []corev1.EnvVar{
 							{

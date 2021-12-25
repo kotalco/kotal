@@ -87,7 +87,7 @@ var _ = Describe("Chainlink node controller", func() {
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
 		// init container
-		Expect(fetched.Spec.Template.Spec.InitContainers[0].Image).To(Equal("busybox"))
+		Expect(fetched.Spec.Template.Spec.InitContainers[0].Image).To(Equal(shared.BusyboxImage))
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Command).To(ConsistOf("/bin/sh"))
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Args).To(ConsistOf(
 			fmt.Sprintf("%s/copy_api_credentials.sh", shared.PathConfig(client.HomeDir())),

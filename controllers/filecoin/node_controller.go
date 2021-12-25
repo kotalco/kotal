@@ -266,7 +266,7 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 				InitContainers: []corev1.Container{
 					{
 						Name:  "copy-config-toml",
-						Image: "busybox",
+						Image: shared.BusyboxImage,
 						Env: []corev1.EnvVar{
 							{
 								Name:  EnvDataPath,

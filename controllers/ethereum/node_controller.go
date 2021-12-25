@@ -592,7 +592,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 		if node.Spec.NodePrivateKeySecretName != "" {
 			convertEnodePrivateKey := corev1.Container{
 				Name:  "convert-enode-privatekey",
-				Image: "busybox",
+				Image: shared.BusyboxImage,
 				Env: []corev1.EnvVar{
 					{
 						Name:  EnvDataPath,
@@ -613,7 +613,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 		if node.Spec.Import != nil {
 			copyKeystore := corev1.Container{
 				Name:  "copy-keystore",
-				Image: "busybox",
+				Image: shared.BusyboxImage,
 				Env: []corev1.EnvVar{
 					{
 						Name:  EnvDataPath,
