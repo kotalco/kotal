@@ -12,6 +12,7 @@ import (
 )
 
 // GethClient is Go-Ethereum client
+// https://github.com/ethereum/go-ethereum
 type GethClient struct {
 	node *ethereumv1alpha1.Node
 }
@@ -20,7 +21,7 @@ const (
 	// EnvGethImage is the environment variable used for go ethereum image
 	EnvGethImage = "GETH_IMAGE"
 	// DefaultGethImage is go-ethereum image
-	DefaultGethImage = "kotalco/geth:v1.10.13"
+	DefaultGethImage = "kotalco/geth:v1.10.14"
 	// GethHomeDir is go-ethereum docker image home directory
 	GethHomeDir = "/home/ethereum"
 )
