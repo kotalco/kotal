@@ -11,10 +11,8 @@ func (n *Node) Default() {
 	defaultAPIs := []API{Web3API, ETHAPI, NetworkAPI}
 
 	// default availability
-	if n.Spec.HighlyAvailable {
-		if n.Spec.TopologyKey == "" {
-			n.Spec.TopologyKey = DefaultTopologyKey
-		}
+	if n.Spec.TopologyKey == "" {
+		n.Spec.TopologyKey = DefaultTopologyKey
 	}
 
 	// default genesis block
@@ -42,41 +40,32 @@ func (n *Node) Default() {
 	// must be called after defaulting sync mode because it's depending on its value
 	n.DefaultNodeResources()
 
-	// don't default hosts or corsDomains if client is nethermind
-	if (n.Spec.RPC || n.Spec.WS || n.Spec.GraphQL) && n.Spec.Client != NethermindClient {
-		if len(n.Spec.Hosts) == 0 {
-			n.Spec.Hosts = DefaultOrigins
-		}
-
-		if len(n.Spec.CORSDomains) == 0 {
-			n.Spec.CORSDomains = DefaultOrigins
-		}
+	if len(n.Spec.Hosts) == 0 {
+		n.Spec.Hosts = DefaultOrigins
 	}
 
-	if n.Spec.RPC {
-		if n.Spec.RPCPort == 0 {
-			n.Spec.RPCPort = 8545
-		}
-
-		if len(n.Spec.RPCAPI) == 0 {
-			n.Spec.RPCAPI = defaultAPIs
-		}
+	if len(n.Spec.CORSDomains) == 0 {
+		n.Spec.CORSDomains = DefaultOrigins
 	}
 
-	if n.Spec.WS {
-		if n.Spec.WSPort == 0 {
-			n.Spec.WSPort = DefaultWSPort
-		}
-
-		if len(n.Spec.WSAPI) == 0 {
-			n.Spec.WSAPI = defaultAPIs
-		}
+	if n.Spec.RPCPort == 0 {
+		n.Spec.RPCPort = 8545
 	}
 
-	if n.Spec.GraphQL {
-		if n.Spec.GraphQLPort == 0 {
-			n.Spec.GraphQLPort = DefaultGraphQLPort
-		}
+	if len(n.Spec.RPCAPI) == 0 {
+		n.Spec.RPCAPI = defaultAPIs
+	}
+
+	if n.Spec.WSPort == 0 {
+		n.Spec.WSPort = DefaultWSPort
+	}
+
+	if len(n.Spec.WSAPI) == 0 {
+		n.Spec.WSAPI = defaultAPIs
+	}
+
+	if n.Spec.GraphQLPort == 0 {
+		n.Spec.GraphQLPort = DefaultGraphQLPort
 	}
 
 	if n.Spec.Logging == "" {

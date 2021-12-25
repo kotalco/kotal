@@ -57,27 +57,23 @@ func (r *Node) Default() {
 		r.Spec.Logging = DefaultLoggingVerbosity
 	}
 
-	if r.Spec.RPC {
-		if r.Spec.RPCPort == 0 {
-			r.Spec.RPCPort = DefaultRPCPort
-		}
+	if r.Spec.RPCPort == 0 {
+		r.Spec.RPCPort = DefaultRPCPort
 	}
 
-	if r.Spec.WS {
-		if r.Spec.WSPort == 0 {
-			r.Spec.WSPort = DefaultWSPort
-		}
+	if r.Spec.WSPort == 0 {
+		r.Spec.WSPort = DefaultWSPort
 	}
 
 	if len(r.Spec.CORSDomains) == 0 {
 		r.Spec.CORSDomains = []string{DefaultCORSDomain}
 	}
 
-	if r.Spec.Telemetry && r.Spec.TelemetryURL == "" {
+	if r.Spec.TelemetryURL == "" {
 		r.Spec.TelemetryURL = DefaultTelemetryURL
 	}
 
-	if r.Spec.Prometheus && r.Spec.PrometheusPort == 0 {
+	if r.Spec.PrometheusPort == 0 {
 		r.Spec.PrometheusPort = DefaultPrometheusPort
 	}
 

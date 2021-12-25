@@ -18,40 +18,32 @@ func (r *BeaconNode) Default() {
 		r.Spec.Logging = DefaultLogging
 	}
 
-	if r.Spec.REST {
-		if r.Spec.RESTPort == 0 {
-			r.Spec.RESTPort = DefaultRestPort
-		}
-		if r.Spec.RESTHost == "" {
-			r.Spec.RESTHost = DefaultRestHost
-		}
+	if r.Spec.RESTPort == 0 {
+		r.Spec.RESTPort = DefaultRestPort
+	}
+	if r.Spec.RESTHost == "" {
+		r.Spec.RESTHost = DefaultRestHost
 	}
 
-	if r.Spec.RPC {
-		if r.Spec.RPCPort == 0 {
-			r.Spec.RPCPort = DefaultRPCPort
-		}
-		if r.Spec.RPCHost == "" {
-			r.Spec.RPCHost = DefaultRPCHost
-		}
+	if r.Spec.RPCPort == 0 {
+		r.Spec.RPCPort = DefaultRPCPort
+	}
+	if r.Spec.RPCHost == "" {
+		r.Spec.RPCHost = DefaultRPCHost
 	}
 
-	if r.Spec.GRPC {
-		if r.Spec.GRPCPort == 0 {
-			r.Spec.GRPCPort = DefaultGRPCPort
-		}
-		if r.Spec.GRPCHost == "" {
-			r.Spec.GRPCHost = DefaultGRPCHost
-		}
+	if r.Spec.GRPCPort == 0 {
+		r.Spec.GRPCPort = DefaultGRPCPort
+	}
+	if r.Spec.GRPCHost == "" {
+		r.Spec.GRPCHost = DefaultGRPCHost
 	}
 
-	if r.Spec.RPC || r.Spec.REST || r.Spec.GRPC {
-		if len(r.Spec.CORSDomains) == 0 {
-			r.Spec.CORSDomains = DefaultOrigins
-		}
-		if len(r.Spec.Hosts) == 0 {
-			r.Spec.Hosts = DefaultOrigins
-		}
+	if len(r.Spec.CORSDomains) == 0 {
+		r.Spec.CORSDomains = DefaultOrigins
+	}
+	if len(r.Spec.Hosts) == 0 {
+		r.Spec.Hosts = DefaultOrigins
 	}
 
 	r.DefaultNodeResources()

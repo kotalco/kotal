@@ -15,16 +15,14 @@ func (n *Node) Default() {
 	mainnet := n.Spec.Network == MainNetwork
 	calibration := n.Spec.Network == CalibrationNetwork
 
-	if n.Spec.API {
-		if n.Spec.APIPort == 0 {
-			n.Spec.APIPort = DefaultAPIPort
-		}
-		if n.Spec.APIHost == "" {
-			n.Spec.APIHost = DefaultHost
-		}
-		if n.Spec.APIRequestTimeout == 0 {
-			n.Spec.APIRequestTimeout = DefaultAPIRequestTimeout
-		}
+	if n.Spec.APIPort == 0 {
+		n.Spec.APIPort = DefaultAPIPort
+	}
+	if n.Spec.APIHost == "" {
+		n.Spec.APIHost = DefaultHost
+	}
+	if n.Spec.APIRequestTimeout == 0 {
+		n.Spec.APIRequestTimeout = DefaultAPIRequestTimeout
 	}
 
 	if n.Spec.P2PPort == 0 {

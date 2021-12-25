@@ -37,7 +37,7 @@ func (r *ClusterPeer) Default() {
 		r.Spec.Consensus = DefaultIPFSClusterConsensus
 	}
 
-	if r.Spec.Consensus == CRDT && len(r.Spec.TrustedPeers) == 0 {
+	if len(r.Spec.TrustedPeers) == 0 {
 		r.Spec.TrustedPeers = []string{"*"}
 	}
 
