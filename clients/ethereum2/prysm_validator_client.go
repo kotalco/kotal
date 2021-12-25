@@ -10,6 +10,7 @@ import (
 )
 
 // PrysmValidatorClient is Prysmatic labs validator client
+// https://github.com/prysmaticlabs/prysm
 type PrysmValidatorClient struct {
 	validator *ethereum2v1alpha1.Validator
 }
@@ -19,7 +20,7 @@ const (
 	// EnvPrysmValidatorImage is the environment variable used for Prysmatic Labs validator client image
 	EnvPrysmValidatorImage = "PRYSM_VALIDATOR_CLIENT_IMAGE"
 	// DefaultPrysmValidatorImage is Prysmatic Labs validator client image
-	DefaultPrysmValidatorImage = "kotalco/prysm:v2.0.4"
+	DefaultPrysmValidatorImage = "kotalco/prysm:v2.0.5"
 )
 
 // HomeDir returns container home directory

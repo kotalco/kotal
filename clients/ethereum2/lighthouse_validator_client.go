@@ -10,6 +10,7 @@ import (
 )
 
 // LighthouseValidatorClient is SigmaPrime Ethereum 2.0 validator client
+// https://github.com/sigp/lighthouse
 type LighthouseValidatorClient struct {
 	validator *ethereum2v1alpha1.Validator
 }

@@ -11,6 +11,7 @@ import (
 )
 
 // NimbusValidatorClient is Status Ethereum 2.0 client
+// https://github.com/status-im/nimbus-eth2
 type NimbusValidatorClient struct {
 	validator *ethereum2v1alpha1.Validator
 }
@@ -20,7 +21,7 @@ const (
 	// EnvNimbusValidatorImage is the environment variable used for Status Ethereum 2.0 validator client image
 	EnvNimbusValidatorImage = "NIMBUS_VALIDATOR_CLIENT_IMAGE"
 	// DefaultNimbusValidatorImage is the default Status Ethereum 2.0 validator client image
-	DefaultNimbusValidatorImage = "kotalco/nimbus:v1.5.4"
+	DefaultNimbusValidatorImage = "kotalco/nimbus:v1.5.5"
 )
 
 // HomeDir returns container home directory

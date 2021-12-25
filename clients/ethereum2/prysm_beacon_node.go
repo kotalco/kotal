@@ -11,6 +11,7 @@ import (
 )
 
 // PrysmBeaconNode is Prysmatic Labs Ethereum 2.0 client
+// https://github.com/prysmaticlabs/prysm
 type PrysmBeaconNode struct {
 	node *ethereum2v1alpha1.BeaconNode
 }
@@ -20,7 +21,7 @@ const (
 	// EnvPrysmBeaconNodeImage is the environment variable used for Prysmatic Labs beacon node image
 	EnvPrysmBeaconNodeImage = "PRYSM_BEACON_NODE_IMAGE"
 	// DefaultPrysmBeaconNodeImage is Prysmatic Labs beacon node image
-	DefaultPrysmBeaconNodeImage = "kotalco/prysm:v2.0.4"
+	DefaultPrysmBeaconNodeImage = "kotalco/prysm:v2.0.5"
 )
 
 // HomeDir returns container home directory

@@ -10,6 +10,7 @@ import (
 )
 
 // NimbusBeaconNode is Status Ethereum 2.0 client
+// https://github.com/status-im/nimbus-eth2
 type NimbusBeaconNode struct {
 	node *ethereum2v1alpha1.BeaconNode
 }
@@ -19,7 +20,7 @@ const (
 	// EnvNimbusBeaconNodeImage is the environment variable used for Status Ethereum 2.0 beacon node image
 	EnvNimbusBeaconNodeImage = "NIMBUS_BEACON_NODE_IMAGE"
 	// DefaultNimbusBeaconNodeImage is the default Status Ethereum 2.0 beacon node image
-	DefaultNimbusBeaconNodeImage = "kotalco/nimbus:v1.5.4"
+	DefaultNimbusBeaconNodeImage = "kotalco/nimbus:v1.5.5"
 )
 
 // HomeDir returns container home directory

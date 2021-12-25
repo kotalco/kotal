@@ -11,6 +11,7 @@ import (
 )
 
 // LighthouseBeaconNode is SigmaPrime Ethereum 2.0 client
+// https://github.com/sigp/lighthouse
 type LighthouseBeaconNode struct {
 	node *ethereum2v1alpha1.BeaconNode
 }
