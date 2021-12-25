@@ -17,23 +17,6 @@ const (
 	FullSynchronization SynchronizationMode = "full"
 )
 
-// VerbosityLevel is logging verbosity levels
-// +kubebuilder:validation:Enum=error;warn;info;debug;trace
-type VerbosityLevel string
-
-const (
-	// ErrorLogs outputs only error logs
-	ErrorLogs VerbosityLevel = "error"
-	// WarnLogs outputs only warning logs
-	WarnLogs VerbosityLevel = "warn"
-	// InfoLogs outputs only informational logs
-	InfoLogs VerbosityLevel = "info"
-	// DebugLogs outputs only debugging logs
-	DebugLogs VerbosityLevel = "debug"
-	// TraceLogs outputs only tracing logs
-	TraceLogs VerbosityLevel = "trace"
-)
-
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Network is the polkadot network/chain to join
@@ -51,7 +34,8 @@ type NodeSpec struct {
 	// RetainedBlocks is the number of blocks to keep state for
 	RetainedBlocks uint `json:"retainedBlocks,omitempty"`
 	// Logging is logging verboisty level
-	Logging VerbosityLevel `json:"logging,omitempty"`
+	// +kubebuilder:validation:Enum=error;warn;info;debug;trace
+	Logging shared.VerbosityLevel `json:"logging,omitempty"`
 	// Telemetry enables connecting to telemetry server
 	Telemetry bool `json:"telemetry,omitempty"`
 	// TelemetryURL is telemetry service URL

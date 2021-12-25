@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
+	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -57,7 +58,7 @@ var _ = Describe("Polkadot client arguments", func() {
 			"4444",
 			PolkadotArgValidator,
 			PolkadotArgLogging,
-			string(polkadotv1alpha1.WarnLogs),
+			string(sharedAPI.WarnLogs),
 			PolkadotArgRPCExternal,
 			PolkadotArgRPCPort,
 			"6789",

@@ -1,10 +1,12 @@
 package v1alpha1
 
+import "github.com/kotalco/kotal/apis/shared"
+
 const (
 	// DefaultSyncMode is the default blockchain sync mode
 	DefaultSyncMode = FullSynchronization
 	// DefaultLoggingVerbosity is the default node logging verbosity
-	DefaultLoggingVerbosity = InfoLogs
+	DefaultLoggingVerbosity = shared.InfoLogs
 	// DefaultRetainedBlocks is the default node of blocks to retain if node isn't archive
 	DefaultRetainedBlocks uint = 256
 	// DefaultRPCPort is the default JSON-RPC server port
