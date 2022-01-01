@@ -19,6 +19,12 @@ test: generate fmt vet manifests
 	KUBEBUILDER_CONTROLPLANE_START_TIMEOUT=100s ACK_GINKGO_DEPRECATIONS=1.16.4 go test -v -coverprofile cover.out.tmp ./...
 	cat cover.out.tmp | grep -v zz_generated > cover.out
 
+# test operator on multiple k8s cluster versions
+# KOTAL_VERSION is released kotal image tag
+# K8S_PROVIDER is k8s cluster provider: kind or minikube
+# KOTAL_VERSION=$IMG K8S_PROVIDER=minikube  make test-multi
+# KOTAL_VERSION=$IMG K8S_PROVIDER=kind  make test-multi
+# make test-multi
 .SILENT: test-multi
 test-multi:
 	chmod +x multi.sh

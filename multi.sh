@@ -2,6 +2,9 @@
 
 set -e
 
+K8S_PROVIDER="${K8S_PROVIDER:-kind}"
+
+
 if ! docker info > /dev/null 2>&1; then
   echo "Docker isn't running"
   echo "Start docker, then try again!"
@@ -15,12 +18,27 @@ then
   make docker-build
 fi
 
-for VERSION in '1.19.11' '1.20.7' '1.21.1' '1.22.4' '1.23.0'
+
+if [ "$K8S_PROVIDER" == "minikube" ]
+then
+# minikube cluster versions
+VERSIONS=("1.19.0" "1.20.0" "1.21.0" "1.22.0" "1.23.0")
+else
+# kind cluster versions
+VERSIONS=("1.19.11" "1.20.7" "1.21.1" "1.22.4" "1.23.0")
+fi
+
+for VERSION in "${VERSIONS[@]}"
 do
   echo "Testing Kotal operator in kubernetes v$VERSION"
     # start Kubernetes in Docker with this kubernetes version
     echo "Creating cluster"
-	  kind create cluster --image=kindest/node:v${VERSION}
+    if [ "$K8S_PROVIDER" == "minikube" ]
+    then
+      minikube start --kubernetes-version=v${VERSION}
+    else
+	    kind create cluster --image=kindest/node:v${VERSION}
+    fi
     # install cert-manager
     echo "Installing cert manager"
     kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.yaml
@@ -36,7 +54,12 @@ do
     then
       echo "Installing Kotal custom resources"
       echo "Deploying Kotal controller manager"
-      make kind
+      if [ "$K8S_PROVIDER" == "minikube" ]
+      then
+        make minikube
+      else
+        make kind
+      fi
     else
       kubectl apply -f https://github.com/kotalco/kotal/releases/download/$KOTAL_VERSION/kotal.yaml
     fi
@@ -52,5 +75,10 @@ do
     echo "🎉 All tests has been passed"
 
     echo "🔥 Deleting kubernetes cluster v$VERSION"
-    kind delete cluster
+    if [ "$K8S_PROVIDER" == "minikube" ]
+    then
+      minikube delete
+    else
+      kind delete cluster
+    fi
 done
