@@ -7,6 +7,7 @@ import (
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Network is NEAR network to join and sync
+	// +kubebuilder:validation:Enum=mainnet;testnet;betanet
 	Network string `json:"network"`
 }
 

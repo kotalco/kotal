@@ -34,6 +34,10 @@ spec:
             properties:
               network:
                 description: Network is NEAR network to join and sync
+                enum:
+                - mainnet
+                - testnet
+                - betanet
                 type: string
             required:
             - network
