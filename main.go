@@ -22,6 +22,7 @@ import (
 	ethereum2controller "github.com/kotalco/kotal/controllers/ethereum2"
 	filecoincontroller "github.com/kotalco/kotal/controllers/filecoin"
 	ipfscontroller "github.com/kotalco/kotal/controllers/ipfs"
+	nearcontroller "github.com/kotalco/kotal/controllers/near"
 	polkadotcontroller "github.com/kotalco/kotal/controllers/polkadot"
 	// +kubebuilder:scaffold:imports
 )
@@ -178,6 +179,13 @@ func main() {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Node")
 			os.Exit(1)
 		}
+	}
+	if err = (&nearcontroller.NodeReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Node")
+		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
 
