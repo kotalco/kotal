@@ -6,6 +6,8 @@ import (
 
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
+	// Network is NEAR network to join and sync
+	Network string `json:"network"`
 }
 
 // NodeStatus defines the observed state of Node
