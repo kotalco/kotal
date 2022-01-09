@@ -26,4 +26,7 @@ resources:
 - group: chainlink
   kind: Node
   version: v1alpha1
+- group: near
+  kind: Node
+  version: v1alpha1
 version: "2"

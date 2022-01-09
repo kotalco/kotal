@@ -15,6 +15,7 @@ import (
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	nearv1alpha1 "github.com/kotalco/kotal/apis/near/v1alpha1"
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
 	chainlinkcontroller "github.com/kotalco/kotal/controllers/chainlink"
 	ethereumcontroller "github.com/kotalco/kotal/controllers/ethereum"
@@ -40,6 +41,7 @@ func init() {
 	_ = filecoinv1alpha1.AddToScheme(scheme)
 	_ = polkadotv1alpha1.AddToScheme(scheme)
 	_ = chainlinkv1alpha1.AddToScheme(scheme)
+	_ = nearv1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
