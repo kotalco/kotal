@@ -23,6 +23,7 @@ type NodeReconciler struct {
 // +kubebuilder:rbac:groups=near.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=near.kotal.io,resources=nodes/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
+// +kubebuilder:rbac:groups=core,resources=persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var node nearv1alpha1.Node
@@ -39,11 +40,61 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	shared.UpdateLabels(&node, "nearcore")
 
+	if err = r.reconcilePVC(ctx, &node); err != nil {
+		return
+	}
+
 	if err = r.reconcileStatefulset(ctx, &node); err != nil {
 		return
 	}
 
 	return
+}
+
+// reconcilePVC reconciles NEAR node persistent volume claim
+func (n *NodeReconciler) reconcilePVC(ctx context.Context, node *nearv1alpha1.Node) error {
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, n.Client, pvc, func() error {
+		if err := ctrl.SetControllerReference(node, pvc, n.Scheme); err != nil {
+			return err
+		}
+
+		n.specPVC(node, pvc)
+
+		return nil
+	})
+
+	return err
+}
+
+// specPVC updates NEAR node persistent volume claim
+func (n *NodeReconciler) specPVC(peer *nearv1alpha1.Node, pvc *corev1.PersistentVolumeClaim) {
+	request := corev1.ResourceList{
+		corev1.ResourceStorage: resource.MustParse(peer.Spec.Resources.Storage),
+	}
+
+	// spec is immutable after creation except resources.requests for bound claims
+	if !pvc.CreationTimestamp.IsZero() {
+		pvc.Spec.Resources.Requests = request
+		return
+	}
+
+	pvc.ObjectMeta.Labels = peer.Labels
+	pvc.Spec = corev1.PersistentVolumeClaimSpec{
+		AccessModes: []corev1.PersistentVolumeAccessMode{
+			corev1.ReadWriteOnce,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: request,
+		},
+		StorageClassName: peer.Spec.Resources.StorageClass,
+	}
 }
 
 func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *nearv1alpha1.Node) error {
@@ -86,8 +137,12 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 						Name:  "node",
 						Image: "nearprotocol/nearup",
 						Args:  []string{"run", node.Spec.Network},
-						// TODO: mount data pvc
-						VolumeMounts: []corev1.VolumeMount{},
+						VolumeMounts: []corev1.VolumeMount{
+							{
+								Name:      "data",
+								MountPath: "/root/.near/",
+							},
+						},
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
 								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPU),
@@ -100,12 +155,13 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 						},
 					},
 				},
-				// TODO: use persistent volume claim
 				Volumes: []corev1.Volume{
 					{
 						Name: "data",
 						VolumeSource: corev1.VolumeSource{
-							EmptyDir: &corev1.EmptyDirVolumeSource{},
+							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+								ClaimName: node.Name,
+							},
 						},
 					},
 				},
@@ -118,5 +174,7 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 func (r *NodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&nearv1alpha1.Node{}).
+		Owns(&appsv1.StatefulSet{}).
+		Owns(&corev1.PersistentVolumeClaim{}).
 		Complete(r)
 }
