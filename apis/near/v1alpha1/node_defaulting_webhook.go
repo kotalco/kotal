@@ -9,6 +9,26 @@ import (
 var _ webhook.Defaulter = &Node{}
 
 // Default implements webhook.Defaulter so a webhook will be registered for the type
-func (r *Node) Default() {
-	nodelog.Info("default", "name", r.Name)
+func (n *Node) Default() {
+	nodelog.Info("default", "name", n.Name)
+
+	if n.Spec.CPU == "" {
+		n.Spec.CPU = DefaultNodeCPURequest
+	}
+	if n.Spec.CPULimit == "" {
+		n.Spec.CPULimit = DefaultNodeCPULimit
+	}
+
+	if n.Spec.Memory == "" {
+		n.Spec.Memory = DefaultNodeMemoryRequest
+	}
+	if n.Spec.MemoryLimit == "" {
+		n.Spec.MemoryLimit = DefaultNodeMemoryLimit
+	}
+
+	if n.Spec.Storage == "" {
+		// TODO: update with archival node defaulting
+		n.Spec.Storage = DefaultNodeStorageRequest
+	}
+
 }

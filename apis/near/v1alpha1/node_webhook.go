@@ -8,8 +8,8 @@ import (
 // log is for logging in this package.
 var nodelog = logf.Log.WithName("node-resource")
 
-func (r *Node) SetupWebhookWithManager(mgr ctrl.Manager) error {
+func (n *Node) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewWebhookManagedBy(mgr).
-		For(r).
+		For(n).
 		Complete()
 }

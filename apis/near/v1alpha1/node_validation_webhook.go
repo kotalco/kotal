@@ -10,22 +10,22 @@ import (
 var _ webhook.Validator = &Node{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (r *Node) ValidateCreate() error {
-	nodelog.Info("validate create", "name", r.Name)
+func (n *Node) ValidateCreate() error {
+	nodelog.Info("validate create", "name", n.Name)
 
 	return nil
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (r *Node) ValidateUpdate(old runtime.Object) error {
-	nodelog.Info("validate update", "name", r.Name)
+func (n *Node) ValidateUpdate(old runtime.Object) error {
+	nodelog.Info("validate update", "name", n.Name)
 
 	return nil
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (r *Node) ValidateDelete() error {
-	nodelog.Info("validate delete", "name", r.Name)
+func (n *Node) ValidateDelete() error {
+	nodelog.Info("validate delete", "name", n.Name)
 
 	return nil
 }
