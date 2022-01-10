@@ -7,6 +7,7 @@ import (
 	"github.com/kotalco/kotal/controllers/shared"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -31,7 +32,10 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
-	// TODO: default the node if webhooks are disabled
+	// default the node if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		node.Default()
+	}
 
 	shared.UpdateLabels(&node, "nearcore")
 
@@ -84,6 +88,16 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 						Args:  []string{"run", node.Spec.Network},
 						// TODO: mount data pvc
 						VolumeMounts: []corev1.VolumeMount{},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPU),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.Memory),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.MemoryLimit),
+							},
+						},
 					},
 				},
 				// TODO: use persistent volume claim
