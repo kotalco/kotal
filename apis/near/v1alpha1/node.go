@@ -10,6 +10,8 @@ type NodeSpec struct {
 	// Network is NEAR network to join and sync
 	// +kubebuilder:validation:Enum=mainnet;testnet;betanet
 	Network string `json:"network"`
+	// RPC enables JSON-RPC server
+	RPC bool `json:"rpc,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

@@ -66,6 +66,9 @@ spec:
                     description: StorageClass is the volume storage class
                     type: string
                 type: object
+              rpc:
+                description: RPC enables JSON-RPC server
+                type: boolean
             required:
             - network
             type: object
