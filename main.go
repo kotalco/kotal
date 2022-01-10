@@ -180,12 +180,19 @@ func main() {
 			os.Exit(1)
 		}
 	}
+
 	if err = (&nearcontroller.NodeReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Node")
 		os.Exit(1)
+	}
+	if enableWebhooks {
+		if err = (&nearv1alpha1.Node{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Node")
+			os.Exit(1)
+		}
 	}
 	// +kubebuilder:scaffold:builder
 

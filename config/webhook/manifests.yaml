@@ -152,6 +152,26 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
+      path: /mutate-near-kotal-io-v1alpha1-node
+  failurePolicy: Fail
+  name: mutate-near-v1alpha1-node.kb.io
+  rules:
+  - apiGroups:
+    - near.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - nodes
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
       path: /mutate-polkadot-kotal-io-v1alpha1-node
   failurePolicy: Fail
   name: mutate-polkadot-v1alpha1-node.kb.io
@@ -313,6 +333,26 @@ webhooks:
     - UPDATE
     resources:
     - peers
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-near-kotal-io-v1alpha1-node
+  failurePolicy: Fail
+  name: validate-near-v1alpha1-node.kb.io
+  rules:
+  - apiGroups:
+    - near.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - nodes
   sideEffects: None
 - admissionReviewVersions:
   - v1
