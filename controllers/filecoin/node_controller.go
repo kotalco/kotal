@@ -281,7 +281,7 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 						Args:    []string{fmt.Sprintf("%s/copy_config_toml.sh", shared.PathConfig(homeDir))},
 						VolumeMounts: []corev1.VolumeMount{
 							{
-								Name:      node.Name,
+								Name:      "data",
 								MountPath: shared.PathData(homeDir),
 							},
 							{
@@ -299,7 +299,7 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 						Env:   env,
 						VolumeMounts: []corev1.VolumeMount{
 							{
-								Name:      node.Name,
+								Name:      "data",
 								MountPath: shared.PathData(homeDir),
 							},
 						},
@@ -317,7 +317,7 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 				},
 				Volumes: []corev1.Volume{
 					{
-						Name: node.Name,
+						Name: "data",
 						VolumeSource: corev1.VolumeSource{
 							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
 								ClaimName: node.Name,
