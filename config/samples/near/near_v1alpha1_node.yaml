@@ -4,3 +4,4 @@ metadata:
   name: node-sample
 spec:
   network: mainnet
+  rpc: true
