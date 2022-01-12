@@ -45,11 +45,15 @@ func (c *NearClient) Command() []string {
 // Args returns NEAR core client args
 func (c *NearClient) Args() (args []string) {
 
-	_ = c.node
+	node := c.node
 
 	args = append(args, "neard")
 	args = append(args, NearArgHome, c.HomeDir())
 	args = append(args, "run")
+
+	if !node.Spec.RPC {
+		args = append(args, NearArgDisableRPC)
+	}
 
 	return
 }

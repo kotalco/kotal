@@ -17,6 +17,7 @@ var _ = Describe("NEAR core client", func() {
 			},
 			Spec: nearv1alpha1.NodeSpec{
 				Network: "mainnet",
+				RPC:     false,
 			},
 		}
 
@@ -29,6 +30,7 @@ var _ = Describe("NEAR core client", func() {
 			NearArgHome,
 			client.HomeDir(),
 			"run",
+			NearArgDisableRPC,
 		}))
 
 	})
