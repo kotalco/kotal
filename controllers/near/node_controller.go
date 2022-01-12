@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	nearv1alpha1 "github.com/kotalco/kotal/apis/near/v1alpha1"
+	nearClients "github.com/kotalco/kotal/clients/near"
 	"github.com/kotalco/kotal/controllers/shared"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -149,11 +150,17 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *nearv1a
 		},
 	}
 
+	client := nearClients.NewClient(node)
+
+	img := client.Image()
+	homeDir := client.HomeDir()
+	args := client.Args()
+
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specStatefulSet(node, sts)
+		r.specStatefulSet(node, sts, img, homeDir, args)
 		return nil
 	})
 
@@ -161,7 +168,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *nearv1a
 }
 
 // specStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.StatefulSet) {
+func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.StatefulSet, img, homeDir string, args []string) {
 
 	sts.ObjectMeta.Labels = node.Labels
 
@@ -180,11 +187,11 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 				InitContainers: []corev1.Container{
 					{
 						Name:  "init-near-node",
-						Image: "nearprotocol/nearcore",
+						Image: img,
 						Env: []corev1.EnvVar{
 							{
 								Name:  EnvDataPath,
-								Value: "/root/.near",
+								Value: homeDir,
 							},
 							{
 								Name:  EnvNetwork,
@@ -196,7 +203,7 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",
-								MountPath: "/root/.near",
+								MountPath: homeDir,
 							},
 							{
 								Name:      "config",
@@ -208,12 +215,12 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 				Containers: []corev1.Container{
 					{
 						Name:  "node",
-						Image: "nearprotocol/nearcore",
-						Args:  []string{"neard", "run"},
+						Image: img,
+						Args:  args,
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",
-								MountPath: "/root/.near",
+								MountPath: homeDir,
 							},
 						},
 						Resources: corev1.ResourceRequirements{
