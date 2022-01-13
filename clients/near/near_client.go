@@ -61,6 +61,8 @@ func (c *NearClient) Args() (args []string) {
 		args = append(args, NearArgDisableRPC)
 	}
 
+	args = append(args, NearArgMinimumPeers, fmt.Sprintf("%d", node.Spec.MinPeers))
+
 	if len(node.Spec.Bootnodes) != 0 {
 		args = append(args, NearArgBootnodes, strings.Join(node.Spec.Bootnodes, ","))
 	}

@@ -17,12 +17,13 @@ var _ = Describe("NEAR core client", func() {
 			},
 			// TODO: create test for rpc: false node
 			Spec: nearv1alpha1.NodeSpec{
-				Network: "mainnet",
-				P2PHost: "127.0.0.1",
-				P2PPort: 3334,
-				RPC:     true,
-				RPCPort: 7444,
-				RPCHost: "127.0.0.1",
+				Network:  "mainnet",
+				MinPeers: 77,
+				P2PHost:  "127.0.0.1",
+				P2PPort:  3334,
+				RPC:      true,
+				RPCPort:  7444,
+				RPCHost:  "127.0.0.1",
 				Bootnodes: []string{
 					"ed25519:86EtEy7epneKyrcJwSWP7zsisTkfDRH5CFVszt4qiQYw@35.195.32.249:24567",
 					"ed25519:BFB78VTDBBfCY4jCP99zWxhXUcFAZqR22oSx2KEr8UM1@35.229.222.235:24567",
@@ -39,6 +40,8 @@ var _ = Describe("NEAR core client", func() {
 			NearArgHome,
 			client.HomeDir(),
 			"run",
+			NearArgMinimumPeers,
+			"77",
 			NearArgNetworkAddress,
 			"127.0.0.1:3334",
 			NearArgRPCAddress,
