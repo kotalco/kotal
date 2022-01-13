@@ -22,6 +22,8 @@ type NodeSpec struct {
 	RPCPort uint `json:"rpcPort,omitempty"`
 	// RPCHost is JSON-RPC server listening host
 	RPCHost string `json:"rpcHost,omitempty"`
+	// PrometheusPort is prometheus exporter port
+	PrometheusPort uint `json:"prometheusPort,omitempty"`
 	// Bootnodes is array of boot nodes to bootstrap network from
 	Bootnodes []string `json:"bootnodes,omitempty"`
 	// Resources is node compute and storage resources
