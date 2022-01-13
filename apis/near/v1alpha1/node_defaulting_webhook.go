@@ -16,12 +16,16 @@ func (n *Node) Default() {
 		n.Spec.RPCPort = DefaultRPCPort
 	}
 
+	if n.Spec.RPCHost == "" {
+		n.Spec.RPCHost = DefaultHost
+	}
+
 	if n.Spec.P2PPort == 0 {
 		n.Spec.P2PPort = DefaultP2PPort
 	}
 
-	if n.Spec.RPCHost == "" {
-		n.Spec.RPCHost = DefaultRPCHost
+	if n.Spec.P2PHost == "" {
+		n.Spec.P2PHost = DefaultHost
 	}
 
 	if n.Spec.CPU == "" {

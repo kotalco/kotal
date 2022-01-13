@@ -19,8 +19,9 @@ var _ = Describe("NEAR node defaulting", func() {
 		node.Default()
 
 		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))
-		Expect(node.Spec.RPCHost).To(Equal(DefaultRPCHost))
+		Expect(node.Spec.RPCHost).To(Equal(DefaultHost))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
+		Expect(node.Spec.P2PHost).To(Equal(DefaultHost))
 
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultNodeCPURequest))
 		Expect(node.Spec.Resources.CPULimit).To(Equal(DefaultNodeCPULimit))
