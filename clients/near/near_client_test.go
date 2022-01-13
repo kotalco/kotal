@@ -15,9 +15,11 @@ var _ = Describe("NEAR core client", func() {
 				Name:      "near-node",
 				Namespace: "default",
 			},
+			// TODO: create test for rpc: false node
 			Spec: nearv1alpha1.NodeSpec{
 				Network: "mainnet",
-				RPC:     false,
+				RPC:     true,
+				RPCPort: 7444,
 			},
 		}
 
@@ -30,7 +32,8 @@ var _ = Describe("NEAR core client", func() {
 			NearArgHome,
 			client.HomeDir(),
 			"run",
-			NearArgDisableRPC,
+			NearArgRPCAddress,
+			"0.0.0.0:7444",
 		}))
 
 	})
