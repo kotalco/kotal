@@ -15,7 +15,7 @@ type NodeSpec struct {
 	// RPCPort is JSON-RPC server listening port
 	RPCPort uint `json:"rpcPort,omitempty"`
 	// RPCHost is JSON-RPC server listening host
-	RPCHost uint `json:"rpcHost,omitempty"`
+	RPCHost string `json:"rpcHost,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

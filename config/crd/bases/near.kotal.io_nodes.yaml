@@ -71,7 +71,7 @@ spec:
                 type: boolean
               rpcHost:
                 description: RPCHost is JSON-RPC server listening host
-                type: integer
+                type: string
               rpcPort:
                 description: RPCPort is JSON-RPC server listening port
                 type: integer
