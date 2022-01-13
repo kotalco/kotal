@@ -44,6 +44,9 @@ spec:
                 - testnet
                 - betanet
                 type: string
+              p2pPort:
+                description: P2PPort is p2p port
+                type: integer
               resources:
                 description: Resources is node compute and storage resources
                 properties:
