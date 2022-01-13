@@ -3,6 +3,7 @@ package near
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	nearv1alpha1 "github.com/kotalco/kotal/apis/near/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
@@ -56,6 +57,10 @@ func (c *NearClient) Args() (args []string) {
 		args = append(args, NearArgRPCAddress, fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.RPCPort))
 	} else {
 		args = append(args, NearArgDisableRPC)
+	}
+
+	if len(node.Spec.Bootnodes) != 0 {
+		args = append(args, NearArgBootnodes, strings.Join(node.Spec.Bootnodes, ","))
 	}
 
 	return

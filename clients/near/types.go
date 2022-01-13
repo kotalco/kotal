@@ -7,4 +7,6 @@ const (
 	NearArgDisableRPC = "--disable-rpc"
 	// NearArgRPCAddress is argument used to set JSON-RPC address
 	NearArgRPCAddress = "--rpc-addr"
+	// NearArgBootnodes is argument used to set the boot nodes to bootstrap network from
+	NearArgBootnodes = "--boot-nodes"
 )
