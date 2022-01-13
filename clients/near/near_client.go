@@ -53,7 +53,7 @@ func (c *NearClient) Args() (args []string) {
 	args = append(args, "run")
 
 	if node.Spec.RPC {
-		args = append(args, NearArgRPCAddress, fmt.Sprintf("0.0.0.0:%d", node.Spec.RPCPort))
+		args = append(args, NearArgRPCAddress, fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.RPCPort))
 	} else {
 		args = append(args, NearArgDisableRPC)
 	}

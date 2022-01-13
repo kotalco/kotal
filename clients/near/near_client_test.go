@@ -20,6 +20,7 @@ var _ = Describe("NEAR core client", func() {
 				Network: "mainnet",
 				RPC:     true,
 				RPCPort: 7444,
+				RPCHost: "127.0.0.1",
 			},
 		}
 
@@ -33,7 +34,7 @@ var _ = Describe("NEAR core client", func() {
 			client.HomeDir(),
 			"run",
 			NearArgRPCAddress,
-			"0.0.0.0:7444",
+			"127.0.0.1:7444",
 		}))
 
 	})
