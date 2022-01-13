@@ -266,5 +266,6 @@ func (r *NodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&nearv1alpha1.Node{}).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.PersistentVolumeClaim{}).
+		Owns(&corev1.ConfigMap{}).
 		Complete(r)
 }
