@@ -5,3 +5,4 @@ metadata:
 spec:
   network: mainnet
   rpc: true
+  rpcPort: 8888
