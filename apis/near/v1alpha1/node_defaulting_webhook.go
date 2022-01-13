@@ -12,6 +12,10 @@ var _ webhook.Defaulter = &Node{}
 func (n *Node) Default() {
 	nodelog.Info("default", "name", n.Name)
 
+	if n.Spec.MinPeers == 0 {
+		n.Spec.MinPeers = DefaultMinPeers
+	}
+
 	if n.Spec.RPCPort == 0 {
 		n.Spec.RPCPort = DefaultRPCPort
 	}

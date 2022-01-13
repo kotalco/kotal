@@ -5,6 +5,8 @@ const (
 	DefaultRPCPort uint = 3030
 	// DefaultP2PPort is the default p2p port
 	DefaultP2PPort uint = 24567
+	// DefaultMinPeers is the default minimum number of peers required to start syncing/producing blocks
+	DefaultMinPeers uint = 5
 	// DefaultHost is the default JSON-RPC host
 	DefaultHost = "0.0.0.0"
 )
