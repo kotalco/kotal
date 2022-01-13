@@ -53,6 +53,9 @@ spec:
               p2pPort:
                 description: P2PPort is p2p port
                 type: integer
+              prometheusHost:
+                description: PrometheusHost is prometheus exporter host
+                type: string
               prometheusPort:
                 description: PrometheusPort is prometheus exporter port
                 type: integer
