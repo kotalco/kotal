@@ -37,6 +37,9 @@ spec:
                 items:
                   type: string
                 type: array
+              minPeers:
+                description: MinPeers is minimum number of peers to start syncing/producing blocks
+                type: integer
               network:
                 description: Network is NEAR network to join and sync
                 enum:
