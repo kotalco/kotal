@@ -12,6 +12,8 @@ type NodeSpec struct {
 	Network string `json:"network"`
 	// P2PPort is p2p port
 	P2PPort uint `json:"p2pPort,omitempty"`
+	// P2PHost is p2p host
+	P2PHost string `json:"p2pHost,omitempty"`
 	// RPC enables JSON-RPC server
 	RPC bool `json:"rpc,omitempty"`
 	// RPCPort is JSON-RPC server listening port
