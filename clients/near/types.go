@@ -7,6 +7,8 @@ const (
 	NearArgDisableRPC = "--disable-rpc"
 	// NearArgRPCAddress is argument used to set JSON-RPC address
 	NearArgRPCAddress = "--rpc-addr"
+	// NearArgPrometheusAddress is argument used to set prometheus exporter address
+	NearArgPrometheusAddress = "--rpc-prometheus-addr"
 	// NearArgBootnodes is argument used to set the boot nodes to bootstrap network from
 	NearArgBootnodes = "--boot-nodes"
 	// NearArgNetworkAddress is argument used to set network listening address

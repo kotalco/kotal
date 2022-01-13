@@ -57,6 +57,7 @@ func (c *NearClient) Args() (args []string) {
 
 	if node.Spec.RPC {
 		args = append(args, NearArgRPCAddress, fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.RPCPort))
+		args = append(args, NearArgPrometheusAddress, fmt.Sprintf("0.0.0.0:%d", node.Spec.PrometheusPort))
 	} else {
 		args = append(args, NearArgDisableRPC)
 	}
