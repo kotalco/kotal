@@ -3,6 +3,8 @@ package v1alpha1
 const (
 	// DefaultRPCPort is the default JSON-RPC port
 	DefaultRPCPort uint = 3030
+	// DefaultP2PPort is the default p2p port
+	DefaultP2PPort uint = 24567
 	// DefaultRPCHost is the default JSON-RPC host
 	DefaultRPCHost = "0.0.0.0"
 )
