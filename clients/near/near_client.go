@@ -53,7 +53,7 @@ func (c *NearClient) Args() (args []string) {
 	args = append(args, NearArgHome, c.HomeDir())
 	args = append(args, "run")
 
-	args = append(args, NearArgNetworkAddress, fmt.Sprintf("0.0.0.0:%d", node.Spec.P2PPort))
+	args = append(args, NearArgNetworkAddress, fmt.Sprintf("%s:%d", node.Spec.P2PHost, node.Spec.P2PPort))
 
 	if node.Spec.RPC {
 		args = append(args, NearArgRPCAddress, fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.RPCPort))
