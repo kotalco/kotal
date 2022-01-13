@@ -9,4 +9,6 @@ const (
 	NearArgRPCAddress = "--rpc-addr"
 	// NearArgBootnodes is argument used to set the boot nodes to bootstrap network from
 	NearArgBootnodes = "--boot-nodes"
+	// NearArgNetworkAddress is argument used to set network listening address
+	NearArgNetworkAddress = "--network-addr"
 )
