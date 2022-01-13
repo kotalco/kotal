@@ -12,10 +12,13 @@ var _ = Describe("NEAR node defaulting", func() {
 			ObjectMeta: metav1.ObjectMeta{},
 			Spec: NodeSpec{
 				Network: "mainnet",
+				RPC:     true,
 			},
 		}
 
 		node.Default()
+
+		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))
 
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultNodeCPURequest))
 		Expect(node.Spec.Resources.CPULimit).To(Equal(DefaultNodeCPULimit))

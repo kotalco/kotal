@@ -12,6 +12,10 @@ var _ webhook.Defaulter = &Node{}
 func (n *Node) Default() {
 	nodelog.Info("default", "name", n.Name)
 
+	if n.Spec.RPCPort == 0 {
+		n.Spec.RPCPort = DefaultRPCPort
+	}
+
 	if n.Spec.CPU == "" {
 		n.Spec.CPU = DefaultNodeCPURequest
 	}
