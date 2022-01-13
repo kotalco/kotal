@@ -16,6 +16,10 @@ func (n *Node) Default() {
 		n.Spec.RPCPort = DefaultRPCPort
 	}
 
+	if n.Spec.RPCHost == "" {
+		n.Spec.RPCHost = DefaultRPCHost
+	}
+
 	if n.Spec.CPU == "" {
 		n.Spec.CPU = DefaultNodeCPURequest
 	}
