@@ -12,6 +12,8 @@ type NodeSpec struct {
 	Network string `json:"network"`
 	// RPC enables JSON-RPC server
 	RPC bool `json:"rpc,omitempty"`
+	// RPCPort is JSON-RPC server listening port
+	RPCPort uint `json:"rpcPort,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
