@@ -13,6 +13,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -31,7 +32,7 @@ var (
 // +kubebuilder:rbac:groups=near.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=near.kotal.io,resources=nodes/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
-// +kubebuilder:rbac:groups=core,resources=configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
+// +kubebuilder:rbac:groups=core,resources=configmaps;persistentvolumeclaims;services,verbs=watch;get;create;update;list;delete
 
 func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var node nearv1alpha1.Node
@@ -56,11 +57,74 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	if err = r.reconcileService(ctx, &node); err != nil {
+		return
+	}
+
 	if err = r.reconcileStatefulset(ctx, &node); err != nil {
 		return
 	}
 
 	return
+}
+
+// reconcileService reconciles NEAR node service
+func (r *NodeReconciler) reconcileService(ctx context.Context, node *nearv1alpha1.Node) error {
+	svc := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
+		if err := ctrl.SetControllerReference(node, svc, r.Scheme); err != nil {
+			return err
+		}
+		r.specService(node, svc)
+		return nil
+	})
+
+	return err
+}
+
+// specService updates NEAR node service spec
+func (r *NodeReconciler) specService(node *nearv1alpha1.Node, svc *corev1.Service) {
+	labels := node.Labels
+
+	svc.ObjectMeta.Labels = labels
+
+	svc.Spec.Ports = []corev1.ServicePort{
+		{
+			Name:       "p2p",
+			Port:       int32(node.Spec.P2PPort),
+			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
+			Protocol:   corev1.ProtocolTCP,
+		},
+		{
+			Name:       "discovery",
+			Port:       int32(node.Spec.P2PPort),
+			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
+			Protocol:   corev1.ProtocolUDP,
+		},
+	}
+
+	if node.Spec.RPC {
+		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
+			Name:       "rpc",
+			Port:       int32(node.Spec.RPCPort),
+			TargetPort: intstr.FromInt(int(node.Spec.RPCPort)),
+			Protocol:   corev1.ProtocolTCP,
+		})
+		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
+			Name:       "prometheus",
+			Port:       int32(node.Spec.PrometheusPort),
+			TargetPort: intstr.FromInt(int(node.Spec.PrometheusPort)),
+			Protocol:   corev1.ProtocolTCP,
+		})
+	}
+
+	svc.Spec.Selector = labels
 }
 
 // reconcilePVC reconciles NEAR node persistent volume claim
@@ -265,7 +329,8 @@ func (r *NodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&nearv1alpha1.Node{}).
 		Owns(&appsv1.StatefulSet{}).
-		Owns(&corev1.PersistentVolumeClaim{}).
 		Owns(&corev1.ConfigMap{}).
+		Owns(&corev1.PersistentVolumeClaim{}).
+		Owns(&corev1.Service{}).
 		Complete(r)
 }
