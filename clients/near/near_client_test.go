@@ -25,6 +25,7 @@ var _ = Describe("NEAR core client", func() {
 				RPCPort:        7444,
 				RPCHost:        "127.0.0.1",
 				PrometheusPort: 9991,
+				PrometheusHost: "127.0.0.1",
 				Bootnodes: []string{
 					"ed25519:86EtEy7epneKyrcJwSWP7zsisTkfDRH5CFVszt4qiQYw@35.195.32.249:24567",
 					"ed25519:BFB78VTDBBfCY4jCP99zWxhXUcFAZqR22oSx2KEr8UM1@35.229.222.235:24567",
@@ -48,7 +49,7 @@ var _ = Describe("NEAR core client", func() {
 			NearArgRPCAddress,
 			"127.0.0.1:7444",
 			NearArgPrometheusAddress,
-			"0.0.0.0:9991",
+			"127.0.0.1:9991",
 			NearArgBootnodes,
 			"ed25519:86EtEy7epneKyrcJwSWP7zsisTkfDRH5CFVszt4qiQYw@35.195.32.249:24567,ed25519:BFB78VTDBBfCY4jCP99zWxhXUcFAZqR22oSx2KEr8UM1@35.229.222.235:24567",
 		}))
