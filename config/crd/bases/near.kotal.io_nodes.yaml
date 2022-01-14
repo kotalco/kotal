@@ -95,6 +95,9 @@ spec:
               rpcPort:
                 description: RPCPort is JSON-RPC server listening port
                 type: integer
+              telemetryURL:
+                description: TelemetryURL is telemetry service URL
+                type: string
             required:
             - network
             type: object

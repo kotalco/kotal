@@ -26,6 +26,8 @@ type NodeSpec struct {
 	PrometheusPort uint `json:"prometheusPort,omitempty"`
 	// PrometheusHost is prometheus exporter host
 	PrometheusHost string `json:"prometheusHost,omitempty"`
+	// TelemetryURL is telemetry service URL
+	TelemetryURL string `json:"telemetryURL,omitempty"`
 	// Bootnodes is array of boot nodes to bootstrap network from
 	Bootnodes []string `json:"bootnodes,omitempty"`
 	// Resources is node compute and storage resources
