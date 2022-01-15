@@ -353,9 +353,8 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 				Labels: node.Labels,
 			},
 			Spec: corev1.PodSpec{
-				// TODO: use shared security context
-				// TODO: update paths to use shared path pkg and non-root directories
-				InitContainers: initContainers,
+				SecurityContext: shared.SecurityContext(),
+				InitContainers:  initContainers,
 				Containers: []corev1.Container{
 					{
 						Name:         "node",
