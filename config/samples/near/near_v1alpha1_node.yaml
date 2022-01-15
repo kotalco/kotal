@@ -1,9 +1,23 @@
+# WARNING: DON'T use the following node key in production
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-node-key
+stringData:
+  key: |-
+    {
+      "account_id": "node",
+      "public_key": "ed25519:xLKUX6m2yyPWrzwqMRiCMNxcNMyo3JwBMUbS8XuDYYg",
+      "secret_key": "ed25519:umba2vvWKENdjjfkNSdMHA6Hjs6w8Jh5EwTrgFut4SFrQ87bM3j3HZsbhWiVdUgu3BPmEE57XSRML996YrdEXda"
+    }
+---
 apiVersion: near.kotal.io/v1alpha1
 kind: Node
 metadata:
   name: node-sample
 spec:
   network: mainnet
+  nodePrivateKeySecretName: my-node-key
   rpc: true
   rpcPort: 8888
   rpcHost: "0.0.0.0"

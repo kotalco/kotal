@@ -27,6 +27,8 @@ type NodeReconciler struct {
 var (
 	//go:embed init_near_node.sh
 	InitNearNode string
+	//go:embed copy_node_key.sh
+	CopyNodeKey string
 )
 
 // +kubebuilder:rbac:groups=near.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
@@ -182,6 +184,7 @@ func (n *NodeReconciler) specConfigmap(node *nearv1alpha1.Node, configmap *corev
 	}
 
 	configmap.Data["init_near_node.sh"] = InitNearNode
+	configmap.Data["copy_node_key.sh"] = CopyNodeKey
 
 }
 
@@ -204,6 +207,70 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *nearv1alp
 	})
 
 	return err
+}
+
+func (r *NodeReconciler) createVolumes(node *nearv1alpha1.Node) []corev1.Volume {
+	volumes := []corev1.Volume{
+		{
+			Name: "data",
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: node.Name,
+				},
+			},
+		},
+		{
+			Name: "config",
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: node.Name,
+					},
+				},
+			},
+		},
+	}
+
+	if node.Spec.NodePrivateKeySecretName != "" {
+		volumes = append(volumes, corev1.Volume{
+			Name: "secrets",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: node.Spec.NodePrivateKeySecretName,
+					Items: []corev1.KeyToPath{
+						{
+							Key:  "key",
+							Path: "node_key.json",
+						},
+					},
+				},
+			},
+		})
+	}
+
+	return volumes
+}
+
+func (r *NodeReconciler) createVolumeMounts(node *nearv1alpha1.Node, homeDir string) []corev1.VolumeMount {
+	mounts := []corev1.VolumeMount{
+		{
+			Name:      "data",
+			MountPath: homeDir,
+		},
+		{
+			Name:      "config",
+			MountPath: "/root/config",
+		},
+	}
+
+	if node.Spec.NodePrivateKeySecretName != "" {
+		mounts = append(mounts, corev1.VolumeMount{
+			Name:      "secrets",
+			MountPath: "/root/secrets",
+		})
+	}
+
+	return mounts
 }
 
 func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *nearv1alpha1.Node) error {
@@ -236,6 +303,46 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 
 	sts.ObjectMeta.Labels = node.Labels
 
+	initContainers := []corev1.Container{
+		{
+			Name:  "init-near-node",
+			Image: img,
+			Env: []corev1.EnvVar{
+				{
+					Name:  EnvDataPath,
+					Value: homeDir,
+				},
+				{
+					Name:  EnvNetwork,
+					Value: node.Spec.Network,
+				},
+			},
+			Command:      []string{"/bin/sh"},
+			Args:         []string{fmt.Sprintf("%s/init_near_node.sh", "/root/config")},
+			VolumeMounts: r.createVolumeMounts(node, homeDir),
+		},
+	}
+
+	if node.Spec.NodePrivateKeySecretName != "" {
+		initContainers = append(initContainers, corev1.Container{
+			Name:    "copy-node-key",
+			Image:   shared.BusyboxImage,
+			Command: []string{"/bin/sh"},
+			Env: []corev1.EnvVar{
+				{
+					Name:  EnvDataPath,
+					Value: homeDir,
+				},
+				{
+					Name:  "KOTAL_SECRETS_PATH",
+					Value: "/root/secrets",
+				},
+			},
+			Args:         []string{fmt.Sprintf("%s/copy_node_key.sh", "/root/config")},
+			VolumeMounts: r.createVolumeMounts(node, homeDir),
+		})
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.Labels,
@@ -248,45 +355,13 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 			Spec: corev1.PodSpec{
 				// TODO: use shared security context
 				// TODO: update paths to use shared path pkg and non-root directories
-				InitContainers: []corev1.Container{
-					{
-						Name:  "init-near-node",
-						Image: img,
-						Env: []corev1.EnvVar{
-							{
-								Name:  EnvDataPath,
-								Value: homeDir,
-							},
-							{
-								Name:  EnvNetwork,
-								Value: node.Spec.Network,
-							},
-						},
-						Command: []string{"/bin/sh"},
-						Args:    []string{fmt.Sprintf("%s/init_near_node.sh", "/root/config")},
-						VolumeMounts: []corev1.VolumeMount{
-							{
-								Name:      "data",
-								MountPath: homeDir,
-							},
-							{
-								Name:      "config",
-								MountPath: "/root/config",
-							},
-						},
-					},
-				},
+				InitContainers: initContainers,
 				Containers: []corev1.Container{
 					{
-						Name:  "node",
-						Image: img,
-						Args:  args,
-						VolumeMounts: []corev1.VolumeMount{
-							{
-								Name:      "data",
-								MountPath: homeDir,
-							},
-						},
+						Name:         "node",
+						Image:        img,
+						Args:         args,
+						VolumeMounts: r.createVolumeMounts(node, homeDir),
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
 								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPU),
@@ -299,26 +374,7 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 						},
 					},
 				},
-				Volumes: []corev1.Volume{
-					{
-						Name: "data",
-						VolumeSource: corev1.VolumeSource{
-							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-								ClaimName: node.Name,
-							},
-						},
-					},
-					{
-						Name: "config",
-						VolumeSource: corev1.VolumeSource{
-							ConfigMap: &corev1.ConfigMapVolumeSource{
-								LocalObjectReference: corev1.LocalObjectReference{
-									Name: node.Name,
-								},
-							},
-						},
-					},
-				},
+				Volumes: r.createVolumes(node),
 			},
 		},
 	}
