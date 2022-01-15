@@ -10,6 +10,8 @@ type NodeSpec struct {
 	// Network is NEAR network to join and sync
 	// +kubebuilder:validation:Enum=mainnet;testnet;betanet
 	Network string `json:"network"`
+	// NodePrivateKeySecretName is the secret name holding node Ed25519 private key
+	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
 	// MinPeers is minimum number of peers to start syncing/producing blocks
 	MinPeers uint `json:"minPeers,omitempty"`
 	// P2PPort is p2p port

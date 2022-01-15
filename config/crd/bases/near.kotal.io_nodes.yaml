@@ -47,6 +47,9 @@ spec:
                 - testnet
                 - betanet
                 type: string
+              nodePrivateKeySecretName:
+                description: NodePrivateKeySecretName is the secret name holding node Ed25519 private key
+                type: string
               p2pHost:
                 description: P2PHost is p2p host
                 type: string
