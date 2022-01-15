@@ -14,6 +14,8 @@ type NodeSpec struct {
 	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
 	// MinPeers is minimum number of peers to start syncing/producing blocks
 	MinPeers uint `json:"minPeers,omitempty"`
+	// Archive keeps old blocks in the storage
+	Archive bool `json:"archive,omitempty"`
 	// P2PPort is p2p port
 	P2PPort uint `json:"p2pPort,omitempty"`
 	// P2PHost is p2p host
