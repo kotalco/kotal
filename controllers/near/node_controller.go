@@ -255,18 +255,18 @@ func (r *NodeReconciler) createVolumeMounts(node *nearv1alpha1.Node, homeDir str
 	mounts := []corev1.VolumeMount{
 		{
 			Name:      "data",
-			MountPath: homeDir,
+			MountPath: shared.PathData(homeDir),
 		},
 		{
 			Name:      "config",
-			MountPath: "/root/config",
+			MountPath: shared.PathConfig(homeDir),
 		},
 	}
 
 	if node.Spec.NodePrivateKeySecretName != "" {
 		mounts = append(mounts, corev1.VolumeMount{
 			Name:      "secrets",
-			MountPath: "/root/secrets",
+			MountPath: shared.PathSecrets(homeDir),
 		})
 	}
 
@@ -310,7 +310,7 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 			Env: []corev1.EnvVar{
 				{
 					Name:  EnvDataPath,
-					Value: homeDir,
+					Value: shared.PathData(homeDir),
 				},
 				{
 					Name:  EnvNetwork,
@@ -318,7 +318,7 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 				},
 			},
 			Command:      []string{"/bin/sh"},
-			Args:         []string{fmt.Sprintf("%s/init_near_node.sh", "/root/config")},
+			Args:         []string{fmt.Sprintf("%s/init_near_node.sh", shared.PathConfig(homeDir))},
 			VolumeMounts: r.createVolumeMounts(node, homeDir),
 		},
 	}
@@ -331,14 +331,14 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 			Env: []corev1.EnvVar{
 				{
 					Name:  EnvDataPath,
-					Value: homeDir,
+					Value: shared.PathData(homeDir),
 				},
 				{
-					Name:  "KOTAL_SECRETS_PATH",
-					Value: "/root/secrets",
+					Name:  EnvSecretsPath,
+					Value: shared.PathSecrets(homeDir),
 				},
 			},
-			Args:         []string{fmt.Sprintf("%s/copy_node_key.sh", "/root/config")},
+			Args:         []string{fmt.Sprintf("%s/copy_node_key.sh", shared.PathConfig(homeDir))},
 			VolumeMounts: r.createVolumeMounts(node, homeDir),
 		})
 	}

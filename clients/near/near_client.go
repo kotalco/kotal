@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	nearv1alpha1 "github.com/kotalco/kotal/apis/near/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -20,10 +21,10 @@ const (
 	// EnvNearImage is the environment variable used for NEAR core client image
 	EnvNearImage = "NEAR_IMAGE"
 	// DefaultNearImage is the default NEAR core client image
-	DefaultNearImage = "nearprotocol/nearcore:1.23.1"
+	DefaultNearImage = "kotalco/nearcore:1.23.1"
 	// NearHomeDir is go ipfs image home dir
 	// TODO: update home dir after building docker image with non-root user and home dir
-	NearHomeDir = "/root/.near"
+	NearHomeDir = "/home/near"
 )
 
 // Image returns NEAR core client image
@@ -50,7 +51,7 @@ func (c *NearClient) Args() (args []string) {
 	node := c.node
 
 	args = append(args, "neard")
-	args = append(args, NearArgHome, c.HomeDir())
+	args = append(args, NearArgHome, shared.PathData(c.HomeDir()))
 	args = append(args, "run")
 
 	args = append(args, NearArgNetworkAddress, fmt.Sprintf("%s:%d", node.Spec.P2PHost, node.Spec.P2PPort))

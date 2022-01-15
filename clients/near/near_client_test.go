@@ -2,6 +2,7 @@ package near
 
 import (
 	nearv1alpha1 "github.com/kotalco/kotal/apis/near/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -41,7 +42,7 @@ var _ = Describe("NEAR core client", func() {
 		Expect(args).To(ContainElements([]string{
 			"neard",
 			NearArgHome,
-			client.HomeDir(),
+			shared.PathData(client.HomeDir()),
 			"run",
 			NearArgMinimumPeers,
 			"77",
