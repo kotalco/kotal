@@ -17,4 +17,6 @@ const (
 	NearArgMinimumPeers = "--min-peers"
 	// NearArgTelemetryURL is argument used to set telemetry URL
 	NearArgTelemetryURL = "--telemetry-url"
+	// NearArgArchive is argument used to keeps old blocks in the storage
+	NearArgArchive = "--archive"
 )

@@ -67,6 +67,10 @@ func (c *NearClient) Args() (args []string) {
 		args = append(args, NearArgTelemetryURL, node.Spec.TelemetryURL)
 	}
 
+	if node.Spec.Archive {
+		args = append(args, NearArgArchive)
+	}
+
 	args = append(args, NearArgMinimumPeers, fmt.Sprintf("%d", node.Spec.MinPeers))
 
 	if len(node.Spec.Bootnodes) != 0 {
