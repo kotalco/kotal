@@ -14,10 +14,15 @@ stringData:
 apiVersion: near.kotal.io/v1alpha1
 kind: Node
 metadata:
-  name: node-sample
+  name: near-node
 spec:
   network: mainnet
   nodePrivateKeySecretName: my-node-key
+  minPeers: 3
+  archive: true
   rpc: true
   rpcPort: 8888
   rpcHost: "0.0.0.0"
+  prometheusPort: 9999
+  prometheusHost: "0.0.0.0"
+  telemetryURL: "https://explorer.mainnet.near.org/api/nodes"
