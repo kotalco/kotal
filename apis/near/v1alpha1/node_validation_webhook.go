@@ -1,7 +1,10 @@
 package v1alpha1
 
 import (
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/validation/field"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
@@ -11,16 +14,32 @@ var _ webhook.Validator = &Node{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (n *Node) ValidateCreate() error {
+	var allErrors field.ErrorList
+
 	nodelog.Info("validate create", "name", n.Name)
 
-	return nil
+	allErrors = append(allErrors, n.Spec.Resources.ValidateCreate()...)
+
+	if len(allErrors) == 0 {
+		return nil
+	}
+
+	return apierrors.NewInvalid(schema.GroupKind{}, n.Name, allErrors)
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
 func (n *Node) ValidateUpdate(old runtime.Object) error {
+	var allErrors field.ErrorList
+
 	nodelog.Info("validate update", "name", n.Name)
 
-	return nil
+	allErrors = append(allErrors, n.Spec.Resources.ValidateUpdate(&n.Spec.Resources)...)
+
+	if len(allErrors) == 0 {
+		return nil
+	}
+
+	return apierrors.NewInvalid(schema.GroupKind{}, n.Name, allErrors)
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
