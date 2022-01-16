@@ -55,8 +55,11 @@ func (n *Node) Default() {
 	}
 
 	if n.Spec.Storage == "" {
-		// TODO: update with archival node defaulting
-		n.Spec.Storage = DefaultNodeStorageRequest
+		storage := DefaultNodeStorageRequest
+		if n.Spec.Archive {
+			storage = DefaultArchivalNodeStorageRequest
+		}
+		n.Spec.Storage = storage
 	}
 
 }
