@@ -36,6 +36,7 @@ var _ = Describe("NEAR node controller", func() {
 		RPC:                      true,
 		Archive:                  true, // test volume storage size
 		NodePrivateKeySecretName: "my-node-key",
+		ValidatorSecretName:      "validator-key",
 	}
 
 	toCreate := &nearv1alpha1.Node{
@@ -143,6 +144,37 @@ var _ = Describe("NEAR node controller", func() {
 				MountPath: shared.PathSecrets(client.HomeDir()),
 			},
 		))
+		// copy validator key
+		Expect(fetched.Spec.Template.Spec.InitContainers[2].Name).To(Equal("copy-validator-key"))
+		Expect(fetched.Spec.Template.Spec.InitContainers[2].Image).To(Equal(shared.BusyboxImage))
+		Expect(fetched.Spec.Template.Spec.InitContainers[2].Command).To(Equal([]string{"/bin/sh"}))
+		Expect(fetched.Spec.Template.Spec.InitContainers[2].Args).To(ContainElements(
+			fmt.Sprintf("%s/copy_validator_key.sh", shared.PathConfig(client.HomeDir())),
+		))
+		Expect(fetched.Spec.Template.Spec.InitContainers[2].Env).To(ContainElements(
+			corev1.EnvVar{
+				Name:  EnvDataPath,
+				Value: shared.PathData(client.HomeDir()),
+			},
+			corev1.EnvVar{
+				Name:  EnvSecretsPath,
+				Value: shared.PathSecrets(client.HomeDir()),
+			},
+		))
+		Expect(fetched.Spec.Template.Spec.InitContainers[2].VolumeMounts).To(ContainElements(
+			corev1.VolumeMount{
+				Name:      "data",
+				MountPath: shared.PathData(client.HomeDir()),
+			},
+			corev1.VolumeMount{
+				Name:      "config",
+				MountPath: shared.PathConfig(client.HomeDir()),
+			},
+			corev1.VolumeMount{
+				Name:      "secrets",
+				MountPath: shared.PathSecrets(client.HomeDir()),
+			},
+		))
 		// node
 		Expect(fetched.Spec.Template.Spec.Containers[0].Name).To(Equal("node"))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
@@ -188,12 +220,33 @@ var _ = Describe("NEAR node controller", func() {
 				{
 					Name: "secrets",
 					VolumeSource: corev1.VolumeSource{
-						Secret: &corev1.SecretVolumeSource{
-							SecretName: toCreate.Spec.NodePrivateKeySecretName,
-							Items: []corev1.KeyToPath{
+						Projected: &corev1.ProjectedVolumeSource{
+							Sources: []corev1.VolumeProjection{
 								{
-									Key:  "key",
-									Path: "node_key.json",
+									Secret: &corev1.SecretProjection{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: toCreate.Spec.NodePrivateKeySecretName,
+										},
+										Items: []corev1.KeyToPath{
+											{
+												Key:  "key",
+												Path: "node_key.json",
+											},
+										},
+									},
+								},
+								{
+									Secret: &corev1.SecretProjection{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: toCreate.Spec.ValidatorSecretName,
+										},
+										Items: []corev1.KeyToPath{
+											{
+												Key:  "key",
+												Path: "validator_key.json",
+											},
+										},
+									},
 								},
 							},
 							DefaultMode: &mode,

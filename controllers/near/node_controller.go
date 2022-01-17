@@ -29,6 +29,8 @@ var (
 	InitNearNode string
 	//go:embed copy_node_key.sh
 	CopyNodeKey string
+	//go:embed copy_validator_key.sh
+	CopyValidatorKey string
 )
 
 // +kubebuilder:rbac:groups=near.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
@@ -185,6 +187,7 @@ func (n *NodeReconciler) specConfigmap(node *nearv1alpha1.Node, configmap *corev
 
 	configmap.Data["init_near_node.sh"] = InitNearNode
 	configmap.Data["copy_node_key.sh"] = CopyNodeKey
+	configmap.Data["copy_validator_key.sh"] = CopyValidatorKey
 
 }
 
@@ -210,6 +213,9 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *nearv1alp
 }
 
 func (r *NodeReconciler) createVolumes(node *nearv1alpha1.Node) []corev1.Volume {
+
+	var volumeProjections []corev1.VolumeProjection
+
 	volumes := []corev1.Volume{
 		{
 			Name: "data",
@@ -232,21 +238,46 @@ func (r *NodeReconciler) createVolumes(node *nearv1alpha1.Node) []corev1.Volume 
 	}
 
 	if node.Spec.NodePrivateKeySecretName != "" {
-		volumes = append(volumes, corev1.Volume{
-			Name: "secrets",
-			VolumeSource: corev1.VolumeSource{
-				Secret: &corev1.SecretVolumeSource{
-					SecretName: node.Spec.NodePrivateKeySecretName,
-					Items: []corev1.KeyToPath{
-						{
-							Key:  "key",
-							Path: "node_key.json",
-						},
+		volumeProjections = append(volumeProjections, corev1.VolumeProjection{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.NodePrivateKeySecretName,
+				},
+				Items: []corev1.KeyToPath{
+					{
+						Key:  "key",
+						Path: "node_key.json",
 					},
 				},
 			},
 		})
 	}
+
+	if node.Spec.ValidatorSecretName != "" {
+		volumeProjections = append(volumeProjections, corev1.VolumeProjection{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.ValidatorSecretName,
+				},
+				Items: []corev1.KeyToPath{
+					{
+						Key:  "key",
+						Path: "validator_key.json",
+					},
+				},
+			},
+		})
+	}
+
+	secretsVolume := corev1.Volume{
+		Name: "secrets",
+		VolumeSource: corev1.VolumeSource{
+			Projected: &corev1.ProjectedVolumeSource{
+				Sources: volumeProjections,
+			},
+		},
+	}
+	volumes = append(volumes, secretsVolume)
 
 	return volumes
 }
@@ -339,6 +370,26 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 				},
 			},
 			Args:         []string{fmt.Sprintf("%s/copy_node_key.sh", shared.PathConfig(homeDir))},
+			VolumeMounts: r.createVolumeMounts(node, homeDir),
+		})
+	}
+
+	if node.Spec.ValidatorSecretName != "" {
+		initContainers = append(initContainers, corev1.Container{
+			Name:    "copy-validator-key",
+			Image:   shared.BusyboxImage,
+			Command: []string{"/bin/sh"},
+			Env: []corev1.EnvVar{
+				{
+					Name:  EnvDataPath,
+					Value: shared.PathData(homeDir),
+				},
+				{
+					Name:  EnvSecretsPath,
+					Value: shared.PathSecrets(homeDir),
+				},
+			},
+			Args:         []string{fmt.Sprintf("%s/copy_validator_key.sh", shared.PathConfig(homeDir))},
 			VolumeMounts: r.createVolumeMounts(node, homeDir),
 		})
 	}

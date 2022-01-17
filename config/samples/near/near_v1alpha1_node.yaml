@@ -11,6 +11,19 @@ stringData:
       "secret_key": "ed25519:umba2vvWKENdjjfkNSdMHA6Hjs6w8Jh5EwTrgFut4SFrQ87bM3j3HZsbhWiVdUgu3BPmEE57XSRML996YrdEXda"
     }
 ---
+# WARNING: DON'T use the following validator key in production
+apiVersion: v1
+kind: Secret
+metadata:
+  name: validator-key
+stringData:
+  key: |-
+    {
+      "account_id": "validator",
+      "public_key": "ed25519:CdTBLXMmu9gzoCbNKdUnej1tJNMz5tzRjJF2a9DwAgUr",
+      "secret_key": "ed25519:4k83DwbSpD3zzai4ZPdeRJcfXttU3Uq68mWWhni6ra2RKnG3jyVKEZyP14gDJZ9W1oqFujpAkidoNrYY4TLqijsG"
+    }
+---
 apiVersion: near.kotal.io/v1alpha1
 kind: Node
 metadata:
@@ -18,6 +31,7 @@ metadata:
 spec:
   network: mainnet
   nodePrivateKeySecretName: my-node-key
+  validatorSecretName: validator-key
   minPeers: 3
   archive: true
   rpc: true
