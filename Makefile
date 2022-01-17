@@ -22,8 +22,8 @@ test: generate fmt vet manifests
 # test operator on multiple k8s cluster versions
 # KOTAL_VERSION is released kotal image tag
 # K8S_PROVIDER is k8s cluster provider: kind or minikube
-# KOTAL_VERSION=$IMG K8S_PROVIDER=minikube  make test-multi
-# KOTAL_VERSION=$IMG K8S_PROVIDER=kind  make test-multi
+# KOTAL_VERSION=$IMG K8S_PROVIDER=minikube make test-multi
+# KOTAL_VERSION=$IMG K8S_PROVIDER=kind make test-multi
 # make test-multi
 .SILENT: test-multi
 test-multi:
