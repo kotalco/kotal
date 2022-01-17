@@ -104,6 +104,9 @@ spec:
               telemetryURL:
                 description: TelemetryURL is telemetry service URL
                 type: string
+              validatorSecretName:
+                description: ValidatorSecretName is the secret name holding node Ed25519 validator key
+                type: string
             required:
             - network
             type: object

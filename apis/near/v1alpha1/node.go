@@ -12,6 +12,8 @@ type NodeSpec struct {
 	Network string `json:"network"`
 	// NodePrivateKeySecretName is the secret name holding node Ed25519 private key
 	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
+	// ValidatorSecretName is the secret name holding node Ed25519 validator key
+	ValidatorSecretName string `json:"validatorSecretName,omitempty"`
 	// MinPeers is minimum number of peers to start syncing/producing blocks
 	MinPeers uint `json:"minPeers,omitempty"`
 	// Archive keeps old blocks in the storage
