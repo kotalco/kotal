@@ -29,6 +29,9 @@ type NodeSpec struct {
 	IPFSOnlineMode bool `json:"ipfsOnlineMode,omitempty"`
 	// IPFSForRetrieval uses ipfs for retrieval
 	IPFSForRetrieval bool `json:"ipfsForRetrieval,omitempty"`
+	// Logging is logging verboisty level
+	// +kubebuilder:validation:Enum=error;warn;info;debug
+	Logging shared.VerbosityLevel `json:"logging,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

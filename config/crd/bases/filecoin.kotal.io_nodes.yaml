@@ -63,6 +63,14 @@ spec:
               ipfsPeerEndpoint:
                 description: IPFSPeerEndpoint is ipfs peer endpoint
                 type: string
+              logging:
+                description: Logging is logging verboisty level
+                enum:
+                - error
+                - warn
+                - info
+                - debug
+                type: string
               network:
                 description: Network is the Filecoin network the node will join and sync
                 enum:
