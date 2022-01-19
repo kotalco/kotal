@@ -15,6 +15,10 @@ func (n *Node) Default() {
 	mainnet := n.Spec.Network == MainNetwork
 	calibration := n.Spec.Network == CalibrationNetwork
 
+	if n.Spec.Logging == "" {
+		n.Spec.Logging = DefaultLogging
+	}
+
 	if n.Spec.APIPort == 0 {
 		n.Spec.APIPort = DefaultAPIPort
 	}

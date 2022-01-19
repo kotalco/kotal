@@ -1,5 +1,7 @@
 package v1alpha1
 
+import "github.com/kotalco/kotal/apis/shared"
+
 const (
 	// DefaultAPIPort is the default port the API server is listening to
 	DefaultAPIPort uint = 1234
@@ -9,6 +11,8 @@ const (
 	DefaultHost = "0.0.0.0"
 	// DefaultAPIRequestTimeout is the default API request timeout
 	DefaultAPIRequestTimeout uint = 30
+	// DefaultLogging is the default logging verbosity
+	DefaultLogging = shared.InfoLogs
 
 	// DefaultMainnetNodeCPURequest is the default mainnet node cpu request
 	DefaultMainnetNodeCPURequest = "8"
