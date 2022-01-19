@@ -11,6 +11,7 @@ import (
 )
 
 // TekuBeaconNode is ConsenSys Pegasys Ethereum 2.0 client
+// https://github.com/Consensys/teku/
 type TekuBeaconNode struct {
 	node *ethereum2v1alpha1.BeaconNode
 }
@@ -19,7 +20,7 @@ const (
 	// EnvTekuBeaconNodeImage is the environment variable used for PegaSys Teku beacon node image
 	EnvTekuBeaconNodeImage = "TEKU_BEACON_NODE_IMAGE"
 	// DefaultTekuBeaconNodeImage is PegaSys Teku beacon node image
-	DefaultTekuBeaconNodeImage = "consensys/teku:21.12.2"
+	DefaultTekuBeaconNodeImage = "consensys/teku:22.1.0"
 )
 
 // HomeDir returns container home directory

@@ -11,6 +11,7 @@ import (
 )
 
 // TekuValidatorClient is Teku validator client
+// https://github.com/Consensys/teku/
 type TekuValidatorClient struct {
 	validator *ethereum2v1alpha1.Validator
 }
@@ -19,7 +20,7 @@ const (
 	// EnvTekuValidatorImage is the environment variable used for PegaSys Teku validator client image
 	EnvTekuValidatorImage = "TEKU_VALIDATOR_CLIENT_IMAGE"
 	// DefaultTekuValidatorImage is PegaSys Teku validator client image
-	DefaultTekuValidatorImage = "consensys/teku:21.12.2"
+	DefaultTekuValidatorImage = "consensys/teku:22.1.0"
 )
 
 // HomeDir returns container home directory
