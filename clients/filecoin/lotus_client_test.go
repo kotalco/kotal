@@ -4,8 +4,10 @@ import (
 	"os"
 
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -37,6 +39,19 @@ var _ = Describe("Lotus Filecoin Client", func() {
 		Expect(client.Args()).To(ContainElements(
 			"lotus",
 			"daemon",
+		))
+	})
+
+	It("Should get correct env", func() {
+		Expect(client.Env()).To(ContainElements(
+			corev1.EnvVar{
+				Name:  EnvLotusPath,
+				Value: shared.PathData(client.HomeDir()),
+			},
+			corev1.EnvVar{
+				Name:  EnvLogLevel,
+				Value: string(node.Spec.Logging),
+			},
 		))
 	})
 

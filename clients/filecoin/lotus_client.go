@@ -48,8 +48,12 @@ func (c *LotusClient) Command() []string {
 func (c *LotusClient) Env() []corev1.EnvVar {
 	return []corev1.EnvVar{
 		{
-			Name:  "LOTUS_PATH",
+			Name:  EnvLotusPath,
 			Value: shared.PathData(c.HomeDir()),
+		},
+		{
+			Name:  EnvLogLevel,
+			Value: string(c.node.Spec.Logging),
 		},
 	}
 }
