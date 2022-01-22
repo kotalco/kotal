@@ -1,5 +1,7 @@
 package v1alpha1
 
+import "github.com/kotalco/kotal/apis/shared"
+
 const (
 	// DefaultRoutingMode is the default content routing mechanism
 	DefaultRoutingMode = DHTRouting
@@ -9,6 +11,8 @@ const (
 	DefaultGatewayPort uint = 8080
 	// DefaultHost is the default API host
 	DefaultHost = "0.0.0.0"
+	// DefaultLogging is the default logging verbosity level
+	DefaultLogging = shared.InfoLogs
 )
 
 // Resources

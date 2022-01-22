@@ -57,6 +57,10 @@ func (r *Peer) Default() {
 		r.Spec.InitProfiles = []Profile{DefaultDatastoreProfile}
 	}
 
+	if r.Spec.Logging == "" {
+		r.Spec.Logging = DefaultLogging
+	}
+
 	r.DefaultPeerResources()
 
 }
