@@ -25,6 +25,9 @@ type PeerSpec struct {
 	Routing RoutingMechanism `json:"routing,omitempty"`
 	// SwarmKeySecretName is the k8s secret holding swarm key
 	SwarmKeySecretName string `json:"swarmKeySecretName,omitempty"`
+	// Logging is logging verboisty level
+	// +kubebuilder:validation:Enum=error;warn;info;debug;notice
+	Logging shared.VerbosityLevel `json:"logging,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

@@ -65,6 +65,15 @@ spec:
                   type: string
                 type: array
                 x-kubernetes-list-type: set
+              logging:
+                description: Logging is logging verboisty level
+                enum:
+                - error
+                - warn
+                - info
+                - debug
+                - notice
+                type: string
               profiles:
                 description: Profiles is the configuration profiles to apply after peer initialization
                 items:
