@@ -23,6 +23,9 @@ type ClusterPeerSpec struct {
 	ClusterSecretName string `json:"clusterSecretName"`
 	// PeerEndpoint is ipfs peer http API endpoint
 	PeerEndpoint string `json:"peerEndpoint"`
+	// Logging is logging verboisty level
+	// +kubebuilder:validation:Enum=error;warn;info;debug
+	Logging shared.VerbosityLevel `json:"logging,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

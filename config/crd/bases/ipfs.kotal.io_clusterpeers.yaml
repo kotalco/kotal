@@ -57,6 +57,14 @@ spec:
               id:
                 description: ID is the the cluster peer id
                 type: string
+              logging:
+                description: Logging is logging verboisty level
+                enum:
+                - error
+                - warn
+                - info
+                - debug
+                type: string
               peerEndpoint:
                 description: PeerEndpoint is ipfs peer http API endpoint
                 type: string
