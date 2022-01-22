@@ -4,8 +4,10 @@ import (
 	"os"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	corev1 "k8s.io/api/core/v1"
 )
 
 var _ = Describe("Go IPFS Cluster Client", func() {
@@ -31,6 +33,25 @@ var _ = Describe("Go IPFS Cluster Client", func() {
 		os.Setenv(EnvGoIPFSClusterImage, testImage)
 		img = client.Image()
 		Expect(img).To(Equal(testImage))
+	})
+
+	It("Should get correct env", func() {
+		Expect(client.Env()).To(Equal(
+			[]corev1.EnvVar{
+				{
+					Name:  EnvIPFSClusterPath,
+					Value: shared.PathData(client.HomeDir()),
+				},
+				{
+					Name:  EnvIPFSClusterPeerName,
+					Value: peer.Name,
+				},
+				{
+					Name:  EnvIPFSLogging,
+					Value: string(peer.Spec.Logging),
+				},
+			},
+		))
 	})
 
 	It("Should get correct command", func() {

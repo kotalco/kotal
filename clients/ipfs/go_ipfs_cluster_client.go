@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -38,7 +39,20 @@ func (c *GoIPFSClusterClient) Command() []string {
 
 // Command returns environment variables for the client
 func (c *GoIPFSClusterClient) Env() []corev1.EnvVar {
-	return nil
+	return []corev1.EnvVar{
+		{
+			Name:  EnvIPFSClusterPath,
+			Value: shared.PathData(c.HomeDir()),
+		},
+		{
+			Name:  EnvIPFSClusterPeerName,
+			Value: c.peer.Name,
+		},
+		{
+			Name:  EnvIPFSLogging,
+			Value: string(c.peer.Spec.Logging),
+		},
+	}
 }
 
 // Arg returns go ipfs cluster arguments
