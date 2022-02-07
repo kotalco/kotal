@@ -1,0 +1,7 @@
+apiVersion: near.kotal.io/v1alpha1
+kind: Node
+metadata:
+  name: near-archive-node
+spec:
+  network: mainnet
+  archive: true
