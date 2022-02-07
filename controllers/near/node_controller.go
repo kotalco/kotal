@@ -311,7 +311,7 @@ func (r *NodeReconciler) createVolumeMounts(node *nearv1alpha1.Node, homeDir str
 		},
 	}
 
-	if node.Spec.NodePrivateKeySecretName != "" {
+	if node.Spec.NodePrivateKeySecretName != "" || node.Spec.ValidatorSecretName != "" {
 		mounts = append(mounts, corev1.VolumeMount{
 			Name:      "secrets",
 			MountPath: shared.PathSecrets(homeDir),
