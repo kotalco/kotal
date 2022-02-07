@@ -16,6 +16,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 // NodeReconciler reconciles a Node object
@@ -69,7 +70,23 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	if err = r.updateStatus(ctx, &node); err != nil {
+		return
+	}
+
 	return
+}
+
+// updateStatus updates NEAR node status
+func (r *NodeReconciler) updateStatus(ctx context.Context, peer *nearv1alpha1.Node) error {
+	peer.Status.Client = "nearcore"
+
+	if err := r.Status().Update(ctx, peer); err != nil {
+		log.FromContext(ctx).Error(err, "unable to update node status")
+		return err
+	}
+
+	return nil
 }
 
 // reconcileService reconciles NEAR node service
