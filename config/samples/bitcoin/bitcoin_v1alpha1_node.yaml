@@ -2,4 +2,5 @@ apiVersion: bitcoin.kotal.io/v1alpha1
 kind: Node
 metadata:
   name: bitcoin-node
-spec: {}
+spec:
+  network: mainnet
