@@ -34,6 +34,8 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
+	shared.UpdateLabels(&node, "bitcoind")
+
 	return
 }
 
