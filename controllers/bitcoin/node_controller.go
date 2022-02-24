@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 
+	bitcoinClients "github.com/kotalco/kotal/clients/bitcoin"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -56,11 +57,17 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *bitcoin
 		},
 	}
 
+	client := bitcoinClients.NewClient(node)
+
+	img := client.Image()
+	homeDir := client.HomeDir()
+	args := client.Args()
+
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		if err := r.specStatefulSet(node, sts); err != nil {
+		if err := r.specStatefulSet(node, sts, img, homeDir, args); err != nil {
 			return err
 		}
 		return nil
@@ -70,7 +77,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *bitcoin
 }
 
 // specStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1.StatefulSet) error {
+func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1.StatefulSet, img, homeDir string, args []string) error {
 
 	sts.ObjectMeta.Labels = node.Labels
 
@@ -86,10 +93,9 @@ func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1
 			Spec: corev1.PodSpec{
 				Containers: []corev1.Container{
 					{
-						Name:    "node",
-						Image:   "ruimarinho/bitcoin-core",
-						Command: []string{"bitcoind"},
-						Args:    []string{"-chain=test"},
+						Name:  "node",
+						Image: img,
+						Args:  args,
 					},
 				},
 			},
