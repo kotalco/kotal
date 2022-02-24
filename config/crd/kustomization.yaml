@@ -11,6 +11,7 @@ resources:
   - bases/polkadot.kotal.io_nodes.yaml
   - bases/chainlink.kotal.io_nodes.yaml
   - bases/near.kotal.io_nodes.yaml
+  - bases/bitcoin.kotal.io_nodes.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:
@@ -23,6 +24,7 @@ patchesStrategicMerge:
   # - patches/webhook_in_clusterpeers.yaml
   # - patches/webhook_in_nodes.yaml
   # - patches/webhook_in_nodes.yaml
+  # - patches/webhook_in_nodes.yaml
   # +kubebuilder:scaffold:crdkustomizewebhookpatch
   # [CERTMANAGER] To enable webhook, uncomment all the sections with [CERTMANAGER] prefix.
   # patches here are for enabling the CA injection for each CRD
@@ -31,6 +33,7 @@ patchesStrategicMerge:
   - patches/cainjection_in_validators.yaml
   - patches/cainjection_in_peers.yaml
   - patches/cainjection_in_clusterpeers.yaml
+  - patches/cainjection_in_nodes.yaml
   - patches/cainjection_in_nodes.yaml
   - patches/cainjection_in_nodes.yaml
 # +kubebuilder:scaffold:crdkustomizecainjectionpatch

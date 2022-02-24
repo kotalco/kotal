@@ -10,6 +10,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
+	bitcoinv1alpha1 "github.com/kotalco/kotal/apis/bitcoin/v1alpha1"
 	chainlinkv1alpha1 "github.com/kotalco/kotal/apis/chainlink/v1alpha1"
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
@@ -43,6 +44,7 @@ func init() {
 	_ = polkadotv1alpha1.AddToScheme(scheme)
 	_ = chainlinkv1alpha1.AddToScheme(scheme)
 	_ = nearv1alpha1.AddToScheme(scheme)
+	_ = bitcoinv1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 

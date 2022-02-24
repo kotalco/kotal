@@ -29,4 +29,7 @@ resources:
 - group: near
   kind: Node
   version: v1alpha1
+- group: bitcoin
+  kind: Node
+  version: v1alpha1
 version: "2"
