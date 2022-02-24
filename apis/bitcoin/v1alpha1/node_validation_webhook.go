@@ -8,7 +8,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-ipfs-kotal-io-v1alpha1-peer,mutating=false,failurePolicy=fail,groups=ipfs.kotal.io,resources=peers,versions=v1alpha1,name=validate-ipfs-v1alpha1-peer.kb.io,sideEffects=None,admissionReviewVersions=v1
 // +kubebuilder:webhook:verbs=create;update,path=/validate-bitcoin-kotal-io-v1alpha1-node,mutating=false,failurePolicy=fail,groups=bitcoin.kotal.io,resources=nodes,versions=v1alpha1,name=validate-bitcoin-v1alpha1-node.kb.io,sideEffects=None,admissionReviewVersions=v1
 
 var _ webhook.Validator = &Node{}
