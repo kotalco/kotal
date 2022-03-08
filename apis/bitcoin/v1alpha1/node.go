@@ -8,6 +8,8 @@ import (
 type NodeSpec struct {
 	// Network is Bitcoin network to join and sync
 	Network string `json:"network"`
+	// RPCPort is JSON-RPC server port
+	RPCPort uint `json:"rpcPort,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node

@@ -35,6 +35,9 @@ spec:
               network:
                 description: Network is Bitcoin network to join and sync
                 type: string
+              rpcPort:
+                description: RPCPort is JSON-RPC server port
+                type: integer
             required:
             - network
             type: object
