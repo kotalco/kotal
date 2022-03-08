@@ -5,6 +5,7 @@ import (
 	"os"
 
 	bitcoinv1alpha1 "github.com/kotalco/kotal/apis/bitcoin/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -33,8 +34,13 @@ func (c *BitcoinCoreClient) Image() string {
 }
 
 // Command returns environment variables for the client
-func (c *BitcoinCoreClient) Env() []corev1.EnvVar {
-	return nil
+func (c *BitcoinCoreClient) Env() (env []corev1.EnvVar) {
+	env = append(env, corev1.EnvVar{
+		Name:  EnvBitcoinData,
+		Value: shared.PathData(c.HomeDir()),
+	})
+
+	return
 }
 
 // Command is Bitcoin core client entrypoint
@@ -50,6 +56,8 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 		"mainnet": "main",
 		"testnet": "test",
 	}
+
+	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgDataDir, shared.PathData(c.HomeDir())))
 
 	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgChain, networks[node.Spec.Network]))
 
