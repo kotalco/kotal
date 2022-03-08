@@ -18,6 +18,7 @@ var _ = Describe("Bitcoin node defaulting", func() {
 		node.Default()
 
 		Expect(node.Spec.RPCPort).To(Equal(DefaultMainnetRPCPort))
+		Expect(node.Spec.RPCHost).To(Equal(DefaultRPCHost))
 
 	})
 })

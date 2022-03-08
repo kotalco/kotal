@@ -19,4 +19,8 @@ func (r *Node) Default() {
 		}
 	}
 
+	if r.Spec.RPCHost == "" {
+		r.Spec.RPCHost = DefaultRPCHost
+	}
+
 }
