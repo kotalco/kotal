@@ -4,3 +4,4 @@ metadata:
   name: bitcoin-node
 spec:
   network: mainnet
+  rpcPort: 7777
