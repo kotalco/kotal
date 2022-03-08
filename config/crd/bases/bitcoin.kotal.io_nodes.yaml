@@ -38,6 +38,9 @@ spec:
                 - mainnet
                 - testnet
                 type: string
+              rpcHost:
+                description: RPCHost is JSON-RPC server host
+                type: string
               rpcPort:
                 description: RPCPort is JSON-RPC server port
                 type: integer

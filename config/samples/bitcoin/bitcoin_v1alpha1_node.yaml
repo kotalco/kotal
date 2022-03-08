@@ -5,3 +5,4 @@ metadata:
 spec:
   network: mainnet
   rpcPort: 7777
+  rpcHost: 0.0.0.0

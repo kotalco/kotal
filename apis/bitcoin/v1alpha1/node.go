@@ -19,6 +19,8 @@ type NodeSpec struct {
 	Network BitcoinNetwork `json:"network"`
 	// RPCPort is JSON-RPC server port
 	RPCPort uint `json:"rpcPort,omitempty"`
+	// RPCHost is JSON-RPC server host
+	RPCHost string `json:"rpcHost,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
