@@ -59,7 +59,7 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 
 	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgDataDir, shared.PathData(c.HomeDir())))
 
-	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgChain, networks[node.Spec.Network]))
+	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgChain, networks[string(node.Spec.Network)]))
 
 	return
 }

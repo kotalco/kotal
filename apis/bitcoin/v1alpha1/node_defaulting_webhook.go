@@ -10,4 +10,13 @@ var _ webhook.Defaulter = &Node{}
 func (r *Node) Default() {
 	nodelog.Info("default", "name", r.Name)
 
+	if r.Spec.RPCPort == 0 {
+		if r.Spec.Network == Mainnet {
+			r.Spec.RPCPort = DefaultMainnetRPCPort
+		}
+		if r.Spec.Network == Testnet {
+			r.Spec.RPCPort = DefaultTestnetRPCPort
+		}
+	}
+
 }
