@@ -18,6 +18,7 @@ var _ = Describe("Bitcoin core client", func() {
 		},
 		Spec: bitcoinv1alpha1.NodeSpec{
 			Network: "mainnet",
+			RPCPort: 7777,
 		},
 	}
 
@@ -47,6 +48,7 @@ var _ = Describe("Bitcoin core client", func() {
 		Expect(client.Args()).To(ContainElements([]string{
 			"-chain=main",
 			"-datadir=/home/bitcoin/kotal-data",
+			"-rpcport=7777",
 		}))
 	})
 
