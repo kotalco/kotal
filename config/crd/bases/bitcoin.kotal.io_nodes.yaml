@@ -34,6 +34,9 @@ spec:
             properties:
               network:
                 description: Network is Bitcoin network to join and sync
+                enum:
+                - mainnet
+                - testnet
                 type: string
               rpcPort:
                 description: RPCPort is JSON-RPC server port

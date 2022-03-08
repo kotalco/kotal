@@ -4,10 +4,19 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// BitcoinNetwork is Bitcoin network
+type BitcoinNetwork string
+
+const (
+	Mainnet BitcoinNetwork = "mainnet"
+	Testnet BitcoinNetwork = "testnet"
+)
+
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Network is Bitcoin network to join and sync
-	Network string `json:"network"`
+	// +kubebuilder:validation:Enum=mainnet;testnet
+	Network BitcoinNetwork `json:"network"`
 	// RPCPort is JSON-RPC server port
 	RPCPort uint `json:"rpcPort,omitempty"`
 }
