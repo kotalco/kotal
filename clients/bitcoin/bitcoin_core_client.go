@@ -63,6 +63,10 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 
 	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgRPCPort, node.Spec.RPCPort))
 
+	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgRPCBind, node.Spec.RPCHost))
+
+	args = append(args, fmt.Sprintf("%s=0.0.0.0/0", BitcoinArgRPCAllowIp))
+
 	return
 }
 

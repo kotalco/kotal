@@ -12,4 +12,8 @@ const (
 	BitcoinArgRPCPort = "-rpcport"
 	// BitcoinArgDataDir is argument used to set data directory
 	BitcoinArgDataDir = "-datadir"
+	// BitcoinArgRPCBind is argument used to set JSON-RPC server host
+	BitcoinArgRPCBind = "-rpcbind"
+	// BitcoinArgRPCAllowIp is argument used to allow JSON-RPC connections from specific sources
+	BitcoinArgRPCAllowIp = "-rpcallowip"
 )

@@ -19,6 +19,7 @@ var _ = Describe("Bitcoin core client", func() {
 		Spec: bitcoinv1alpha1.NodeSpec{
 			Network: "mainnet",
 			RPCPort: 7777,
+			RPCHost: "127.0.0.1",
 		},
 	}
 
@@ -49,6 +50,8 @@ var _ = Describe("Bitcoin core client", func() {
 			"-chain=main",
 			"-datadir=/home/bitcoin/kotal-data",
 			"-rpcport=7777",
+			"-rpcbind=127.0.0.1",
+			"-rpcallowip=0.0.0.0/0",
 		}))
 	})
 
