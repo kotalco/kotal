@@ -44,6 +44,22 @@ spec:
               rpcPort:
                 description: RPCPort is JSON-RPC server port
                 type: integer
+              rpcUsers:
+                description: RPCUsers is JSON-RPC users credentials
+                items:
+                  description: RPCUsers is JSON-RPC users credentials
+                  properties:
+                    passwordSecretName:
+                      description: PasswordSecretName is k8s secret name holding JSON-RPC user password
+                      type: string
+                    username:
+                      description: Username is JSON-RPC username
+                      type: string
+                  required:
+                  - passwordSecretName
+                  - username
+                  type: object
+                type: array
             required:
             - network
             type: object

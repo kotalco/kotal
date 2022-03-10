@@ -12,6 +12,14 @@ const (
 	Testnet BitcoinNetwork = "testnet"
 )
 
+// RPCUsers is JSON-RPC users credentials
+type RPCUser struct {
+	// Username is JSON-RPC username
+	Username string `json:"username"`
+	// PasswordSecretName is k8s secret name holding JSON-RPC user password
+	PasswordSecretName string `json:"passwordSecretName"`
+}
+
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Network is Bitcoin network to join and sync
@@ -21,6 +29,8 @@ type NodeSpec struct {
 	RPCPort uint `json:"rpcPort,omitempty"`
 	// RPCHost is JSON-RPC server host
 	RPCHost string `json:"rpcHost,omitempty"`
+	// RPCUsers is JSON-RPC users credentials
+	RPCUsers []RPCUser `json:"rpcUsers,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
