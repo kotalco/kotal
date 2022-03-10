@@ -25,6 +25,8 @@ type NodeSpec struct {
 	// Network is Bitcoin network to join and sync
 	// +kubebuilder:validation:Enum=mainnet;testnet
 	Network BitcoinNetwork `json:"network"`
+	// RPC enables JSON-RPC server
+	RPC bool `json:"rpc,omitempty"`
 	// RPCPort is JSON-RPC server port
 	RPCPort uint `json:"rpcPort,omitempty"`
 	// RPCHost is JSON-RPC server host

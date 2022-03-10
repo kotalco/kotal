@@ -38,6 +38,9 @@ spec:
                 - mainnet
                 - testnet
                 type: string
+              rpc:
+                description: RPC enables JSON-RPC server
+                type: boolean
               rpcHost:
                 description: RPCHost is JSON-RPC server host
                 type: string
