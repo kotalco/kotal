@@ -61,11 +61,14 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 
 	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgChain, networks[string(node.Spec.Network)]))
 
-	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgRPCPort, node.Spec.RPCPort))
-
-	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgRPCBind, node.Spec.RPCHost))
-
-	args = append(args, fmt.Sprintf("%s=0.0.0.0/0", BitcoinArgRPCAllowIp))
+	if c.node.Spec.RPC {
+		args = append(args, fmt.Sprintf("%s=1", BitcoinArgServer))
+		args = append(args, fmt.Sprintf("%s=%d", BitcoinArgRPCPort, node.Spec.RPCPort))
+		args = append(args, fmt.Sprintf("%s=%s", BitcoinArgRPCBind, node.Spec.RPCHost))
+		args = append(args, fmt.Sprintf("%s=0.0.0.0/0", BitcoinArgRPCAllowIp))
+	} else {
+		args = append(args, fmt.Sprintf("%s=0", BitcoinArgServer))
+	}
 
 	return
 }

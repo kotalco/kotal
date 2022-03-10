@@ -8,6 +8,8 @@ const (
 const (
 	// BitcoinArgChain is argument used to set chain
 	BitcoinArgChain = "-chain"
+	// BitcoinArgServer is argument used to enable CLI and JSON-RPC server
+	BitcoinArgServer = "-server"
 	// BitcoinArgRPCPort is argument used to set JSON-RPC port
 	BitcoinArgRPCPort = "-rpcport"
 	// BitcoinArgDataDir is argument used to set data directory
