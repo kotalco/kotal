@@ -90,6 +90,9 @@ spec:
                   - username
                   type: object
                 type: array
+              txIndex:
+                description: TransactionIndex maintains a full tx index
+                type: boolean
               wallet:
                 description: Wallet load wallet and enables wallet RPC calls
                 type: boolean

@@ -36,6 +36,8 @@ type NodeSpec struct {
 	RPCUsers []RPCUser `json:"rpcUsers,omitempty"`
 	// Wallet load wallet and enables wallet RPC calls
 	Wallet bool `json:"wallet,omitempty"`
+	// TransactionIndex maintains a full tx index
+	TransactionIndex bool `json:"txIndex,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
