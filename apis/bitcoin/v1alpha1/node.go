@@ -34,6 +34,8 @@ type NodeSpec struct {
 	RPCHost string `json:"rpcHost,omitempty"`
 	// RPCUsers is JSON-RPC users credentials
 	RPCUsers []RPCUser `json:"rpcUsers,omitempty"`
+	// Wallet load wallet and enables wallet RPC calls
+	Wallet bool `json:"wallet,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

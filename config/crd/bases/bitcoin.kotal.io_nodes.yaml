@@ -90,6 +90,9 @@ spec:
                   - username
                   type: object
                 type: array
+              wallet:
+                description: Wallet load wallet and enables wallet RPC calls
+                type: boolean
             required:
             - network
             type: object
