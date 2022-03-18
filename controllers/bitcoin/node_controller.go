@@ -108,7 +108,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *bitcoin
 		},
 	}
 
-	client := bitcoinClients.NewClient(node)
+	client := bitcoinClients.NewClient(node, r.Client)
 
 	img := client.Image()
 	homeDir := client.HomeDir()

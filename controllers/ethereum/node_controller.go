@@ -684,18 +684,6 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereu
 	return err
 }
 
-func (r *NodeReconciler) getSecret(ctx context.Context, name types.NamespacedName, key string) (value string, err error) {
-	secret := &corev1.Secret{}
-
-	if err = r.Client.Get(ctx, name, secret); err != nil {
-		return
-	}
-
-	value = string(secret.Data[key])
-
-	return
-}
-
 // specSecret creates keystore from account private key for nethermind client
 func (r *NodeReconciler) specSecret(ctx context.Context, node *ethereumv1alpha1.Node, secret *corev1.Secret) error {
 	secret.ObjectMeta.Labels = node.GetLabels()
@@ -706,7 +694,7 @@ func (r *NodeReconciler) specSecret(ctx context.Context, node *ethereumv1alpha1.
 			Namespace: node.Namespace,
 		}
 
-		privateKey, err := r.getSecret(ctx, key, "key")
+		privateKey, err := shared.GetSecret(ctx, r.Client, key, "key")
 		if err != nil {
 			return err
 		}
@@ -716,7 +704,7 @@ func (r *NodeReconciler) specSecret(ctx context.Context, node *ethereumv1alpha1.
 			Namespace: node.Namespace,
 		}
 
-		password, err := r.getSecret(ctx, key, "password")
+		password, err := shared.GetSecret(ctx, r.Client, key, "password")
 		if err != nil {
 			return err
 		}
@@ -754,7 +742,7 @@ func (r *NodeReconciler) reconcileSecret(ctx context.Context, node *ethereumv1al
 		}
 
 		var nodekey string
-		nodekey, err = r.getSecret(ctx, key, "key")
+		nodekey, err = shared.GetSecret(ctx, r.Client, key, "key")
 		if err != nil {
 			return
 		}

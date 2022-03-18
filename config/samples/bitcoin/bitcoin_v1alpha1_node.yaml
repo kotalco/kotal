@@ -1,3 +1,19 @@
+# WARNING: DON'T use the following secrets in production
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kotal-json-rpc-user-password
+stringData:
+  password: secret
+---
+# WARNING: DON'T use the following secrets in production
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dummy-json-rpc-user-password
+stringData:
+  password: s3cr3t
+---
 apiVersion: bitcoin.kotal.io/v1alpha1
 kind: Node
 metadata:
@@ -7,3 +23,8 @@ spec:
   rpc: true
   rpcPort: 7777
   rpcHost: 0.0.0.0
+  rpcUsers:
+    - username: kotal
+      passwordSecretName: kotal-json-rpc-user-password
+    - username: dummy
+      passwordSecretName: dummy-json-rpc-user-password

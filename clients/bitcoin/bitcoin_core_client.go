@@ -1,19 +1,29 @@
 package bitcoin
 
 import (
+	"context"
+	"crypto/hmac"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"os"
 
 	bitcoinv1alpha1 "github.com/kotalco/kotal/apis/bitcoin/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // BitcoinCoreClient is Bitcoin core client
 // https://github.com/bitcoin/bitcoin
 type BitcoinCoreClient struct {
-	node *bitcoinv1alpha1.Node
+	node   *bitcoinv1alpha1.Node
+	client client.Client
 }
+
+var hashCash map[string]string = map[string]string{}
 
 // Images
 const (
@@ -66,6 +76,18 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 		args = append(args, fmt.Sprintf("%s=%d", BitcoinArgRPCPort, node.Spec.RPCPort))
 		args = append(args, fmt.Sprintf("%s=%s", BitcoinArgRPCBind, node.Spec.RPCHost))
 		args = append(args, fmt.Sprintf("%s=0.0.0.0/0", BitcoinArgRPCAllowIp))
+
+		for _, rpcUser := range node.Spec.RPCUsers {
+			name := types.NamespacedName{Name: rpcUser.PasswordSecretName, Namespace: node.Namespace}
+			password, _ := shared.GetSecret(context.TODO(), c.client, name, "password")
+			saltedHash, found := hashCash[password]
+			if !found {
+				salt, hash := HmacSha256(password)
+				saltedHash = fmt.Sprintf("%s$%s", salt, hash)
+				hashCash[password] = saltedHash
+			}
+			args = append(args, fmt.Sprintf("%s=%s:%s", BitcoinArgRPCAuth, rpcUser.Username, saltedHash))
+		}
 	} else {
 		args = append(args, fmt.Sprintf("%s=0", BitcoinArgServer))
 	}
@@ -76,4 +98,20 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 // HomeDir is the home directory of Bitcoin core client image
 func (c *BitcoinCoreClient) HomeDir() string {
 	return BitcoinCoreHomeDir
+}
+
+// HmacSha256 creates new hmac sha256 hash
+// reference implementation:
+// https://github.com/bitcoin/bitcoin/blob/master/share/rpcauth/rpcauth.py
+func HmacSha256(password string) (salt, hash string) {
+	random := make([]byte, 16)
+	rand.Read(random)
+	salt = hex.EncodeToString(random)
+
+	h := hmac.New(sha256.New, []byte(salt))
+	h.Write([]byte(password))
+
+	hash = fmt.Sprintf("%x", h.Sum(nil))
+
+	return
 }

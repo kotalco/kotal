@@ -18,4 +18,6 @@ const (
 	BitcoinArgRPCBind = "-rpcbind"
 	// BitcoinArgRPCAllowIp is argument used to allow JSON-RPC connections from specific sources
 	BitcoinArgRPCAllowIp = "-rpcallowip"
+	// BitcoinArgRPCAuth is argument used to set JSON-RPC user and password in the format of user:salt$hash
+	BitcoinArgRPCAuth = "-rpcauth"
 )

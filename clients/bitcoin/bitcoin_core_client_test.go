@@ -25,7 +25,9 @@ var _ = Describe("Bitcoin core client", func() {
 	}
 
 	node.Default()
-	client := NewClient(node)
+	// nil is passed because there's no reconciler client
+	// TODO: create test for rpcUsers where client is not nil
+	client := NewClient(node, nil)
 
 	It("Should get correct image", func() {
 		// default image
