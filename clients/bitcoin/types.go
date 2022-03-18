@@ -20,4 +20,6 @@ const (
 	BitcoinArgRPCAllowIp = "-rpcallowip"
 	// BitcoinArgRPCAuth is argument used to set JSON-RPC user and password in the format of user:salt$hash
 	BitcoinArgRPCAuth = "-rpcauth"
+	// BitcoinArgDisableWallet is argument used to disable wallet and RPC calls
+	BitcoinArgDisableWallet = "-disablewallet"
 )

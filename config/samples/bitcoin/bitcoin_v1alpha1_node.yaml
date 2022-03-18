@@ -20,6 +20,7 @@ metadata:
   name: bitcoin-node
 spec:
   network: mainnet
+  wallet: false
   rpc: true
   rpcPort: 7777
   rpcHost: 0.0.0.0
