@@ -79,7 +79,7 @@ func (r *NodeReconciler) reconcilePVC(ctx context.Context, node *bitcoinv1alpha1
 // specPVC updates Bitcoin node persistent volume claim
 func (r *NodeReconciler) specPVC(node *bitcoinv1alpha1.Node, pvc *corev1.PersistentVolumeClaim) {
 	request := corev1.ResourceList{
-		corev1.ResourceStorage: resource.MustParse("10Gi"),
+		corev1.ResourceStorage: resource.MustParse(node.Spec.Storage),
 	}
 
 	// spec is immutable after creation except resources.requests for bound claims
@@ -153,6 +153,16 @@ func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1
 							{
 								Name:      "data",
 								MountPath: shared.PathData(homeDir),
+							},
+						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPU),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.Memory),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.MemoryLimit),
 							},
 						},
 					},
