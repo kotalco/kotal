@@ -112,6 +112,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *bitcoin
 
 	img := client.Image()
 	homeDir := client.HomeDir()
+	cmd := client.Command()
 	args := client.Args()
 	env := client.Env()
 
@@ -119,7 +120,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *bitcoin
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		if err := r.specStatefulSet(node, sts, img, homeDir, env, args); err != nil {
+		if err := r.specStatefulSet(node, sts, img, homeDir, env, cmd, args); err != nil {
 			return err
 		}
 		return nil
@@ -129,7 +130,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *bitcoin
 }
 
 // specStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1.StatefulSet, img, homeDir string, env []corev1.EnvVar, args []string) error {
+func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1.StatefulSet, img, homeDir string, env []corev1.EnvVar, cmd, args []string) error {
 
 	sts.ObjectMeta.Labels = node.Labels
 
@@ -143,12 +144,14 @@ func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1
 				Labels: node.Labels,
 			},
 			Spec: corev1.PodSpec{
+				SecurityContext: shared.SecurityContext(),
 				Containers: []corev1.Container{
 					{
-						Name:  "node",
-						Image: img,
-						Args:  args,
-						Env:   env,
+						Name:    "node",
+						Image:   img,
+						Command: cmd,
+						Args:    args,
+						Env:     env,
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",

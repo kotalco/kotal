@@ -41,7 +41,9 @@ var _ = Describe("Bitcoin core client", func() {
 	})
 
 	It("Should get correct command", func() {
-		Expect(client.Command()).To(BeNil())
+		Expect(client.Command()).To(Equal([]string{
+			"bitcoind",
+		}))
 	})
 
 	It("Should get correct home directory", func() {

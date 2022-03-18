@@ -54,8 +54,9 @@ func (c *BitcoinCoreClient) Env() (env []corev1.EnvVar) {
 }
 
 // Command is Bitcoin core client entrypoint
-func (c *BitcoinCoreClient) Command() []string {
-	return nil
+func (c *BitcoinCoreClient) Command() (command []string) {
+	command = append(command, "bitcoind")
+	return
 }
 
 // Args returns Bitcoin core client args
