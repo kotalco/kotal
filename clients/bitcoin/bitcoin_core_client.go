@@ -93,6 +93,12 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 		args = append(args, fmt.Sprintf("%s=0", BitcoinArgServer))
 	}
 
+	var txIndex uint
+	if node.Spec.TransactionIndex {
+		txIndex = 1
+	}
+	args = append(args, fmt.Sprintf("-txindex=%d", txIndex))
+
 	if !node.Spec.Wallet {
 		args = append(args, BitcoinArgDisableWallet)
 	}

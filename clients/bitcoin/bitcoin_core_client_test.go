@@ -17,11 +17,12 @@ var _ = Describe("Bitcoin core client", func() {
 			Namespace: "default",
 		},
 		Spec: bitcoinv1alpha1.NodeSpec{
-			Network: "mainnet",
-			RPC:     true,
-			RPCPort: 7777,
-			RPCHost: "127.0.0.1",
-			Wallet:  false,
+			Network:          "mainnet",
+			RPC:              true,
+			RPCPort:          7777,
+			RPCHost:          "127.0.0.1",
+			Wallet:           false,
+			TransactionIndex: true,
 		},
 	}
 
@@ -60,6 +61,7 @@ var _ = Describe("Bitcoin core client", func() {
 			"-rpcbind=127.0.0.1",
 			"-rpcallowip=0.0.0.0/0",
 			"-disablewallet",
+			"-txindex=1",
 		}))
 	})
 
