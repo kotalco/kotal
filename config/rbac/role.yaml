@@ -268,3 +268,23 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - stacks.kotal.io
+  resources:
+  - nodes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - stacks.kotal.io
+  resources:
+  - nodes/status
+  verbs:
+  - get
+  - patch
+  - update

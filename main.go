@@ -27,6 +27,7 @@ import (
 	ipfscontroller "github.com/kotalco/kotal/controllers/ipfs"
 	nearcontroller "github.com/kotalco/kotal/controllers/near"
 	polkadotcontroller "github.com/kotalco/kotal/controllers/polkadot"
+	stackscontroller "github.com/kotalco/kotal/controllers/stacks"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -214,6 +215,13 @@ func main() {
 		}
 	}
 
+	if err = (&stackscontroller.NodeReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Node")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 
 	setupLog.Info("starting manager")
