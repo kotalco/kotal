@@ -18,6 +18,7 @@ import (
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	nearv1alpha1 "github.com/kotalco/kotal/apis/near/v1alpha1"
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
+	stacksv1alpha1 "github.com/kotalco/kotal/apis/stacks/v1alpha1"
 	bitcoincontroller "github.com/kotalco/kotal/controllers/bitcoin"
 	chainlinkcontroller "github.com/kotalco/kotal/controllers/chainlink"
 	ethereumcontroller "github.com/kotalco/kotal/controllers/ethereum"
@@ -46,6 +47,7 @@ func init() {
 	_ = chainlinkv1alpha1.AddToScheme(scheme)
 	_ = nearv1alpha1.AddToScheme(scheme)
 	_ = bitcoinv1alpha1.AddToScheme(scheme)
+	_ = stacksv1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
