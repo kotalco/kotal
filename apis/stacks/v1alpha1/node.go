@@ -4,8 +4,20 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// StacksNetwork is Stacks network
+type StacksNetwork string
+
+const (
+	Mainnet StacksNetwork = "mainnet"
+	Testnet StacksNetwork = "testnet"
+)
+
 // NodeSpec defines the desired state of Node
-type NodeSpec struct{}
+type NodeSpec struct {
+	// Network is stacks network
+	// +kubebuilder:validation:Enum=mainnet;testnet
+	Network StacksNetwork `json:"network"`
+}
 
 // NodeStatus defines the observed state of Node
 type NodeStatus struct{}

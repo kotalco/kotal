@@ -2,4 +2,5 @@ apiVersion: stacks.kotal.io/v1alpha1
 kind: Node
 metadata:
   name: stacks-node
-spec: {}
+spec:
+  network: mainnet
