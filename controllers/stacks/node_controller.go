@@ -37,11 +37,54 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	shared.UpdateLabels(&node, "stacks-node")
 
-	if r.reconcileStatefulset(ctx, &node); err != nil {
+	if err = r.reconcileConfigmap(ctx, &node); err != nil {
+		return
+	}
+
+	if err = r.reconcileStatefulset(ctx, &node); err != nil {
 		return
 	}
 
 	return
+}
+
+// specConfigmap updates node statefulset spec
+func (r *NodeReconciler) specConfigmap(node *stacksv1alpha1.Node, configmap *corev1.ConfigMap, configToml string) {
+	configmap.ObjectMeta.Labels = node.Labels
+
+	if configmap.Data == nil {
+		configmap.Data = map[string]string{}
+	}
+
+	configmap.Data["config.toml"] = configToml
+
+}
+
+// reconcileConfigmap reconciles node configmap
+func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *stacksv1alpha1.Node) error {
+
+	configmap := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	// filecoin generates config.toml file from node spec
+	configToml, err := ConfigFromSpec(node)
+	if err != nil {
+		return err
+	}
+
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
+		if err := ctrl.SetControllerReference(node, configmap, r.Scheme); err != nil {
+			return err
+		}
+		r.specConfigmap(node, configmap, configToml)
+		return nil
+	})
+
+	return err
 }
 
 // reconcileStatefulset reconciles node statefulset
@@ -97,6 +140,25 @@ func (r *NodeReconciler) specStatefulSet(node *stacksv1alpha1.Node, sts *appsv1.
 						Command: cmd,
 						Args:    args,
 						Env:     env,
+						VolumeMounts: []corev1.VolumeMount{
+							{
+								Name:      "config",
+								ReadOnly:  true,
+								MountPath: shared.PathConfig(homeDir),
+							},
+						},
+					},
+				},
+				Volumes: []corev1.Volume{
+					{
+						Name: "config",
+						VolumeSource: corev1.VolumeSource{
+							ConfigMap: &corev1.ConfigMapVolumeSource{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: node.Name,
+								},
+							},
+						},
 					},
 				},
 			},

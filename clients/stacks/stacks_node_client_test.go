@@ -1,9 +1,11 @@
 package stacks
 
 import (
+	"fmt"
 	"os"
 
 	stacksv1alpha1 "github.com/kotalco/kotal/apis/stacks/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -37,7 +39,12 @@ var _ = Describe("Stacks node client", func() {
 	})
 
 	It("Should get correct command", func() {
-		Expect(client.Command()).To(BeNil())
+		Expect(client.Command()).To(Equal(
+			[]string{
+				StacksNodeCommand,
+				StacksStartCommand,
+			},
+		))
 	})
 
 	It("Should get correct home directory", func() {
@@ -45,7 +52,12 @@ var _ = Describe("Stacks node client", func() {
 	})
 
 	It("Should generate correct client arguments", func() {
-		Expect(client.Args()).To(ContainElements([]string{}))
+		Expect(client.Args()).To(ContainElements(
+			[]string{
+				StacksArgConfig,
+				fmt.Sprintf("%s/config.toml", shared.PathConfig(client.HomeDir())),
+			},
+		))
 	})
 
 })

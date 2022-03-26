@@ -1,9 +1,11 @@
 package stacks
 
 import (
+	"fmt"
 	"os"
 
 	stacksv1alpha1 "github.com/kotalco/kotal/apis/stacks/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -21,7 +23,7 @@ const (
 	DefaultStacksNodeImage = "blockstack/stacks-blockchain:2.05.0.1.0"
 	// StacksNodeHomeDir is Stacks node image home dir
 	// TODO: update home dir after creating a new docker image
-	StacksNodeHomeDir = "/root"
+	StacksNodeHomeDir = "/tmp"
 )
 
 // Image returns Stacks node client image
@@ -39,12 +41,18 @@ func (c *StacksNodeClient) Env() (env []corev1.EnvVar) {
 
 // Command is Stacks node client entrypoint
 func (c *StacksNodeClient) Command() (command []string) {
+
+	command = append(command, StacksNodeCommand, StacksStartCommand)
+
 	return
 }
 
 // Args returns Stacks node client args
 func (c *StacksNodeClient) Args() (args []string) {
 	_ = c.node
+
+	args = append(args, StacksArgConfig, fmt.Sprintf("%s/config.toml", shared.PathConfig(c.HomeDir())))
+
 	return
 }
 
