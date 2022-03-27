@@ -14,9 +14,17 @@ var _ webhook.Validator = &Node{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (r *Node) ValidateCreate() error {
+	var allErrors field.ErrorList
+
 	nodelog.Info("validate create", "name", r.Name)
 
-	return nil
+	allErrors = append(allErrors, r.Spec.Resources.ValidateCreate()...)
+
+	if len(allErrors) == 0 {
+		return nil
+	}
+
+	return apierrors.NewInvalid(schema.GroupKind{}, r.Name, allErrors)
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
@@ -25,6 +33,8 @@ func (r *Node) ValidateUpdate(old runtime.Object) error {
 	oldNode := old.(*Node)
 
 	nodelog.Info("validate update", "name", r.Name)
+
+	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
 	if r.Spec.Network != oldNode.Spec.Network {
 		err := field.Invalid(field.NewPath("spec").Child("network"), r.Spec.Network, "field is immutable")
