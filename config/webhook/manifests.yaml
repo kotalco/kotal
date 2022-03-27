@@ -206,6 +206,26 @@ webhooks:
     resources:
     - nodes
   sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-stacks-kotal-io-v1alpha1-node
+  failurePolicy: Fail
+  name: mutate-stacks-v1alpha1-node.kb.io
+  rules:
+  - apiGroups:
+    - stacks.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - nodes
+  sideEffects: None
 
 ---
 apiVersion: admissionregistration.k8s.io/v1
@@ -406,6 +426,26 @@ webhooks:
   rules:
   - apiGroups:
     - polkadot.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - nodes
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-stacks-kotal-io-v1alpha1-node
+  failurePolicy: Fail
+  name: validate-stacks-v1alpha1-node.kb.io
+  rules:
+  - apiGroups:
+    - stacks.kotal.io
     apiVersions:
     - v1alpha1
     operations:

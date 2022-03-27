@@ -34,7 +34,10 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
-	// TODO: default the node if webhooks are disabled
+	// default the node if webhooks are disabled
+	if !shared.IsWebhookEnabled() {
+		node.Default()
+	}
 
 	shared.UpdateLabels(&node, "stacks-node")
 
