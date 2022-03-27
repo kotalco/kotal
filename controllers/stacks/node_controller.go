@@ -24,6 +24,7 @@ type NodeReconciler struct {
 // +kubebuilder:rbac:groups=stacks.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=stacks.kotal.io,resources=nodes/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
+// +kubebuilder:rbac:groups=core,resources=configmaps,verbs=watch;get;create;update;list;delete
 
 func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var node stacksv1alpha1.Node
@@ -172,5 +173,6 @@ func (r *NodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&stacksv1alpha1.Node{}).
 		Owns(&appsv1.StatefulSet{}).
+		Owns(&corev1.ConfigMap{}).
 		Complete(r)
 }

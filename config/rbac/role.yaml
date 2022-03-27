@@ -61,6 +61,17 @@ rules:
   - ""
   resources:
   - configmaps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
   - persistentvolumeclaims
   verbs:
   - create
