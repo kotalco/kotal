@@ -4,3 +4,9 @@ metadata:
   name: stacks-node
 spec:
   network: mainnet
+  resources:
+    cpu: "2"
+    cpuLimit: "4"
+    memory: "2Gi"
+    memoryLimit: "4Gi"
+    storage: "10Gi"
