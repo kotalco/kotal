@@ -6,6 +6,7 @@ import (
 	stacksClients "github.com/kotalco/kotal/clients/stacks"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -91,6 +92,51 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *stacksv1a
 	return err
 }
 
+// reconcilePVC reconciles Stacks node persistent volume claim
+func (r *NodeReconciler) reconcilePVC(ctx context.Context, node *stacksv1alpha1.Node) error {
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
+		if err := ctrl.SetControllerReference(node, pvc, r.Scheme); err != nil {
+			return err
+		}
+
+		r.specPVC(node, pvc)
+
+		return nil
+	})
+
+	return err
+}
+
+// specPVC updates Stacks node persistent volume claim
+func (r *NodeReconciler) specPVC(node *stacksv1alpha1.Node, pvc *corev1.PersistentVolumeClaim) {
+	request := corev1.ResourceList{
+		corev1.ResourceStorage: resource.MustParse(node.Spec.Storage),
+	}
+
+	// spec is immutable after creation except resources.requests for bound claims
+	if !pvc.CreationTimestamp.IsZero() {
+		pvc.Spec.Resources.Requests = request
+		return
+	}
+
+	pvc.ObjectMeta.Labels = node.Labels
+	pvc.Spec = corev1.PersistentVolumeClaimSpec{
+		AccessModes: []corev1.PersistentVolumeAccessMode{
+			corev1.ReadWriteOnce,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: request,
+		},
+	}
+}
+
 // reconcileStatefulset reconciles node statefulset
 func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *stacksv1alpha1.Node) error {
 	sts := &appsv1.StatefulSet{
@@ -144,6 +190,16 @@ func (r *NodeReconciler) specStatefulSet(node *stacksv1alpha1.Node, sts *appsv1.
 						Command: cmd,
 						Args:    args,
 						Env:     env,
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPU),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.Memory),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.MemoryLimit),
+							},
+						},
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "config",
