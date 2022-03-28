@@ -47,7 +47,7 @@ var _ = Describe("Stacks node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.network",
 					BadValue: "testnet",
-					Detail:   "field is immutablex",
+					Detail:   "field is immutable",
 				},
 			},
 		},

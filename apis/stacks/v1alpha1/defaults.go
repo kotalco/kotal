@@ -1,5 +1,10 @@
 package v1alpha1
 
+const (
+	// DefaultRPCPort is the default JSON-RPC port
+	DefaultRPCPort uint = 20443
+)
+
 // Resources
 const (
 	// DefaultNodeCPURequest is the cpu requested by Stacks node
