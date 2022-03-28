@@ -26,6 +26,8 @@ type NodeSpec struct {
 	P2PPort uint `json:"p2pPort,omitempty"`
 	// P2PHost is p2p bind host
 	P2PHost string `json:"p2pHost,omitempty"`
+	// BitcoinNodeEndpoint is bitcoin node JSON-RPC endpoint
+	BitcoinNodeEndpoint string `json:"bitcoinNodeEndpoint,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
