@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"fmt"
 
 	"github.com/BurntSushi/toml"
 	stacksv1alpha1 "github.com/kotalco/kotal/apis/stacks/v1alpha1"
@@ -16,6 +17,7 @@ type BurnChain struct {
 
 type Node struct {
 	WorkingDir string `toml:"working_dir"`
+	RPCBind    string `toml:"rpc_bind"`
 }
 
 type Config struct {
@@ -29,6 +31,7 @@ func ConfigFromSpec(node *stacksv1alpha1.Node) (config string, err error) {
 
 	c.Node = Node{
 		WorkingDir: shared.PathData(stacksClients.StacksNodeHomeDir),
+		RPCBind:    fmt.Sprintf("0.0.0.0:%d", node.Spec.RPCPort),
 	}
 
 	c.BurnChain = BurnChain{
