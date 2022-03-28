@@ -31,7 +31,7 @@ func ConfigFromSpec(node *stacksv1alpha1.Node) (config string, err error) {
 
 	c.Node = Node{
 		WorkingDir: shared.PathData(stacksClients.StacksNodeHomeDir),
-		RPCBind:    fmt.Sprintf("0.0.0.0:%d", node.Spec.RPCPort),
+		RPCBind:    fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.RPCPort),
 	}
 
 	c.BurnChain = BurnChain{
