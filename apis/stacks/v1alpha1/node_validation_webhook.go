@@ -36,6 +36,11 @@ func (r *Node) ValidateUpdate(old runtime.Object) error {
 
 	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
+	if r.Spec.Network != oldNode.Spec.Network {
+		err := field.Invalid(field.NewPath("spec").Child("network"), r.Spec.Network, "field is immutable")
+		allErrors = append(allErrors, err)
+	}
+
 	if len(allErrors) == 0 {
 		return nil
 	}
