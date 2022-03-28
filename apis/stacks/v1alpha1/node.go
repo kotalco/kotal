@@ -18,6 +18,8 @@ type NodeSpec struct {
 	// Network is stacks network
 	// +kubebuilder:validation:Enum=mainnet;testnet
 	Network StacksNetwork `json:"network"`
+	// RPCPort is JSON-RPC server port
+	RPCPort uint `json:"rpcPort,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
