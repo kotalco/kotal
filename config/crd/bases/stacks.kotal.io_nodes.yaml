@@ -38,6 +38,9 @@ spec:
                 - mainnet
                 - testnet
                 type: string
+              p2pHost:
+                description: P2PHost is p2p bind host
+                type: integer
               p2pPort:
                 description: P2PPort is p2p bind port
                 type: integer

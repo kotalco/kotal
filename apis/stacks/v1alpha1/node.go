@@ -24,6 +24,8 @@ type NodeSpec struct {
 	RPCHost string `json:"rpcHost,omitempty"`
 	// P2PPort is p2p bind port
 	P2PPort uint `json:"p2pPort,omitempty"`
+	// P2PHost is p2p bind host
+	P2PHost uint `json:"p2pHost,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
