@@ -38,6 +38,9 @@ spec:
                 - mainnet
                 - testnet
                 type: string
+              p2pPort:
+                description: P2PPort is p2p bind port
+                type: integer
               resources:
                 description: Resources is node compute and storage resources
                 properties:
