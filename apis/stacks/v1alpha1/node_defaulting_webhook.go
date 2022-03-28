@@ -36,6 +36,10 @@ func (r *Node) Default() {
 
 	r.DefaultNodeResources()
 
+	if r.Spec.P2PPort == 0 {
+		r.Spec.P2PPort = DefaultP2PPort
+	}
+
 	if r.Spec.RPCPort == 0 {
 		r.Spec.RPCPort = DefaultRPCPort
 	}

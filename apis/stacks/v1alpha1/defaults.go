@@ -5,6 +5,8 @@ const (
 	DefaultRPCHost = "0.0.0.0"
 	// DefaultRPCPort is the default JSON-RPC port
 	DefaultRPCPort uint = 20443
+	// DefaultP2PPort is the default p2p bind port
+	DefaultP2PPort uint = 20444
 )
 
 // Resources
