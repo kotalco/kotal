@@ -1,3 +1,11 @@
+# WARNING: DON'T use the following secrets in production
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bitcoin-node-rpc-password
+stringData:
+  password: blockstacksystem
+---
 apiVersion: stacks.kotal.io/v1alpha1
 kind: Node
 metadata:
@@ -8,6 +16,12 @@ spec:
   p2pHost: 0.0.0.0
   rpcPort: 7777
   rpcHost: 0.0.0.0
+  bitcoinNode:
+    endpoint: bitcoin.blockstack.com
+    rpcPort: 8332
+    p2pPort: 8333
+    rpcUsername: blockstack
+    rpcPasswordSecretName: bitcoin-node-rpc-password
   resources:
     cpu: "2"
     cpuLimit: "4"
