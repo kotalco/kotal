@@ -18,6 +18,7 @@ type BurnChain struct {
 type Node struct {
 	WorkingDir string `toml:"working_dir"`
 	RPCBind    string `toml:"rpc_bind"`
+	P2PBind    string `toml:"p2p_bind"`
 }
 
 type Config struct {
@@ -32,6 +33,7 @@ func ConfigFromSpec(node *stacksv1alpha1.Node) (config string, err error) {
 	c.Node = Node{
 		WorkingDir: shared.PathData(stacksClients.StacksNodeHomeDir),
 		RPCBind:    fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.RPCPort),
+		P2PBind:    fmt.Sprintf("0.0.0.0:%d", node.Spec.P2PPort),
 	}
 
 	c.BurnChain = BurnChain{
