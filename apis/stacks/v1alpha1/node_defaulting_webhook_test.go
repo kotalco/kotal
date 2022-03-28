@@ -17,6 +17,7 @@ var _ = Describe("Stacks node defaulting", func() {
 
 		node.Default()
 
+		Expect(node.Spec.RPCHost).To(Equal(DefaultRPCHost))
 		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))
 		Expect(node.Spec.CPU).To(Equal(DefaultNodeCPURequest))
 		Expect(node.Spec.CPULimit).To(Equal(DefaultNodeCPULimit))

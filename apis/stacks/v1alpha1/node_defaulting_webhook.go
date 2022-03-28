@@ -40,4 +40,8 @@ func (r *Node) Default() {
 		r.Spec.RPCPort = DefaultRPCPort
 	}
 
+	if r.Spec.RPCHost == "" {
+		r.Spec.RPCHost = DefaultRPCHost
+	}
+
 }
