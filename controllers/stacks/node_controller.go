@@ -46,6 +46,10 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	if err = r.reconcilePVC(ctx, &node); err != nil {
+		return
+	}
+
 	if err = r.reconcileStatefulset(ctx, &node); err != nil {
 		return
 	}
@@ -202,6 +206,10 @@ func (r *NodeReconciler) specStatefulSet(node *stacksv1alpha1.Node, sts *appsv1.
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							{
+								Name:      "data",
+								MountPath: shared.PathData(homeDir),
+							},
+							{
 								Name:      "config",
 								ReadOnly:  true,
 								MountPath: shared.PathConfig(homeDir),
@@ -217,6 +225,14 @@ func (r *NodeReconciler) specStatefulSet(node *stacksv1alpha1.Node, sts *appsv1.
 								LocalObjectReference: corev1.LocalObjectReference{
 									Name: node.Name,
 								},
+							},
+						},
+					},
+					{
+						Name: "data",
+						VolumeSource: corev1.VolumeSource{
+							PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+								ClaimName: node.Name,
 							},
 						},
 					},
