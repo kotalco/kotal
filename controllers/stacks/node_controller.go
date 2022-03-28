@@ -80,7 +80,7 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *stacksv1a
 	}
 
 	// filecoin generates config.toml file from node spec
-	configToml, err := ConfigFromSpec(node)
+	configToml, err := ConfigFromSpec(node, r.Client)
 	if err != nil {
 		return err
 	}
