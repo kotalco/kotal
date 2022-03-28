@@ -40,7 +40,7 @@ spec:
                 type: string
               p2pHost:
                 description: P2PHost is p2p bind host
-                type: integer
+                type: string
               p2pPort:
                 description: P2PPort is p2p bind port
                 type: integer
