@@ -32,9 +32,31 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
-              bitcoinNodeEndpoint:
-                description: BitcoinNodeEndpoint is bitcoin node JSON-RPC endpoint
-                type: string
+              bitcoinNode:
+                description: BitcoinNode is Bitcoin node
+                properties:
+                  endpoint:
+                    description: Endpoint is bitcoin node JSON-RPC endpoint
+                    type: string
+                  p2pPort:
+                    description: P2pPort is bitcoin node p2p port
+                    type: integer
+                  rpcPasswordSecretName:
+                    description: RpcPasswordSecretName is k8s secret name holding bitcoin node JSON-RPC password
+                    type: string
+                  rpcPort:
+                    description: RpcPort is bitcoin node JSON-RPC port
+                    type: integer
+                  rpcUsername:
+                    description: RpcUsername is bitcoin node JSON-RPC username
+                    type: string
+                required:
+                - endpoint
+                - p2pPort
+                - rpcPasswordSecretName
+                - rpcPort
+                - rpcUsername
+                type: object
               network:
                 description: Network is stacks network
                 enum:
@@ -81,6 +103,7 @@ spec:
                 description: RPCPort is JSON-RPC server port
                 type: integer
             required:
+            - bitcoinNode
             - network
             type: object
           status:
