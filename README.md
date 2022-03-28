@@ -15,23 +15,24 @@ Kotal operator is a **cloud agnostic blockchain deployer** that makes it super e
 - Deploy Chainlink nodes
 - Deploy Filecoin nodes
 - Deploy Filecoin backed pinning services (FPS)
+- Deploy Stacks rpc and api nodes
 
 
 ## Kubernetes Custom Resources
 
 Kotal extended kubernetes with custom resources in different API groups.
 
-| Group            | Description                                      | API Group                   | Status               |
-| ---------------- | ------------------------------------------------ | --------------------------- | -------------------- |
-| **Bitcoin**      | Deploy Bitcoin nodes                             | bitcoin.kotal.io/v1alpha1   | alpha                |
-| **Chainlink**    | Deploy Chainlink nodes                           | chainlink.kotal.io/v1alpha1 | alpha                |
-| **Ethereum**     | Deploy private and public network Ethereum nodes | ethereum.kotal.io/v1alpha1  | alpha                |
-| **Ethereum 2.0** | Deploy validator and beacon chain nodes          | ethereum2.kotal.io/v1alpha1 | alpha                |
-| **IPFS**         | Deploy IPFS peers, cluster peers, and swarms     | ipfs.kotal.io/v1alpha1      | alpha                |
-| **Filecoin**     | Deploy Filecoin nodes                            | filecoin.kotal.io/v1alpha1  | alpha                |
-| **NEAR**         | Deploy NEAR rpc, archive and validator nodes     | near.kotal.io/v1alpha1      | alpha                |
-| **Polkadot**     | Deploy Polkadot nodes and validator nodes        | polkadot.kotal.io/v1alpha1  | alpha                |
-| **Algorand**     | Deploy Algorand relay and participation nodes    | algorand.kotal.io/v1alpha1  | coming soon :rocket: |
+| Protocol         | Description                                      | API Group                   | Status |
+| ---------------- | ------------------------------------------------ | --------------------------- | ------ |
+| **Bitcoin**      | Deploy Bitcoin nodes                             | bitcoin.kotal.io/v1alpha1   | alpha  |
+| **Chainlink**    | Deploy Chainlink nodes                           | chainlink.kotal.io/v1alpha1 | alpha  |
+| **Ethereum**     | Deploy private and public network Ethereum nodes | ethereum.kotal.io/v1alpha1  | alpha  |
+| **Ethereum 2.0** | Deploy validator and beacon chain nodes          | ethereum2.kotal.io/v1alpha1 | alpha  |
+| **Filecoin**     | Deploy Filecoin nodes                            | filecoin.kotal.io/v1alpha1  | alpha  |
+| **IPFS**         | Deploy IPFS peers, cluster peers, and swarms     | ipfs.kotal.io/v1alpha1      | alpha  |
+| **NEAR**         | Deploy NEAR rpc, archive and validator nodes     | near.kotal.io/v1alpha1      | alpha  |
+| **Polkadot**     | Deploy Polkadot nodes and validator nodes        | polkadot.kotal.io/v1alpha1  | alpha  |
+| **Stacks**       | Deploy Stacks rpc and api nodes                  | stacks.kotal.io/v1alpha1    | alpha  |
 
 ## Client support
 
@@ -47,6 +48,7 @@ For each protocol, kotal supports at least 1 client (reference client), client c
 | **Filecoin**     | [Lotus](https://github.com/filecoin-project/lotus)                                                                                                                                               |
 | **NEAR**         | [nearcore](https://github.com/near/nearcore)                                                                                                                                                     |
 | **Polkadot**     | [Parity Polkadot](https://github.com/paritytech/polkadot)                                                                                                                                        |
+| **Stacks**       | [Stacks Node](https://github.com/stacks-network/stacks-blockchain)                                                                                                                               |
 
 ## Install Kotal
 
