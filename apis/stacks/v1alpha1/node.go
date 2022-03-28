@@ -20,6 +20,8 @@ type NodeSpec struct {
 	Network StacksNetwork `json:"network"`
 	// RPCPort is JSON-RPC server port
 	RPCPort uint `json:"rpcPort,omitempty"`
+	// RPCHost is JSON-RPC server host
+	RPCHost string `json:"rpcHost,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
