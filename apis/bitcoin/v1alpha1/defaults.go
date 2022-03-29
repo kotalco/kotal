@@ -9,8 +9,8 @@ const (
 	DefaultMainnetP2PPort uint = 8333
 	// DefaultTestnetP2PPort is the default p2p port for testnet
 	DefaultTestnetP2PPort uint = 18333
-	// DefaultRPCHost is the default JSON-RPC server host
-	DefaultRPCHost = "0.0.0.0"
+	// DefaultHost is the default JSON-RPC server host
+	DefaultHost = "0.0.0.0"
 )
 
 // Resources
