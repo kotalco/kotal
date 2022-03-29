@@ -130,7 +130,14 @@ func (r *NodeReconciler) specService(node *bitcoinv1alpha1.Node, svc *corev1.Ser
 
 	svc.ObjectMeta.Labels = labels
 
-	svc.Spec.Ports = []corev1.ServicePort{}
+	svc.Spec.Ports = []corev1.ServicePort{
+		{
+			Name:       "p2p",
+			Port:       int32(node.Spec.P2PPort),
+			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
+			Protocol:   corev1.ProtocolTCP,
+		},
+	}
 
 	if node.Spec.RPC {
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
