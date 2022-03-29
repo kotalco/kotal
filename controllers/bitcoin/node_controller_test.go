@@ -140,6 +140,12 @@ var _ = Describe("Bitcoin node controller", func() {
 		Expect(fetched.Spec.Ports).To(ContainElements(
 			[]corev1.ServicePort{
 				{
+					Name:       "p2p",
+					Port:       int32(bitcoinv1alpha1.DefaultMainnetP2PPort),
+					TargetPort: intstr.FromInt(int(bitcoinv1alpha1.DefaultMainnetP2PPort)),
+					Protocol:   corev1.ProtocolTCP,
+				},
+				{
 					Name:       "rpc",
 					Port:       int32(bitcoinv1alpha1.DefaultMainnetRPCPort),
 					TargetPort: intstr.FromInt(int(bitcoinv1alpha1.DefaultMainnetRPCPort)),
