@@ -9,6 +9,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -25,7 +26,7 @@ type NodeReconciler struct {
 // +kubebuilder:rbac:groups=stacks.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=stacks.kotal.io,resources=nodes/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
-// +kubebuilder:rbac:groups=core,resources=configmaps,verbs=watch;get;create;update;list;delete
+// +kubebuilder:rbac:groups=core,resources=services;configmaps,verbs=watch;get;create;update;list;delete
 
 func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
 	var node stacksv1alpha1.Node
@@ -47,6 +48,10 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	}
 
 	if err = r.reconcilePVC(ctx, &node); err != nil {
+		return
+	}
+
+	if err = r.reconcileService(ctx, &node); err != nil {
 		return
 	}
 
@@ -139,6 +144,50 @@ func (r *NodeReconciler) specPVC(node *stacksv1alpha1.Node, pvc *corev1.Persiste
 			Requests: request,
 		},
 	}
+}
+
+// reconcileService reconciles Bitcoin node service
+func (r *NodeReconciler) reconcileService(ctx context.Context, node *stacksv1alpha1.Node) error {
+	svc := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
+		if err := ctrl.SetControllerReference(node, svc, r.Scheme); err != nil {
+			return err
+		}
+		r.specService(node, svc)
+		return nil
+	})
+
+	return err
+}
+
+// specService updates Bitcoin node service spec
+func (r *NodeReconciler) specService(node *stacksv1alpha1.Node, svc *corev1.Service) {
+	labels := node.Labels
+
+	svc.ObjectMeta.Labels = labels
+
+	svc.Spec.Ports = []corev1.ServicePort{
+		{
+			Name:       "p2p",
+			Port:       int32(node.Spec.P2PPort),
+			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
+			Protocol:   corev1.ProtocolTCP,
+		},
+		{
+			Name:       "rpc",
+			Port:       int32(node.Spec.RPCPort),
+			TargetPort: intstr.FromInt(int(node.Spec.RPCPort)),
+			Protocol:   corev1.ProtocolTCP,
+		},
+	}
+
+	svc.Spec.Selector = labels
 }
 
 // reconcileStatefulset reconciles node statefulset
@@ -249,5 +298,6 @@ func (r *NodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&stacksv1alpha1.Node{}).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.ConfigMap{}).
+		Owns(&corev1.Service{}).
 		Complete(r)
 }
