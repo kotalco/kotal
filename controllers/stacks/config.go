@@ -41,7 +41,7 @@ func ConfigFromSpec(node *stacksv1alpha1.Node, client client.Client) (config str
 	c.Node = Node{
 		WorkingDir: shared.PathData(stacksClients.StacksNodeHomeDir),
 		RPCBind:    fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.RPCPort),
-		P2PBind:    fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.P2PPort),
+		P2PBind:    fmt.Sprintf("%s:%d", node.Spec.P2PHost, node.Spec.P2PPort),
 	}
 
 	name := types.NamespacedName{
