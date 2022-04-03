@@ -20,10 +20,10 @@ const (
 	// EnvStacksNodeImage is the environment variable used for Stacks node client image
 	EnvStacksNodeImage = "STACKS_NODE_IMAGE"
 	// DefaultStacksNodeImage is the default Stacks node client image
-	DefaultStacksNodeImage = "blockstack/stacks-blockchain:2.05.0.1.0"
+	DefaultStacksNodeImage = "kotalco/stacks:2.05.0.1.0"
 	// StacksNodeHomeDir is Stacks node image home dir
 	// TODO: update home dir after creating a new docker image
-	StacksNodeHomeDir = "/tmp"
+	StacksNodeHomeDir = "/home/stacks"
 )
 
 // Image returns Stacks node client image
