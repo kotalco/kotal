@@ -91,7 +91,7 @@ func (r *Resources) ValidateUpdate(oldResources *Resources) (errors field.ErrorL
 	// storage class is immutable
 	if oldStorageClass != r.StorageClass {
 		msg := "field is immutable"
-		err := field.Invalid(field.NewPath("spec").Child("resources").Child("storageClass"), r.StorageClass, msg)
+		err := field.Invalid(field.NewPath("spec").Child("resources").Child("storageClass"), *r.StorageClass, msg)
 		errors = append(errors, err)
 	}
 
