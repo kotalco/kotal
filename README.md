@@ -36,7 +36,7 @@ Kotal extended kubernetes with custom resources in different API groups.
 
 ## Client support
 
-For each protocol, kotal supports at least 1 client (reference client), client can be changed by updating `client: ...` specification parameter.
+For each protocol, kotal supports at least 1 client (reference client):
 
 | Protocol         | Client(s)                                                                                                                                                                                        |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
