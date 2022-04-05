@@ -6,12 +6,20 @@ metadata:
 stringData:
   password: blockstacksystem
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: node-private-key
+stringData:
+  key: 7d6774f1bfcd3b0e0ed81ae6094f17232056ed4a560408353ba92ee70d53647001
+---
 apiVersion: stacks.kotal.io/v1alpha1
 kind: Node
 metadata:
   name: stacks-node
 spec:
   network: mainnet
+  nodePrivateKeySecretName: node-private-key
   p2pPort: 8888
   p2pHost: 0.0.0.0
   rpcPort: 7777
