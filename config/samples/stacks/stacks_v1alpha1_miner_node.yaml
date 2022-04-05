@@ -17,7 +17,7 @@ stringData:
 apiVersion: stacks.kotal.io/v1alpha1
 kind: Node
 metadata:
-  name: stacks-node
+  name: stacks-miner-node
 spec:
   network: mainnet
   p2pPort: 8888
@@ -25,6 +25,7 @@ spec:
   rpcPort: 7777
   rpcHost: 0.0.0.0
   miner: true
+  mineMicroblocks: true
   seedPrivateKeySecretName: seed-private-key
   bitcoinNode:
     endpoint: bitcoin.blockstack.com

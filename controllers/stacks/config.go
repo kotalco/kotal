@@ -24,11 +24,12 @@ type BurnChain struct {
 }
 
 type Node struct {
-	WorkingDir string `toml:"working_dir"`
-	RPCBind    string `toml:"rpc_bind"`
-	P2PBind    string `toml:"p2p_bind"`
-	Miner      bool   `toml:"miner"`
-	Seed       string `toml:"seed"`
+	WorkingDir      string `toml:"working_dir"`
+	RPCBind         string `toml:"rpc_bind"`
+	P2PBind         string `toml:"p2p_bind"`
+	Seed            string `toml:"seed,omitempty"`
+	Miner           bool   `toml:"miner"`
+	MineMicroblocks bool   `toml:"mine_microblocks,omitempty"`
 }
 
 type Config struct {
@@ -59,6 +60,7 @@ func ConfigFromSpec(node *stacksv1alpha1.Node, client client.Client) (config str
 		}
 
 		c.Node.Seed = seedPrivateKey
+		c.Node.MineMicroblocks = node.Spec.MineMicroblocks
 	}
 
 	name := types.NamespacedName{
