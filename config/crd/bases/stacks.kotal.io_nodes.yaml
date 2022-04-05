@@ -57,6 +57,9 @@ spec:
                 - rpcPort
                 - rpcUsername
                 type: object
+              mineMicroblocks:
+                description: MineMicroblocks mines Stacks micro blocks
+                type: boolean
               miner:
                 description: Miner enables mining
                 type: boolean
