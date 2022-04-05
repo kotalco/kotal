@@ -28,6 +28,7 @@ type Node struct {
 	RPCBind    string `toml:"rpc_bind"`
 	P2PBind    string `toml:"p2p_bind"`
 	Miner      bool   `toml:"miner"`
+	Seed       string `toml:"seed"`
 }
 
 type Config struct {
@@ -44,6 +45,20 @@ func ConfigFromSpec(node *stacksv1alpha1.Node, client client.Client) (config str
 		RPCBind:    fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.RPCPort),
 		P2PBind:    fmt.Sprintf("%s:%d", node.Spec.P2PHost, node.Spec.P2PPort),
 		Miner:      node.Spec.Miner,
+	}
+
+	if node.Spec.Miner {
+		var seedPrivateKey string
+		name := types.NamespacedName{
+			Name:      node.Spec.SeedPrivateKeySecretName,
+			Namespace: node.Namespace,
+		}
+		seedPrivateKey, err = shared.GetSecret(context.Background(), client, name, "key")
+		if err != nil {
+			return
+		}
+
+		c.Node.Seed = seedPrivateKey
 	}
 
 	name := types.NamespacedName{
