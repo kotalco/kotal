@@ -5,13 +5,18 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+    
+env:
+  K8S_VERSION: 1.23.3
 
 jobs:
 
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+
+    - name: Clone repo
+      uses: actions/checkout@v3
 
     - name: Set up Go
       uses: actions/setup-go@v3
@@ -20,6 +25,11 @@ jobs:
 
     - name: Build
       run: go build -v ./...
+
+    - name: Download envtest binaries
+      run: |
+        curl -sSLo envtest-bins.tar.gz "https://go.kubebuilder.io/test-tools/${K8S_VERSION}/$(go env GOOS)/$(go env GOARCH)"
+        tar -vxzf envtest-bins.tar.gz -C /usr/local/
 
     - name: Test
       run: go test -v ./...
