@@ -29,7 +29,7 @@ jobs:
     - name: Download envtest binaries
       run: |
         curl -sSLo envtest-bins.tar.gz "https://go.kubebuilder.io/test-tools/${K8S_VERSION}/$(go env GOOS)/$(go env GOARCH)"
-        tar -vxzf envtest-bins.tar.gz -C /usr/local/
+        sudo tar -vxzf envtest-bins.tar.gz -C /usr/local/
 
     - name: Test
       run: go test -v ./...
