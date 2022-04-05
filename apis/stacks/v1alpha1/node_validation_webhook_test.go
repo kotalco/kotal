@@ -51,6 +51,23 @@ var _ = Describe("Stacks node validation", func() {
 				},
 			},
 		},
+		{
+			Title: "mineMicroblocks is given for non miner node",
+			Node: &Node{
+				Spec: NodeSpec{
+					Network:         Mainnet,
+					MineMicroblocks: true,
+				},
+			},
+			Errors: []*field.Error{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.miner",
+					BadValue: false,
+					Detail:   "node must be a miner if mineMicroblocks is true",
+				},
+			},
+		},
 	}
 
 	updateCases := []struct {

@@ -30,6 +30,11 @@ func (r *Node) ValidateCreate() error {
 		allErrors = append(allErrors, err)
 	}
 
+	if r.Spec.MineMicroblocks && !r.Spec.Miner {
+		err := field.Invalid(field.NewPath("spec").Child("miner"), r.Spec.Miner, "node must be a miner if mineMicroblocks is true")
+		allErrors = append(allErrors, err)
+	}
+
 	if len(allErrors) == 0 {
 		return nil
 	}
