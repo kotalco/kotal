@@ -57,6 +57,9 @@ spec:
                 - rpcPort
                 - rpcUsername
                 type: object
+              miner:
+                description: Miner enables mining
+                type: boolean
               network:
                 description: Network is stacks network
                 enum:

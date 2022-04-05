@@ -42,6 +42,8 @@ type NodeSpec struct {
 	P2PHost string `json:"p2pHost,omitempty"`
 	// BitcoinNode is Bitcoin node
 	BitcoinNode BitcoinNode `json:"bitcoinNode"`
+	// Miner enables mining
+	Miner bool `json:"miner,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
