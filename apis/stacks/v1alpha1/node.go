@@ -44,6 +44,8 @@ type NodeSpec struct {
 	BitcoinNode BitcoinNode `json:"bitcoinNode"`
 	// Miner enables mining
 	Miner bool `json:"miner,omitempty"`
+	// SeedPrivateKeySecretName is k8s secret holding seed private key used for mining
+	SeedPrivateKeySecretName string `json:"seedPrivateKeySecretName,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

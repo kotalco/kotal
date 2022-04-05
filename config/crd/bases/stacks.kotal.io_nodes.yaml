@@ -105,6 +105,9 @@ spec:
               rpcPort:
                 description: RPCPort is JSON-RPC server port
                 type: integer
+              seedPrivateKeySecretName:
+                description: SeedPrivateKeySecretName is k8s secret holding seed private key used for mining
+                type: string
             required:
             - bitcoinNode
             - network
