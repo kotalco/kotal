@@ -27,6 +27,7 @@ type Node struct {
 	WorkingDir string `toml:"working_dir"`
 	RPCBind    string `toml:"rpc_bind"`
 	P2PBind    string `toml:"p2p_bind"`
+	Miner      bool   `toml:"miner"`
 }
 
 type Config struct {
@@ -42,6 +43,7 @@ func ConfigFromSpec(node *stacksv1alpha1.Node, client client.Client) (config str
 		WorkingDir: shared.PathData(stacksClients.StacksNodeHomeDir),
 		RPCBind:    fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.RPCPort),
 		P2PBind:    fmt.Sprintf("%s:%d", node.Spec.P2PHost, node.Spec.P2PPort),
+		Miner:      node.Spec.Miner,
 	}
 
 	name := types.NamespacedName{
