@@ -34,6 +34,23 @@ var _ = Describe("Stacks node validation", func() {
 				},
 			},
 		},
+		{
+			Title: "seedPrivateKeySecretName is given for non miner node",
+			Node: &Node{
+				Spec: NodeSpec{
+					Network:                  Mainnet,
+					SeedPrivateKeySecretName: "seed-private-key",
+				},
+			},
+			Errors: []*field.Error{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.miner",
+					BadValue: false,
+					Detail:   "node must be a miner if seedPrivateKeySecretName is given",
+				},
+			},
+		},
 	}
 
 	updateCases := []struct {

@@ -25,6 +25,11 @@ func (r *Node) ValidateCreate() error {
 		allErrors = append(allErrors, err)
 	}
 
+	if r.Spec.SeedPrivateKeySecretName != "" && !r.Spec.Miner {
+		err := field.Invalid(field.NewPath("spec").Child("miner"), r.Spec.Miner, "node must be a miner if seedPrivateKeySecretName is given")
+		allErrors = append(allErrors, err)
+	}
+
 	if len(allErrors) == 0 {
 		return nil
 	}
