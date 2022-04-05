@@ -16,7 +16,25 @@ var _ = Describe("Stacks node validation", func() {
 		Title  string
 		Node   *Node
 		Errors field.ErrorList
-	}{}
+	}{
+		{
+			Title: "missing seedPrivateKeySecretName",
+			Node: &Node{
+				Spec: NodeSpec{
+					Network: Mainnet,
+					Miner:   true,
+				},
+			},
+			Errors: []*field.Error{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.seedPrivateKeySecretName",
+					BadValue: "",
+					Detail:   "seedPrivateKeySecretName is required if node is miner",
+				},
+			},
+		},
+	}
 
 	updateCases := []struct {
 		Title   string
