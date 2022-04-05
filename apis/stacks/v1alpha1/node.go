@@ -48,6 +48,8 @@ type NodeSpec struct {
 	SeedPrivateKeySecretName string `json:"seedPrivateKeySecretName,omitempty"`
 	// MineMicroblocks mines Stacks micro blocks
 	MineMicroblocks bool `json:"mineMicroblocks,omitempty"`
+	// NodePrivateKeySecretName is k8s secret holding node private key
+	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

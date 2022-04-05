@@ -69,6 +69,9 @@ spec:
                 - mainnet
                 - testnet
                 type: string
+              nodePrivateKeySecretName:
+                description: NodePrivateKeySecretName is k8s secret holding node private key
+                type: string
               p2pHost:
                 description: P2PHost is p2p bind host
                 type: string
