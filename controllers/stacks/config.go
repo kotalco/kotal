@@ -28,6 +28,7 @@ type Node struct {
 	RPCBind         string `toml:"rpc_bind"`
 	P2PBind         string `toml:"p2p_bind"`
 	Seed            string `toml:"seed,omitempty"`
+	LocalPeerSeed   string `toml:"local_peer_seed"`
 	Miner           bool   `toml:"miner"`
 	MineMicroblocks bool   `toml:"mine_microblocks,omitempty"`
 }
@@ -61,6 +62,20 @@ func ConfigFromSpec(node *stacksv1alpha1.Node, client client.Client) (config str
 
 		c.Node.Seed = seedPrivateKey
 		c.Node.MineMicroblocks = node.Spec.MineMicroblocks
+	}
+
+	if node.Spec.NodePrivateKeySecretName != "" {
+		var nodePrivateKey string
+		name := types.NamespacedName{
+			Name:      node.Spec.NodePrivateKeySecretName,
+			Namespace: node.Namespace,
+		}
+		nodePrivateKey, err = shared.GetSecret(context.Background(), client, name, "key")
+		if err != nil {
+			return
+		}
+
+		c.Node.LocalPeerSeed = nodePrivateKey
 	}
 
 	name := types.NamespacedName{
