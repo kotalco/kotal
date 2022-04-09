@@ -12,6 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	stacksv1alpha1 "github.com/kotalco/kotal/apis/stacks/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -59,7 +60,23 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		return
 	}
 
+	if err = r.updateStatus(ctx, &node); err != nil {
+		return
+	}
+
 	return
+}
+
+// updateStatus updates Stacks node status
+func (r *NodeReconciler) updateStatus(ctx context.Context, node *stacksv1alpha1.Node) error {
+	node.Status.Client = "stacks"
+
+	if err := r.Status().Update(ctx, node); err != nil {
+		log.FromContext(ctx).Error(err, "unable to update node status")
+		return err
+	}
+
+	return nil
 }
 
 // specConfigmap updates node statefulset spec
