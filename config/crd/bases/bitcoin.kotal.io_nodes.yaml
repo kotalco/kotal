@@ -16,7 +16,14 @@ spec:
     singular: node
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.network
+      name: Network
+      type: string
+    - jsonPath: .status.client
+      name: Client
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: Node is the Schema for the nodes API
@@ -107,10 +114,15 @@ spec:
             type: object
           status:
             description: NodeStatus defines the observed state of Node
+            properties:
+              client:
+                type: string
             type: object
         type: object
     served: true
     storage: true
+    subresources:
+      status: {}
 status:
   acceptedNames:
     kind: ""
