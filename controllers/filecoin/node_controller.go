@@ -263,6 +263,7 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 				Labels: labels,
 			},
 			Spec: corev1.PodSpec{
+				SecurityContext: shared.SecurityContext(),
 				InitContainers: []corev1.Container{
 					{
 						Name:  "copy-config-toml",
