@@ -8,6 +8,7 @@ import (
 
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
 	filecoinClients "github.com/kotalco/kotal/clients/filecoin"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	appsv1 "k8s.io/api/apps/v1"
@@ -78,6 +79,7 @@ var _ = Describe("kusama node controller", func() {
 		fetched := &appsv1.StatefulSet{}
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
+		Expect(fetched.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
 	})
 

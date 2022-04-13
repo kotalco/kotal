@@ -82,6 +82,7 @@ var _ = Describe("NEAR node controller", func() {
 		fetched := &appsv1.StatefulSet{}
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
+		Expect(fetched.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
 		// init near node
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Name).To(Equal("init-near-node"))
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Image).To(Equal(client.Image()))

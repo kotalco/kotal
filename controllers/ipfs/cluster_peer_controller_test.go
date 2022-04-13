@@ -117,7 +117,7 @@ var _ = Describe("IPFS cluster peer controller", func() {
 		fetched := &appsv1.StatefulSet{}
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 		Expect(fetched.OwnerReferences).To(ContainElements(peerOwnerReference))
-
+		Expect(fetched.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
 		container := fetched.Spec.Template.Spec.Containers[0]
 		Expect(container.Image).To(Equal(client.Image()))
 

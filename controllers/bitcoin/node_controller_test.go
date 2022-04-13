@@ -79,6 +79,7 @@ var _ = Describe("Bitcoin node controller", func() {
 		fetched := &appsv1.StatefulSet{}
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
+		Expect(fetched.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Name).To(Equal("node"))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Env).To(Equal(client.Env()))

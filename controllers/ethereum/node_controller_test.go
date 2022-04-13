@@ -9,6 +9,7 @@ import (
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	ethereumClients "github.com/kotalco/kotal/clients/ethereum"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	appsv1 "k8s.io/api/apps/v1"
@@ -151,6 +152,7 @@ var _ = Describe("Ethereum network controller", func() {
 			sts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), key, sts)).To(Succeed())
 			Expect(sts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
+			Expect(sts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
 			Expect(sts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
 		})
 
@@ -340,6 +342,7 @@ var _ = Describe("Ethereum network controller", func() {
 			sts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), key, sts)).To(Succeed())
 			Expect(sts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
+			Expect(sts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
 			Expect(sts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
 		})
 
@@ -539,6 +542,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
+			Expect(nodeSts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
 		})
 
@@ -750,6 +754,7 @@ var _ = Describe("Ethereum network controller", func() {
 			sts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), key, sts)).To(Succeed())
 			Expect(sts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
+			Expect(sts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
 			Expect(sts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
 		})
 
@@ -938,6 +943,7 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
+			Expect(nodeSts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
 		})
 

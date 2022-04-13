@@ -86,6 +86,7 @@ var _ = Describe("Chainlink node controller", func() {
 		fetched := &appsv1.StatefulSet{}
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
+		Expect(fetched.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
 		// init container
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Image).To(Equal(shared.BusyboxImage))
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Command).To(ConsistOf("/bin/sh"))
