@@ -5,6 +5,18 @@ set -e
 K8S_PROVIDER="${K8S_PROVIDER:-kind}"
 
 
+function cleanup {
+  echo "🧽 Cleaning up"
+  if [ "$K8S_PROVIDER" == "minikube" ]
+    then
+      minikube delete --all
+    else
+      kind delete clusters --all
+  fi
+}
+
+trap cleanup EXIT
+
 if ! docker info > /dev/null 2>&1; then
   echo "Docker isn't running"
   echo "Start docker, then try again!"
