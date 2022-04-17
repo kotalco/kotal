@@ -9,9 +9,9 @@ import (
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	ethereumClients "github.com/kotalco/kotal/clients/ethereum"
-	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gstruct"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -152,7 +152,12 @@ var _ = Describe("Ethereum network controller", func() {
 			sts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), key, sts)).To(Succeed())
 			Expect(sts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(sts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+			Expect(*sts.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+				"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+				"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+			}))
 			Expect(sts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
 		})
 
@@ -342,7 +347,12 @@ var _ = Describe("Ethereum network controller", func() {
 			sts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), key, sts)).To(Succeed())
 			Expect(sts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(sts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+			Expect(*sts.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+				"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+				"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+			}))
 			Expect(sts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
 		})
 
@@ -542,7 +552,12 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+			Expect(*nodeSts.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+				"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+				"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
 		})
 
@@ -754,7 +769,12 @@ var _ = Describe("Ethereum network controller", func() {
 			sts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), key, sts)).To(Succeed())
 			Expect(sts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(sts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+			Expect(*sts.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+				"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+				"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+			}))
 			Expect(sts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
 		})
 
@@ -943,7 +963,12 @@ var _ = Describe("Ethereum network controller", func() {
 			nodeSts := &appsv1.StatefulSet{}
 			Expect(k8sClient.Get(context.Background(), key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+			Expect(*nodeSts.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+				"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+				"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(nodeClient.Image()))
 		})
 

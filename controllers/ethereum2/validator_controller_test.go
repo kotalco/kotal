@@ -19,6 +19,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gstruct"
 )
 
 var _ = Describe("Ethereum 2.0 validator client", func() {
@@ -91,7 +92,12 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 
 			Expect(k8sClient.Get(context.Background(), key, validatorSts)).To(Succeed())
 			Expect(validatorSts.GetOwnerReferences()).To(ContainElement(validatorOwnerReference))
-			Expect(validatorSts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+			Expect(*validatorSts.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+				"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+				"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+			}))
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
 			// container volume mounts
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].VolumeMounts).To(ContainElements(
@@ -261,7 +267,12 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 
 			Expect(k8sClient.Get(context.Background(), key, validatorSts)).To(Succeed())
 			Expect(validatorSts.GetOwnerReferences()).To(ContainElement(validatorOwnerReference))
-			Expect(validatorSts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+			Expect(*validatorSts.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+				"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+				"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+			}))
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
 			// container volume mounts
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].VolumeMounts).To(ContainElements(
@@ -513,7 +524,12 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 
 			Expect(k8sClient.Get(context.Background(), key, validatorSts)).To(Succeed())
 			Expect(validatorSts.GetOwnerReferences()).To(ContainElement(validatorOwnerReference))
-			Expect(validatorSts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+			Expect(*validatorSts.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+				"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+				"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+			}))
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
 			// container volume mounts
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].VolumeMounts).To(ContainElements(
@@ -721,7 +737,12 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 
 			Expect(k8sClient.Get(context.Background(), key, validatorSts)).To(Succeed())
 			Expect(validatorSts.GetOwnerReferences()).To(ContainElement(validatorOwnerReference))
-			Expect(validatorSts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+			Expect(*validatorSts.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+				"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+				"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+			}))
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
 			// container volume mounts
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].VolumeMounts).To(ContainElements(

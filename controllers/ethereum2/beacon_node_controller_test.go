@@ -16,10 +16,10 @@ import (
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	ethereum2Clients "github.com/kotalco/kotal/clients/ethereum2"
-	"github.com/kotalco/kotal/controllers/shared"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gstruct"
 )
 
 var _ = Describe("Ethereum 2.0 beacon node", func() {
@@ -85,7 +85,12 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 
 			Expect(k8sClient.Get(context.Background(), key, nodeSts)).To(Succeed())
 			Expect(nodeSts.GetOwnerReferences()).To(ContainElement(nodeOwnerReference))
-			Expect(nodeSts.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+			Expect(*nodeSts.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+				"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+				"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+			}))
 			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
 		})
 

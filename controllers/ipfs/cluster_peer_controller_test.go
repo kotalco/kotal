@@ -9,6 +9,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gstruct"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	ipfsClients "github.com/kotalco/kotal/clients/ipfs"
@@ -117,7 +118,12 @@ var _ = Describe("IPFS cluster peer controller", func() {
 		fetched := &appsv1.StatefulSet{}
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 		Expect(fetched.OwnerReferences).To(ContainElements(peerOwnerReference))
-		Expect(fetched.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+		Expect(*fetched.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+			"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+			"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+			"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+			"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+		}))
 		container := fetched.Spec.Template.Spec.Containers[0]
 		Expect(container.Image).To(Equal(client.Image()))
 

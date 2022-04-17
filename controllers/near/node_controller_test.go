@@ -11,6 +11,7 @@ import (
 	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gstruct"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -82,7 +83,12 @@ var _ = Describe("NEAR node controller", func() {
 		fetched := &appsv1.StatefulSet{}
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
-		Expect(fetched.Spec.Template.Spec.SecurityContext).To(Equal(shared.SecurityContext()))
+		Expect(*fetched.Spec.Template.Spec.SecurityContext).To(gstruct.MatchFields(gstruct.IgnoreExtras, gstruct.Fields{
+			"RunAsUser":    gstruct.PointTo(Equal(int64(1000))),
+			"RunAsGroup":   gstruct.PointTo(Equal(int64(3000))),
+			"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
+			"RunAsNonRoot": gstruct.PointTo(Equal(true)),
+		}))
 		// init near node
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Name).To(Equal("init-near-node"))
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Image).To(Equal(client.Image()))
