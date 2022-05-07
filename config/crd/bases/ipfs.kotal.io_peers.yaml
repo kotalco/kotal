@@ -48,6 +48,9 @@ spec:
               gatewayPort:
                 description: GatewayPort is local gateway port
                 type: integer
+              image:
+                description: Image is ipfs peer client image
+                type: string
               initProfiles:
                 description: InitProfiles is the intial profiles to apply during
                 items:
