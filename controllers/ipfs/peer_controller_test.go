@@ -11,7 +11,6 @@ import (
 	"github.com/onsi/gomega/gstruct"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
-	ipfsClients "github.com/kotalco/kotal/clients/ipfs"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -33,7 +32,10 @@ var _ = Describe("IPFS peer controller", func() {
 		Namespace: ns.Name,
 	}
 
+	image := "kotalco/go-ipfs:test"
+
 	spec := ipfsv1alpha1.PeerSpec{
+		Image:              &image,
 		APIPort:            3333,
 		GatewayPort:        4444,
 		Routing:            ipfsv1alpha1.DHTClientRouting,
@@ -47,8 +49,6 @@ var _ = Describe("IPFS peer controller", func() {
 		},
 		Spec: spec,
 	}
-
-	client, _ := ipfsClients.NewClient(toCreate)
 
 	t := true
 
@@ -89,7 +89,7 @@ var _ = Describe("IPFS peer controller", func() {
 			"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
 			"RunAsNonRoot": gstruct.PointTo(Equal(true)),
 		}))
-		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(image))
 	})
 
 	It("Should create allocate correct resources to peer statefulset", func() {

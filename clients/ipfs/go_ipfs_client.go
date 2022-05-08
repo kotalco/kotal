@@ -26,7 +26,9 @@ const (
 
 // Image returns go-ipfs image
 func (c *GoIPFSClient) Image() string {
-	if os.Getenv(EnvGoIPFSImage) == "" {
+	if img := c.peer.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvGoIPFSImage) == "" {
 		return DefaultGoIPFSImage
 	}
 	return os.Getenv(EnvGoIPFSImage)
