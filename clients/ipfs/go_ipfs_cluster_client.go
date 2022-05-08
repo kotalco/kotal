@@ -26,7 +26,9 @@ const (
 
 // Image returns go ipfs cluster image
 func (c *GoIPFSClusterClient) Image() string {
-	if os.Getenv(EnvGoIPFSClusterImage) == "" {
+	if img := c.peer.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvGoIPFSClusterImage) == "" {
 		return DefaultGoIPFSClusterImage
 	}
 	return os.Getenv(EnvGoIPFSClusterImage)

@@ -35,7 +35,10 @@ var _ = Describe("IPFS cluster peer controller", func() {
 		Namespace: ns.Name,
 	}
 
+	image := "kotalco/ipfs-cluster:test"
+
 	spec := ipfsv1alpha1.ClusterPeerSpec{
+		Image:                &image,
 		ID:                   "12D3KooWBcEtY8GH4mNkri9kM3haeWhEXtQV7mi81ErWrqLYGuiq",
 		PrivateKeySecretName: "cluster-privatekey",
 		ClusterSecretName:    "cluster-secret",
@@ -54,8 +57,6 @@ var _ = Describe("IPFS cluster peer controller", func() {
 		},
 		Spec: spec,
 	}
-
-	client, _ := ipfsClients.NewClient(toCreate)
 
 	t := true
 
@@ -125,7 +126,7 @@ var _ = Describe("IPFS cluster peer controller", func() {
 			"RunAsNonRoot": gstruct.PointTo(Equal(true)),
 		}))
 		container := fetched.Spec.Template.Spec.Containers[0]
-		Expect(container.Image).To(Equal(client.Image()))
+		Expect(container.Image).To(Equal(image))
 
 	})
 

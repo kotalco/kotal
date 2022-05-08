@@ -28,8 +28,13 @@ var _ = Describe("Go IPFS Cluster Client", func() {
 		// default image
 		img := client.Image()
 		Expect(img).To(Equal(DefaultGoIPFSClusterImage))
-		// after setting custom image
-		testImage := "kotalco/ipfs-cluster:test"
+		// after setting .spec.image
+		testImage := "kotalco/ipfs-cluster:spec"
+		peer.Spec.Image = &testImage
+		img = client.Image()
+		Expect(img).To(Equal(testImage))
+		// after setting image environment variable
+		testImage = "kotalco/ipfs-cluster:test"
 		os.Setenv(EnvGoIPFSClusterImage, testImage)
 		img = client.Image()
 		Expect(img).To(Equal(testImage))
