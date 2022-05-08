@@ -7,6 +7,8 @@ import (
 
 // ClusterPeerSpec defines the desired state of ClusterPeer
 type ClusterPeerSpec struct {
+	// Image is ipfs cluster peer client image
+	Image *string `json:"image,omitempty"`
 	// ID is the the cluster peer id
 	ID string `json:"id,omitempty"`
 	// PrivateKeySecretName is k8s secret holding private key

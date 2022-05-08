@@ -57,6 +57,9 @@ spec:
               id:
                 description: ID is the the cluster peer id
                 type: string
+              image:
+                description: Image is ipfs cluster peer client image
+                type: string
               logging:
                 description: Logging is logging verboisty level
                 enum:
