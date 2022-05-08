@@ -44,6 +44,9 @@ type NodeList struct {
 type NodeSpec struct {
 	AvailabilityConfig `json:",inline"`
 
+	// Image is Ethereum node client image
+	Image *string `json:"image,omitempty"`
+
 	// Genesis is genesis block configuration
 	Genesis *Genesis `json:"genesis,omitempty"`
 

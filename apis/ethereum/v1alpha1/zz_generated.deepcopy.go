@@ -248,6 +248,11 @@ func (in *NodeList) DeepCopyObject() runtime.Object {
 func (in *NodeSpec) DeepCopyInto(out *NodeSpec) {
 	*out = *in
 	out.AvailabilityConfig = in.AvailabilityConfig
+	if in.Image != nil {
+		in, out := &in.Image, &out.Image
+		*out = new(string)
+		**out = **in
+	}
 	if in.Genesis != nil {
 		in, out := &in.Genesis, &out.Genesis
 		*out = new(Genesis)

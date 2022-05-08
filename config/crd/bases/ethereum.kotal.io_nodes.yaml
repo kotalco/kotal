@@ -254,6 +254,9 @@ spec:
                   type: string
                 type: array
                 x-kubernetes-list-type: set
+              image:
+                description: Image is Ethereum node client image
+                type: string
               import:
                 description: import is account to import
                 properties:
