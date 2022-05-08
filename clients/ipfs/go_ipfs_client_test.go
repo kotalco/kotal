@@ -23,8 +23,13 @@ var _ = Describe("Go IPFS Client", func() {
 		// default image
 		img := client.Image()
 		Expect(img).To(Equal(DefaultGoIPFSImage))
+		// after changing .spec.image
+		testImage := "kotalco/go-ipfs:spec"
+		peer.Spec.Image = &testImage
+		img = client.Image()
+		Expect(img).To(Equal(testImage))
 		// after setting custom image
-		testImage := "kotalco/go-ipfs:test"
+		testImage = "kotalco/go-ipfs:test"
 		os.Setenv(EnvGoIPFSImage, testImage)
 		img = client.Image()
 		Expect(img).To(Equal(testImage))
