@@ -77,6 +77,9 @@ spec:
                   type: string
                 type: array
                 x-kubernetes-list-type: set
+              image:
+                description: Image is Ethereum 2.0 Beacon node client image
+                type: string
               logging:
                 description: Logging is logging verboisty level
                 enum:
