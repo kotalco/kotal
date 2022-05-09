@@ -29,7 +29,6 @@ var _ = Describe("Nethermind Client", func() {
 				},
 			},
 		}
-		testImage := "kotalco/nethermind:test"
 		client, _ := NewClient(node)
 
 		It("should return correct home directory", func() {
@@ -38,6 +37,12 @@ var _ = Describe("Nethermind Client", func() {
 
 		It("should return correct docker image tag", func() {
 			Expect(client.Image()).To(Equal(DefaultNethermindImage))
+			// set node .spec.image
+			testImage := "kotalco/nethermind:spec"
+			node.Spec.Image = &testImage
+			Expect(client.Image()).To(Equal(testImage))
+			// set Nethermind image environment variable
+			testImage = "kotalco/nethermind:test"
 			os.Setenv(EnvNethermindImage, testImage)
 			Expect(client.Image()).To(Equal(testImage))
 		})

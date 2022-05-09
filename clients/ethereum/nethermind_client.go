@@ -142,7 +142,9 @@ func (n *NethermindClient) EncodeStaticNodes() string {
 
 // Image returns nethermind docker image
 func (n *NethermindClient) Image() string {
-	if os.Getenv(EnvNethermindImage) == "" {
+	if img := n.node.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvNethermindImage) == "" {
 		return DefaultNethermindImage
 	}
 	return os.Getenv(EnvNethermindImage)

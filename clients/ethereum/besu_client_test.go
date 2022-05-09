@@ -30,7 +30,6 @@ var _ = Describe("Besu Client", func() {
 				},
 			},
 		}
-		testImage := "kotalco/besu:test"
 		client, _ := NewClient(node)
 
 		It("should return correct home directory", func() {
@@ -39,6 +38,12 @@ var _ = Describe("Besu Client", func() {
 
 		It("should return correct docker image tag", func() {
 			Expect(client.Image()).To(Equal(DefaultBesuImage))
+			// setting node spec.image
+			testImage := "kotalco/besu:spec"
+			node.Spec.Image = &testImage
+			Expect(client.Image()).To(Equal(testImage))
+			// setting besu image environment variable
+			testImage = "kotalco/besu:test"
 			os.Setenv(EnvBesuImage, testImage)
 			Expect(client.Image()).To(Equal(testImage))
 		})

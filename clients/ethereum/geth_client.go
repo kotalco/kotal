@@ -259,7 +259,9 @@ func (g *GethClient) Genesis() (content string, err error) {
 
 // Image returns geth docker image
 func (g *GethClient) Image() string {
-	if os.Getenv(EnvGethImage) == "" {
+	if img := g.node.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvGethImage) == "" {
 		return DefaultGethImage
 	}
 	return os.Getenv(EnvGethImage)

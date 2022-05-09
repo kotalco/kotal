@@ -29,7 +29,6 @@ var _ = Describe("Geth Client", func() {
 				},
 			},
 		}
-		testImage := "kotalco/geth:test"
 		client, _ := NewClient(node)
 
 		It("should return correct home directory", func() {
@@ -38,6 +37,12 @@ var _ = Describe("Geth Client", func() {
 
 		It("should return correct docker image tag", func() {
 			Expect(client.Image()).To(Equal(DefaultGethImage))
+			// setting node spec.image
+			testImage := "kotalco/geth:spec"
+			node.Spec.Image = &testImage
+			Expect(client.Image()).To(Equal(testImage))
+			// setting geth image environment variable
+			testImage = "kotalco/geth:test"
 			os.Setenv(EnvGethImage, testImage)
 			Expect(client.Image()).To(Equal(testImage))
 		})

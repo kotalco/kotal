@@ -265,7 +265,9 @@ func (b *BesuClient) EncodeStaticNodes() string {
 
 // Image returns besu docker image
 func (b *BesuClient) Image() string {
-	if os.Getenv(EnvBesuImage) == "" {
+	if img := b.node.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvBesuImage) == "" {
 		return DefaultBesuImage
 	}
 	return os.Getenv(EnvBesuImage)
