@@ -40,7 +40,7 @@ var _ = Describe("Bitcoin core client", func() {
 		// after setting custom image
 		testImage := "kotalco/bitcoin-core:spec"
 		node.Spec.Image = &testImage
-		Expect(img).To(Equal(testImage))
+		Expect(client.Image()).To(Equal(testImage))
 		// after setting custom image
 		testImage = "kotalco/bitcoin-core:test"
 		os.Setenv(EnvBitcoinCoreImage, testImage)
