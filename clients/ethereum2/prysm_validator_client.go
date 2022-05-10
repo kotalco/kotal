@@ -73,7 +73,9 @@ func (t *PrysmValidatorClient) Command() (command []string) {
 
 // Image returns prysm docker image
 func (t *PrysmValidatorClient) Image() string {
-	if os.Getenv(EnvPrysmValidatorImage) == "" {
+	if img := t.validator.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvPrysmValidatorImage) == "" {
 		return DefaultPrysmValidatorImage
 	}
 	return os.Getenv(EnvPrysmValidatorImage)

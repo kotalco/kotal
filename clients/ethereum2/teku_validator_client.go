@@ -72,7 +72,9 @@ func (t *TekuValidatorClient) Command() (command []string) {
 
 // Image returns teku docker image
 func (t *TekuValidatorClient) Image() string {
-	if os.Getenv(EnvTekuValidatorImage) == "" {
+	if img := t.validator.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvTekuValidatorImage) == "" {
 		return DefaultTekuValidatorImage
 	}
 	return os.Getenv(EnvTekuValidatorImage)

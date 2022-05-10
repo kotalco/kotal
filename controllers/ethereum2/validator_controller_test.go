@@ -36,7 +36,10 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			Namespace: ns.Name,
 		}
 
+		testImage := "kotalco/teku:test"
+
 		spec := ethereum2v1alpha1.ValidatorSpec{
+			Image:           &testImage,
 			Network:         "mainnet",
 			Client:          ethereum2v1alpha1.TekuClient,
 			BeaconEndpoints: []string{"http://10.96.130.88:9999"},
@@ -65,8 +68,6 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			Controller:         &t,
 			BlockOwnerDeletion: &t,
 		}
-
-		client, _ := ethereum2Clients.NewClient(toCreate)
 
 		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.TODO(), ns))
@@ -98,7 +99,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
 				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
 			}))
-			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(testImage))
 			// container volume mounts
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].VolumeMounts).To(ContainElements(
 				corev1.VolumeMount{
@@ -209,7 +210,10 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			Namespace: ns.Name,
 		}
 
+		testImage := "kotalco/prysm:test"
+
 		spec := ethereum2v1alpha1.ValidatorSpec{
+			Image:                &testImage,
 			Network:              "mainnet",
 			Client:               ethereum2v1alpha1.PrysmClient,
 			BeaconEndpoints:      []string{"http://10.96.130.88:9999"},
@@ -241,8 +245,6 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			BlockOwnerDeletion: &t,
 		}
 
-		client, _ := ethereum2Clients.NewClient(toCreate)
-
 		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.TODO(), ns))
 		})
@@ -273,7 +275,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
 				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
 			}))
-			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(testImage))
 			// container volume mounts
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].VolumeMounts).To(ContainElements(
 				corev1.VolumeMount{
@@ -364,7 +366,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 				},
 			))
 			// init containers
-			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ethereum2Clients.DefaultPrysmValidatorImage))
+			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(testImage))
 			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Env).To(ContainElements(
 				corev1.EnvVar{
 					Name:  "KOTAL_NETWORK",
@@ -466,7 +468,10 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			Namespace: ns.Name,
 		}
 
+		testImage := "kotalco/lighthouse:test"
+
 		spec := ethereum2v1alpha1.ValidatorSpec{
+			Image:                &testImage,
 			Network:              "mainnet",
 			Client:               ethereum2v1alpha1.LighthouseClient,
 			BeaconEndpoints:      []string{"http://10.96.130.88:9999"},
@@ -498,8 +503,6 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			BlockOwnerDeletion: &t,
 		}
 
-		client, _ := ethereum2Clients.NewClient(toCreate)
-
 		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.TODO(), ns))
 		})
@@ -530,7 +533,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
 				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
 			}))
-			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(testImage))
 			// container volume mounts
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].VolumeMounts).To(ContainElements(
 				corev1.VolumeMount{
@@ -587,7 +590,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 				},
 			))
 			// init containers
-			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ethereum2Clients.DefaultLighthouseValidatorImage))
+			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(testImage))
 			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Env).To(ContainElements(
 				corev1.EnvVar{
 					Name:  "KOTAL_NETWORK",
@@ -680,7 +683,10 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			Namespace: ns.Name,
 		}
 
+		testImage := "kotalco/nimbus:test"
+
 		spec := ethereum2v1alpha1.ValidatorSpec{
+			Image:                &testImage,
 			Network:              "mainnet",
 			Client:               ethereum2v1alpha1.NimbusClient,
 			BeaconEndpoints:      []string{"http://10.96.130.88:9999"},
@@ -710,8 +716,6 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			Controller:         &t,
 			BlockOwnerDeletion: &t,
 		}
-
-		client, _ := ethereum2Clients.NewClient(toCreate)
 
 		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.TODO(), ns))
@@ -743,7 +747,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
 				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
 			}))
-			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+			Expect(validatorSts.Spec.Template.Spec.Containers[0].Image).To(Equal(testImage))
 			// container volume mounts
 			Expect(validatorSts.Spec.Template.Spec.Containers[0].VolumeMounts).To(ContainElements(
 				corev1.VolumeMount{
@@ -824,7 +828,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 				},
 			))
 			// init containers
-			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(ethereum2Clients.DefaultNimbusBeaconNodeImage))
+			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(testImage))
 			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Env).To(ContainElements(
 				corev1.EnvVar{
 					Name:  "KOTAL_SECRETS_PATH",

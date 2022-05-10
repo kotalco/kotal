@@ -63,7 +63,9 @@ func (t *LighthouseValidatorClient) Command() (command []string) {
 
 // Image returns prysm docker image
 func (t *LighthouseValidatorClient) Image() string {
-	if os.Getenv(EnvLighthouseValidatorImage) == "" {
+	if img := t.validator.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvLighthouseValidatorImage) == "" {
 		return DefaultLighthouseValidatorImage
 	}
 	return os.Getenv(EnvLighthouseValidatorImage)

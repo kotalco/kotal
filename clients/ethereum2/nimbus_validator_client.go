@@ -66,7 +66,9 @@ func (t *NimbusValidatorClient) Command() (command []string) {
 
 // Image returns prysm docker image
 func (t *NimbusValidatorClient) Image() string {
-	if os.Getenv(EnvNimbusValidatorImage) == "" {
+	if img := t.validator.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvNimbusValidatorImage) == "" {
 		return DefaultNimbusValidatorImage
 	}
 	return os.Getenv(EnvNimbusValidatorImage)
