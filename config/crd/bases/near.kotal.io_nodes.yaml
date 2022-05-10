@@ -52,6 +52,9 @@ spec:
                   type: string
                 type: array
                 x-kubernetes-list-type: set
+              image:
+                description: Image is NEAR node client image
+                type: string
               minPeers:
                 description: MinPeers is minimum number of peers to start syncing/producing blocks
                 type: integer
