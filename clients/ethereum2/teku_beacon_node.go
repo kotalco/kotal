@@ -75,7 +75,9 @@ func (t *TekuBeaconNode) Env() []corev1.EnvVar {
 
 // Image returns teku docker image
 func (t *TekuBeaconNode) Image() string {
-	if os.Getenv(EnvTekuBeaconNodeImage) == "" {
+	if img := t.node.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvTekuBeaconNodeImage) == "" {
 		return DefaultTekuBeaconNodeImage
 	}
 	return os.Getenv(EnvTekuBeaconNodeImage)

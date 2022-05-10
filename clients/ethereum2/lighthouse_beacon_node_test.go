@@ -2,6 +2,7 @@ package ethereum2
 
 import (
 	"fmt"
+	"os"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
@@ -10,7 +11,43 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Lighthouse Ethereum 2.0 client arguments", func() {
+var _ = Describe("Lighthouse beacon node", func() {
+
+	node := ethereum2v1alpha1.BeaconNode{
+		Spec: ethereum2v1alpha1.BeaconNodeSpec{
+			Client:  ethereum2v1alpha1.LighthouseClient,
+			Network: "mainnet",
+		},
+	}
+	client, _ := NewClient(&node)
+
+	It("Should get correct image", func() {
+		// default image
+		img := client.Image()
+		Expect(img).To(Equal(DefaultLighthouseBeaconNodeImage))
+		// after changing .spec.image
+		testImage := "kotalco/lighthouse:spec"
+		node.Spec.Image = &testImage
+		img = client.Image()
+		Expect(img).To(Equal(testImage))
+		// after setting custom image
+		testImage = "kotalco/lighthouse:test"
+		os.Setenv(EnvLighthouseBeaconNodeImage, testImage)
+		img = client.Image()
+		Expect(img).To(Equal(testImage))
+	})
+
+	It("Should get correct command", func() {
+		Expect(client.Command()).To(ConsistOf("lighthouse", "bn"))
+	})
+
+	It("Should get correct env", func() {
+		Expect(client.Env()).To(BeNil())
+	})
+
+	It("Should get correct home dir", func() {
+		Expect(client.HomeDir()).To(Equal(LighthouseHomeDir))
+	})
 
 	cases := []struct {
 		title  string

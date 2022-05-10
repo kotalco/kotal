@@ -15,7 +15,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
-	ethereum2Clients "github.com/kotalco/kotal/clients/ethereum2"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -36,7 +35,10 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 			Namespace: ns.Name,
 		}
 
+		testImage := "kotalco/teku:controller-test"
+
 		spec := ethereum2v1alpha1.BeaconNodeSpec{
+			Image:   &testImage,
 			Client:  ethereum2v1alpha1.TekuClient,
 			Network: "mainnet",
 		}
@@ -58,8 +60,6 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 			Controller:         &t,
 			BlockOwnerDeletion: &t,
 		}
-
-		client, _ := ethereum2Clients.NewClient(toCreate)
 
 		It(fmt.Sprintf("Should create %s namespace", ns.Name), func() {
 			Expect(k8sClient.Create(context.TODO(), ns))
@@ -91,7 +91,7 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 				"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
 				"RunAsNonRoot": gstruct.PointTo(Equal(true)),
 			}))
-			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+			Expect(nodeSts.Spec.Template.Spec.Containers[0].Image).To(Equal(testImage))
 		})
 
 		It("Should allocate correct resources to bootnode statefulset", func() {

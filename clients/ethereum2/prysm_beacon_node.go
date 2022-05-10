@@ -96,7 +96,9 @@ func (t *PrysmBeaconNode) Command() (command []string) {
 
 // Image returns prysm docker image
 func (t *PrysmBeaconNode) Image() string {
-	if os.Getenv(EnvPrysmBeaconNodeImage) == "" {
+	if img := t.node.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvPrysmBeaconNodeImage) == "" {
 		return DefaultPrysmBeaconNodeImage
 	}
 	return os.Getenv(EnvPrysmBeaconNodeImage)
