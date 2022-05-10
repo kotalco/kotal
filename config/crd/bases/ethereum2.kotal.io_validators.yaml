@@ -61,7 +61,7 @@ spec:
                 description: Graffiti is the text to include in proposed blocks
                 type: string
               image:
-                description: Image is Ethereum 2.0 Beacon node client image
+                description: Image is Ethereum 2.0 validator client image
                 type: string
               keystores:
                 description: Keystores is a list of Validator keystores

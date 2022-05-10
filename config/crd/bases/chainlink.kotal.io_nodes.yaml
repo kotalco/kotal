@@ -83,6 +83,9 @@ spec:
               ethereumWsEndpoint:
                 description: EthereumWSEndpoint is ethereum websocket endpoint
                 type: string
+              image:
+                description: Image is Chainlink node client image
+                type: string
               keystorePasswordSecretName:
                 description: KeystorePasswordSecretName is k8s secret name that holds keystore password
                 type: string

@@ -15,6 +15,8 @@ type APICredentials struct {
 
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
+	// Image is Chainlink node client image
+	Image *string `json:"image,omitempty"`
 	// EthereumChainId is ethereum chain id
 	EthereumChainId uint `json:"ethereumChainId"`
 	// EthereumWSEndpoint is ethereum websocket endpoint
