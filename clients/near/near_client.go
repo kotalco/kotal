@@ -29,7 +29,9 @@ const (
 
 // Image returns NEAR core client image
 func (c *NearClient) Image() string {
-	if os.Getenv(EnvNearImage) == "" {
+	if img := c.node.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvNearImage) == "" {
 		return DefaultNearImage
 	}
 	return os.Getenv(EnvNearImage)

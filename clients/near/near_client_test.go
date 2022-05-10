@@ -42,13 +42,15 @@ var _ = Describe("NEAR core client", func() {
 
 	It("Should get correct image", func() {
 		// default image
-		img := client.Image()
-		Expect(img).To(Equal(DefaultNearImage))
-		// after setting custom image
-		testImage := "kotalco/near:test"
+		Expect(client.Image()).To(Equal(DefaultNearImage))
+		// after setting .spec.image
+		testImage := "kotalco/near:spec"
+		node.Spec.Image = &testImage
+		Expect(client.Image()).To(Equal(testImage))
+		// after setting custom image environment variable
+		testImage = "kotalco/near:test"
 		os.Setenv(EnvNearImage, testImage)
-		img = client.Image()
-		Expect(img).To(Equal(testImage))
+		Expect(client.Image()).To(Equal(testImage))
 	})
 
 	It("Should get correct command", func() {

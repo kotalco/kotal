@@ -32,7 +32,10 @@ var _ = Describe("NEAR node controller", func() {
 		Namespace: ns.Name,
 	}
 
+	testImage := "kotalco/nearcore:controller-test"
+
 	spec := nearv1alpha1.NodeSpec{
+		Image:                    &testImage,
 		Network:                  "mainnet",
 		RPC:                      true,
 		Archive:                  true, // test volume storage size
@@ -91,7 +94,7 @@ var _ = Describe("NEAR node controller", func() {
 		}))
 		// init near node
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Name).To(Equal("init-near-node"))
-		Expect(fetched.Spec.Template.Spec.InitContainers[0].Image).To(Equal(client.Image()))
+		Expect(fetched.Spec.Template.Spec.InitContainers[0].Image).To(Equal(testImage))
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Command).To(Equal([]string{"/bin/sh"}))
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Args).To(ContainElements(
 			fmt.Sprintf("%s/init_near_node.sh", shared.PathConfig(client.HomeDir())),
@@ -184,7 +187,7 @@ var _ = Describe("NEAR node controller", func() {
 		))
 		// node
 		Expect(fetched.Spec.Template.Spec.Containers[0].Name).To(Equal("node"))
-		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(testImage))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Command).To(Equal(client.Command()))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Args).To(Equal(client.Args()))
 		Expect(fetched.Spec.Template.Spec.Containers[0].VolumeMounts).To(ContainElements(
