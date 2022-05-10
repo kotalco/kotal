@@ -28,7 +28,9 @@ const (
 
 // Image returns Stacks node client image
 func (c *StacksNodeClient) Image() string {
-	if os.Getenv(EnvStacksNodeImage) == "" {
+	if img := c.node.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvStacksNodeImage) == "" {
 		return DefaultStacksNodeImage
 	}
 	return os.Getenv(EnvStacksNodeImage)
