@@ -7,6 +7,8 @@ import (
 
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
+	// Image is Filecoin node client image
+	Image *string `json:"image,omitempty"`
 	// API enables API server
 	API bool `json:"api,omitempty"`
 	// APIPort is API server listening port

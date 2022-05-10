@@ -54,6 +54,9 @@ spec:
               disableMetadataLog:
                 description: DisableMetadataLog disables metadata log
                 type: boolean
+              image:
+                description: Image is Filecoin node client image
+                type: string
               ipfsForRetrieval:
                 description: IPFSForRetrieval uses ipfs for retrieval
                 type: boolean
