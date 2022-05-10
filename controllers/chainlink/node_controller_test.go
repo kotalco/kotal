@@ -32,7 +32,10 @@ var _ = Describe("Chainlink node controller", func() {
 		Namespace: ns.Name,
 	}
 
+	testImage := "kotalco/chainlink:controller-test"
+
 	spec := chainlinkv1alpha1.NodeSpec{
+		Image:                      &testImage,
 		EthereumChainId:            1,
 		EthereumWSEndpoint:         "wss://my-eth-node:8546",
 		LinkContractAddress:        "0x01BE23585060835E02B77ef475b0Cc51aA1e0709",
@@ -128,7 +131,7 @@ var _ = Describe("Chainlink node controller", func() {
 			},
 		))
 		// node container
-		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(testImage))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Command).To(Equal(client.Command()))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Args).To(Equal(client.Args()))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Env).To(Equal(client.Env()))

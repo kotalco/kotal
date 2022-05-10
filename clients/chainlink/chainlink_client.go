@@ -29,7 +29,9 @@ const (
 
 // Image returns chainlink image
 func (c *ChainlinkClient) Image() string {
-	if os.Getenv(EnvChainlinkImage) == "" {
+	if img := c.node.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvChainlinkImage) == "" {
 		return DefaultChainlinkImage
 	}
 	return os.Getenv(EnvChainlinkImage)

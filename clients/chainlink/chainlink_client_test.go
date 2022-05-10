@@ -41,7 +41,12 @@ var _ = Describe("Chainlink Client", func() {
 		img := client.Image()
 		Expect(img).To(Equal(DefaultChainlinkImage))
 		// after setting custom image
-		testImage := "kotalco/chainlink:test"
+		testImage := "kotalco/chainlink:spec"
+		node.Spec.Image = &testImage
+		img = client.Image()
+		Expect(img).To(Equal(testImage))
+		// after setting custom image
+		testImage = "kotalco/chainlink:test"
 		os.Setenv(EnvChainlinkImage, testImage)
 		img = client.Image()
 		Expect(img).To(Equal(testImage))
