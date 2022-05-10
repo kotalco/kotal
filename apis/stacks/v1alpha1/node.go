@@ -29,6 +29,8 @@ type BitcoinNode struct {
 
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
+	// Image is Stacks node client image
+	Image *string `json:"image,omitempty"`
 	// Network is stacks network
 	// +kubebuilder:validation:Enum=mainnet;testnet
 	Network StacksNetwork `json:"network"`

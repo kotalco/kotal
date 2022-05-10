@@ -67,6 +67,9 @@ spec:
                 - rpcPort
                 - rpcUsername
                 type: object
+              image:
+                description: Image is Stacks node client image
+                type: string
               mineMicroblocks:
                 description: MineMicroblocks mines Stacks micro blocks
                 type: boolean
