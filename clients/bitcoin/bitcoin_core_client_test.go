@@ -38,10 +38,13 @@ var _ = Describe("Bitcoin core client", func() {
 		img := client.Image()
 		Expect(img).To(Equal(DefaultBitcoinCoreImage))
 		// after setting custom image
-		testImage := "kotalco/bitcoin-core:test"
-		os.Setenv(EnvBitcoinCoreImage, testImage)
-		img = client.Image()
+		testImage := "kotalco/bitcoin-core:spec"
+		node.Spec.Image = &testImage
 		Expect(img).To(Equal(testImage))
+		// after setting custom image
+		testImage = "kotalco/bitcoin-core:test"
+		os.Setenv(EnvBitcoinCoreImage, testImage)
+		Expect(client.Image()).To(Equal(testImage))
 	})
 
 	It("Should get correct command", func() {

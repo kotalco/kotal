@@ -37,7 +37,9 @@ const (
 
 // Image returns Bitcoin core client image
 func (c *BitcoinCoreClient) Image() string {
-	if os.Getenv(EnvBitcoinCoreImage) == "" {
+	if img := c.node.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvBitcoinCoreImage) == "" {
 		return DefaultBitcoinCoreImage
 	}
 	return os.Getenv(EnvBitcoinCoreImage)

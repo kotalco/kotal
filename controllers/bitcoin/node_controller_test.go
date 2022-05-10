@@ -32,7 +32,10 @@ var _ = Describe("Bitcoin node controller", func() {
 		Namespace: ns.Name,
 	}
 
+	testImage := "kotalco/bitcoin-core:controller-test"
+
 	spec := bitcoinv1alpha1.NodeSpec{
+		Image:   &testImage,
 		Network: bitcoinv1alpha1.Mainnet,
 		RPC:     true,
 	}
@@ -87,7 +90,7 @@ var _ = Describe("Bitcoin node controller", func() {
 			"RunAsNonRoot": gstruct.PointTo(Equal(true)),
 		}))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Name).To(Equal("node"))
-		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(testImage))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Env).To(Equal(client.Env()))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Command).To(Equal(client.Command()))
 		Expect(fetched.Spec.Template.Spec.Containers[0].Args).To(Equal(client.Args()))
