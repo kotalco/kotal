@@ -7,7 +7,6 @@ import (
 	"time"
 
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
-	polkadotClients "github.com/kotalco/kotal/clients/polkadot"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gstruct"
@@ -31,7 +30,10 @@ var _ = Describe("kusama node controller", func() {
 		Namespace: ns.Name,
 	}
 
+	testImage := "kotalco/polkadot:controller-test"
+
 	spec := polkadotv1alpha1.NodeSpec{
+		Image:      &testImage,
 		Network:    "kusama",
 		RPC:        true,
 		WS:         true,
@@ -45,8 +47,6 @@ var _ = Describe("kusama node controller", func() {
 		},
 		Spec: spec,
 	}
-
-	client := polkadotClients.NewClient(toCreate)
 
 	t := true
 
@@ -87,7 +87,7 @@ var _ = Describe("kusama node controller", func() {
 			"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
 			"RunAsNonRoot": gstruct.PointTo(Equal(true)),
 		}))
-		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(testImage))
 	})
 
 	It("Should create allocate correct resources to peer statefulset", func() {

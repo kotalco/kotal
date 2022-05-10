@@ -28,7 +28,9 @@ const (
 
 // Image returns go-ipfs image
 func (c *PolkadotClient) Image() string {
-	if os.Getenv(EnvPolkadotImage) == "" {
+	if img := c.node.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvPolkadotImage) == "" {
 		return DefaultPolkadotImage
 	}
 	return os.Getenv(EnvPolkadotImage)
