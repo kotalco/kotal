@@ -7,6 +7,9 @@ import (
 
 // ValidatorSpec defines the desired state of Validator
 type ValidatorSpec struct {
+	// Image is Ethereum 2.0 Beacon node client image
+	Image *string `json:"image,omitempty"`
+
 	// Network is the network this validator is validating blocks for
 	Network string `json:"network"`
 	// Client is the Ethereum 2.0 client to use
