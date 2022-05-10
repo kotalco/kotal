@@ -28,7 +28,9 @@ const (
 
 // Image returns lotus image for node's network
 func (c *LotusClient) Image() string {
-	if os.Getenv(EnvLotusImage) == "" {
+	if img := c.node.Spec.Image; img != nil {
+		return *img
+	} else if os.Getenv(EnvLotusImage) == "" {
 		switch c.node.Spec.Network {
 		case filecoinv1alpha1.MainNetwork:
 			return DefaultLotusImage

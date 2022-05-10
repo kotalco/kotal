@@ -30,7 +30,12 @@ var _ = Describe("Lotus Filecoin Client", func() {
 		Expect(client.Image()).To(Equal(DefaultLotusCalibrationImage))
 		node.Spec.Network = filecoinv1alpha1.MainNetwork
 		Expect(client.Image()).To(Equal(DefaultLotusImage))
-		testImage := "kotalco/lotus:test"
+		// set node image environment variable
+		testImage := "kotalco/lotus:spec"
+		node.Spec.Image = &testImage
+		Expect(client.Image()).To(Equal(testImage))
+		// set node image environment variable
+		testImage = "kotalco/lotus:test"
 		os.Setenv(EnvLotusImage, testImage)
 		Expect(client.Image()).To(Equal(testImage))
 	})

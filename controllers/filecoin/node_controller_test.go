@@ -7,7 +7,6 @@ import (
 	"time"
 
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
-	filecoinClients "github.com/kotalco/kotal/clients/filecoin"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gstruct"
@@ -19,7 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-var _ = Describe("kusama node controller", func() {
+var _ = Describe("Filecoin node controller", func() {
 	ns := &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "filecoin",
@@ -31,7 +30,10 @@ var _ = Describe("kusama node controller", func() {
 		Namespace: ns.Name,
 	}
 
+	testImage := "kotalco/lotus:controller-test"
+
 	spec := filecoinv1alpha1.NodeSpec{
+		Image:   &testImage,
 		Network: filecoinv1alpha1.CalibrationNetwork,
 		API:     true,
 	}
@@ -43,8 +45,6 @@ var _ = Describe("kusama node controller", func() {
 		},
 		Spec: spec,
 	}
-
-	client := filecoinClients.NewClient(toCreate)
 
 	t := true
 
@@ -85,7 +85,7 @@ var _ = Describe("kusama node controller", func() {
 			"FSGroup":      gstruct.PointTo(Equal(int64(2000))),
 			"RunAsNonRoot": gstruct.PointTo(Equal(true)),
 		}))
-		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(client.Image()))
+		Expect(fetched.Spec.Template.Spec.Containers[0].Image).To(Equal(testImage))
 	})
 
 	It("Should create allocate correct resources to peer statefulset", func() {
