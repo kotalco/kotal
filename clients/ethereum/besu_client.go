@@ -44,23 +44,18 @@ func (b *BesuClient) Args() (args []string) {
 
 	node := b.node
 
-	// appendArg appends argument with optional value to the arguments array
-	appendArg := func(arg ...string) {
-		args = append(args, arg...)
-	}
-
-	appendArg(BesuNatMethod, "KUBERNETES")
-	appendArg(BesuDataPath, shared.PathData(b.HomeDir()))
-	appendArg(BesuP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
-	appendArg(BesuSyncMode, string(node.Spec.SyncMode))
-	appendArg(BesuLogging, strings.ToUpper(string(node.Spec.Logging)))
+	args = append(args, BesuNatMethod, "KUBERNETES")
+	args = append(args, BesuDataPath, shared.PathData(b.HomeDir()))
+	args = append(args, BesuP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
+	args = append(args, BesuSyncMode, string(node.Spec.SyncMode))
+	args = append(args, BesuLogging, strings.ToUpper(string(node.Spec.Logging)))
 
 	if node.Spec.NodePrivateKeySecretName != "" {
-		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(b.HomeDir())))
+		args = append(args, BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(b.HomeDir())))
 	}
 
 	if len(node.Spec.StaticNodes) != 0 {
-		appendArg(BesuStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(b.HomeDir())))
+		args = append(args, BesuStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(b.HomeDir())))
 	}
 
 	if len(node.Spec.Bootnodes) != 0 {
@@ -68,21 +63,21 @@ func (b *BesuClient) Args() (args []string) {
 		for _, bootnode := range node.Spec.Bootnodes {
 			bootnodes = append(bootnodes, string(bootnode))
 		}
-		appendArg(BesuBootnodes, strings.Join(bootnodes, ","))
+		args = append(args, BesuBootnodes, strings.Join(bootnodes, ","))
 	}
 
 	// public network
 	if node.Spec.Genesis == nil {
-		appendArg(BesuNetwork, node.Spec.Network)
+		args = append(args, BesuNetwork, node.Spec.Network)
 	} else { // private network
-		appendArg(BesuGenesisFile, fmt.Sprintf("%s/genesis.json", shared.PathConfig(b.HomeDir())))
-		appendArg(BesuNetworkID, fmt.Sprintf("%d", node.Spec.Genesis.NetworkID))
-		appendArg(BesuDiscoveryEnabled, "false")
+		args = append(args, BesuGenesisFile, fmt.Sprintf("%s/genesis.json", shared.PathConfig(b.HomeDir())))
+		args = append(args, BesuNetworkID, fmt.Sprintf("%d", node.Spec.Genesis.NetworkID))
+		args = append(args, BesuDiscoveryEnabled, "false")
 	}
 
 	if node.Spec.Miner {
-		appendArg(BesuMinerEnabled)
-		appendArg(BesuMinerCoinbase, string(node.Spec.Coinbase))
+		args = append(args, BesuMinerEnabled)
+		args = append(args, BesuMinerCoinbase, string(node.Spec.Coinbase))
 	}
 
 	// convert spec rpc modules into format suitable for cli option
@@ -95,37 +90,37 @@ func (b *BesuClient) Args() (args []string) {
 	}
 
 	if node.Spec.RPC {
-		appendArg(BesuRPCHTTPEnabled)
-		appendArg(BesuRPCHTTPHost, DefaultHost)
-		appendArg(BesuRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
-		appendArg(BesuRPCHTTPAPI, normalizedAPIs(node.Spec.RPCAPI))
+		args = append(args, BesuRPCHTTPEnabled)
+		args = append(args, BesuRPCHTTPHost, DefaultHost)
+		args = append(args, BesuRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
+		args = append(args, BesuRPCHTTPAPI, normalizedAPIs(node.Spec.RPCAPI))
 	}
 
 	if node.Spec.WS {
-		appendArg(BesuRPCWSEnabled)
-		appendArg(BesuRPCWSHost, DefaultHost)
-		appendArg(BesuRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
-		appendArg(BesuRPCWSAPI, normalizedAPIs(node.Spec.WSAPI))
+		args = append(args, BesuRPCWSEnabled)
+		args = append(args, BesuRPCWSHost, DefaultHost)
+		args = append(args, BesuRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
+		args = append(args, BesuRPCWSAPI, normalizedAPIs(node.Spec.WSAPI))
 	}
 
 	if node.Spec.GraphQL {
-		appendArg(BesuGraphQLHTTPEnabled)
-		appendArg(BesuGraphQLHTTPHost, DefaultHost)
-		appendArg(BesuGraphQLHTTPPort, fmt.Sprintf("%d", node.Spec.GraphQLPort))
+		args = append(args, BesuGraphQLHTTPEnabled)
+		args = append(args, BesuGraphQLHTTPHost, DefaultHost)
+		args = append(args, BesuGraphQLHTTPPort, fmt.Sprintf("%d", node.Spec.GraphQLPort))
 	}
 
 	if len(node.Spec.Hosts) != 0 {
 		commaSeperatedHosts := strings.Join(node.Spec.Hosts, ",")
-		appendArg(BesuHostAllowlist, commaSeperatedHosts)
+		args = append(args, BesuHostAllowlist, commaSeperatedHosts)
 	}
 
 	if len(node.Spec.CORSDomains) != 0 {
 		commaSeperatedDomains := strings.Join(node.Spec.CORSDomains, ",")
 		if node.Spec.RPC {
-			appendArg(BesuRPCHTTPCorsOrigins, commaSeperatedDomains)
+			args = append(args, BesuRPCHTTPCorsOrigins, commaSeperatedDomains)
 		}
 		if node.Spec.GraphQL {
-			appendArg(BesuGraphQLHTTPCorsOrigins, commaSeperatedDomains)
+			args = append(args, BesuGraphQLHTTPCorsOrigins, commaSeperatedDomains)
 		}
 		// no ws cors setting
 	}

@@ -47,23 +47,18 @@ func (n *NethermindClient) Args() (args []string) {
 
 	node := n.node
 
-	// appendArg appends argument with optional value to the arguments array
-	appendArg := func(arg ...string) {
-		args = append(args, arg...)
-	}
-
-	appendArg(NethermindDataPath, shared.PathData(n.HomeDir()))
-	appendArg(NethermindP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
-	appendArg(NethermindLogging, strings.ToUpper(string(node.Spec.Logging)))
+	args = append(args, NethermindDataPath, shared.PathData(n.HomeDir()))
+	args = append(args, NethermindP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
+	args = append(args, NethermindLogging, strings.ToUpper(string(node.Spec.Logging)))
 
 	if node.Spec.NodePrivateKeySecretName != "" {
 		// use enode private key in binary format
 		// that has been converted using nethermind_convert_enode_privatekey.sh script
-		appendArg(NethermindNodePrivateKey, fmt.Sprintf("%s/kotal_nodekey", shared.PathData(n.HomeDir())))
+		args = append(args, NethermindNodePrivateKey, fmt.Sprintf("%s/kotal_nodekey", shared.PathData(n.HomeDir())))
 	}
 
 	if len(node.Spec.StaticNodes) != 0 {
-		appendArg(NethermindStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(n.HomeDir())))
+		args = append(args, NethermindStaticNodesFile, fmt.Sprintf("%s/static-nodes.json", shared.PathConfig(n.HomeDir())))
 	}
 
 	if len(node.Spec.Bootnodes) != 0 {
@@ -71,54 +66,54 @@ func (n *NethermindClient) Args() (args []string) {
 		for _, bootnode := range node.Spec.Bootnodes {
 			bootnodes = append(bootnodes, string(bootnode))
 		}
-		appendArg(NethermindBootnodes, strings.Join(bootnodes, ","))
+		args = append(args, NethermindBootnodes, strings.Join(bootnodes, ","))
 	}
 
 	if node.Spec.Genesis == nil {
-		appendArg(NethermindNetwork, node.Spec.Network)
+		args = append(args, NethermindNetwork, node.Spec.Network)
 	} else {
 		// use empty config, because nethermind uses mainnet.cfg by default which can shadow some settings here
-		appendArg(NethermindNetwork, fmt.Sprintf("%s/empty.cfg", shared.PathConfig(n.HomeDir())))
-		appendArg(NethermindGenesisFile, fmt.Sprintf("%s/genesis.json", shared.PathConfig(n.HomeDir())))
-		appendArg(NethermindDiscoveryEnabled, "false")
+		args = append(args, NethermindNetwork, fmt.Sprintf("%s/empty.cfg", shared.PathConfig(n.HomeDir())))
+		args = append(args, NethermindGenesisFile, fmt.Sprintf("%s/genesis.json", shared.PathConfig(n.HomeDir())))
+		args = append(args, NethermindDiscoveryEnabled, "false")
 	}
 
 	switch node.Spec.SyncMode {
 	case ethereumv1alpha1.FullSynchronization:
-		appendArg(NethermindFastSync, "false")
-		appendArg(NethermindFastBlocks, "false")
-		appendArg(NethermindDownloadBodiesInFastSync, "false")
-		appendArg(NethermindDownloadReceiptsInFastSync, "false")
+		args = append(args, NethermindFastSync, "false")
+		args = append(args, NethermindFastBlocks, "false")
+		args = append(args, NethermindDownloadBodiesInFastSync, "false")
+		args = append(args, NethermindDownloadReceiptsInFastSync, "false")
 	case ethereumv1alpha1.FastSynchronization:
-		appendArg(NethermindFastSync, "true")
-		appendArg(NethermindFastBlocks, "true")
-		appendArg(NethermindDownloadBodiesInFastSync, "true")
-		appendArg(NethermindDownloadReceiptsInFastSync, "true")
+		args = append(args, NethermindFastSync, "true")
+		args = append(args, NethermindFastBlocks, "true")
+		args = append(args, NethermindDownloadBodiesInFastSync, "true")
+		args = append(args, NethermindDownloadReceiptsInFastSync, "true")
 	}
 
 	if node.Spec.Miner {
-		appendArg(NethermindMiningEnabled, "true")
-		appendArg(NethermindMinerCoinbase, string(node.Spec.Coinbase))
-		appendArg(NethermindUnlockAccounts, fmt.Sprintf("[%s]", node.Spec.Coinbase))
-		appendArg(NethermindPasswordFiles, fmt.Sprintf("[%s/account.password]", shared.PathSecrets(n.HomeDir())))
+		args = append(args, NethermindMiningEnabled, "true")
+		args = append(args, NethermindMinerCoinbase, string(node.Spec.Coinbase))
+		args = append(args, NethermindUnlockAccounts, fmt.Sprintf("[%s]", node.Spec.Coinbase))
+		args = append(args, NethermindPasswordFiles, fmt.Sprintf("[%s/account.password]", shared.PathSecrets(n.HomeDir())))
 	}
 
 	if node.Spec.RPC {
-		appendArg(NethermindRPCHTTPEnabled, "true")
-		appendArg(NethermindRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
-		appendArg(NethermindRPCHTTPHost, DefaultHost)
+		args = append(args, NethermindRPCHTTPEnabled, "true")
+		args = append(args, NethermindRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
+		args = append(args, NethermindRPCHTTPHost, DefaultHost)
 		// JSON-RPC API
 		apis := []string{}
 		for _, api := range node.Spec.RPCAPI {
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg(NethermindRPCHTTPAPI, commaSeperatedAPIs)
+		args = append(args, NethermindRPCHTTPAPI, commaSeperatedAPIs)
 	}
 
 	if node.Spec.WS {
-		appendArg(NethermindRPCWSEnabled, "true")
-		appendArg(NethermindRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
+		args = append(args, NethermindRPCWSEnabled, "true")
+		args = append(args, NethermindRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
 		// no option for ws host, ws uses same http host as JSON-RPC
 		// nethermind ws reuses enabled JSON-RPC modules
 	}

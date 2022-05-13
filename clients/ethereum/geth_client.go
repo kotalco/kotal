@@ -56,24 +56,19 @@ func (g *GethClient) Args() (args []string) {
 
 	node := g.node
 
-	// appendArg appends argument with optional value to the arguments array
-	appendArg := func(arg ...string) {
-		args = append(args, arg...)
-	}
-
-	appendArg(GethDataDir, shared.PathData(g.HomeDir()))
-	appendArg(GethDisableIPC)
-	appendArg(GethP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
-	appendArg(GethSyncMode, string(node.Spec.SyncMode))
-	appendArg(GethLogging, verbosityLevels[node.Spec.Logging])
+	args = append(args, GethDataDir, shared.PathData(g.HomeDir()))
+	args = append(args, GethDisableIPC)
+	args = append(args, GethP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
+	args = append(args, GethSyncMode, string(node.Spec.SyncMode))
+	args = append(args, GethLogging, verbosityLevels[node.Spec.Logging])
 
 	// config.toml holding static nodes
 	if len(node.Spec.StaticNodes) != 0 {
-		appendArg(GethConfig, fmt.Sprintf("%s/config.toml", shared.PathConfig(g.HomeDir())))
+		args = append(args, GethConfig, fmt.Sprintf("%s/config.toml", shared.PathConfig(g.HomeDir())))
 	}
 
 	if node.Spec.NodePrivateKeySecretName != "" {
-		appendArg(GethNodeKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(g.HomeDir())))
+		args = append(args, GethNodeKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(g.HomeDir())))
 	}
 
 	if len(node.Spec.Bootnodes) != 0 {
@@ -81,51 +76,51 @@ func (g *GethClient) Args() (args []string) {
 		for _, bootnode := range node.Spec.Bootnodes {
 			bootnodes = append(bootnodes, string(bootnode))
 		}
-		appendArg(GethBootnodes, strings.Join(bootnodes, ","))
+		args = append(args, GethBootnodes, strings.Join(bootnodes, ","))
 	}
 
 	if node.Spec.Genesis == nil {
-		appendArg(fmt.Sprintf("--%s", node.Spec.Network))
+		args = append(args, fmt.Sprintf("--%s", node.Spec.Network))
 	} else {
-		appendArg(GethNoDiscovery)
-		appendArg(GethNetworkID, fmt.Sprintf("%d", node.Spec.Genesis.NetworkID))
+		args = append(args, GethNoDiscovery)
+		args = append(args, GethNetworkID, fmt.Sprintf("%d", node.Spec.Genesis.NetworkID))
 	}
 
 	if node.Spec.Miner {
-		appendArg(GethMinerEnabled)
-		appendArg(GethMinerCoinbase, string(node.Spec.Coinbase))
-		appendArg(GethUnlock, string(node.Spec.Coinbase))
-		appendArg(GethPassword, fmt.Sprintf("%s/account.password", shared.PathSecrets(g.HomeDir())))
+		args = append(args, GethMinerEnabled)
+		args = append(args, GethMinerCoinbase, string(node.Spec.Coinbase))
+		args = append(args, GethUnlock, string(node.Spec.Coinbase))
+		args = append(args, GethPassword, fmt.Sprintf("%s/account.password", shared.PathSecrets(g.HomeDir())))
 	}
 
 	if node.Spec.RPC {
-		appendArg(GethRPCHTTPEnabled)
-		appendArg(GethRPCHTTPHost, DefaultHost)
-		appendArg(GethRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
+		args = append(args, GethRPCHTTPEnabled)
+		args = append(args, GethRPCHTTPHost, DefaultHost)
+		args = append(args, GethRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
 		// JSON-RPC API
 		apis := []string{}
 		for _, api := range node.Spec.RPCAPI {
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg(GethRPCHTTPAPI, commaSeperatedAPIs)
+		args = append(args, GethRPCHTTPAPI, commaSeperatedAPIs)
 	}
 
 	if node.Spec.WS {
-		appendArg(GethRPCWSEnabled)
-		appendArg(GethRPCWSHost, DefaultHost)
-		appendArg(GethRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
+		args = append(args, GethRPCWSEnabled)
+		args = append(args, GethRPCWSHost, DefaultHost)
+		args = append(args, GethRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
 		// WebSocket API
 		apis := []string{}
 		for _, api := range node.Spec.WSAPI {
 			apis = append(apis, string(api))
 		}
 		commaSeperatedAPIs := strings.Join(apis, ",")
-		appendArg(GethRPCWSAPI, commaSeperatedAPIs)
+		args = append(args, GethRPCWSAPI, commaSeperatedAPIs)
 	}
 
 	if node.Spec.GraphQL {
-		appendArg(GethGraphQLHTTPEnabled)
+		args = append(args, GethGraphQLHTTPEnabled)
 		//NOTE: .GraphQLPort is ignored because rpc port will be used by graphql server
 		// .GraphQLPort will be used in the service that point to the pod
 	}
@@ -133,10 +128,10 @@ func (g *GethClient) Args() (args []string) {
 	if len(node.Spec.Hosts) != 0 {
 		commaSeperatedHosts := strings.Join(node.Spec.Hosts, ",")
 		if node.Spec.RPC {
-			appendArg(GethRPCHostWhitelist, commaSeperatedHosts)
+			args = append(args, GethRPCHostWhitelist, commaSeperatedHosts)
 		}
 		if node.Spec.GraphQL {
-			appendArg(GethGraphQLHostWhitelist, commaSeperatedHosts)
+			args = append(args, GethGraphQLHostWhitelist, commaSeperatedHosts)
 		}
 		// no ws hosts settings
 	}
@@ -144,13 +139,13 @@ func (g *GethClient) Args() (args []string) {
 	if len(node.Spec.CORSDomains) != 0 {
 		commaSeperatedDomains := strings.Join(node.Spec.CORSDomains, ",")
 		if node.Spec.RPC {
-			appendArg(GethRPCHTTPCorsOrigins, commaSeperatedDomains)
+			args = append(args, GethRPCHTTPCorsOrigins, commaSeperatedDomains)
 		}
 		if node.Spec.GraphQL {
-			appendArg(GethGraphQLHTTPCorsOrigins, commaSeperatedDomains)
+			args = append(args, GethGraphQLHTTPCorsOrigins, commaSeperatedDomains)
 		}
 		if node.Spec.WS {
-			appendArg(GethWSOrigins, commaSeperatedDomains)
+			args = append(args, GethWSOrigins, commaSeperatedDomains)
 		}
 	}
 
