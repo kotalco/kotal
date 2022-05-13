@@ -102,7 +102,7 @@ var _ = Describe("Besu Client", func() {
 				BesuNetwork,
 				ethereumv1alpha1.MainNetwork,
 				BesuLogging,
-				client.LoggingArgFromVerbosity(sharedAPI.WarnLogs),
+				"WARN",
 				BesuNodePrivateKey,
 				fmt.Sprintf("%s/nodekey", shared.PathSecrets(client.HomeDir())),
 				BesuStaticNodesFile,

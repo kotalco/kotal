@@ -9,6 +9,7 @@ import (
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // GethClient is Go-Ethereum client
@@ -26,14 +27,8 @@ const (
 	GethHomeDir = "/home/ethereum"
 )
 
-// HomeDir returns go-ethereum docker image home directory
-func (g *GethClient) HomeDir() string {
-	return GethHomeDir
-}
-
-// LoggingArgFromVerbosity returns logging argument from node verbosity level
-func (g *GethClient) LoggingArgFromVerbosity(level sharedAPI.VerbosityLevel) string {
-	levels := map[sharedAPI.VerbosityLevel]string{
+var (
+	verbosityLevels = map[sharedAPI.VerbosityLevel]string{
 		sharedAPI.NoLogs:    "0",
 		sharedAPI.ErrorLogs: "1",
 		sharedAPI.WarnLogs:  "2",
@@ -41,8 +36,19 @@ func (g *GethClient) LoggingArgFromVerbosity(level sharedAPI.VerbosityLevel) str
 		sharedAPI.DebugLogs: "4",
 		sharedAPI.AllLogs:   "5",
 	}
+)
 
-	return levels[level]
+// HomeDir returns go-ethereum docker image home directory
+func (g *GethClient) HomeDir() string {
+	return GethHomeDir
+}
+
+func (g *GethClient) Command() []string {
+	return nil
+}
+
+func (g *GethClient) Env() []corev1.EnvVar {
+	return nil
 }
 
 // Args returns command line arguments required for client run
@@ -59,7 +65,7 @@ func (g *GethClient) Args() (args []string) {
 	appendArg(GethDisableIPC)
 	appendArg(GethP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 	appendArg(GethSyncMode, string(node.Spec.SyncMode))
-	appendArg(GethLogging, g.LoggingArgFromVerbosity(node.Spec.Logging))
+	appendArg(GethLogging, verbosityLevels[node.Spec.Logging])
 
 	// config.toml holding static nodes
 	if len(node.Spec.StaticNodes) != 0 {

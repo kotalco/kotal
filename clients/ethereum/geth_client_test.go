@@ -99,7 +99,7 @@ var _ = Describe("Geth Client", func() {
 				GethDisableIPC,
 				fmt.Sprintf("--%s", ethereumv1alpha1.MainNetwork),
 				GethLogging,
-				client.LoggingArgFromVerbosity(sharedAPI.WarnLogs),
+				"2", // warn logs
 				GethNodeKey,
 				fmt.Sprintf("%s/nodekey", shared.PathSecrets(client.HomeDir())),
 				GethConfig,

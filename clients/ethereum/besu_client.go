@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
-	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // BesuClient is Hyperledger Besu client
@@ -26,14 +26,17 @@ const (
 	BesuHomeDir = "/opt/besu"
 )
 
-// LoggingArgFromVerbosity returns logging argument from node verbosity level
-func (b *BesuClient) LoggingArgFromVerbosity(level sharedAPI.VerbosityLevel) string {
-	return strings.ToUpper(string(level))
-}
-
 // HomeDir returns besu client home directory
 func (b *BesuClient) HomeDir() string {
 	return BesuHomeDir
+}
+
+func (b *BesuClient) Command() []string {
+	return nil
+}
+
+func (b *BesuClient) Env() []corev1.EnvVar {
+	return nil
 }
 
 // Args returns command line arguments required for client run
@@ -50,7 +53,7 @@ func (b *BesuClient) Args() (args []string) {
 	appendArg(BesuDataPath, shared.PathData(b.HomeDir()))
 	appendArg(BesuP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 	appendArg(BesuSyncMode, string(node.Spec.SyncMode))
-	appendArg(BesuLogging, b.LoggingArgFromVerbosity(node.Spec.Logging))
+	appendArg(BesuLogging, strings.ToUpper(string(node.Spec.Logging)))
 
 	if node.Spec.NodePrivateKeySecretName != "" {
 		appendArg(BesuNodePrivateKey, fmt.Sprintf("%s/nodekey", shared.PathSecrets(b.HomeDir())))

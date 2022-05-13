@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
-	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
+	corev1 "k8s.io/api/core/v1"
 )
 
 const (
@@ -27,15 +27,17 @@ type NethermindClient struct {
 	node *ethereumv1alpha1.Node
 }
 
-// LoggingArgFromVerbosity returns logging argument from node verbosity level
-// Nethermind supports TRACE, DEBUG, INFO, WARN, ERROR verbosity levels
-func (n *NethermindClient) LoggingArgFromVerbosity(level sharedAPI.VerbosityLevel) string {
-	return strings.ToUpper(string(level))
-}
-
 // HomeDir returns besu client home directory
 func (n *NethermindClient) HomeDir() string {
 	return NethermindHomeDir
+}
+
+func (n *NethermindClient) Command() []string {
+	return nil
+}
+
+func (n *NethermindClient) Env() []corev1.EnvVar {
+	return nil
 }
 
 // Args returns command line arguments required for client run
@@ -52,7 +54,7 @@ func (n *NethermindClient) Args() (args []string) {
 
 	appendArg(NethermindDataPath, shared.PathData(n.HomeDir()))
 	appendArg(NethermindP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
-	appendArg(NethermindLogging, n.LoggingArgFromVerbosity(node.Spec.Logging))
+	appendArg(NethermindLogging, strings.ToUpper(string(node.Spec.Logging)))
 
 	if node.Spec.NodePrivateKeySecretName != "" {
 		// use enode private key in binary format

@@ -4,16 +4,13 @@ import (
 	"fmt"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
-	sharedAPI "github.com/kotalco/kotal/apis/shared"
+	"github.com/kotalco/kotal/clients"
 )
 
 // EthereumClient is Ethereum client
 type EthereumClient interface {
-	Image() string
-	Args() []string
-	HomeDir() string
+	clients.Interface
 	Genesis() (string, error)
-	LoggingArgFromVerbosity(sharedAPI.VerbosityLevel) string
 	EncodeStaticNodes() string
 }
 
