@@ -9,11 +9,6 @@ var (
 	DefaultOrigins []string = []string{"*"}
 )
 
-// Network defaults
-const (
-	DefaultTopologyKey = "topology.kubernetes.io/zone"
-)
-
 // Node defaults
 const (
 	// DefaultLogging is the default logging verbosity level

@@ -501,30 +501,8 @@ func (r *NodeReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, hom
 	return volumeMounts
 }
 
-// getNodeAffinity returns affinity settings to be use by the node pod
-func (r *NodeReconciler) getNodeAffinity(node *ethereumv1alpha1.Node) *corev1.Affinity {
-	if node.Spec.HighlyAvailable {
-		return &corev1.Affinity{
-			PodAntiAffinity: &corev1.PodAntiAffinity{
-				RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
-					{
-						LabelSelector: &metav1.LabelSelector{
-							MatchLabels: map[string]string{
-								"name":    "node",
-								"network": node.Name,
-							},
-						},
-						TopologyKey: node.Spec.TopologyKey,
-					},
-				},
-			},
-		}
-	}
-	return nil
-}
-
 // specStatefulset updates node statefulset spec
-func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv1.StatefulSet, img, homedir string, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount, affinity *corev1.Affinity) {
+func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv1.StatefulSet, img, homedir string, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount) {
 	labels := node.GetLabels()
 	// used by geth to init genesis and import account(s)
 	initContainers := []corev1.Container{}
@@ -648,7 +626,6 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 		Volumes:         volumes,
 		InitContainers:  initContainers,
 		Containers:      []corev1.Container{nodeContainer},
-		Affinity:        affinity,
 	}
 }
 
@@ -671,13 +648,12 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereu
 	args := client.Args()
 	volumes := r.createNodeVolumes(node)
 	mounts := r.createNodeVolumeMounts(node, homedir)
-	affinity := r.getNodeAffinity(node)
 
 	_, err = ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specStatefulset(node, sts, img, homedir, args, volumes, mounts, affinity)
+		r.specStatefulset(node, sts, img, homedir, args, volumes, mounts)
 		return nil
 	})
 

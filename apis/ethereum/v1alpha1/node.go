@@ -42,7 +42,6 @@ type NodeList struct {
 
 //NodeSpec is the specification of the node
 type NodeSpec struct {
-	AvailabilityConfig `json:",inline"`
 
 	// Image is Ethereum node client image
 	Image *string `json:"image,omitempty"`

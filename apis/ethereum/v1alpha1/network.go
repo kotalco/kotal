@@ -21,15 +21,6 @@ const (
 	DevNetwork = "dev"
 )
 
-// AvailabilityConfig is the shared high availability config between node and network
-type AvailabilityConfig struct {
-	// HighlyAvailable is whether blockchain nodes can land on the same k8s node or no
-	HighlyAvailable bool `json:"highlyAvailable,omitempty"`
-
-	// TopologyKey is the k8s node label used to distribute blockchain nodes
-	TopologyKey string `json:"TopologyKey,omitempty"`
-}
-
 // HexString is String in hexadecial format
 // +kubebuilder:validation:Pattern="^0[xX][0-9a-fA-F]+$"
 type HexString string

@@ -10,11 +10,6 @@ var _ webhook.Defaulter = &Node{}
 func (n *Node) Default() {
 	defaultAPIs := []API{Web3API, ETHAPI, NetworkAPI}
 
-	// default availability
-	if n.Spec.TopologyKey == "" {
-		n.Spec.TopologyKey = DefaultTopologyKey
-	}
-
 	// default genesis block
 	if n.Spec.Genesis != nil {
 		n.Spec.Genesis.Default()

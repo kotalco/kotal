@@ -39,17 +39,6 @@ var _ = Describe("Ethereum network controller", func() {
 		useExistingCluster = os.Getenv("USE_EXISTING_CLUSTER") == "true"
 	)
 
-	if useExistingCluster {
-		It("Should label all nodes with topology key", func() {
-			nodes := &corev1.NodeList{}
-			Expect(k8sClient.List(context.Background(), nodes)).To(Succeed())
-			for i, node := range nodes.Items {
-				node.Labels[ethereumv1alpha1.DefaultTopologyKey] = fmt.Sprintf("zone-%d", i)
-				Expect(k8sClient.Update(context.Background(), &node)).To(Succeed())
-			}
-		})
-	}
-
 	Context("Joining Mainnet", func() {
 		ns := &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{

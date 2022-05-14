@@ -8,18 +8,13 @@ import (
 
 var _ = Describe("Ethereum defaulting", func() {
 	It("Should default nodes joining mainnet", func() {
-		availabilityConfig := AvailabilityConfig{
-			HighlyAvailable: true,
-		}
-
 		node1 := Node{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "node-1",
 			},
 			Spec: NodeSpec{
-				AvailabilityConfig: availabilityConfig,
-				Client:             BesuClient,
-				Network:            MainNetwork,
+				Client:  BesuClient,
+				Network: MainNetwork,
 			},
 		}
 
@@ -28,10 +23,9 @@ var _ = Describe("Ethereum defaulting", func() {
 				Name: "node-2",
 			},
 			Spec: NodeSpec{
-				AvailabilityConfig: availabilityConfig,
-				Client:             BesuClient,
-				Network:            MainNetwork,
-				SyncMode:           FullSynchronization,
+				Client:   BesuClient,
+				Network:  MainNetwork,
+				SyncMode: FullSynchronization,
 			},
 		}
 
@@ -39,7 +33,6 @@ var _ = Describe("Ethereum defaulting", func() {
 		node2.Default()
 
 		// node1 defaulting
-		Expect(node1.Spec.TopologyKey).To(Equal(DefaultTopologyKey))
 		Expect(node1.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node1.Spec.SyncMode).To(Equal(DefaultPublicNetworkSyncMode))
 		Expect(node1.Spec.Resources.CPU).To(Equal(DefaultPublicNetworkNodeCPURequest))
@@ -49,7 +42,6 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node1.Spec.Resources.Storage).To(Equal(DefaultMainNetworkFastNodeStorageRequest))
 		Expect(node1.Spec.Logging).To(Equal(DefaultLogging))
 		// node2 defaulting
-		Expect(node2.Spec.TopologyKey).To(Equal(DefaultTopologyKey))
 		Expect(node2.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node2.Spec.SyncMode).To(Equal(FullSynchronization))
 		Expect(node2.Spec.Resources.CPU).To(Equal(DefaultPublicNetworkNodeCPURequest))
@@ -62,23 +54,18 @@ var _ = Describe("Ethereum defaulting", func() {
 	})
 
 	It("Should default nodes joining rinkeby", func() {
-		availabilityConfig := AvailabilityConfig{
-			HighlyAvailable: true,
-		}
 
 		node := Node{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "node-1",
 			},
 			Spec: NodeSpec{
-				AvailabilityConfig: availabilityConfig,
-				Client:             BesuClient,
-				Network:            RinkebyNetwork,
+				Client:  BesuClient,
+				Network: RinkebyNetwork,
 			},
 		}
 
 		node.Default()
-		Expect(node.Spec.TopologyKey).To(Equal(DefaultTopologyKey))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.Spec.SyncMode).To(Equal(DefaultPublicNetworkSyncMode))
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultPublicNetworkNodeCPURequest))
@@ -90,23 +77,18 @@ var _ = Describe("Ethereum defaulting", func() {
 	})
 
 	It("Should default geth node joining rinkeby", func() {
-		availabilityConfig := AvailabilityConfig{
-			HighlyAvailable: true,
-		}
 
 		node := Node{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "node-1",
 			},
 			Spec: NodeSpec{
-				AvailabilityConfig: availabilityConfig,
-				Client:             GethClient,
-				Network:            RinkebyNetwork,
+				Client:  GethClient,
+				Network: RinkebyNetwork,
 			},
 		}
 
 		node.Default()
-		Expect(node.Spec.TopologyKey).To(Equal(DefaultTopologyKey))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.Spec.SyncMode).To(Equal(SnapSynchronization))
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultPublicNetworkNodeCPURequest))
