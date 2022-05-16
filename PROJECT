@@ -35,4 +35,7 @@ resources:
 - group: stacks
   kind: Node
   version: v1alpha1
+- group: aptos
+  kind: Node
+  version: v1alpha1
 version: "2"
