@@ -20,6 +20,7 @@ import (
 	nearv1alpha1 "github.com/kotalco/kotal/apis/near/v1alpha1"
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
 	stacksv1alpha1 "github.com/kotalco/kotal/apis/stacks/v1alpha1"
+	aptoscontroller "github.com/kotalco/kotal/controllers/aptos"
 	bitcoincontroller "github.com/kotalco/kotal/controllers/bitcoin"
 	chainlinkcontroller "github.com/kotalco/kotal/controllers/chainlink"
 	ethereumcontroller "github.com/kotalco/kotal/controllers/ethereum"
@@ -40,7 +41,6 @@ var (
 
 func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
-
 	_ = ethereumv1alpha1.AddToScheme(scheme)
 	_ = ethereum2v1alpha1.AddToScheme(scheme)
 	_ = ipfsv1alpha1.AddToScheme(scheme)
@@ -229,6 +229,13 @@ func main() {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Node")
 			os.Exit(1)
 		}
+	}
+	if err = (&aptoscontroller.NodeReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Node")
+		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
 

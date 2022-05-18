@@ -18,6 +18,26 @@ rules:
   - update
   - watch
 - apiGroups:
+  - aptos.kotal.io
+  resources:
+  - nodes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - aptos.kotal.io
+  resources:
+  - nodes/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - bitcoin.kotal.io
   resources:
   - nodes
