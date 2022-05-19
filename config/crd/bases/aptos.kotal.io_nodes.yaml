@@ -35,6 +35,14 @@ spec:
               image:
                 description: Image is Aptos node client image
                 type: string
+              network:
+                description: Network is Aptos network to join and sync
+                enum:
+                - devnet
+                - testnet
+                type: string
+            required:
+            - network
             type: object
           status:
             description: NodeStatus defines the observed state of Node

@@ -4,10 +4,21 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// AptosNetwork is Aptos network
+type AptosNetwork string
+
+const (
+	Devnet  AptosNetwork = "devnet"
+	Testnet AptosNetwork = "testnet"
+)
+
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
-	// Image is Bitcoin node client image
+	// Image is Aptos node client image
 	Image *string `json:"image,omitempty"`
+	// Network is Aptos network to join and sync
+	// +kubebuilder:validation:Enum=devnet;testnet
+	Network AptosNetwork `json:"network"`
 }
 
 // NodeStatus defines the observed state of Node
