@@ -6,6 +6,8 @@ import (
 
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
+	// Image is Bitcoin node client image
+	Image *string `json:"image,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
