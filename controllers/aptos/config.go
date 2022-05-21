@@ -5,8 +5,13 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type Waypoint struct {
+	FromConfig string `yaml:"from_config"`
+}
+
 type Base struct {
-	Role string `yaml:"role"`
+	Role     string   `yaml:"role"`
+	Waypoint Waypoint `yaml:"waypoint"`
 }
 type Config struct {
 	Base Base `yaml:"base"`
@@ -24,6 +29,9 @@ func ConfigFromSpec(node *aptosv1alpha1.Node) (config string, err error) {
 	c := Config{
 		Base: Base{
 			Role: role,
+			Waypoint: Waypoint{
+				FromConfig: node.Spec.Waypoint,
+			},
 		},
 	}
 
