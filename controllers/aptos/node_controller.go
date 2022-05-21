@@ -36,11 +36,53 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	shared.UpdateLabels(&node, "aptos-core")
 
+	if err = r.reconcileConfigmap(ctx, &node); err != nil {
+		return
+	}
+
 	if err = r.reconcileStatefulset(ctx, &node); err != nil {
 		return
 	}
 
 	return
+}
+
+// specConfigmap updates node configmap
+func (n *NodeReconciler) specConfigmap(node *aptosv1alpha1.Node, configmap *corev1.ConfigMap) {
+	configmap.ObjectMeta.Labels = node.Labels
+
+	if configmap.Data == nil {
+		configmap.Data = map[string]string{}
+	}
+
+	config, err := ConfigFromSpec(node)
+	if err != nil {
+		return
+	}
+
+	configmap.Data["config.yaml"] = config
+
+}
+
+// reconcileConfigmap reconciles node configmap
+func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *aptosv1alpha1.Node) error {
+
+	configmap := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      node.Name,
+			Namespace: node.Namespace,
+		},
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
+		if err := ctrl.SetControllerReference(node, configmap, r.Scheme); err != nil {
+			return err
+		}
+		r.specConfigmap(node, configmap)
+		return nil
+	})
+
+	return err
 }
 
 // reconcileStatefulset reconciles node statefulset
@@ -96,6 +138,25 @@ func (r *NodeReconciler) specStatefulSet(node *aptosv1alpha1.Node, sts *appsv1.S
 						Command: cmd,
 						Args:    args,
 						Env:     env,
+						VolumeMounts: []corev1.VolumeMount{
+							{
+								Name:      "config",
+								MountPath: "/opt/aptos/config",
+								ReadOnly:  true,
+							},
+						},
+					},
+				},
+				Volumes: []corev1.Volume{
+					{
+						Name: "config",
+						VolumeSource: corev1.VolumeSource{
+							ConfigMap: &corev1.ConfigMapVolumeSource{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: node.Name,
+								},
+							},
+						},
 					},
 				},
 			},

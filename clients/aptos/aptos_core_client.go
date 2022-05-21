@@ -46,11 +46,13 @@ func (c *AptosCoreClient) Env() (env []corev1.EnvVar) {
 
 // Command is Aptos Core client entrypoint
 func (c *AptosCoreClient) Command() (command []string) {
+	command = append(command, "/opt/aptos/bin/aptos-node")
 	return
 }
 
 // Args returns Aptos Core client args
 func (c *AptosCoreClient) Args() (args []string) {
+	args = append(args, AptosArgConfig, "/opt/aptos/config/config.yaml")
 	return
 }
 
