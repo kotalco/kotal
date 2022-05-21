@@ -41,6 +41,9 @@ spec:
                 - devnet
                 - testnet
                 type: string
+              validator:
+                description: Validator enables validator mode
+                type: boolean
             required:
             - network
             type: object

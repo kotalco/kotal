@@ -19,6 +19,8 @@ type NodeSpec struct {
 	// Network is Aptos network to join and sync
 	// +kubebuilder:validation:Enum=devnet;testnet
 	Network AptosNetwork `json:"network"`
+	// Validator enables validator mode
+	Validator bool `json:"validator,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
