@@ -144,16 +144,42 @@ func (r *NodeReconciler) specStatefulSet(node *aptosv1alpha1.Node, sts *appsv1.S
 								MountPath: "/opt/aptos/config",
 								ReadOnly:  true,
 							},
+							{
+								Name:      "data",
+								MountPath: "/opt/aptos/data",
+							},
 						},
 					},
 				},
 				Volumes: []corev1.Volume{
 					{
+						Name: "data",
+						VolumeSource: corev1.VolumeSource{
+							// TODO: create persistent volume claim
+							EmptyDir: &corev1.EmptyDirVolumeSource{},
+						},
+					},
+					{
 						Name: "config",
 						VolumeSource: corev1.VolumeSource{
-							ConfigMap: &corev1.ConfigMapVolumeSource{
-								LocalObjectReference: corev1.LocalObjectReference{
-									Name: node.Name,
+							Projected: &corev1.ProjectedVolumeSource{
+								Sources: []corev1.VolumeProjection{
+									{
+										// config.yaml
+										ConfigMap: &corev1.ConfigMapProjection{
+											LocalObjectReference: corev1.LocalObjectReference{
+												Name: node.Name,
+											},
+										},
+									},
+									{
+										// genesis.blob
+										ConfigMap: &corev1.ConfigMapProjection{
+											LocalObjectReference: corev1.LocalObjectReference{
+												Name: node.Spec.GenesisConfigmapName,
+											},
+										},
+									},
 								},
 							},
 						},
