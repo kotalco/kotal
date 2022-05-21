@@ -2,4 +2,5 @@ apiVersion: aptos.kotal.io/v1alpha1
 kind: Node
 metadata:
   name: node-sample
-spec: {}
+spec:
+  network: devnet
