@@ -23,6 +23,8 @@ type NodeSpec struct {
 	Validator bool `json:"validator,omitempty"`
 	// Waypoint provides an off-chain mechanism to verify the sync process after restart or epoch change
 	Waypoint string `json:"waypoint"`
+	// GenesisConfigmapName is Kubernetes configmap name holding genesis blob
+	GenesisConfigmapName string `json:"genesisConfigmapName"`
 }
 
 // NodeStatus defines the observed state of Node

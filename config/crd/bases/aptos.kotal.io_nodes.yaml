@@ -32,6 +32,9 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
+              genesisConfigmapName:
+                description: GenesisConfigmapName is Kubernetes configmap name holding genesis blob
+                type: string
               image:
                 description: Image is Aptos node client image
                 type: string
@@ -48,6 +51,7 @@ spec:
                 description: Waypoint provides an off-chain mechanism to verify the sync process after restart or epoch change
                 type: string
             required:
+            - genesisConfigmapName
             - network
             - waypoint
             type: object
