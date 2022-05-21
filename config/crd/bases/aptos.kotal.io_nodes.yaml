@@ -44,8 +44,12 @@ spec:
               validator:
                 description: Validator enables validator mode
                 type: boolean
+              waypoint:
+                description: Waypoint provides an off-chain mechanism to verify the sync process after restart or epoch change
+                type: string
             required:
             - network
+            - waypoint
             type: object
           status:
             description: NodeStatus defines the observed state of Node
