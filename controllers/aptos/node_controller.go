@@ -55,7 +55,7 @@ func (n *NodeReconciler) specConfigmap(node *aptosv1alpha1.Node, configmap *core
 		configmap.Data = map[string]string{}
 	}
 
-	config, err := ConfigFromSpec(node)
+	config, err := ConfigFromSpec(node, n.Client)
 	if err != nil {
 		return
 	}
