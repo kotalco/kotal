@@ -25,6 +25,8 @@ type NodeSpec struct {
 	Waypoint string `json:"waypoint"`
 	// GenesisConfigmapName is Kubernetes configmap name holding genesis blob
 	GenesisConfigmapName string `json:"genesisConfigmapName"`
+	// NodePrivateKeySecretName is the secret name holding node private key
+	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node

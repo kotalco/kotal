@@ -44,6 +44,9 @@ spec:
                 - devnet
                 - testnet
                 type: string
+              nodePrivateKeySecretName:
+                description: NodePrivateKeySecretName is the secret name holding node private key
+                type: string
               validator:
                 description: Validator enables validator mode
                 type: boolean
