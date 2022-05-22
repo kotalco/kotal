@@ -47,6 +47,9 @@ spec:
               nodePrivateKeySecretName:
                 description: NodePrivateKeySecretName is the secret name holding node private key
                 type: string
+              peerId:
+                description: PeerId is the node identity
+                type: string
               validator:
                 description: Validator enables validator mode
                 type: boolean

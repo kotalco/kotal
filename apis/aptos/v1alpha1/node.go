@@ -27,6 +27,8 @@ type NodeSpec struct {
 	GenesisConfigmapName string `json:"genesisConfigmapName"`
 	// NodePrivateKeySecretName is the secret name holding node private key
 	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
+	// PeerId is the node identity
+	PeerId string `json:"peerId,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node
