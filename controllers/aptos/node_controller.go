@@ -192,6 +192,16 @@ func (r *NodeReconciler) specStatefulSet(node *aptosv1alpha1.Node, sts *appsv1.S
 						Command: cmd,
 						Args:    args,
 						Env:     env,
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPU),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.Memory),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse(node.Spec.CPULimit),
+								corev1.ResourceMemory: resource.MustParse(node.Spec.MemoryLimit),
+							},
+						},
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "config",
