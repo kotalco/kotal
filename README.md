@@ -16,6 +16,7 @@ Kotal operator is a **cloud agnostic blockchain deployer** that makes it super e
 - Deploy Filecoin nodes
 - Deploy Filecoin backed pinning services (FPS)
 - Deploy Stacks rpc and api nodes
+- Deploy Aptos full and validator nodes
 
 
 ## Kubernetes Custom Resources
@@ -24,6 +25,7 @@ Kotal extended kubernetes with custom resources in different API groups.
 
 | Protocol         | Description                                      | API Group                   | Status |
 | ---------------- | ------------------------------------------------ | --------------------------- | ------ |
+| **Aptos**        | Deploy Aptos full and validator nodes            | aptos.kotal.io/v1alpha1     | alpha  |
 | **Bitcoin**      | Deploy Bitcoin nodes                             | bitcoin.kotal.io/v1alpha1   | alpha  |
 | **Chainlink**    | Deploy Chainlink nodes                           | chainlink.kotal.io/v1alpha1 | alpha  |
 | **Ethereum**     | Deploy private and public network Ethereum nodes | ethereum.kotal.io/v1alpha1  | alpha  |
@@ -40,6 +42,7 @@ For each protocol, kotal supports at least 1 client (reference client):
 
 | Protocol         | Client(s)                                                                                                                                                                                        |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Aptos**        | [Aptos Core](https://github.com/aptos-labs/aptos-core)                                                                                                                                           |
 | **Bitcoin**      | [Bitcoin Core](https://github.com/bitcoin/bitcoin)                                                                                                                                               |
 | **Chainlink**    | [Chainlink](https://github.com/smartcontractkit/chainlink)                                                                                                                                       |
 | **Ethereum**     | [Hyperledger Besu](https://github.com/hyperledger/besu), [Go-Ethereum](https://github.com/ethereum/go-ethereum), [Nethermind](https://github.com/NethermindEth/nethermind)                       |
