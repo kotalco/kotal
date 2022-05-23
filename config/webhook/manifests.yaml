@@ -12,6 +12,26 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
+      path: /mutate-aptos-kotal-io-v1alpha1-node
+  failurePolicy: Fail
+  name: mutate-aptos-v1alpha1-node.kb.io
+  rules:
+  - apiGroups:
+    - aptos.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - nodes
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
       path: /mutate-bitcoin-kotal-io-v1alpha1-node
   failurePolicy: Fail
   name: mutate-bitcoin-v1alpha1-node.kb.io
@@ -234,6 +254,26 @@ metadata:
   creationTimestamp: null
   name: validating-webhook-configuration
 webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-aptos-kotal-io-v1alpha1-node
+  failurePolicy: Fail
+  name: validate-aptos-v1alpha1-node.kb.io
+  rules:
+  - apiGroups:
+    - aptos.kotal.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - nodes
+  sideEffects: None
 - admissionReviewVersions:
   - v1
   clientConfig:
