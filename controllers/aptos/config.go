@@ -64,9 +64,9 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 		}
 
 		identity = Identity{
-			Type: "from_config",
-			Key:  nodePrivateKey,
-			// TODO: update with peer ID
+			Type:   "from_config",
+			Key:    nodePrivateKey,
+			PeerId: node.Spec.PeerId,
 		}
 
 	}
