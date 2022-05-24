@@ -32,6 +32,10 @@ type NodeSpec struct {
 	PeerId string `json:"peerId,omitempty"`
 	// API enables REST API server
 	API bool `json:"api,omitempty"`
+	// APIPort is api server port
+	APIPort uint `json:"apiPort,omitempty"`
+	// APIHost is api server host
+	APIHost string `json:"apiHost,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
