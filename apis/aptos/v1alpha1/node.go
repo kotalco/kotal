@@ -30,6 +30,8 @@ type NodeSpec struct {
 	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
 	// PeerId is the node identity
 	PeerId string `json:"peerId,omitempty"`
+	// API enables REST API server
+	API bool `json:"api,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
