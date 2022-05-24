@@ -15,3 +15,10 @@ const (
 	// DefaultNodeStorageRequest is the Storage requested by Aptos node
 	DefaultNodeStorageRequest = "250Gi"
 )
+
+const (
+	// DefaultAPIPort is the default API server port
+	DefaultAPIPort uint = 8080
+	// DefaultHost is the default host
+	DefaultHost = "0.0.0.0"
+)

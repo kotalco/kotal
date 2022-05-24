@@ -38,4 +38,12 @@ func (r *Node) Default() {
 
 	r.DefaultNodeResources()
 
+	if r.Spec.APIPort == 0 {
+		r.Spec.APIPort = DefaultAPIPort
+	}
+
+	if r.Spec.APIHost == "" {
+		r.Spec.APIHost = DefaultHost
+	}
+
 }
