@@ -36,10 +36,16 @@ type Network struct {
 	Identity        Identity `yaml:"identity,omitempty"`
 }
 
+type API struct {
+	Enabled bool   `yaml:"enabled"`
+	Address string `yaml:"address"`
+}
+
 type Config struct {
 	Base             Base      `yaml:"base"`
 	Execution        Execution `yaml:"execution"`
 	FullNodeNetworks []Network `yaml:"full_node_networks,omitempty"`
+	API              API       `yaml:"api"`
 }
 
 // ConfigFromSpec generates config.toml file from node spec
@@ -88,6 +94,11 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 				DiscoveryMethod: "onchain",
 				Identity:        identity,
 			},
+		},
+		API: API{
+			Enabled: node.Spec.API,
+			// TODO: update using api host and port
+			Address: "127.0.0.1:8080",
 		},
 	}
 
