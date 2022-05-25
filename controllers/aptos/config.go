@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	aptosv1alpha1 "github.com/kotalco/kotal/apis/aptos/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -97,8 +98,7 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 		},
 		API: API{
 			Enabled: node.Spec.API,
-			// TODO: update using api host and port
-			Address: "127.0.0.1:8080",
+			Address: fmt.Sprintf("%s:%d", node.Spec.APIHost, node.Spec.APIPort),
 		},
 	}
 
