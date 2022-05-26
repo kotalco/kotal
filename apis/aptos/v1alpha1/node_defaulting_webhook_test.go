@@ -11,9 +11,11 @@ var _ = Describe("Aptos node defaulting", func() {
 		node := Node{
 			ObjectMeta: metav1.ObjectMeta{},
 			Spec: NodeSpec{
-				Network: Devnet,
+				Network:   Devnet,
+				Validator: true,
 			},
 		}
+		// TODO: create a test for full node, p2p port
 
 		node.Default()
 
@@ -24,6 +26,8 @@ var _ = Describe("Aptos node defaulting", func() {
 		Expect(node.Spec.Storage).To(Equal(DefaultNodeStorageRequest))
 		Expect(node.Spec.APIPort).To(Equal(DefaultAPIPort))
 		Expect(node.Spec.APIHost).To(Equal(DefaultHost))
+		Expect(node.Spec.P2PPort).To(Equal(DefaultValidatorP2PPort))
+		Expect(node.Spec.P2PHost).To(Equal(DefaultHost))
 
 	})
 })

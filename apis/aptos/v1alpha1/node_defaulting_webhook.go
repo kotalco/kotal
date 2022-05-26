@@ -46,4 +46,16 @@ func (r *Node) Default() {
 		r.Spec.APIHost = DefaultHost
 	}
 
+	if r.Spec.P2PPort == 0 {
+		if r.Spec.Validator {
+			r.Spec.P2PPort = DefaultValidatorP2PPort
+		} else {
+			r.Spec.P2PPort = DefaultFullnodeP2PPort
+		}
+	}
+
+	if r.Spec.P2PHost == "" {
+		r.Spec.P2PHost = DefaultHost
+	}
+
 }

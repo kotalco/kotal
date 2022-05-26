@@ -19,6 +19,10 @@ const (
 const (
 	// DefaultAPIPort is the default API server port
 	DefaultAPIPort uint = 8080
+	// DefaultFullnodeP2PPort is the default full node p2p port
+	DefaultFullnodeP2PPort uint = 6182
+	// DefaultValidatorP2PPort is the default validator node p2p port
+	DefaultValidatorP2PPort uint = 6180
 	// DefaultHost is the default host
 	DefaultHost = "0.0.0.0"
 )
