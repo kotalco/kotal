@@ -13,6 +13,19 @@ const (
 	Testnet AptosNetwork = "testnet"
 )
 
+// PeerAddress is peer multiaddress
+type PeerAddress string
+
+// Peer is Aptos network peer
+type Peer struct {
+	// ID is peer identifier
+	ID string `json:"id"`
+	// Addresses is array of peer multiaddress
+	// +listType=set
+	// +kubebuilder:validation:MinItems=1
+	Addresses []PeerAddress `json:"addresses"`
+}
+
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Image is Aptos node client image
@@ -30,6 +43,8 @@ type NodeSpec struct {
 	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
 	// PeerId is the node identity
 	PeerId string `json:"peerId,omitempty"`
+	// SeedPeers is seed peers
+	SeedPeers []Peer `json:"seedPeers,omitempty"`
 	// API enables REST API server
 	API bool `json:"api,omitempty"`
 	// APIPort is api server port

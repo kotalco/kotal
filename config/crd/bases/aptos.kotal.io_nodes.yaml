@@ -92,6 +92,27 @@ spec:
                     description: StorageClass is the volume storage class
                     type: string
                 type: object
+              seedPeers:
+                description: SeedPeers is seed peers
+                items:
+                  description: Peer is Aptos network peer
+                  properties:
+                    addresses:
+                      description: Addresses is array of peer multiaddress
+                      items:
+                        description: PeerAddress is peer multiaddress
+                        type: string
+                      minItems: 1
+                      type: array
+                      x-kubernetes-list-type: set
+                    id:
+                      description: ID is peer identifier
+                      type: string
+                  required:
+                  - addresses
+                  - id
+                  type: object
+                type: array
               validator:
                 description: Validator enables validator mode
                 type: boolean
