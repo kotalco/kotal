@@ -13,9 +13,6 @@ const (
 	Testnet AptosNetwork = "testnet"
 )
 
-// PeerAddress is peer multiaddress
-type PeerAddress string
-
 // Peer is Aptos network peer
 type Peer struct {
 	// ID is peer identifier
@@ -23,7 +20,7 @@ type Peer struct {
 	// Addresses is array of peer multiaddress
 	// +listType=set
 	// +kubebuilder:validation:MinItems=1
-	Addresses []PeerAddress `json:"addresses"`
+	Addresses []string `json:"addresses"`
 }
 
 // NodeSpec defines the desired state of Node

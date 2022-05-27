@@ -100,7 +100,6 @@ spec:
                     addresses:
                       description: Addresses is array of peer multiaddress
                       items:
-                        description: PeerAddress is peer multiaddress
                         type: string
                       minItems: 1
                       type: array

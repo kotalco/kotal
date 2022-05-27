@@ -31,11 +31,17 @@ type Identity struct {
 	PeerId string `yaml:"peer_id"`
 }
 
+type Peer struct {
+	Addresses []string `yaml:"addresses"`
+	Role      string   `yaml:"role"`
+}
+
 type Network struct {
-	NetworkId       string   `yaml:"network_id"`
-	DiscoveryMethod string   `yaml:"discovery_method"`
-	ListenAddress   string   `yaml:"listen_address"`
-	Identity        Identity `yaml:"identity,omitempty"`
+	NetworkId       string          `yaml:"network_id"`
+	DiscoveryMethod string          `yaml:"discovery_method"`
+	ListenAddress   string          `yaml:"listen_address"`
+	Identity        Identity        `yaml:"identity,omitempty"`
+	Seeds           map[string]Peer `yaml:"seeds,omitempty"`
 }
 
 type API struct {
@@ -79,6 +85,17 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 
 	}
 
+	seeds := map[string]Peer{}
+
+	if len(node.Spec.SeedPeers) != 0 {
+		for _, peer := range node.Spec.SeedPeers {
+			seeds[peer.ID] = Peer{
+				Addresses: peer.Addresses,
+				Role:      "Upstream",
+			}
+		}
+	}
+
 	c := Config{
 		Base: Base{
 			Role:    role,
@@ -96,6 +113,7 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 				DiscoveryMethod: "onchain",
 				ListenAddress:   fmt.Sprintf("/ip4/%s/tcp/%d", node.Spec.P2PHost, node.Spec.P2PPort),
 				Identity:        identity,
+				Seeds:           seeds,
 			},
 		},
 		API: API{

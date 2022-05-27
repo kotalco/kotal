@@ -116,7 +116,7 @@ func (in *Peer) DeepCopyInto(out *Peer) {
 	*out = *in
 	if in.Addresses != nil {
 		in, out := &in.Addresses, &out.Addresses
-		*out = make([]PeerAddress, len(*in))
+		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
 }
