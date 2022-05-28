@@ -177,6 +177,13 @@ func (r *NodeReconciler) specService(node *aptosv1alpha1.Node, svc *corev1.Servi
 			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
 			Protocol:   corev1.ProtocolTCP,
 		},
+		{
+			// TODO: update node.spec with metricsPort
+			Name:       "metrics",
+			Port:       int32(9101),
+			TargetPort: intstr.FromInt(9101),
+			Protocol:   corev1.ProtocolTCP,
+		},
 	}
 
 	if node.Spec.API {
