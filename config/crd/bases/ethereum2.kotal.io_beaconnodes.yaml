@@ -4,7 +4,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.5.0
+    controller-gen.kubebuilder.io/version: v0.6.0
   creationTimestamp: null
   name: beaconnodes.ethereum2.kotal.io
 spec:
@@ -29,10 +29,14 @@ spec:
         description: BeaconNode is the Schema for the beaconnodes API
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -40,7 +44,8 @@ spec:
             description: BeaconNodeSpec defines the desired state of BeaconNode
             properties:
               certSecretName:
-                description: CertSecretName is k8s secret name that holds tls.key and tls.cert
+                description: CertSecretName is k8s secret name that holds tls.key
+                  and tls.cert
                 type: string
               client:
                 description: Client is the Ethereum 2.0 client to use
@@ -51,7 +56,8 @@ spec:
                 - nimbus
                 type: string
               corsDomains:
-                description: CORSDomains is the domains from which to accept cross origin requests
+                description: CORSDomains is the domains from which to accept cross
+                  origin requests
                 items:
                   type: string
                 type: array
@@ -72,7 +78,8 @@ spec:
                 description: GRPCPort is GRPC gateway server port
                 type: integer
               hosts:
-                description: Hosts is a list of hostnames to to whitelist for API access
+                description: Hosts is a list of hostnames to to whitelist for API
+                  access
                 items:
                   type: string
                 type: array

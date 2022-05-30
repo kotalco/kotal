@@ -4,7 +4,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.5.0
+    controller-gen.kubebuilder.io/version: v0.6.0
   creationTimestamp: null
   name: validators.ethereum2.kotal.io
 spec:
@@ -29,10 +29,14 @@ spec:
         description: Validator is the Schema for the validators API
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -66,14 +70,16 @@ spec:
               keystores:
                 description: Keystores is a list of Validator keystores
                 items:
-                  description: Keystore is Ethereum 2.0 validator EIP-2335 BLS12-381 keystore https://eips.ethereum.org/EIPS/eip-2335
+                  description: Keystore is Ethereum 2.0 validator EIP-2335 BLS12-381
+                    keystore https://eips.ethereum.org/EIPS/eip-2335
                   properties:
                     publicKey:
                       description: PublicKey is the validator public key in hexadecimal
                       pattern: ^0[xX][0-9a-fA-F]{96}$
                       type: string
                     secretName:
-                      description: SecretName is the kubernetes secret holding [keystore] and [password]
+                      description: SecretName is the kubernetes secret holding [keystore]
+                        and [password]
                       type: string
                   required:
                   - secretName
@@ -97,7 +103,8 @@ spec:
                 - none
                 type: string
               network:
-                description: Network is the network this validator is validating blocks for
+                description: Network is the network this validator is validating blocks
+                  for
                 type: string
               resources:
                 description: Resources is node compute and storage resources

@@ -4,7 +4,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.5.0
+    controller-gen.kubebuilder.io/version: v0.6.0
   creationTimestamp: null
   name: nodes.ethereum.kotal.io
 spec:
@@ -36,10 +36,14 @@ spec:
         description: Node is the Schema for the nodes API
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -47,7 +51,8 @@ spec:
             description: NodeSpec is the specification of the node
             properties:
               bootnodes:
-                description: Bootnodes is set of ethereum node URLS for p2p discovery bootstrap
+                description: Bootnodes is set of ethereum node URLS for p2p discovery
+                  bootstrap
                 items:
                   description: Enode is ethereum node url
                   type: string
@@ -65,7 +70,8 @@ spec:
                 pattern: ^0[xX][0-9a-fA-F]{40}$
                 type: string
               corsDomains:
-                description: CORSDomains is the domains from which to accept cross origin requests
+                description: CORSDomains is the domains from which to accept cross
+                  origin requests
                 items:
                   type: string
                 type: array
@@ -74,7 +80,8 @@ spec:
                 description: Genesis is genesis block configuration
                 properties:
                   accounts:
-                    description: Accounts is array of accounts to fund or associate with code and storage
+                    description: Accounts is array of accounts to fund or associate
+                      with code and storage
                     items:
                       description: Account is Ethereum account
                       properties:
@@ -95,14 +102,16 @@ spec:
                             description: HexString is String in hexadecial format
                             pattern: ^0[xX][0-9a-fA-F]+$
                             type: string
-                          description: Storage is account contract storage as key value pair
+                          description: Storage is account contract storage as key
+                            value pair
                           type: object
                       required:
                       - address
                       type: object
                     type: array
                   chainId:
-                    description: ChainID is the the chain ID used in transaction signature to prevent reply attack more details https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
+                    description: ChainID is the the chain ID used in transaction signature
+                      to prevent reply attack more details https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
                     type: integer
                   clique:
                     description: Clique PoA engine cinfiguration
@@ -111,10 +120,12 @@ spec:
                         description: BlockPeriod is block time in seconds
                         type: integer
                       epochLength:
-                        description: EpochLength is the Number of blocks after which to reset all votes
+                        description: EpochLength is the Number of blocks after which
+                          to reset all votes
                         type: integer
                       signers:
-                        description: Signers are PoA initial signers, at least one signer is required
+                        description: Signers are PoA initial signers, at least one
+                          signer is required
                         items:
                           description: EthereumAddress is ethereum address
                           pattern: ^0[xX][0-9a-fA-F]{40}$
@@ -134,11 +145,13 @@ spec:
                     description: Ethash PoW engine configuration
                     properties:
                       fixedDifficulty:
-                        description: FixedDifficulty is fixed difficulty to be used in private PoW networks
+                        description: FixedDifficulty is fixed difficulty to be used
+                          in private PoW networks
                         type: integer
                     type: object
                   forks:
-                    description: Forks is supported forks (network upgrade) and corresponding block number
+                    description: Forks is supported forks (network upgrade) and corresponding
+                      block number
                     properties:
                       arrowGlacier:
                         description: ArrowGlacier fork
@@ -181,7 +194,8 @@ spec:
                         type: integer
                     type: object
                   gasLimit:
-                    description: GastLimit is the total gas limit for all transactions in a block
+                    description: GastLimit is the total gas limit for all transactions
+                      in a block
                     pattern: ^0[xX][0-9a-fA-F]+$
                     type: string
                   ibft2:
@@ -194,19 +208,23 @@ spec:
                         description: DuplicateMessageLimit is duplicate messages limit
                         type: integer
                       epochLength:
-                        description: EpochLength is the Number of blocks after which to reset all votes
+                        description: EpochLength is the Number of blocks after which
+                          to reset all votes
                         type: integer
                       futureMessagesLimit:
-                        description: futureMessagesLimit is future messages buffer limit
+                        description: futureMessagesLimit is future messages buffer
+                          limit
                         type: integer
                       futureMessagesMaxDistance:
-                        description: FutureMessagesMaxDistance is maximum height from current chain height for buffering future messages
+                        description: FutureMessagesMaxDistance is maximum height from
+                          current chain height for buffering future messages
                         type: integer
                       messageQueueLimit:
                         description: MessageQueueLimit is the message queue limit
                         type: integer
                       requestTimeout:
-                        description: RequestTimeout is the timeout for each consensus round in seconds
+                        description: RequestTimeout is the timeout for each consensus
+                          round in seconds
                         type: integer
                       validators:
                         description: Validators are initial ibft2 validators
@@ -218,7 +236,8 @@ spec:
                         type: array
                     type: object
                   mixHash:
-                    description: MixHash is hash combined with nonce to prove effort spent to create block
+                    description: MixHash is hash combined with nonce to prove effort
+                      spent to create block
                     pattern: ^0[xX][0-9a-fA-F]{64}$
                     type: string
                   networkId:
@@ -243,7 +262,8 @@ spec:
                 description: GraphQLPort is the GraphQL server listening port
                 type: integer
               hosts:
-                description: Hosts is a list of hostnames to to whitelist for RPC access
+                description: Hosts is a list of hostnames to to whitelist for RPC
+                  access
                 items:
                   type: string
                 type: array
@@ -255,10 +275,12 @@ spec:
                 description: import is account to import
                 properties:
                   passwordSecretName:
-                    description: PasswordSecretName is the secret holding password used to encrypt account private key
+                    description: PasswordSecretName is the secret holding password
+                      used to encrypt account private key
                     type: string
                   privateKeySecretName:
-                    description: PrivateKeySecretName is the secret name holding account private key
+                    description: PrivateKeySecretName is the secret name holding account
+                      private key
                     type: string
                 required:
                 - passwordSecretName
@@ -277,13 +299,15 @@ spec:
                 - all
                 type: string
               miner:
-                description: Miner is whether node is mining/validating blocks or no
+                description: Miner is whether node is mining/validating blocks or
+                  no
                 type: boolean
               network:
                 description: Network specifies the network to join
                 type: string
               nodePrivateKeySecretName:
-                description: NodePrivateKeySecretName is the secret name holding node private key
+                description: NodePrivateKeySecretName is the secret name holding node
+                  private key
                 type: string
               p2pPort:
                 description: P2PPort is port used for peer to peer communication
@@ -343,7 +367,8 @@ spec:
                 description: RPCPort is HTTP-RPC server listening port
                 type: integer
               staticNodes:
-                description: StaticNodes is a set of ethereum nodes to maintain connection to
+                description: StaticNodes is a set of ethereum nodes to maintain connection
+                  to
                 items:
                   description: Enode is ethereum node url
                   type: string

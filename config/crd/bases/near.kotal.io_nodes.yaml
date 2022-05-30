@@ -4,7 +4,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.5.0
+    controller-gen.kubebuilder.io/version: v0.6.0
   creationTimestamp: null
   name: nodes.near.kotal.io
 spec:
@@ -33,10 +33,14 @@ spec:
         description: Node is the Schema for the nodes API
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -47,7 +51,8 @@ spec:
                 description: Archive keeps old blocks in the storage
                 type: boolean
               bootnodes:
-                description: Bootnodes is array of boot nodes to bootstrap network from
+                description: Bootnodes is array of boot nodes to bootstrap network
+                  from
                 items:
                   type: string
                 type: array
@@ -56,7 +61,8 @@ spec:
                 description: Image is NEAR node client image
                 type: string
               minPeers:
-                description: MinPeers is minimum number of peers to start syncing/producing blocks
+                description: MinPeers is minimum number of peers to start syncing/producing
+                  blocks
                 type: integer
               network:
                 description: Network is NEAR network to join and sync
@@ -66,7 +72,8 @@ spec:
                 - betanet
                 type: string
               nodePrivateKeySecretName:
-                description: NodePrivateKeySecretName is the secret name holding node Ed25519 private key
+                description: NodePrivateKeySecretName is the secret name holding node
+                  Ed25519 private key
                 type: string
               p2pHost:
                 description: P2PHost is p2p host
@@ -120,7 +127,8 @@ spec:
                 description: TelemetryURL is telemetry service URL
                 type: string
               validatorSecretName:
-                description: ValidatorSecretName is the secret name holding node Ed25519 validator key
+                description: ValidatorSecretName is the secret name holding node Ed25519
+                  validator key
                 type: string
             required:
             - network
