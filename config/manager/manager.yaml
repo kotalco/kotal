@@ -22,26 +22,30 @@ spec:
       labels:
         control-plane: controller-manager
     spec:
+      securityContext:
+        runAsUser: 65532
       containers:
-      - name: manager
-        image: controller:latest
-        # uncomment the following environment variables to use custom images
-        # env:
-        # - name: PARITY_IMAGE
-        #   value: openethereum/openethereum:latest
-        # - name: GETH_IMAGE
-        #   value: ethereum/client-go:latest
-        # - name: BESU_IMAGE
-        #   value: hyperledger/besu:latest
-        command:
-        - /manager
-        args:
-        - --enable-leader-election
-        resources:
-          limits:
-            cpu: 500m
-            memory: 1Gi
-          requests:
-            cpu: 250m
-            memory: 500Mi
+        - name: manager
+          securityContext:
+            allowPrivilegeEscalation: false
+          image: controller:latest
+          # uncomment the following environment variables to use custom images
+          # env:
+          # - name: PARITY_IMAGE
+          #   value: openethereum/openethereum:latest
+          # - name: GETH_IMAGE
+          #   value: ethereum/client-go:latest
+          # - name: BESU_IMAGE
+          #   value: hyperledger/besu:latest
+          command:
+            - /manager
+          args:
+            - "--leader-elect"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 500Mi
       terminationGracePeriodSeconds: 10
