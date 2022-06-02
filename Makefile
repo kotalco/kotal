@@ -120,7 +120,8 @@ vet:
 
 ENVTEST_ASSETS_DIR=$(shell pwd)/testbin
 test: manifests generate fmt vet envtest
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" go test ./... -coverprofile cover.out
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" go test -coverprofile cover.out.tmp ./...
+	cat cover.out.tmp | grep -v zz_generated > cover.out
 
 # output manifest files for the release
 release: manifests
