@@ -29,6 +29,7 @@ var _ = Describe("Polkadot client", func() {
 			Logging:                  "warn",
 			RPC:                      true,
 			RPCPort:                  6789,
+			RPCMethods:               "unsafe",
 			WS:                       true,
 			WSPort:                   3456,
 			Telemetry:                true,

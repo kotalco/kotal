@@ -50,6 +50,8 @@ type NodeSpec struct {
 	RPC bool `json:"rpc,omitempty"`
 	// RPCPort is JSON-RPC server port
 	RPCPort uint `json:"rpcPort,omitempty"`
+	// RPCMethods is JSON-RPC methods access control
+	RPCMethods string `json:"rpcMethods,omitempty"`
 	// WS enables Websocket server
 	WS bool `json:"ws,omitempty"`
 	// WSPort is Websocket server port

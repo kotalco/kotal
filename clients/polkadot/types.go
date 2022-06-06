@@ -21,6 +21,8 @@ const (
 	PolkadotArgRPCPort = "--rpc-port"
 	// PolkadotArgRPCCors is argument used to set origins allowed to access the JSON-RPC HTTP and WS servers
 	PolkadotArgRPCCors = "--rpc-cors"
+	// PolkadotArgRPCMethods is argument used to set allowed to access the JSON-RPC methods
+	PolkadotArgRPCMethods = "--rpc-methods"
 	// PolkadotArgWSExternal is argument used to enable websocket server
 	PolkadotArgWSExternal = "--ws-external"
 	// PolkadotArgWSPort is argument used to set websocket server port
