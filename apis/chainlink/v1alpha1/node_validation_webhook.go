@@ -1,8 +1,6 @@
 package v1alpha1
 
 import (
-	"fmt"
-
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -20,14 +18,16 @@ func (r *Node) ValidateCreate() error {
 
 	nodelog.Info("validate create", "name", r.Name)
 
-	allErrors = append(allErrors, r.Spec.Resources.ValidateCreate()...)
+	errList := ValidateCreate(r)
+	for _, v := range errList {
+		allErrors = append(allErrors, &v.FieldErr)
+	}
 
 	if len(allErrors) == 0 {
 		return nil
 	}
 
 	return apierrors.NewInvalid(schema.GroupKind{}, r.Name, allErrors)
-
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
@@ -37,20 +37,9 @@ func (r *Node) ValidateUpdate(old runtime.Object) error {
 
 	nodelog.Info("validate update", "name", r.Name)
 
-	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
-
-	if oldNode.Spec.EthereumChainId != r.Spec.EthereumChainId {
-		err := field.Invalid(field.NewPath("spec").Child("ethereumChainId"), fmt.Sprintf("%d", r.Spec.EthereumChainId), "field is immutable")
-		allErrors = append(allErrors, err)
-	}
-
-	if oldNode.Spec.LinkContractAddress != r.Spec.LinkContractAddress {
-		err := field.Invalid(field.NewPath("spec").Child("linkContractAddress"), r.Spec.LinkContractAddress, "field is immutable")
-		allErrors = append(allErrors, err)
-	}
-
-	if len(allErrors) == 0 {
-		return nil
+	errList := ValidateUpdate(r, oldNode)
+	for _, v := range errList {
+		allErrors = append(allErrors, &v.FieldErr)
 	}
 
 	return apierrors.NewInvalid(schema.GroupKind{}, r.Name, allErrors)
