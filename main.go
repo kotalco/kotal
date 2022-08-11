@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"k8s.io/apimachinery/pkg/runtime"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -17,6 +18,7 @@ import (
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
+	graphv1alpha1 "github.com/kotalco/kotal/apis/graph/v1alpha1"
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	nearv1alpha1 "github.com/kotalco/kotal/apis/near/v1alpha1"
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
@@ -41,17 +43,18 @@ var (
 )
 
 func init() {
-	_ = clientgoscheme.AddToScheme(scheme)
-	_ = ethereumv1alpha1.AddToScheme(scheme)
-	_ = ethereum2v1alpha1.AddToScheme(scheme)
-	_ = ipfsv1alpha1.AddToScheme(scheme)
-	_ = filecoinv1alpha1.AddToScheme(scheme)
-	_ = polkadotv1alpha1.AddToScheme(scheme)
-	_ = chainlinkv1alpha1.AddToScheme(scheme)
-	_ = nearv1alpha1.AddToScheme(scheme)
-	_ = bitcoinv1alpha1.AddToScheme(scheme)
-	_ = stacksv1alpha1.AddToScheme(scheme)
-	_ = aptosv1alpha1.AddToScheme(scheme)
+	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
+	utilruntime.Must(ethereumv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(ethereum2v1alpha1.AddToScheme(scheme))
+	utilruntime.Must(ipfsv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(filecoinv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(polkadotv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(chainlinkv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(nearv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(bitcoinv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(stacksv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(aptosv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(graphv1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 

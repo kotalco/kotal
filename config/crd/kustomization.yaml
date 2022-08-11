@@ -14,6 +14,7 @@ resources:
   - bases/bitcoin.kotal.io_nodes.yaml
   - bases/stacks.kotal.io_nodes.yaml
   - bases/aptos.kotal.io_nodes.yaml
+  - bases/graph.kotal.io_nodes.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:
@@ -24,6 +25,7 @@ patchesStrategicMerge:
   # - patches/webhook_in_validators.yaml
   # - patches/webhook_in_peers.yaml
   # - patches/webhook_in_clusterpeers.yaml
+  # - patches/webhook_in_nodes.yaml
   # - patches/webhook_in_nodes.yaml
   # - patches/webhook_in_nodes.yaml
   # - patches/webhook_in_nodes.yaml
@@ -42,6 +44,7 @@ patchesStrategicMerge:
   - patches/cainjection_in_nodes.yaml
   - patches/cainjection_in_nodes.yaml
   - patches/cainjection_in_nodes.yaml
+  - patches/cainjection_in_graph_nodes.yaml
 # +kubebuilder:scaffold:crdkustomizecainjectionpatch
 
 # the following config is for teaching kustomize how to do kustomization for CRDs.

@@ -1,164 +1,172 @@
 domain: kotal.io
 layout:
-  - go.kubebuilder.io/v3
+- go.kubebuilder.io/v3
 multigroup: true
 projectName: kotal
 repo: github.com/kotalco/kotal
-version: "3"
 resources:
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: filecoin
-    kind: Node
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/filecoin/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: ethereum
-    kind: Node
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/ethereum/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: ethereum2
-    kind: BeaconNode
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/ethereum2/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: ethereum2
-    kind: Validator
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/ethereum2/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: ipfs
-    kind: Peer
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/ipfs/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: ipfs
-    kind: ClusterPeer
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/ipfs/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: polkadot
-    kind: Node
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/polkadot/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: chainlink
-    kind: Node
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/chainlink/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: near
-    kind: Node
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/near/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: bitcoin
-    kind: Node
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/bitcoin/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: stacks
-    kind: Node
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/stacks/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: kotal.io
-    group: aptos
-    kind: Node
-    version: v1alpha1
-    path: github.com/kotalco/kotal/apis/aptos/v1alpha1
-    webhooks:
-      defaulting: true
-      validation: true
-      webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: filecoin
+  kind: Node
+  path: github.com/kotalco/kotal/apis/filecoin/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: ethereum
+  kind: Node
+  path: github.com/kotalco/kotal/apis/ethereum/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: ethereum2
+  kind: BeaconNode
+  path: github.com/kotalco/kotal/apis/ethereum2/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: ethereum2
+  kind: Validator
+  path: github.com/kotalco/kotal/apis/ethereum2/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: ipfs
+  kind: Peer
+  path: github.com/kotalco/kotal/apis/ipfs/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: ipfs
+  kind: ClusterPeer
+  path: github.com/kotalco/kotal/apis/ipfs/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: polkadot
+  kind: Node
+  path: github.com/kotalco/kotal/apis/polkadot/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: chainlink
+  kind: Node
+  path: github.com/kotalco/kotal/apis/chainlink/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: near
+  kind: Node
+  path: github.com/kotalco/kotal/apis/near/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: bitcoin
+  kind: Node
+  path: github.com/kotalco/kotal/apis/bitcoin/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: stacks
+  kind: Node
+  path: github.com/kotalco/kotal/apis/stacks/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kotal.io
+  group: aptos
+  kind: Node
+  path: github.com/kotalco/kotal/apis/aptos/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: kotal.io
+  group: graph
+  kind: Node
+  path: github.com/kotalco/kotal/apis/graph/v1alpha1
+  version: v1alpha1
+version: "3"
