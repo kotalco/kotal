@@ -231,6 +231,32 @@ rules:
   - patch
   - update
 - apiGroups:
+  - graph.kotal.io
+  resources:
+  - nodes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - graph.kotal.io
+  resources:
+  - nodes/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - graph.kotal.io
+  resources:
+  - nodes/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - ipfs.kotal.io
   resources:
   - clusterpeers
