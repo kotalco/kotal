@@ -268,7 +268,7 @@ func (r *ValidatorReconciler) createValidatorVolumes(validator *ethereum2v1alpha
 // |		|_ key-name-1.txt
 // |		|_ key-name-n.txt
 // |___prysm-wallet
-// 			|_prysm-wallet-pasword.txt
+// |        |_prysm-wallet-pasword.txt
 func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1alpha1.Validator, homeDir string) (mounts []corev1.VolumeMount) {
 	dataMount := corev1.VolumeMount{
 		Name:      "data",

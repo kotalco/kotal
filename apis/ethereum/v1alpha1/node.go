@@ -40,7 +40,7 @@ type NodeList struct {
 	Items           []Node `json:"items"`
 }
 
-//NodeSpec is the specification of the node
+// NodeSpec is the specification of the node
 type NodeSpec struct {
 
 	// Image is Ethereum node client image
