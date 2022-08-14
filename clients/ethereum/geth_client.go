@@ -60,6 +60,11 @@ func (g *GethClient) Args() (args []string) {
 	args = append(args, GethDisableIPC)
 	args = append(args, GethP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 	args = append(args, GethSyncMode, string(node.Spec.SyncMode))
+	if g.node.Spec.SyncMode == ethereumv1alpha1.FullSynchronization {
+		args = append(args, GethGcMode, "archive")
+		args = append(args, GethTxLookupLimit, "0")
+		args = append(args, GethCachePreImages)
+	}
 	args = append(args, GethLogging, verbosityLevels[node.Spec.Logging])
 
 	// config.toml holding static nodes

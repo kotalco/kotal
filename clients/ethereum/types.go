@@ -92,6 +92,12 @@ const (
 	GethBootnodes = "--bootnodes"
 	// GethSyncMode is the argument used for sync mode
 	GethSyncMode = "--syncmode"
+	// GethGcMode is the argument used for garbage collection mode
+	GethGcMode = "--gcmode"
+	// GethTxLookupLimit is the argument used to set recent number of blocks to maintain transactions index for
+	GethTxLookupLimit = "--txlookuplimit"
+	// GethCachePreImages is the argument used to enable recording the sha3 preimages of trie keys
+	GethCachePreImages = "--cache.preimages"
 
 	// GethMinerEnabled is the argument used for turning on mining
 	GethMinerEnabled = "--mine"

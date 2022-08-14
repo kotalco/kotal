@@ -200,6 +200,7 @@ var _ = Describe("Geth Client", func() {
 					},
 				},
 				Client:   ethereumv1alpha1.GethClient,
+				SyncMode: ethereumv1alpha1.FullSynchronization,
 				Miner:    true,
 				Coinbase: ethereumv1alpha1.EthereumAddress(coinbase),
 				Import: &ethereumv1alpha1.ImportedAccount{
@@ -216,6 +217,11 @@ var _ = Describe("Geth Client", func() {
 
 			Expect(err).To(BeNil())
 			Expect(client.Args()).To(ContainElements(
+				GethSyncMode,
+				string(node.Spec.SyncMode),
+				GethCachePreImages,
+				GethTxLookupLimit,
+				"0",
 				GethMinerEnabled,
 				GethMinerCoinbase,
 				coinbase,
