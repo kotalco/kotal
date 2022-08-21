@@ -6,6 +6,8 @@ import (
 
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
+	// EthereumNodeRPCEndpoint is Ethereum node JSON-RPC server endpoint
+	EthereumNodeRPCEndpoint string `json:"ethereumNodeRPCEndpoint"`
 }
 
 // NodeStatus defines the observed state of Node
