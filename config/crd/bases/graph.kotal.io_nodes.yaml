@@ -39,6 +39,9 @@ spec:
                 description: EthereumNodeRPCEndpoint is Ethereum node JSON-RPC server
                   endpoint
                 type: string
+              image:
+                description: Image is Graph node client image
+                type: string
             required:
             - ethereumNodeRPCEndpoint
             type: object
