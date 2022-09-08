@@ -31,6 +31,7 @@ Kotal extended kubernetes with custom resources in different API groups.
 | **Ethereum**     | Deploy private and public network Ethereum nodes | ethereum.kotal.io/v1alpha1  | alpha  |
 | **Ethereum 2.0** | Deploy validator and beacon chain nodes          | ethereum2.kotal.io/v1alpha1 | alpha  |
 | **Filecoin**     | Deploy Filecoin nodes                            | filecoin.kotal.io/v1alpha1  | alpha  |
+| **Graph**        | Deploy graph nodes                               | graph.kotal.io/v1alpha1     | alpha  |
 | **IPFS**         | Deploy IPFS peers, cluster peers, and swarms     | ipfs.kotal.io/v1alpha1      | alpha  |
 | **NEAR**         | Deploy NEAR rpc, archive and validator nodes     | near.kotal.io/v1alpha1      | alpha  |
 | **Polkadot**     | Deploy Polkadot nodes and validator nodes        | polkadot.kotal.io/v1alpha1  | alpha  |
@@ -47,8 +48,9 @@ For each protocol, kotal supports at least 1 client (reference client):
 | **Chainlink**    | [Chainlink](https://github.com/smartcontractkit/chainlink)                                                                                                                                       |
 | **Ethereum**     | [Hyperledger Besu](https://github.com/hyperledger/besu), [Go-Ethereum](https://github.com/ethereum/go-ethereum), [Nethermind](https://github.com/NethermindEth/nethermind)                       |
 | **Ethereum 2.0** | [Teku](https://github.com/ConsenSys/teku), [Prysm](https://github.com/prysmaticlabs/prysm), [Lighthouse](https://github.com/sigp/lighthouse), [Nimbus](https://github.com/status-im/nimbus-eth2) |
-| **IFPS**         | [go-ipfs](https://github.com/ipfs/go-ipfs), [ipfs-cluster-service](https://github.com/ipfs/ipfs-cluster)                                                                                         |
 | **Filecoin**     | [Lotus](https://github.com/filecoin-project/lotus)                                                                                                                                               |
+| **Graph**        | [graph-node](https://github.com/graphprotocol/graph-node)                                                                                                                                        |
+| **IPFS**         | [go-ipfs](https://github.com/ipfs/go-ipfs), [ipfs-cluster-service](https://github.com/ipfs/ipfs-cluster)                                                                                         |
 | **NEAR**         | [nearcore](https://github.com/near/nearcore)                                                                                                                                                     |
 | **Polkadot**     | [Parity Polkadot](https://github.com/paritytech/polkadot)                                                                                                                                        |
 | **Stacks**       | [Stacks Node](https://github.com/stacks-network/stacks-blockchain)                                                                                                                               |
@@ -112,4 +114,4 @@ TODO
 
 ## Licensing
 
-TODO
+Kotal Blockchain Kubernetes operator is free and open-source software licensed under the [Apache 2.0](LICENSE) License
