@@ -35,15 +35,9 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
-              ethereumNodeRPCEndpoint:
-                description: EthereumNodeRPCEndpoint is Ethereum node JSON-RPC server
-                  endpoint
-                type: string
               image:
                 description: Image is Graph node client image
                 type: string
-            required:
-            - ethereumNodeRPCEndpoint
             type: object
           status:
             description: NodeStatus defines the observed state of Node

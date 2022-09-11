@@ -8,8 +8,6 @@ import (
 type NodeSpec struct {
 	// Image is Graph node client image
 	Image *string `json:"image,omitempty"`
-	// EthereumNodeRPCEndpoint is Ethereum node JSON-RPC server endpoint
-	EthereumNodeRPCEndpoint string `json:"ethereumNodeRPCEndpoint"`
 }
 
 // NodeStatus defines the observed state of Node
