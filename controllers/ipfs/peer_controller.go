@@ -54,7 +54,7 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		peer.Default()
 	}
 
-	shared.UpdateLabels(&peer, "go-ipfs")
+	shared.UpdateLabels(&peer, "kubo")
 
 	if err = r.reconcileConfigmap(ctx, &peer); err != nil {
 		return
@@ -82,7 +82,7 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 // updateStatus updates ipfs peer status
 func (r *PeerReconciler) updateStatus(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
 	// TODO: update after multi-client support
-	peer.Status.Client = "go-ipfs"
+	peer.Status.Client = "kubo"
 
 	if err := r.Status().Update(ctx, peer); err != nil {
 		log.FromContext(ctx).Error(err, "unable to update peer status")

@@ -17,7 +17,7 @@ type IPFSClient interface {
 func NewClient(obj runtime.Object) (IPFSClient, error) {
 	switch peer := obj.(type) {
 	case *ipfsv1alpha1.Peer:
-		return &GoIPFSClient{peer}, nil
+		return &KuboClient{peer}, nil
 	case *ipfsv1alpha1.ClusterPeer:
 		return &GoIPFSClusterClient{peer}, nil
 	}

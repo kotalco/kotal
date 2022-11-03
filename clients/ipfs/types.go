@@ -1,7 +1,7 @@
 package ipfs
 
 const (
-	// EnvIPFSPath is the environment variable used for go-ipfs path
+	// EnvIPFSPath is the environment variable used for kubo path
 	EnvIPFSPath = "IPFS_PATH"
 	// EnvIPFSLogging is the environment variable used for logging verbosity level
 	EnvIPFSLogging = "IPFS_LOGGING"

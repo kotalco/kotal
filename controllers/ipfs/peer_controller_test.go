@@ -32,7 +32,7 @@ var _ = Describe("IPFS peer controller", func() {
 		Namespace: ns.Name,
 	}
 
-	image := "kotalco/go-ipfs:test"
+	image := "kotalco/kubo:test"
 
 	spec := ipfsv1alpha1.PeerSpec{
 		Image:              &image,
