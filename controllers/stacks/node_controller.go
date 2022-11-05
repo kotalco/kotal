@@ -13,6 +13,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	stacksv1alpha1 "github.com/kotalco/kotal/apis/stacks/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -311,8 +312,10 @@ func (r *NodeReconciler) specStatefulSet(node *stacksv1alpha1.Node, sts *appsv1.
 }
 
 func (r *NodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	pred := predicate.GenerationChangedPredicate{}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&stacksv1alpha1.Node{}).
+		WithEventFilter(pred).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&corev1.Service{}).

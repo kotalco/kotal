@@ -16,6 +16,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	ethereumClients "github.com/kotalco/kotal/clients/ethereum"
@@ -827,8 +828,10 @@ func (r *NodeReconciler) reconcileService(ctx context.Context, node *ethereumv1a
 
 // SetupWithManager adds reconciler to the manager
 func (r *NodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	pred := predicate.GenerationChangedPredicate{}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ethereumv1alpha1.Node{}).
+		WithEventFilter(pred).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.Service{}).
 		Owns(&corev1.Secret{}).

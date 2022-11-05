@@ -13,6 +13,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	bitcoinv1alpha1 "github.com/kotalco/kotal/apis/bitcoin/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -257,8 +258,10 @@ func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1
 }
 
 func (r *NodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	pred := predicate.GenerationChangedPredicate{}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&bitcoinv1alpha1.Node{}).
+		WithEventFilter(pred).
 		Owns(&corev1.PersistentVolumeClaim{}).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.Service{}).
