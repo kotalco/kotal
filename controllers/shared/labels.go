@@ -24,8 +24,9 @@ func UpdateLabels(cr CustomResource, client string) {
 		"app.kubernetes.io/name":       client,
 		"app.kubernetes.io/instance":   cr.GetName(),
 		"app.kubernetes.io/component":  fmt.Sprintf("%s-%s", group, kind),
-		"app.kubernetes.io/managed-by": "kotal",
+		"app.kubernetes.io/managed-by": "kotal-operator",
 		"app.kubernetes.io/created-by": fmt.Sprintf("%s-%s-controller", group, kind),
+		"kotal.io/protocol":            group,
 	}
 
 	cr.SetLabels(labels)

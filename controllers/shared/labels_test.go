@@ -35,8 +35,9 @@ func TestUpdateLabels(t *testing.T) {
 		"app.kubernetes.io/name":       string(ethereumNode.Spec.Client),
 		"app.kubernetes.io/instance":   ethereumNode.Name,
 		"app.kubernetes.io/component":  "ethereum-node",
-		"app.kubernetes.io/managed-by": "kotal",
+		"app.kubernetes.io/managed-by": "kotal-operator",
 		"app.kubernetes.io/created-by": "ethereum-node-controller",
+		"kotal.io/protocol":            "ethereum",
 	}
 
 	for k, v := range labels {
