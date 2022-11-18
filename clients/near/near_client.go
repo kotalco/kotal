@@ -21,7 +21,7 @@ const (
 	// EnvNearImage is the environment variable used for NEAR core client image
 	EnvNearImage = "NEAR_IMAGE"
 	// DefaultNearImage is the default NEAR core client image
-	DefaultNearImage = "kotalco/nearcore:1.23.1"
+	DefaultNearImage = "kotalco/nearcore:1.29.1"
 	// NearHomeDir is go ipfs image home dir
 	// TODO: update home dir after building docker image with non-root user and home dir
 	NearHomeDir = "/home/near"
