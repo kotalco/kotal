@@ -129,19 +129,19 @@ func (r *ClusterPeerReconciler) specService(peer *ipfsv1alpha1.ClusterPeer, svc 
 			Protocol:   corev1.ProtocolUDP,
 		},
 		{
-			Name:       "ipfs-api",
+			Name:       "api",
 			Port:       5001,
 			TargetPort: intstr.FromInt(int(5001)),
 			Protocol:   corev1.ProtocolTCP,
 		},
 		{
-			Name:       "ipfs-proxy",
+			Name:       "proxy-api",
 			Port:       9095,
 			TargetPort: intstr.FromInt(int(9095)),
 			Protocol:   corev1.ProtocolTCP,
 		},
 		{
-			Name:       "rest-api",
+			Name:       "rest",
 			Port:       9094,
 			TargetPort: intstr.FromInt(int(9094)),
 			Protocol:   corev1.ProtocolTCP,

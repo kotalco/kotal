@@ -196,6 +196,8 @@ func (r *NodeReconciler) specService(node *stacksv1alpha1.Node, svc *corev1.Serv
 			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
 			Protocol:   corev1.ProtocolTCP,
 		},
+		// TODO: update spec with .RPC
+		// add rpc service port only if RPC is enabled
 		{
 			Name:       "rpc",
 			Port:       int32(node.Spec.RPCPort),

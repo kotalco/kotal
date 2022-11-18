@@ -119,6 +119,8 @@ func (r *NodeReconciler) specService(node *chainlinkv1alpha1.Node, svc *corev1.S
 			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
 			Protocol:   corev1.ProtocolTCP,
 		},
+		// TODO: update spec with .API
+		// add api service port only if API enabled
 		{
 			Name:       "api",
 			Port:       int32(node.Spec.APIPort),

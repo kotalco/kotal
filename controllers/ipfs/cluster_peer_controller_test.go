@@ -248,19 +248,25 @@ var _ = Describe("IPFS cluster peer controller", func() {
 					Protocol:   corev1.ProtocolUDP,
 				},
 				{
-					Name:       "ipfs-api",
+					// Pinning service API
+					// https://ipfscluster.io/documentation/reference/pinsvc_api/
+					Name:       "api",
 					Port:       5001,
 					TargetPort: intstr.FromInt(int(5001)),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
-					Name:       "ipfs-proxy",
+					// Proxy API
+					// https://ipfscluster.io/documentation/reference/proxy/
+					Name:       "proxy-api",
 					Port:       9095,
 					TargetPort: intstr.FromInt(int(9095)),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
-					Name:       "rest-api",
+					// REST API
+					//https://ipfscluster.io/documentation/reference/api/
+					Name:       "rest",
 					Port:       9094,
 					TargetPort: intstr.FromInt(int(9094)),
 					Protocol:   corev1.ProtocolTCP,

@@ -762,16 +762,16 @@ func (r *NodeReconciler) specService(node *ethereumv1alpha1.Node, svc *corev1.Se
 		},
 	}
 
-	if node.Spec.RPCPort != 0 {
+	if node.Spec.RPC {
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
-			Name:       "json-rpc",
+			Name:       "rpc",
 			Port:       int32(node.Spec.RPCPort),
 			TargetPort: intstr.FromInt(int(node.Spec.RPCPort)),
 			Protocol:   corev1.ProtocolTCP,
 		})
 	}
 
-	if node.Spec.WSPort != 0 {
+	if node.Spec.WS {
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "ws",
 			Port:       int32(node.Spec.WSPort),
@@ -780,7 +780,7 @@ func (r *NodeReconciler) specService(node *ethereumv1alpha1.Node, svc *corev1.Se
 		})
 	}
 
-	if node.Spec.GraphQLPort != 0 {
+	if node.Spec.GraphQL {
 		targetPort := node.Spec.GraphQLPort
 		if client == ethereumv1alpha1.GethClient {
 			targetPort = node.Spec.RPCPort

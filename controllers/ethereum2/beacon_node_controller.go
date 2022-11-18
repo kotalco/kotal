@@ -101,16 +101,16 @@ func (r *BeaconNodeReconciler) specService(node *ethereum2v1alpha1.BeaconNode, s
 		},
 	}
 
-	if node.Spec.RPCPort != 0 {
+	if node.Spec.RPC {
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
-			Name:       "json-rpc",
+			Name:       "rpc",
 			Port:       int32(node.Spec.RPCPort),
 			TargetPort: intstr.FromInt(int(node.Spec.RPCPort)),
 			Protocol:   corev1.ProtocolTCP,
 		})
 	}
 
-	if node.Spec.GRPCPort != 0 {
+	if node.Spec.GRPC {
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "grpc",
 			Port:       int32(node.Spec.GRPCPort),
@@ -119,7 +119,7 @@ func (r *BeaconNodeReconciler) specService(node *ethereum2v1alpha1.BeaconNode, s
 		})
 	}
 
-	if node.Spec.RESTPort != 0 {
+	if node.Spec.REST {
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "rest",
 			Port:       int32(node.Spec.RESTPort),
