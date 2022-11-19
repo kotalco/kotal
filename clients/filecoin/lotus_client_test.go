@@ -41,10 +41,7 @@ var _ = Describe("Lotus Filecoin Client", func() {
 	})
 
 	It("Should get correct args", func() {
-		Expect(client.Args()).To(ContainElements(
-			"lotus",
-			"daemon",
-		))
+		Expect(client.Args()).To(BeNil())
 	})
 
 	It("Should get correct env", func() {
@@ -61,7 +58,10 @@ var _ = Describe("Lotus Filecoin Client", func() {
 	})
 
 	It("Should get correct command", func() {
-		Expect(client.Command()).To(BeNil())
+		Expect(client.Command()).To(ContainElements(
+			"lotus",
+			"daemon",
+		))
 	})
 
 	It("Should get image home directory", func() {
