@@ -19,7 +19,7 @@ const (
 	// EnvGoIPFSImage is the environment variable used for go ipfs client image
 	EnvGoIPFSImage = "GO_IPFS_IMAGE"
 	// DefaultGoIPFSImage is the default go ipfs client image
-	DefaultGoIPFSImage = "kotalco/kubo:v0.16.0"
+	DefaultGoIPFSImage = "kotalco/kubo:v0.17.0"
 	//  GoIPFSHomeDir is go ipfs image home dir
 	GoIPFSHomeDir = "/home/ipfs"
 )
