@@ -8,9 +8,9 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-// GoIPFSClient is go-ipfs client
-// https://github.com/ipfs/go-ipfs
-type GoIPFSClient struct {
+// KuboClient is an ipfs implementation in golang
+// https://github.com/ipfs/kubo
+type KuboClient struct {
 	peer *ipfsv1alpha1.Peer
 }
 
@@ -19,13 +19,13 @@ const (
 	// EnvGoIPFSImage is the environment variable used for go ipfs client image
 	EnvGoIPFSImage = "GO_IPFS_IMAGE"
 	// DefaultGoIPFSImage is the default go ipfs client image
-	DefaultGoIPFSImage = "kotalco/go-ipfs:v0.11.0"
+	DefaultGoIPFSImage = "kotalco/kubo:v0.17.0"
 	//  GoIPFSHomeDir is go ipfs image home dir
 	GoIPFSHomeDir = "/home/ipfs"
 )
 
-// Image returns go-ipfs image
-func (c *GoIPFSClient) Image() string {
+// Image returns kubo image
+func (c *KuboClient) Image() string {
 	if img := c.peer.Spec.Image; img != nil {
 		return *img
 	} else if os.Getenv(EnvGoIPFSImage) == "" {
@@ -34,13 +34,13 @@ func (c *GoIPFSClient) Image() string {
 	return os.Getenv(EnvGoIPFSImage)
 }
 
-// Command is go-ipfs entrypoint
-func (c *GoIPFSClient) Command() []string {
+// Command is kubo entrypoint
+func (c *KuboClient) Command() []string {
 	return []string{"ipfs"}
 }
 
 // Command returns environment variables for the client
-func (c *GoIPFSClient) Env() []corev1.EnvVar {
+func (c *KuboClient) Env() []corev1.EnvVar {
 	return []corev1.EnvVar{
 		{
 			Name:  EnvIPFSPath,
@@ -53,8 +53,8 @@ func (c *GoIPFSClient) Env() []corev1.EnvVar {
 	}
 }
 
-// Args returns go-ipfs args
-func (c *GoIPFSClient) Args() (args []string) {
+// Args returns kubo args
+func (c *KuboClient) Args() (args []string) {
 
 	peer := c.peer
 
@@ -65,6 +65,6 @@ func (c *GoIPFSClient) Args() (args []string) {
 	return
 }
 
-func (c *GoIPFSClient) HomeDir() string {
+func (c *KuboClient) HomeDir() string {
 	return GoIPFSHomeDir
 }

@@ -19,9 +19,9 @@ const (
 	// EnvLotusImage is the environment variable used for lotus filecoin client image
 	EnvLotusImage = "LOTUS_IMAGE"
 	// DefaultLotusImage is the default lotus client image
-	DefaultLotusImage = "kotalco/lotus:v1.13.2"
+	DefaultLotusImage = "kotalco/lotus:v1.18.0"
 	// DefaultLotusCalibrationImage is the default lotus client image for calibration network
-	DefaultLotusCalibrationImage = "kotalco/lotus:v1.13.2-calibration"
+	DefaultLotusCalibrationImage = "kotalco/lotus:v1.18.0-calibration"
 	//  LotusHomeDir is lotus client image home dir
 	LotusHomeDir = "/home/filecoin"
 )
@@ -42,8 +42,9 @@ func (c *LotusClient) Image() string {
 }
 
 // Command is lotus image command
-func (c *LotusClient) Command() []string {
-	return nil
+func (c *LotusClient) Command() (command []string) {
+	command = append(command, "lotus", "daemon")
+	return
 }
 
 // Command returns environment variables for the client
@@ -61,9 +62,8 @@ func (c *LotusClient) Env() []corev1.EnvVar {
 }
 
 // Args returns lotus client args from node spec
-func (c *LotusClient) Args() (args []string) {
-	args = append(args, "lotus", "daemon")
-	return
+func (c *LotusClient) Args() []string {
+	return nil
 }
 
 // HomeDir returns lotus image home directory

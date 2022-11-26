@@ -17,6 +17,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
 // NodeReconciler reconciles a Node object
@@ -449,8 +450,10 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 }
 
 func (r *NodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	pred := predicate.GenerationChangedPredicate{}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&nearv1alpha1.Node{}).
+		WithEventFilter(pred).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&corev1.PersistentVolumeClaim{}).

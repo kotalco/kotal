@@ -21,7 +21,7 @@ const (
 	// EnvChainlinkImage is the environment variable used for chainlink client image
 	EnvChainlinkImage = "CHAINLINK_IMAGE"
 	// DefaultChainlinkImage is the default chainlink client image
-	DefaultChainlinkImage = "kotalco/chainlink:v1.0.1"
+	DefaultChainlinkImage = "kotalco/chainlink:v1.10.0"
 	// ChainlinkHomeDir is chainlink image home dir
 	// TODO: update the home directory
 	ChainlinkHomeDir = "/home/chainlink"

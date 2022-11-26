@@ -39,7 +39,7 @@ echo "🗑 Deleting all Minikube clusters"
 minikube delete --all
 else
 # kind cluster versions
-VERSIONS=("1.19.16" "1.20.15" "1.21.14" "1.22.13" "1.23.10" "1.24.4" "1.25.0")
+VERSIONS=("1.19.16" "1.20.15" "1.21.14" "1.22.15" "1.23.13" "1.24.7" "1.25.3")
 echo "🗑 Deleting all Kind clusters"
 kind delete clusters --all
 fi

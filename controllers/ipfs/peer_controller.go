@@ -15,6 +15,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	ipfsClients "github.com/kotalco/kotal/clients/ipfs"
@@ -54,7 +55,7 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		peer.Default()
 	}
 
-	shared.UpdateLabels(&peer, "go-ipfs")
+	shared.UpdateLabels(&peer, "kubo")
 
 	if err = r.reconcileConfigmap(ctx, &peer); err != nil {
 		return
@@ -82,7 +83,7 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 // updateStatus updates ipfs peer status
 func (r *PeerReconciler) updateStatus(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
 	// TODO: update after multi-client support
-	peer.Status.Client = "go-ipfs"
+	peer.Status.Client = "kubo"
 
 	if err := r.Status().Update(ctx, peer); err != nil {
 		log.FromContext(ctx).Error(err, "unable to update peer status")
@@ -448,8 +449,10 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 
 // SetupWithManager registers the controller to be started with the given manager
 func (r *PeerReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	pred := predicate.GenerationChangedPredicate{}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ipfsv1alpha1.Peer{}).
+		WithEventFilter(pred).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.PersistentVolumeClaim{}).
 		Owns(&corev1.ConfigMap{}).

@@ -20,7 +20,7 @@ const (
 	// EnvLighthouseValidatorImage is the environment variable used for SigmaPrime Ethereum 2.0 validator client image
 	EnvLighthouseValidatorImage = "LIGHTHOUSE_VALIDATOR_CLIENT_IMAGE"
 	// DefaultLighthouseValidatorImage is the default SigmaPrime Ethereum 2.0 validator client image
-	DefaultLighthouseValidatorImage = "kotalco/lighthouse:v2.0.1"
+	DefaultLighthouseValidatorImage = "kotalco/lighthouse:v3.3.0"
 )
 
 // HomeDir returns container home directory

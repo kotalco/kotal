@@ -15,6 +15,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	ipfsClients "github.com/kotalco/kotal/clients/ipfs"
@@ -414,8 +415,10 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 }
 
 func (r *ClusterPeerReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	pred := predicate.GenerationChangedPredicate{}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&ipfsv1alpha1.ClusterPeer{}).
+		WithEventFilter(pred).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.PersistentVolumeClaim{}).
 		Owns(&corev1.Service{}).
