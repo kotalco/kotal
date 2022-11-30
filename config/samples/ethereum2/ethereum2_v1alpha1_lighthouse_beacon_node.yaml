@@ -3,7 +3,7 @@ kind: BeaconNode
 metadata:
   name: lighthouse-beacon-node
 spec:
-  network: pyrmont
+  network: goerli
   client: lighthouse
   logging: info
   rest: true

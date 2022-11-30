@@ -25,7 +25,7 @@ func TestUpdateLabels(t *testing.T) {
 		},
 		Spec: ethereumv1alpha1.NodeSpec{
 			Client:  ethereumv1alpha1.BesuClient,
-			Network: ethereumv1alpha1.RinkebyNetwork,
+			Network: ethereumv1alpha1.GoerliNetwork,
 		},
 	}
 

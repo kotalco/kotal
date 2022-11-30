@@ -53,7 +53,7 @@ var _ = Describe("Ethereum defaulting", func() {
 
 	})
 
-	It("Should default nodes joining rinkeby", func() {
+	It("Should default nodes joining goerli", func() {
 
 		node := Node{
 			ObjectMeta: metav1.ObjectMeta{
@@ -61,7 +61,7 @@ var _ = Describe("Ethereum defaulting", func() {
 			},
 			Spec: NodeSpec{
 				Client:  BesuClient,
-				Network: RinkebyNetwork,
+				Network: GoerliNetwork,
 			},
 		}
 
@@ -76,7 +76,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node.Spec.Logging).To(Equal(DefaultLogging))
 	})
 
-	It("Should default geth node joining rinkeby", func() {
+	It("Should default geth node joining goerli", func() {
 
 		node := Node{
 			ObjectMeta: metav1.ObjectMeta{
@@ -84,7 +84,7 @@ var _ = Describe("Ethereum defaulting", func() {
 			},
 			Spec: NodeSpec{
 				Client:  GethClient,
-				Network: RinkebyNetwork,
+				Network: GoerliNetwork,
 			},
 		}
 

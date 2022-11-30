@@ -128,7 +128,7 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Title: "Node #7",
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Network: "pyrmont",
+					Network: "goerli",
 					Client:  PrysmClient,
 					RPC:     true,
 				},
@@ -199,7 +199,7 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			},
 			NewNode: &BeaconNode{
 				Spec: BeaconNodeSpec{
-					Network: "pyrmont",
+					Network: "goerli",
 					Client:  TekuClient,
 				},
 			},
@@ -207,7 +207,7 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 				{
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.network",
-					BadValue: "pyrmont",
+					BadValue: "goerli",
 					Detail:   "field is immutable",
 				},
 			},

@@ -26,7 +26,7 @@ kind: BeaconNode
 metadata:
   name: prysm-beacon-node
 spec:
-  network: pyrmont
+  network: goerli
   client: prysm
   logging: info
   rpc: true

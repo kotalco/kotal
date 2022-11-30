@@ -181,12 +181,13 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *ethereumv1alpha
 
 	if node.Spec.Genesis == nil {
 		switch node.Spec.Network {
-		case ethereumv1alpha1.MainNetwork, ethereumv1alpha1.RopstenNetwork:
-			consensus = "pow"
-		case ethereumv1alpha1.RinkebyNetwork, ethereumv1alpha1.GoerliNetwork:
-			consensus = "poa"
-		case ethereumv1alpha1.XDaiNetwork:
+		case ethereumv1alpha1.MainNetwork,
+			ethereumv1alpha1.RopstenNetwork,
+			ethereumv1alpha1.XDaiNetwork,
+			ethereumv1alpha1.GoerliNetwork:
 			consensus = "pos"
+		case ethereumv1alpha1.RinkebyNetwork:
+			consensus = "poa"
 		}
 	} else {
 		if node.Spec.Genesis.Ethash != nil {

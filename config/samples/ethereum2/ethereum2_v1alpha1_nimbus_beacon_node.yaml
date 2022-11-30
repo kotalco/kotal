@@ -3,7 +3,7 @@ kind: BeaconNode
 metadata:
   name: nimbus-beacon-node
 spec:
-  network: pyrmont
+  network: goerli
   client: nimbus
   logging: info
   rpc: true

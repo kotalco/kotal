@@ -35,14 +35,14 @@ var _ = Describe("Ethereum node validation", func() {
 						ChainID: 444,
 					},
 					Client:  BesuClient,
-					Network: RinkebyNetwork,
+					Network: GoerliNetwork,
 				},
 			},
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.network",
-					BadValue: RinkebyNetwork,
+					BadValue: GoerliNetwork,
 					Detail:   "must be none if spec.genesis is specified",
 				},
 			},
@@ -320,7 +320,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:   BesuClient,
-					Network:  RinkebyNetwork,
+					Network:  GoerliNetwork,
 					SyncMode: LightSynchronization,
 				},
 			},
@@ -341,7 +341,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:   NethermindClient,
-					Network:  RinkebyNetwork,
+					Network:  GoerliNetwork,
 					SyncMode: SnapSynchronization,
 				},
 			},
@@ -362,7 +362,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  BesuClient,
-					Network: RinkebyNetwork,
+					Network: GoerliNetwork,
 					Resources: shared.Resources{
 						CPU:      "2",
 						CPULimit: "1",
@@ -386,7 +386,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  BesuClient,
-					Network: RinkebyNetwork,
+					Network: GoerliNetwork,
 					Resources: shared.Resources{
 						CPU:         "1",
 						CPULimit:    "2",
@@ -412,7 +412,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  GethClient,
-					Network: RinkebyNetwork,
+					Network: GoerliNetwork,
 					Logging: shared.FatalLogs,
 				},
 			},
@@ -433,7 +433,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  GethClient,
-					Network: RinkebyNetwork,
+					Network: GoerliNetwork,
 					Logging: shared.TraceLogs,
 				},
 			},
@@ -454,7 +454,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  GethClient,
-					Network: RinkebyNetwork,
+					Network: GoerliNetwork,
 					GraphQL: true,
 				},
 			},
@@ -475,7 +475,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  NethermindClient,
-					Network: RinkebyNetwork,
+					Network: GoerliNetwork,
 					Hosts:   []string{"kotal.com"},
 				},
 			},
@@ -496,7 +496,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:      NethermindClient,
-					Network:     RinkebyNetwork,
+					Network:     GoerliNetwork,
 					CORSDomains: []string{"kotal.com"},
 				},
 			},
@@ -526,7 +526,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  BesuClient,
-					Network: RinkebyNetwork,
+					Network: GoerliNetwork,
 				},
 			},
 			NewNode: &Node{
@@ -535,14 +535,14 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  BesuClient,
-					Network: RopstenNetwork,
+					Network: MainNetwork,
 				},
 			},
 			Errors: field.ErrorList{
 				{
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.network",
-					BadValue: RopstenNetwork,
+					BadValue: MainNetwork,
 					Detail:   "field is immutable",
 				},
 			},
@@ -555,7 +555,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  BesuClient,
-					Network: RopstenNetwork,
+					Network: GoerliNetwork,
 					Resources: shared.Resources{
 						Storage: "20Gi",
 					},
@@ -567,7 +567,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  BesuClient,
-					Network: RopstenNetwork,
+					Network: GoerliNetwork,
 					Resources: shared.Resources{
 						Storage: "10Gi",
 					},
@@ -590,7 +590,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  BesuClient,
-					Network: RopstenNetwork,
+					Network: GoerliNetwork,
 					Resources: shared.Resources{
 						CPU:      "1",
 						CPULimit: "2",
@@ -603,7 +603,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  BesuClient,
-					Network: RopstenNetwork,
+					Network: GoerliNetwork,
 					Resources: shared.Resources{
 						CPU:      "2",
 						CPULimit: "1",
@@ -627,7 +627,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  BesuClient,
-					Network: RopstenNetwork,
+					Network: GoerliNetwork,
 					Resources: shared.Resources{
 						Memory:      "1Gi",
 						MemoryLimit: "2Gi",
@@ -640,7 +640,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  BesuClient,
-					Network: RopstenNetwork,
+					Network: GoerliNetwork,
 					Resources: shared.Resources{
 						Memory:      "1Gi",
 						MemoryLimit: "1Gi",
@@ -664,7 +664,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  BesuClient,
-					Network: RopstenNetwork,
+					Network: GoerliNetwork,
 				},
 			},
 			NewNode: &Node{
@@ -673,7 +673,7 @@ var _ = Describe("Ethereum node validation", func() {
 				},
 				Spec: NodeSpec{
 					Client:  GethClient,
-					Network: RopstenNetwork,
+					Network: GoerliNetwork,
 				},
 			},
 			Errors: field.ErrorList{

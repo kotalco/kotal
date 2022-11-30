@@ -79,7 +79,7 @@ kubectl apply -f https://github.com/kotalco/kotal/releases/download/v0.1-alpha.6
 
 ## Example
 
-Ethereum node using Hyperleger Besu client, joining rinkeby network, and enabling RPC HTTP server:
+Ethereum node using Hyperleger Besu client, joining goerli network, and enabling RPC HTTP server:
 
 ```yaml
 # ethereum-node.yaml
@@ -89,7 +89,7 @@ metadata:
   name: ethereum-node
 spec:
   client: besu
-  network: rinkeby
+  network: goerli
   rpc: true
 ```
 

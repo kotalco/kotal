@@ -3,12 +3,14 @@ package v1alpha1
 const (
 	// MainNetwork is ethereum main network
 	MainNetwork = "mainnet"
-	// RopstenNetwork is ropsten pow network
+	// RopstenNetwork is ropsten pos network
 	RopstenNetwork = "ropsten"
 	// RinkebyNetwork is rinkeby poa network
 	RinkebyNetwork = "rinkeby"
-	// GoerliNetwork is goerli poa cross-client network
+	// GoerliNetwork is goerli pos cross-client network
 	GoerliNetwork = "goerli"
+	// SepoliaNetwork is sepolia pos network
+	SepoliaNetwork = "sepolia"
 	// XDaiNetwork is xdai pos network
 	XDaiNetwork = "xdai"
 	// KottiNetwork is kotti poa ethereum classic test network

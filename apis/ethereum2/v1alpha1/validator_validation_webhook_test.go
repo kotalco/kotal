@@ -165,7 +165,7 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 			},
 			NewValidator: &Validator{
 				Spec: ValidatorSpec{
-					Network:  "pyrmont",
+					Network:  "goerli",
 					Client:   TekuClient,
 					Graffiti: "Kotal is amazing",
 					Keystores: []Keystore{
@@ -179,7 +179,7 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 				{
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.network",
-					BadValue: "pyrmont",
+					BadValue: "goerli",
 					Detail:   "field is immutable",
 				},
 			},

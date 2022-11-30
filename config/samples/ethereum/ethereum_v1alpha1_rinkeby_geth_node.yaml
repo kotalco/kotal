@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: rinkeby-geth-nodekey
+  name: goerli-geth-nodekey
 stringData:
   # address 0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d
   key: 5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
@@ -10,11 +10,11 @@ stringData:
 apiVersion: ethereum.kotal.io/v1alpha1
 kind: Node
 metadata:
-  name: rinkeby-geth-node
+  name: goerli-geth-node
 spec:
-  network: rinkeby
+  network: goerli
   client: geth
-  nodePrivateKeySecretName: rinkeby-geth-nodekey
+  nodePrivateKeySecretName: goerli-geth-nodekey
   rpc: true
   rpcPort: 8599
   corsDomains:

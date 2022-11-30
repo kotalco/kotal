@@ -214,10 +214,10 @@ var _ = Describe("Ethereum network controller", func() {
 		})
 	})
 
-	Context("Joining Rinkeby", func() {
+	Context("Joining Goerli", func() {
 		ns := &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "rinkeby",
+				Name: ethereumv1alpha1.GoerliNetwork,
 			},
 		}
 		key := types.NamespacedName{
@@ -227,7 +227,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		spec := ethereumv1alpha1.NodeSpec{
 			Client:                   ethereumv1alpha1.BesuClient,
-			Network:                  "rinkeby",
+			Network:                  ethereumv1alpha1.GoerliNetwork,
 			NodePrivateKeySecretName: "nodekey",
 			Logging:                  sharedAPI.FatalLogs,
 		}
