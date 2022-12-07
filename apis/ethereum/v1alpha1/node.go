@@ -93,6 +93,9 @@ type NodeSpec struct {
 	// +listType=set
 	CORSDomains []string `json:"corsDomains,omitempty"`
 
+	// JWTSecretName is kubernetes secret name holding JWT secret
+	JWTSecretName string `json:"jwtSecretName,omitempty"`
+
 	// RPC is whether HTTP-RPC server is enabled or not
 	RPC bool `json:"rpc,omitempty"`
 
