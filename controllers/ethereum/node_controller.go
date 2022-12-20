@@ -371,6 +371,24 @@ func (r *NodeReconciler) createNodeVolumes(node *ethereumv1alpha1.Node) []corev1
 	volumes := []corev1.Volume{}
 	projections := []corev1.VolumeProjection{}
 
+	// authenticated APIs jwt secret
+	if node.Spec.JWTSecretName != "" {
+		jwtSecretProjection := corev1.VolumeProjection{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.JWTSecretName,
+				},
+				Items: []corev1.KeyToPath{
+					{
+						Key:  "secret",
+						Path: "jwt.secret",
+					},
+				},
+			},
+		}
+		projections = append(projections, jwtSecretProjection)
+	}
+
 	// nodekey (node private key) projection
 	if node.Spec.NodePrivateKeySecretName != "" {
 		nodekeyProjection := corev1.VolumeProjection{
@@ -479,20 +497,20 @@ func (r *NodeReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, hom
 	volumeMounts := []corev1.VolumeMount{}
 
 	if node.Spec.NodePrivateKeySecretName != "" || node.Spec.Import != nil {
-		nodekeyMount := corev1.VolumeMount{
+		secretsMount := corev1.VolumeMount{
 			Name:      "secrets",
 			MountPath: shared.PathSecrets(homedir),
 			ReadOnly:  true,
 		}
-		volumeMounts = append(volumeMounts, nodekeyMount)
+		volumeMounts = append(volumeMounts, secretsMount)
 	}
 
-	genesisMount := corev1.VolumeMount{
+	configMount := corev1.VolumeMount{
 		Name:      "config",
 		MountPath: shared.PathConfig(homedir),
 		ReadOnly:  true,
 	}
-	volumeMounts = append(volumeMounts, genesisMount)
+	volumeMounts = append(volumeMounts, configMount)
 
 	dataMount := corev1.VolumeMount{
 		Name:      "data",

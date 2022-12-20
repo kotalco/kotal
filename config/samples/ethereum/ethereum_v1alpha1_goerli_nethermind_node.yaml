@@ -6,6 +6,13 @@ metadata:
 stringData:
   key: 608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jwt-secret
+stringData:
+  secret: fbe0c28a10274b27babf3c51e88a7435318e25fad4de877e5a63a67d0d65fdbb
+---
 apiVersion: ethereum.kotal.io/v1alpha1
 kind: Node
 metadata:
@@ -15,6 +22,7 @@ spec:
   client: nethermind
   nodePrivateKeySecretName: goerli-nethermind-nodekey
   logging: info
+  jwtSecretName: jwt-secret
   rpc: true
   rpcPort: 9999
   rpcAPI:

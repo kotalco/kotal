@@ -6,6 +6,13 @@ metadata:
 stringData:
   key: 5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jwt-secret
+stringData:
+  secret: fbe0c28a10274b27babf3c51e88a7435318e25fad4de877e5a63a67d0d65fdbb
+---
 apiVersion: ethereum.kotal.io/v1alpha1
 kind: Node
 metadata:
@@ -22,6 +29,7 @@ spec:
     - web3
     - net
     - eth
+  jwtSecretName: jwt-secret
   graphql: true
   graphqlPort: 8777
   resources:

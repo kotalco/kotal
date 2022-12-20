@@ -48,6 +48,16 @@ const (
 	BesuRPCHTTPHost = "--rpc-http-host"
 	// BesuRPCHTTPAPI is the argument used for RPC HTTP APIs
 	BesuRPCHTTPAPI = "--rpc-http-api"
+
+	// BesuEngineRpcEnabled is the argument used to enable Engine RPC APIs
+	BesuEngineRpcEnabled = "--engine-rpc-enabled"
+	// BesuEngineJwtSecret is the argument used to locate JWT secret
+	BesuEngineJwtSecret = "--engine-jwt-secret"
+	// BesuEngineRpcPort is the argument used to set Engine RPC listening port
+	BesuEngineRpcPort = "--engine-rpc-port"
+	// BesuEngineHostAllowList is the argument used to set hosts from which to accept requests
+	BesuEngineHostAllowList = "--engine-host-allowlist"
+
 	// BesuRPCWSEnabled is the argument used to enable RPC WS
 	BesuRPCWSEnabled = "--rpc-ws-enabled"
 	// BesuRPCWSPort is the argument used for RPC WS port
@@ -116,6 +126,17 @@ const (
 	GethRPCHTTPAPI = "--http.api"
 	// GethRPCHostWhitelist is the argument used for whitelisting hosts
 	GethRPCHostWhitelist = "--http.vhosts"
+
+	// GethAuthRPCAddress is the argument used for listening address for authenticated APIs
+	GethAuthRPCAddress = "--authrpc.addr"
+	// GethAuthRPCPort is the argument used for listening port for authenticated APIs
+	GethAuthRPCPort = "--authrpc.port"
+	// GethAuthRPCHosts is the argument used for hostnames from which to accept requests
+	GethAuthRPCHosts = "--authrpc.vhosts"
+	// GethAuthRPCJwtSecret is the argument used for JWT secret to use for authenticated RPC endpoints
+	GethAuthRPCJwtSecret = "--authrpc.jwtsecret"
+
+	// --authrpc.jwtsecret
 
 	// GethRPCWSEnabled is the argument used to enable RPC WS
 	GethRPCWSEnabled = "--ws"
@@ -239,6 +260,14 @@ const (
 	NethermindRPCHTTPPort = "--JsonRpc.Port"
 	// NethermindRPCHTTPAPI is the argument used for RPC HTTP APIs
 	NethermindRPCHTTPAPI = "--JsonRpc.EnabledModules"
+
+	// NethermindRPCEnginePort is the argument used to set engine API listening port
+	NethermindRPCEnginePort = "--JsonRpc.EnginePort"
+	// NethermindRPCEngineHost is the argument used to set engine API listening address
+	NethermindRPCEngineHost = "--JsonRpc.EngineHost"
+	// NethermindRPCJwtSecretFile is the argument used to locate jwt secret file
+	NethermindRPCJwtSecretFile = "--JsonRpc.JwtSecretFile"
+
 	// NethermindRPCWSEnabled is the argument used to enable RPC WS
 	NethermindRPCWSEnabled = "--Init.WebSocketsEnabled"
 	// NethermindRPCWSPort is the argument used for RPC WS port
