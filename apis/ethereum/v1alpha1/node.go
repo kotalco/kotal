@@ -96,6 +96,9 @@ type NodeSpec struct {
 	// Engine enables authenticated Engine RPC APIs
 	Engine bool `json:"engine,omitempty"`
 
+	// EnginePort is engine authenticated RPC APIs port
+	EnginePort uint `json:"enginePort,omitempty"`
+
 	// JWTSecretName is kubernetes secret name holding JWT secret
 	JWTSecretName string `json:"jwtSecretName,omitempty"`
 

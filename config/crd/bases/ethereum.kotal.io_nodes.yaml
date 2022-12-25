@@ -78,6 +78,9 @@ spec:
               engine:
                 description: Engine enables authenticated Engine RPC APIs
                 type: boolean
+              enginePort:
+                description: EnginePort is engine authenticated RPC APIs port
+                type: integer
               genesis:
                 description: Genesis is genesis block configuration
                 properties:
