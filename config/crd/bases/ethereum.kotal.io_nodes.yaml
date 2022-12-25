@@ -75,6 +75,9 @@ spec:
                   type: string
                 type: array
                 x-kubernetes-list-type: set
+              engine:
+                description: Engine enables authenticated Engine RPC APIs
+                type: boolean
               genesis:
                 description: Genesis is genesis block configuration
                 properties:
