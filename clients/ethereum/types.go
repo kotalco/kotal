@@ -8,6 +8,8 @@ const (
 	// https://github.com/ethereum/go-ethereum/releases/tag/v1.9.19
 	// in most use cases the value 0.0.0.0 makes most sense.
 	DefaultHost = "0.0.0.0"
+	// LocalHost is the host name used to access services on the same host
+	LocalHost = "127.0.0.1"
 )
 
 // Hyperledger Besu client arguments
