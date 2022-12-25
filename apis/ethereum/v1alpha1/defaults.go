@@ -19,6 +19,8 @@ const (
 	DefaultPublicNetworkSyncMode = FastSynchronization
 	// DefaultPrivateNetworkSyncMode is the default sync mode for private networks
 	DefaultPrivateNetworkSyncMode = FullSynchronization
+	// DefaultEngineRPCPort is the default engine rpc port
+	DefaultEngineRPCPort uint = 8551
 	// DefaultRPCPort is the default rpc port
 	DefaultRPCPort uint = 8545
 	// DefaultWSPort is the default ws port

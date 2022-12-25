@@ -15,6 +15,7 @@ var _ = Describe("Ethereum defaulting", func() {
 			Spec: NodeSpec{
 				Client:  BesuClient,
 				Network: MainNetwork,
+				Engine:  true,
 			},
 		}
 
@@ -33,6 +34,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		node2.Default()
 
 		// node1 defaulting
+		Expect(node1.Spec.EnginePort).To(Equal(DefaultEngineRPCPort))
 		Expect(node1.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node1.Spec.SyncMode).To(Equal(DefaultPublicNetworkSyncMode))
 		Expect(node1.Spec.Resources.CPU).To(Equal(DefaultPublicNetworkNodeCPURequest))

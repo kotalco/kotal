@@ -43,8 +43,12 @@ func (n *Node) Default() {
 		n.Spec.CORSDomains = DefaultOrigins
 	}
 
+	if n.Spec.EnginePort == 0 {
+		n.Spec.EnginePort = DefaultEngineRPCPort
+	}
+
 	if n.Spec.RPCPort == 0 {
-		n.Spec.RPCPort = 8545
+		n.Spec.RPCPort = DefaultRPCPort
 	}
 
 	if len(n.Spec.RPCAPI) == 0 {
