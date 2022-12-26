@@ -114,13 +114,10 @@ func (n *NethermindClient) Args() (args []string) {
 	if node.Spec.Engine {
 		args = append(args, NethermindRPCEngineHost, DefaultHost)
 		args = append(args, NethermindRPCEnginePort, fmt.Sprintf("%d", node.Spec.EnginePort))
-	} else {
-		args = append(args, NethermindRPCEngineHost, LocalHost)
-	}
-
-	if node.Spec.JWTSecretName != "" {
 		jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(n.HomeDir()))
 		args = append(args, NethermindRPCJwtSecretFile, jwtSecretPath)
+	} else {
+		args = append(args, NethermindRPCEngineHost, LocalHost)
 	}
 
 	if node.Spec.WS {
