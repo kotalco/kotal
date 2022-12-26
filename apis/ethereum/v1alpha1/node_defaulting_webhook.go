@@ -9,6 +9,7 @@ var _ webhook.Defaulter = &Node{}
 // Default implements webhook.Defaulter so a webhook will be registered for the type
 func (n *Node) Default() {
 	defaultAPIs := []API{Web3API, ETHAPI, NetworkAPI}
+	nethermindNode := n.Spec.Client == NethermindClient
 
 	// default genesis block
 	if n.Spec.Genesis != nil {
@@ -35,11 +36,13 @@ func (n *Node) Default() {
 	// must be called after defaulting sync mode because it's depending on its value
 	n.DefaultNodeResources()
 
-	if len(n.Spec.Hosts) == 0 {
+	// nethermind doesn't support host whitelisting
+	if len(n.Spec.Hosts) == 0 && !nethermindNode {
 		n.Spec.Hosts = DefaultOrigins
 	}
 
-	if len(n.Spec.CORSDomains) == 0 {
+	// nethermind doesn't support cors domains
+	if len(n.Spec.CORSDomains) == 0 && !nethermindNode {
 		n.Spec.CORSDomains = DefaultOrigins
 	}
 
