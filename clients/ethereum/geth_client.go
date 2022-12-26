@@ -119,7 +119,6 @@ func (g *GethClient) Args() (args []string) {
 	}
 
 	if node.Spec.JWTSecretName != "" {
-		args = append(args, GethAuthRPCHosts, "*")
 		jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(g.HomeDir()))
 		args = append(args, GethAuthRPCJwtSecret, jwtSecretPath)
 	}
@@ -150,6 +149,9 @@ func (g *GethClient) Args() (args []string) {
 		}
 		if node.Spec.GraphQL {
 			args = append(args, GethGraphQLHostWhitelist, commaSeperatedHosts)
+		}
+		if node.Spec.Engine {
+			args = append(args, GethAuthRPCHosts, commaSeperatedHosts)
 		}
 		// no ws hosts settings
 	}

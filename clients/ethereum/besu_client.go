@@ -102,7 +102,6 @@ func (b *BesuClient) Args() (args []string) {
 	}
 
 	if node.Spec.JWTSecretName != "" {
-		args = append(args, BesuEngineHostAllowList, "*")
 		jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(b.HomeDir()))
 		args = append(args, BesuEngineJwtSecret, jwtSecretPath)
 	}
@@ -123,6 +122,9 @@ func (b *BesuClient) Args() (args []string) {
 	if len(node.Spec.Hosts) != 0 {
 		commaSeperatedHosts := strings.Join(node.Spec.Hosts, ",")
 		args = append(args, BesuHostAllowlist, commaSeperatedHosts)
+		if node.Spec.Engine {
+			args = append(args, BesuEngineHostAllowList, commaSeperatedHosts)
+		}
 	}
 
 	if len(node.Spec.CORSDomains) != 0 {
