@@ -98,11 +98,11 @@ func (b *BesuClient) Args() (args []string) {
 
 	if node.Spec.Engine {
 		args = append(args, BesuEngineRpcEnabled)
+		args = append(args, BesuEngineRpcPort, fmt.Sprintf("%d", node.Spec.EnginePort))
 	}
 
 	if node.Spec.JWTSecretName != "" {
 		args = append(args, BesuEngineHostAllowList, "*")
-		args = append(args, BesuEngineRpcPort, "8551")
 		jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(b.HomeDir()))
 		args = append(args, BesuEngineJwtSecret, jwtSecretPath)
 	}

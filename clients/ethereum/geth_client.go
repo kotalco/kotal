@@ -113,12 +113,12 @@ func (g *GethClient) Args() (args []string) {
 
 	if node.Spec.Engine {
 		args = append(args, GethAuthRPCAddress, DefaultHost)
+		args = append(args, GethAuthRPCPort, fmt.Sprintf("%d", node.Spec.EnginePort))
 	} else {
 		args = append(args, GethAuthRPCAddress, LocalHost)
 	}
 
 	if node.Spec.JWTSecretName != "" {
-		args = append(args, GethAuthRPCPort, "8551")
 		args = append(args, GethAuthRPCHosts, "*")
 		jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(g.HomeDir()))
 		args = append(args, GethAuthRPCJwtSecret, jwtSecretPath)
