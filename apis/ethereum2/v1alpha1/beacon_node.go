@@ -14,9 +14,8 @@ type BeaconNodeSpec struct {
 	Network string `json:"network"`
 	// Client is the Ethereum 2.0 client to use
 	Client Ethereum2Client `json:"client"`
-	// Eth1Endpoints is Ethereum 1 endpoints
-	// +listType=set
-	Eth1Endpoints []string `json:"eth1Endpoints,omitempty"`
+	// ExecutionEngineEndpoint is Ethereum Execution engine node endpoint
+	ExecutionEngineEndpoint string `json:"executionEngineEndpoint"`
 
 	// REST enables Beacon REST API
 	REST bool `json:"rest,omitempty"`

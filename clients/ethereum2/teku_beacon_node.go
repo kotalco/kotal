@@ -39,9 +39,7 @@ func (t *TekuBeaconNode) Args() (args []string) {
 
 	args = append(args, TekuLogging, strings.ToUpper(string(node.Spec.Logging)))
 
-	if len(node.Spec.Eth1Endpoints) != 0 {
-		args = append(args, TekuEth1Endpoints, strings.Join(node.Spec.Eth1Endpoints, ","))
-	}
+	args = append(args, TekuExecutionEngineEndpoint, node.Spec.ExecutionEngineEndpoint)
 
 	if node.Spec.REST {
 		args = append(args, TekuRestEnabled)

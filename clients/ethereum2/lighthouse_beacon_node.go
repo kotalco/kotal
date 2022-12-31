@@ -45,10 +45,7 @@ func (t *LighthouseBeaconNode) Args() (args []string) {
 
 	args = append(args, LighthouseNetwork, node.Spec.Network)
 
-	if len(node.Spec.Eth1Endpoints) != 0 {
-		args = append(args, LighthouseEth1)
-		args = append(args, LighthouseEth1Endpoints, strings.Join(node.Spec.Eth1Endpoints, ","))
-	}
+	args = append(args, LighthouseExecutionEngineEndpoint, node.Spec.ExecutionEngineEndpoint)
 
 	if node.Spec.REST {
 		args = append(args, LighthouseHTTP)

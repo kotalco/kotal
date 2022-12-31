@@ -46,9 +46,7 @@ func (t *NimbusBeaconNode) Args() (args []string) {
 
 	args = append(args, argWithVal(NimbusNetwork, node.Spec.Network))
 
-	if len(node.Spec.Eth1Endpoints) != 0 {
-		args = append(args, argWithVal(NimbusEth1Endpoint, node.Spec.Eth1Endpoints[0]))
-	}
+	args = append(args, argWithVal(NimbusExecutionEngineEndpoint, node.Spec.ExecutionEngineEndpoint))
 
 	if node.Spec.RPC {
 		args = append(args, NimbusRPC)

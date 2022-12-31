@@ -45,12 +45,7 @@ func (t *PrysmBeaconNode) Args() (args []string) {
 
 	args = append(args, PrysmLogging, string(t.node.Spec.Logging))
 
-	if len(node.Spec.Eth1Endpoints) != 0 {
-		args = append(args, PrysmWeb3Provider, node.Spec.Eth1Endpoints[0])
-		for _, provider := range node.Spec.Eth1Endpoints[1:] {
-			args = append(args, PrysmFallbackWeb3Provider, provider)
-		}
-	}
+	args = append(args, PrysmExecutionEngineEndpoint, node.Spec.ExecutionEngineEndpoint)
 
 	args = append(args, fmt.Sprintf("--%s", node.Spec.Network))
 

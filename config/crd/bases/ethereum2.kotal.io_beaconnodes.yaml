@@ -61,12 +61,10 @@ spec:
                   type: string
                 type: array
                 x-kubernetes-list-type: set
-              eth1Endpoints:
-                description: Eth1Endpoints is Ethereum 1 endpoints
-                items:
-                  type: string
-                type: array
-                x-kubernetes-list-type: set
+              executionEngineEndpoint:
+                description: ExecutionEngineEndpoint is Ethereum Execution engine
+                  node endpoint
+                type: string
               grpc:
                 description: GRPC enables GRPC gateway server
                 type: boolean
@@ -155,6 +153,7 @@ spec:
                 type: integer
             required:
             - client
+            - executionEngineEndpoint
             - network
             type: object
           status:

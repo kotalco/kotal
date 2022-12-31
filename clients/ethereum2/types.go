@@ -16,8 +16,8 @@ const (
 const (
 	// TekuNetwork is the argument used for selecting network
 	TekuNetwork = "--network"
-	// TekuEth1Endpoints is the argument used for Ethereum 1 JSON RPC endpoint
-	TekuEth1Endpoints = "--eth1-endpoints"
+	// TekuExecutionEngineEndpoint is the argument used to set execution engine endpoint
+	TekuExecutionEngineEndpoint = "--ee-endpoint"
 	// TekuDataPath is the argument used for data directory
 	TekuDataPath = "--data-path"
 	// TekuRestEnabled is the argument used to enable Beacon REST API
@@ -51,10 +51,8 @@ const (
 const (
 	// PrysmDataDir is the argument used for data directory
 	PrysmDataDir = "--datadir"
-	// PrysmWeb3Provider is the argument used for Ethereum 1 JSON RPC endpoint
-	PrysmWeb3Provider = "--http-web3provider"
-	// PrysmFallbackWeb3Provider is the argument used for fallback Ethereum 1 JSON RPC endpoints
-	PrysmFallbackWeb3Provider = "--fallback-web3provider"
+	// PrysmExecutionEngineEndpoint is the argument used to set execution engine endpoint
+	PrysmExecutionEngineEndpoint = "--execution-endpoint"
 	// PrysmAcceptTermsOfUse is the argument used for accepting terms of use
 	PrysmAcceptTermsOfUse = "--accept-terms-of-use"
 	// PrysmRPCPort is the argument used for RPC server port
@@ -101,8 +99,6 @@ const (
 	LighthouseDataDir = "--datadir"
 	// LighthouseNetwork is the argument used for selecting network
 	LighthouseNetwork = "--network"
-	// LighthouseEth1 is the argument used for connecting to Ethereum 1 node
-	LighthouseEth1 = "--eth1"
 	// LighthouseHTTP is the argument used to enable Beacon REST API
 	LighthouseHTTP = "--http"
 	// LighthouseAllowOrigins is the argument used to whitelist domains for cross domain requests
@@ -111,8 +107,8 @@ const (
 	LighthouseHTTPPort = "--http-port"
 	// LighthouseHTTPAddress is the argument used for Beacon REST API server host
 	LighthouseHTTPAddress = "--http-address"
-	// LighthouseEth1Endpoints is the argument used for Ethereum 1 JSON RPC endpoints
-	LighthouseEth1Endpoints = "--eth1-endpoints"
+	// LighthouseExecutionEngineEndpoint is the argument used for Execution engine endpoint
+	LighthouseExecutionEngineEndpoint = "--execution-endpoint"
 	// LighthousePort is the argument used for p2p tcp port
 	LighthousePort = "--port"
 	// LighthouseDiscoveryPort is the argument used for discovery udp port
@@ -144,8 +140,8 @@ const (
 	NimbusNonInteractive = "--non-interactive"
 	// NimbusNetwork is the argument used for selecting network
 	NimbusNetwork = "--network"
-	// NimbusEth1Endpoint is the argument used for Ethereum 1 JSON RPC endpoint
-	NimbusEth1Endpoint = "--web3-url"
+	// NimbusExecutionEngineEndpoint is the argument used for Execution engine endpoint
+	NimbusExecutionEngineEndpoint = "--web3-url"
 	// NimbusRPC is the argument used to enable RPC server
 	NimbusRPC = "--rpc"
 	// NimbusRPCPort is the argument used for RPC server port

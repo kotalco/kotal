@@ -76,11 +76,6 @@ func (in *BeaconNodeSpec) DeepCopyInto(out *BeaconNodeSpec) {
 		*out = new(string)
 		**out = **in
 	}
-	if in.Eth1Endpoints != nil {
-		in, out := &in.Eth1Endpoints, &out.Eth1Endpoints
-		*out = make([]string, len(*in))
-		copy(*out, *in)
-	}
 	if in.Hosts != nil {
 		in, out := &in.Hosts, &out.Hosts
 		*out = make([]string, len(*in))

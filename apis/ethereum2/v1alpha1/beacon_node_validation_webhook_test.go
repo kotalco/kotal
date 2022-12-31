@@ -125,45 +125,6 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			},
 		},
 		{
-			Title: "Node #7",
-			Node: &BeaconNode{
-				Spec: BeaconNodeSpec{
-					Network: "goerli",
-					Client:  PrysmClient,
-					RPC:     true,
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.eth1Endpoints",
-					BadValue: "",
-					Detail:   "required by prysm client if network is not mainnet",
-				},
-			},
-		},
-		{
-			Title: "Node #8",
-			Node: &BeaconNode{
-				Spec: BeaconNodeSpec{
-					Network: "mainnet",
-					Client:  NimbusClient,
-					Eth1Endpoints: []string{
-						"http://localhost:8545",
-						"http://localhost:8546",
-					},
-				},
-			},
-			Errors: field.ErrorList{
-				{
-					Type:     field.ErrorTypeInvalid,
-					Field:    "spec.eth1Endpoints",
-					BadValue: "http://localhost:8545, http://localhost:8546",
-					Detail:   "multiple Ethereum 1 endpoints not supported by nimbus client",
-				},
-			},
-		},
-		{
 			Title: "Node #9",
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
