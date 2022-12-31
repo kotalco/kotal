@@ -84,6 +84,9 @@ spec:
               image:
                 description: Image is Ethereum 2.0 Beacon node client image
                 type: string
+              jwtSecretName:
+                description: JWTSecretName is kubernetes secret name holding JWT secret
+                type: string
               logging:
                 description: Logging is logging verboisty level
                 enum:
@@ -154,6 +157,7 @@ spec:
             required:
             - client
             - executionEngineEndpoint
+            - jwtSecretName
             - network
             type: object
           status:

@@ -16,6 +16,8 @@ type BeaconNodeSpec struct {
 	Client Ethereum2Client `json:"client"`
 	// ExecutionEngineEndpoint is Ethereum Execution engine node endpoint
 	ExecutionEngineEndpoint string `json:"executionEngineEndpoint"`
+	// JWTSecretName is kubernetes secret name holding JWT secret
+	JWTSecretName string `json:"jwtSecretName"`
 
 	// REST enables Beacon REST API
 	REST bool `json:"rest,omitempty"`
