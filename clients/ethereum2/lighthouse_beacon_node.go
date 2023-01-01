@@ -47,6 +47,9 @@ func (t *LighthouseBeaconNode) Args() (args []string) {
 
 	args = append(args, LighthouseExecutionEngineEndpoint, node.Spec.ExecutionEngineEndpoint)
 
+	jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(t.HomeDir()))
+	args = append(args, LighthouseJwtSecretFile, jwtSecretPath)
+
 	if node.Spec.REST {
 		args = append(args, LighthouseHTTP)
 		args = append(args, LighthouseAllowOrigins, strings.Join(node.Spec.CORSDomains, ","))

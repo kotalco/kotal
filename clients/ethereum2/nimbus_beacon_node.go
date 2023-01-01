@@ -48,6 +48,9 @@ func (t *NimbusBeaconNode) Args() (args []string) {
 
 	args = append(args, argWithVal(NimbusExecutionEngineEndpoint, node.Spec.ExecutionEngineEndpoint))
 
+	jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(t.HomeDir()))
+	args = append(args, argWithVal(NimbusJwtSecretFile, jwtSecretPath))
+
 	if node.Spec.RPC {
 		args = append(args, NimbusRPC)
 		if node.Spec.RPCPort != 0 {

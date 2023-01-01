@@ -211,53 +211,91 @@ func (r *BeaconNodeReconciler) reconcileStatefulset(ctx context.Context, node *e
 	return err
 }
 
-// specStatefulset updates beacon node statefulset spec
-func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNode, sts *appsv1.StatefulSet, args, command []string, img, homeDir string) {
+// nodeVolumes returns node volumes
+func (r *BeaconNodeReconciler) nodeVolumes(node *ethereum2v1alpha1.BeaconNode) (volumes []corev1.Volume) {
+	dataVolume := corev1.Volume{
+		Name: "data",
+		VolumeSource: corev1.VolumeSource{
+			PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+				ClaimName: node.Name,
+			},
+		},
+	}
+	volumes = append(volumes, dataVolume)
 
-	sts.Labels = node.GetLabels()
+	// projected volume sources
+	volumeProjections := []corev1.VolumeProjection{
+		{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.JWTSecretName,
+				},
+				Items: []corev1.KeyToPath{
+					{
+						Key:  "secret",
+						Path: "jwt.secret",
+					},
+				},
+			},
+		},
+	}
 
-	mountPath := shared.PathData(homeDir)
+	if node.Spec.CertSecretName != "" {
+		volumeProjections = append(volumeProjections, corev1.VolumeProjection{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.CertSecretName,
+				},
+			},
+		})
+	}
+
+	volumes = append(volumes, corev1.Volume{
+		Name: "secrets",
+		VolumeSource: corev1.VolumeSource{
+			Projected: &corev1.ProjectedVolumeSource{
+				Sources: volumeProjections,
+			},
+		},
+	})
+
+	return
+}
+
+// nodeVolumeMounts returns node volume mounts
+func (r *BeaconNodeReconciler) nodeVolumeMounts(node *ethereum2v1alpha1.BeaconNode, homeDir string) (mounts []corev1.VolumeMount) {
+	dataDir := shared.PathData(homeDir)
 
 	// Nimbus required changing permission of the data dir to be
 	// read and write by owner only
 	// that's why we mount volume at $HOME
 	// but data dir is atatched at $HOME/kota-data
 	if node.Spec.Client == ethereum2v1alpha1.NimbusClient {
-		mountPath = homeDir
+		dataDir = homeDir
 	}
 
-	volumes := []corev1.Volume{
-		{
-			Name: "data",
-			VolumeSource: corev1.VolumeSource{
-				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-					ClaimName: node.Name,
-				},
-			},
-		},
+	dataMount := corev1.VolumeMount{
+		Name:      "data",
+		MountPath: dataDir,
 	}
+	mounts = append(mounts, dataMount)
 
-	mounts := []corev1.VolumeMount{
-		{
-			Name:      "data",
-			MountPath: mountPath,
-		},
+	secretMount := corev1.VolumeMount{
+		Name:      "secrets",
+		MountPath: shared.PathSecrets(homeDir),
 	}
+	mounts = append(mounts, secretMount)
 
-	if node.Spec.CertSecretName != "" {
-		volumes = append(volumes, corev1.Volume{
-			Name: "cert",
-			VolumeSource: corev1.VolumeSource{
-				Secret: &corev1.SecretVolumeSource{
-					SecretName: node.Spec.CertSecretName,
-				},
-			},
-		})
-		mounts = append(mounts, corev1.VolumeMount{
-			Name:      "cert",
-			MountPath: shared.PathSecrets(homeDir),
-		})
-	}
+	return
+}
+
+// specStatefulset updates beacon node statefulset spec
+func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNode, sts *appsv1.StatefulSet, args, command []string, img, homeDir string) {
+
+	sts.Labels = node.GetLabels()
+
+	volumes := r.nodeVolumes(node)
+	volumeMounts := r.nodeVolumeMounts(node, homeDir)
 
 	initContainers := []corev1.Container{}
 
@@ -278,7 +316,7 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 					shared.PathData(homeDir),
 				),
 			},
-			VolumeMounts: mounts,
+			VolumeMounts: volumeMounts,
 		}
 		initContainers = append(initContainers, fixPermissionContainer)
 	}
@@ -300,7 +338,7 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 						Command:      command,
 						Args:         args,
 						Image:        img,
-						VolumeMounts: mounts,
+						VolumeMounts: volumeMounts,
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
 								corev1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPU),

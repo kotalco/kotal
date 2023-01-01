@@ -18,6 +18,8 @@ const (
 	TekuNetwork = "--network"
 	// TekuExecutionEngineEndpoint is the argument used to set execution engine endpoint
 	TekuExecutionEngineEndpoint = "--ee-endpoint"
+	// TekuJwtSecretFile is the argument used to locate jwt secret file
+	TekuJwtSecretFile = "--ee-jwt-secret-file"
 	// TekuDataPath is the argument used for data directory
 	TekuDataPath = "--data-path"
 	// TekuRestEnabled is the argument used to enable Beacon REST API
@@ -53,6 +55,8 @@ const (
 	PrysmDataDir = "--datadir"
 	// PrysmExecutionEngineEndpoint is the argument used to set execution engine endpoint
 	PrysmExecutionEngineEndpoint = "--execution-endpoint"
+	// PrysmJwtSecretFile is the argument used to locate jwt secret file
+	PrysmJwtSecretFile = "--jwt-secret"
 	// PrysmAcceptTermsOfUse is the argument used for accepting terms of use
 	PrysmAcceptTermsOfUse = "--accept-terms-of-use"
 	// PrysmRPCPort is the argument used for RPC server port
@@ -109,6 +113,8 @@ const (
 	LighthouseHTTPAddress = "--http-address"
 	// LighthouseExecutionEngineEndpoint is the argument used for Execution engine endpoint
 	LighthouseExecutionEngineEndpoint = "--execution-endpoint"
+	// LighthouseJwtSecretFile is the argument used to locate jwt secret file
+	LighthouseJwtSecretFile = "--execution-jwt"
 	// LighthousePort is the argument used for p2p tcp port
 	LighthousePort = "--port"
 	// LighthouseDiscoveryPort is the argument used for discovery udp port
@@ -142,6 +148,8 @@ const (
 	NimbusNetwork = "--network"
 	// NimbusExecutionEngineEndpoint is the argument used for Execution engine endpoint
 	NimbusExecutionEngineEndpoint = "--web3-url"
+	// NimbusJwtSecretFile is the argument used to locate jwt secret file
+	NimbusJwtSecretFile = "--jwt-secret"
 	// NimbusRPC is the argument used to enable RPC server
 	NimbusRPC = "--rpc"
 	// NimbusRPCPort is the argument used for RPC server port

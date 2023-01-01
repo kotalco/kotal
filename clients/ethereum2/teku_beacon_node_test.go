@@ -7,6 +7,7 @@ import (
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -78,6 +79,7 @@ var _ = Describe("Teku beacon node", func() {
 					Client:                  ethereum2v1alpha1.TekuClient,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
+					JWTSecretName:           "jwt-secret",
 				},
 			},
 			result: []string{
@@ -86,6 +88,8 @@ var _ = Describe("Teku beacon node", func() {
 				"mainnet",
 				TekuExecutionEngineEndpoint,
 				"https://localhost:8551",
+				TekuJwtSecretFile,
+				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
 			},
 		},
 		{
@@ -95,6 +99,7 @@ var _ = Describe("Teku beacon node", func() {
 					Client:                  ethereum2v1alpha1.TekuClient,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
+					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 				},
 			},
@@ -104,6 +109,8 @@ var _ = Describe("Teku beacon node", func() {
 				"mainnet",
 				TekuExecutionEngineEndpoint,
 				"https://localhost:8551",
+				TekuJwtSecretFile,
+				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
 				TekuRestEnabled,
 				TekuRESTAPICorsOrigins,
 				"*",
@@ -118,6 +125,7 @@ var _ = Describe("Teku beacon node", func() {
 					Client:                  ethereum2v1alpha1.TekuClient,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
+					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 					RESTPort:                3333,
 				},
@@ -128,6 +136,8 @@ var _ = Describe("Teku beacon node", func() {
 				"mainnet",
 				TekuExecutionEngineEndpoint,
 				"https://localhost:8551",
+				TekuJwtSecretFile,
+				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
 				TekuRestEnabled,
 				TekuRestPort,
 				"3333",
@@ -144,6 +154,7 @@ var _ = Describe("Teku beacon node", func() {
 					Client:                  ethereum2v1alpha1.TekuClient,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
+					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 					RESTPort:                3333,
 					RESTHost:                "0.0.0.0",
@@ -155,6 +166,8 @@ var _ = Describe("Teku beacon node", func() {
 				"mainnet",
 				TekuExecutionEngineEndpoint,
 				"https://localhost:8551",
+				TekuJwtSecretFile,
+				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
 				TekuRestEnabled,
 				TekuRestPort,
 				"3333",
@@ -174,6 +187,7 @@ var _ = Describe("Teku beacon node", func() {
 					P2PPort:                 7891,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
+					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 					RESTPort:                3333,
 					RESTHost:                "0.0.0.0",
@@ -187,6 +201,8 @@ var _ = Describe("Teku beacon node", func() {
 				"mainnet",
 				TekuExecutionEngineEndpoint,
 				"https://localhost:8551",
+				TekuJwtSecretFile,
+				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
 				TekuRestEnabled,
 				TekuRestPort,
 				"3333",

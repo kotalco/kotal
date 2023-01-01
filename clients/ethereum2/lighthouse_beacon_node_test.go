@@ -6,6 +6,7 @@ import (
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
+	"github.com/kotalco/kotal/controllers/shared"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -78,6 +79,7 @@ var _ = Describe("Lighthouse beacon node", func() {
 					Client:                  ethereum2v1alpha1.LighthouseClient,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
+					JWTSecretName:           "jwt-secret",
 				},
 			},
 			result: []string{
@@ -86,6 +88,8 @@ var _ = Describe("Lighthouse beacon node", func() {
 				"mainnet",
 				LighthouseExecutionEngineEndpoint,
 				"https://localhost:8551",
+				LighthouseJwtSecretFile,
+				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
 			},
 		},
 		{
@@ -95,6 +99,7 @@ var _ = Describe("Lighthouse beacon node", func() {
 					Client:                  ethereum2v1alpha1.LighthouseClient,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
+					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 				},
 			},
@@ -104,6 +109,8 @@ var _ = Describe("Lighthouse beacon node", func() {
 				"mainnet",
 				LighthouseExecutionEngineEndpoint,
 				"https://localhost:8551",
+				LighthouseJwtSecretFile,
+				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
 				LighthouseHTTP,
 				LighthouseAllowOrigins,
 				"*",
@@ -116,6 +123,7 @@ var _ = Describe("Lighthouse beacon node", func() {
 					Client:                  ethereum2v1alpha1.LighthouseClient,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
+					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 					RESTPort:                4444,
 				},
@@ -126,6 +134,8 @@ var _ = Describe("Lighthouse beacon node", func() {
 				"mainnet",
 				LighthouseExecutionEngineEndpoint,
 				"https://localhost:8551",
+				LighthouseJwtSecretFile,
+				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
 				LighthouseHTTP,
 				LighthouseHTTPPort,
 				"4444",
@@ -140,6 +150,7 @@ var _ = Describe("Lighthouse beacon node", func() {
 					Client:                  ethereum2v1alpha1.LighthouseClient,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
+					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 					RESTPort:                4444,
 					RESTHost:                "0.0.0.0",
@@ -151,6 +162,8 @@ var _ = Describe("Lighthouse beacon node", func() {
 				"mainnet",
 				LighthouseExecutionEngineEndpoint,
 				"https://localhost:8551",
+				LighthouseJwtSecretFile,
+				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
 				LighthouseHTTP,
 				LighthouseHTTPPort,
 				"4444",
@@ -168,6 +181,7 @@ var _ = Describe("Lighthouse beacon node", func() {
 					P2PPort:                 7891,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
+					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 					RESTPort:                4444,
 					RESTHost:                "0.0.0.0",
@@ -183,6 +197,8 @@ var _ = Describe("Lighthouse beacon node", func() {
 				"mainnet",
 				LighthouseExecutionEngineEndpoint,
 				"https://localhost:8551",
+				LighthouseJwtSecretFile,
+				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
 				LighthouseHTTP,
 				LighthouseHTTPPort,
 				"4444",

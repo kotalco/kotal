@@ -47,6 +47,9 @@ func (t *PrysmBeaconNode) Args() (args []string) {
 
 	args = append(args, PrysmExecutionEngineEndpoint, node.Spec.ExecutionEngineEndpoint)
 
+	jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(t.HomeDir()))
+	args = append(args, PrysmJwtSecretFile, jwtSecretPath)
+
 	args = append(args, fmt.Sprintf("--%s", node.Spec.Network))
 
 	if node.Spec.RPCPort != 0 {
