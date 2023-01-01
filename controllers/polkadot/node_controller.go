@@ -241,7 +241,7 @@ func (r *NodeReconciler) nodeVolumes(node *polkadotv1alpha1.Node) (volumes []cor
 }
 
 // nodeVolumeMounts returns node volume mounts
-func (r NodeReconciler) nodeVolumeMounts(node *polkadotv1alpha1.Node, homeDir string) (mounts []corev1.VolumeMount) {
+func (r *NodeReconciler) nodeVolumeMounts(node *polkadotv1alpha1.Node, homeDir string) (mounts []corev1.VolumeMount) {
 	dataMount := corev1.VolumeMount{
 		Name:      "data",
 		MountPath: shared.PathData(homeDir),
