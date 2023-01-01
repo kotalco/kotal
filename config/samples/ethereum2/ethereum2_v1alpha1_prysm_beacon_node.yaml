@@ -21,6 +21,13 @@ spec:
   issuerRef:
     name: self-signed-issuer
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jwt-secret
+stringData:
+  secret: fbe0c28a10274b27babf3c51e88a7435318e25fad4de877e5a63a67d0d65fdbb
+---
 apiVersion: ethereum2.kotal.io/v1alpha1
 kind: BeaconNode
 metadata:
@@ -33,9 +40,8 @@ spec:
   rpcPort: 8888
   grpc: true
   grpcPort: 9999
-  eth1Endpoints:
-    - http://localhost:8545
-    - http://localhost:8546
+  executionEngineEndpoint: http://goerli-geth-node:8551
+  jwtSecretName: "jwt-secret"
   certSecretName: "beaconnode-cert"
   resources:
     # these resources are only for testing
