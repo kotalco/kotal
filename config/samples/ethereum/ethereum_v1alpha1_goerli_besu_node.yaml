@@ -29,6 +29,7 @@ spec:
     - web3
     - net
     - eth
+  engine: true
   jwtSecretName: jwt-secret
   graphql: true
   graphqlPort: 8777

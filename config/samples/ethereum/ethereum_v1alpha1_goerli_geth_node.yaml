@@ -22,6 +22,7 @@ spec:
   client: geth
   nodePrivateKeySecretName: goerli-geth-nodekey
   rpc: true
+  engine: true
   jwtSecretName: jwt-secret
   rpcPort: 8599
   corsDomains:

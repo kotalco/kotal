@@ -22,6 +22,7 @@ spec:
   client: nethermind
   nodePrivateKeySecretName: goerli-nethermind-nodekey
   logging: info
+  engine: true
   jwtSecretName: jwt-secret
   rpc: true
   rpcPort: 9999
