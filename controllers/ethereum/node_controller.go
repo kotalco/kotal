@@ -800,6 +800,15 @@ func (r *NodeReconciler) specService(node *ethereumv1alpha1.Node, svc *corev1.Se
 		})
 	}
 
+	if node.Spec.Engine {
+		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
+			Name:       "engine",
+			Port:       int32(node.Spec.EnginePort),
+			TargetPort: intstr.FromInt(int(node.Spec.EnginePort)),
+			Protocol:   corev1.ProtocolTCP,
+		})
+	}
+
 	if node.Spec.GraphQL {
 		targetPort := node.Spec.GraphQLPort
 		if client == ethereumv1alpha1.GethClient {
