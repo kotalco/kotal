@@ -23,7 +23,8 @@ var _ = Describe("Nimbus validator client", func() {
 					SecretName: "my-validator",
 				},
 			},
-			Logging: sharedAPI.FatalLogs,
+			FeeRecipient: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+			Logging:      sharedAPI.FatalLogs,
 		},
 	}
 
@@ -70,6 +71,7 @@ var _ = Describe("Nimbus validator client", func() {
 			argWithVal(NimbusGraffiti, "Validated by Kotal"),
 			argWithVal(NimbusValidatorsDir, fmt.Sprintf("%s/kotal-validators/validator-keys", shared.PathData(client.HomeDir()))),
 			argWithVal(NimbusSecretsDir, fmt.Sprintf("%s/kotal-validators/validator-secrets", shared.PathData(client.HomeDir()))),
+			argWithVal(NimbusFeeRecipient, "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"),
 		}))
 
 	})

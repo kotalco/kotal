@@ -25,6 +25,7 @@ var _ = Describe("Prysm validator client", func() {
 				},
 			},
 			WalletPasswordSecret: "wallet-password",
+			FeeRecipient:         "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 			CertSecretName:       "my-cert",
 			Logging:              sharedAPI.ErrorLogs,
 		},
@@ -81,6 +82,8 @@ var _ = Describe("Prysm validator client", func() {
 			string(sharedAPI.ErrorLogs),
 			PrysmTLSCert,
 			fmt.Sprintf("%s/cert/tls.crt", shared.PathSecrets(client.HomeDir())),
+			PrysmFeeRecipient,
+			"0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 		}))
 
 	})

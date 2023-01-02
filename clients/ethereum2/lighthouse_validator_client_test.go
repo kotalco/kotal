@@ -21,8 +21,9 @@ var _ = Describe("Lighthouse validator client", func() {
 				"http://localhost:8899",
 				"http://localhost:9988",
 			},
-			Graffiti: "Validated by Kotal",
-			Logging:  sharedAPI.WarnLogs,
+			Graffiti:     "Validated by Kotal",
+			Logging:      sharedAPI.WarnLogs,
+			FeeRecipient: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 		},
 	}
 
@@ -71,6 +72,8 @@ var _ = Describe("Lighthouse validator client", func() {
 			"Validated by Kotal",
 			LighthouseDebugLevel,
 			string(sharedAPI.WarnLogs),
+			LighthouseFeeRecipient,
+			"0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 		}))
 	})
 

@@ -18,6 +18,7 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 			Network:         "mainnet",
 			BeaconEndpoints: []string{"http://localhost:9988"},
 			Graffiti:        "Validated by Kotal",
+			FeeRecipient:    "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 			Keystores: []ethereum2v1alpha1.Keystore{
 				{
 					SecretName: "my-validator",
@@ -76,6 +77,8 @@ var _ = Describe("Teku Ethereum 2.0 validator client arguments", func() {
 				shared.PathSecrets(client.HomeDir()),
 				shared.PathSecrets(client.HomeDir()),
 			),
+			TekuFeeRecipient,
+			"0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 		}))
 
 	})

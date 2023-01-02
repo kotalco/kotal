@@ -44,6 +44,8 @@ func (t *LighthouseValidatorClient) Args() (args []string) {
 
 	args = append(args, LighthouseNetwork, validator.Spec.Network)
 
+	args = append(args, LighthouseFeeRecipient, string(validator.Spec.FeeRecipient))
+
 	if len(validator.Spec.BeaconEndpoints) != 0 {
 		args = append(args, LighthouseBeaconNodeEndpoints, strings.Join(validator.Spec.BeaconEndpoints, ","))
 	}

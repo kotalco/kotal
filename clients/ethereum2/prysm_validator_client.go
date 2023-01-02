@@ -48,6 +48,8 @@ func (t *PrysmValidatorClient) Args() (args []string) {
 
 	args = append(args, PrysmWalletPasswordFile, fmt.Sprintf("%s/prysm-wallet/prysm-wallet-password.txt", shared.PathSecrets(t.HomeDir())))
 
+	args = append(args, PrysmFeeRecipient, string(t.validator.Spec.FeeRecipient))
+
 	args = append(args, fmt.Sprintf("--%s", validator.Spec.Network))
 
 	if len(validator.Spec.BeaconEndpoints) != 0 {

@@ -46,6 +46,8 @@ func (t *TekuValidatorClient) Args() (args []string) {
 
 	args = append(args, TekuValidatorsKeystoreLockingEnabled, "false")
 
+	args = append(args, TekuFeeRecipient, string(validator.Spec.FeeRecipient))
+
 	if len(validator.Spec.BeaconEndpoints) != 0 {
 		args = append(args, TekuBeaconNodeEndpoint, validator.Spec.BeaconEndpoints[0])
 	}
