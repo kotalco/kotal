@@ -17,7 +17,7 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		node.Default()
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.Spec.Logging).To(Equal(DefaultLogging))
-		Expect(node.Spec.FeeRecipient).To(Equal(ZeroAddress))
+		Expect(node.Spec.FeeRecipient).To(Equal(EthereumAddress(ZeroAddress)))
 	})
 
 	It("Should default beacon node with missing node resources", func() {

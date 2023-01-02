@@ -16,6 +16,10 @@ func (r *Validator) Default() {
 		r.Spec.Graffiti = DefaultGraffiti
 	}
 
+	if r.Spec.FeeRecipient == "" {
+		r.Spec.FeeRecipient = ZeroAddress
+	}
+
 	r.DefaultNodeResources()
 
 }
