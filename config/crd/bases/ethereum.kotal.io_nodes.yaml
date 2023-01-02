@@ -419,7 +419,6 @@ spec:
                 type: integer
             required:
             - client
-            - jwtSecretName
             type: object
           status:
             description: NodeStatus defines the observed state of Node

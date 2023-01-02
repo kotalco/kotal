@@ -45,6 +45,12 @@ func (n *Node) validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	// validate jwtSecretName is provided if engine is enabled
+	if n.Spec.Engine && n.Spec.JWTSecretName == "" {
+		err := field.Invalid(path.Child("jwtSecretName"), "", "must provide jwtSecretName if engine is true")
+		nodeErrors = append(nodeErrors, err)
+	}
+
 	// validate coinbase can't be set if miner is not set explicitly as true
 	if n.Spec.Coinbase != "" && !n.Spec.Miner {
 		err := field.Invalid(path.Child("miner"), false, "must set miner to true if coinbase is provided")

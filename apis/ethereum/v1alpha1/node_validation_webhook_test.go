@@ -90,6 +90,27 @@ var _ = Describe("Ethereum node validation", func() {
 			},
 		},
 		{
+			Title: "node #10",
+			Node: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "node-1",
+				},
+				Spec: NodeSpec{
+					Client:  BesuClient,
+					Network: GoerliNetwork,
+					Engine:  true,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.jwtSecretName",
+					BadValue: "",
+					Detail:   "must provide jwtSecretName if engine is true",
+				},
+			},
+		},
+		{
 			Title: "node #11",
 			Node: &Node{
 				ObjectMeta: metav1.ObjectMeta{
