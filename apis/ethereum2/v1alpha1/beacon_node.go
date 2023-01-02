@@ -18,6 +18,8 @@ type BeaconNodeSpec struct {
 	ExecutionEngineEndpoint string `json:"executionEngineEndpoint"`
 	// JWTSecretName is kubernetes secret name holding JWT secret
 	JWTSecretName string `json:"jwtSecretName"`
+	// FeeRecipient is ethereum address collecting transaction fees
+	FeeRecipient string `json:"FeeRecipient,omitempty"`
 
 	// REST enables Beacon REST API
 	REST bool `json:"rest,omitempty"`

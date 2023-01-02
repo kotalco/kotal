@@ -42,6 +42,10 @@ spec:
           spec:
             description: BeaconNodeSpec defines the desired state of BeaconNode
             properties:
+              FeeRecipient:
+                description: FeeRecipient is ethereum address collecting transaction
+                  fees
+                type: string
               certSecretName:
                 description: CertSecretName is k8s secret name that holds tls.key
                   and tls.cert
