@@ -48,6 +48,8 @@ func (t *NimbusBeaconNode) Args() (args []string) {
 
 	args = append(args, argWithVal(NimbusExecutionEngineEndpoint, node.Spec.ExecutionEngineEndpoint))
 
+	args = append(args, argWithVal(NimbusFeeRecipient, string(node.Spec.FeeRecipient)))
+
 	jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(t.HomeDir()))
 	args = append(args, argWithVal(NimbusJwtSecretFile, jwtSecretPath))
 

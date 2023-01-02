@@ -80,6 +80,7 @@ var _ = Describe("Lighthouse beacon node", func() {
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
 					JWTSecretName:           "jwt-secret",
+					FeeRecipient:            "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 				},
 			},
 			result: []string{
@@ -90,6 +91,8 @@ var _ = Describe("Lighthouse beacon node", func() {
 				"https://localhost:8551",
 				LighthouseJwtSecretFile,
 				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
+				LighthouseFeeRecipient,
+				"0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 			},
 		},
 		{

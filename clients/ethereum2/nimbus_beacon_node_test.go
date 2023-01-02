@@ -158,6 +158,7 @@ var _ = Describe("Nimbus beacon node", func() {
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
 					JWTSecretName:           "jwt-secret",
+					FeeRecipient:            "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 					RPC:                     true,
 					RPCPort:                 30303,
 					RPCHost:                 "0.0.0.0",
@@ -173,6 +174,7 @@ var _ = Describe("Nimbus beacon node", func() {
 				NimbusRPC,
 				argWithVal(NimbusRPCPort, fmt.Sprintf("%d", 30303)),
 				argWithVal(NimbusRPCAddress, "0.0.0.0"),
+				argWithVal(NimbusFeeRecipient, "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"),
 			},
 		},
 	}

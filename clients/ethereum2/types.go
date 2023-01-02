@@ -18,6 +18,8 @@ const (
 	TekuNetwork = "--network"
 	// TekuExecutionEngineEndpoint is the argument used to set execution engine endpoint
 	TekuExecutionEngineEndpoint = "--ee-endpoint"
+	// TekuFeeRecipient is the argument used to set default fee recipient
+	TekuFeeRecipient = "--validators-proposer-default-fee-recipient"
 	// TekuJwtSecretFile is the argument used to locate jwt secret file
 	TekuJwtSecretFile = "--ee-jwt-secret-file"
 	// TekuDataPath is the argument used for data directory
@@ -55,6 +57,8 @@ const (
 	PrysmDataDir = "--datadir"
 	// PrysmExecutionEngineEndpoint is the argument used to set execution engine endpoint
 	PrysmExecutionEngineEndpoint = "--execution-endpoint"
+	// PrysmFeeRecipient is the argument used to set fee recipient
+	PrysmFeeRecipient = "--suggested-fee-recipient"
 	// PrysmJwtSecretFile is the argument used to locate jwt secret file
 	PrysmJwtSecretFile = "--jwt-secret"
 	// PrysmAcceptTermsOfUse is the argument used for accepting terms of use
@@ -115,6 +119,8 @@ const (
 	LighthouseExecutionEngineEndpoint = "--execution-endpoint"
 	// LighthouseJwtSecretFile is the argument used to locate jwt secret file
 	LighthouseJwtSecretFile = "--execution-jwt"
+	// LighthouseFeeRecipient is the argument used to set fee recipient
+	LighthouseFeeRecipient = "--suggested-fee-recipient"
 	// LighthousePort is the argument used for p2p tcp port
 	LighthousePort = "--port"
 	// LighthouseDiscoveryPort is the argument used for discovery udp port
@@ -150,6 +156,8 @@ const (
 	NimbusExecutionEngineEndpoint = "--web3-url"
 	// NimbusJwtSecretFile is the argument used to locate jwt secret file
 	NimbusJwtSecretFile = "--jwt-secret"
+	// NimbusFeeRecipient is the argument used to set fee recipient
+	NimbusFeeRecipient = "--suggested-fee-recipient"
 	// NimbusRPC is the argument used to enable RPC server
 	NimbusRPC = "--rpc"
 	// NimbusRPCPort is the argument used for RPC server port

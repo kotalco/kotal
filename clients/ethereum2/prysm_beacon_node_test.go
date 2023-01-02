@@ -80,6 +80,7 @@ var _ = Describe("Prysm beacon node", func() {
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
 					JWTSecretName:           "jwt-secret",
+					FeeRecipient:            "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 					RPC:                     true,
 				},
 			},
@@ -91,6 +92,8 @@ var _ = Describe("Prysm beacon node", func() {
 				"https://localhost:8551",
 				PrysmJwtSecretFile,
 				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
+				PrysmFeeRecipient,
+				"0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 			},
 		},
 		{

@@ -47,6 +47,8 @@ func (t *PrysmBeaconNode) Args() (args []string) {
 
 	args = append(args, PrysmExecutionEngineEndpoint, node.Spec.ExecutionEngineEndpoint)
 
+	args = append(args, PrysmFeeRecipient, string(node.Spec.FeeRecipient))
+
 	jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(t.HomeDir()))
 	args = append(args, PrysmJwtSecretFile, jwtSecretPath)
 

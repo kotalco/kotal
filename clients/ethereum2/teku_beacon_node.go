@@ -41,6 +41,8 @@ func (t *TekuBeaconNode) Args() (args []string) {
 
 	args = append(args, TekuExecutionEngineEndpoint, node.Spec.ExecutionEngineEndpoint)
 
+	args = append(args, TekuFeeRecipient, string(node.Spec.FeeRecipient))
+
 	jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(t.HomeDir()))
 	args = append(args, TekuJwtSecretFile, jwtSecretPath)
 
