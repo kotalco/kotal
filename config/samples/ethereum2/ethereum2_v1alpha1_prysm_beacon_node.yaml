@@ -42,6 +42,7 @@ spec:
   grpcPort: 9999
   executionEngineEndpoint: http://goerli-geth-node:8551
   jwtSecretName: "jwt-secret"
+  feeRecipient: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
   certSecretName: "beaconnode-cert"
   resources:
     # these resources are only for testing
