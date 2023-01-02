@@ -14,6 +14,7 @@ spec:
   # password is the password file
   keystores:
     - secretName: my-validator
+  feeRecipient: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
   resources:
     # these resources are only for testing
     # change resources depending on your use case

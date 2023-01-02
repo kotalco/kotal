@@ -12,6 +12,7 @@ spec:
   keystores:
     - secretName: my-validator
       publicKey: "0x83dbb18e088cb16a07fca598db2ac24da3e8549601eedd75eb28d8a9d4be405f49f7dbdcad5c9d7df54a8a40a143e852"
+  feeRecipient: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
   resources:
     # these resources are only for testing
     # change resources depending on your use case
