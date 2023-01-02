@@ -8,6 +8,8 @@ var (
 )
 
 const (
+	// ZeroAddress is Ethereum zero address
+	ZeroAddress = "0x0000000000000000000000000000000000000000"
 	// DefaultP2PPort is the default port used for p2p and discovery
 	DefaultP2PPort uint = 9000
 	// DefaultRestPort is the default Beacon REST api port

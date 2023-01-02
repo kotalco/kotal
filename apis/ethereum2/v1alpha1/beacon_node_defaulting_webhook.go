@@ -46,6 +46,10 @@ func (r *BeaconNode) Default() {
 		r.Spec.Hosts = DefaultOrigins
 	}
 
+	if r.Spec.FeeRecipient == "" {
+		r.Spec.FeeRecipient = ZeroAddress
+	}
+
 	r.DefaultNodeResources()
 
 }
