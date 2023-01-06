@@ -70,6 +70,8 @@ func (c *PolkadotClient) Args() (args []string) {
 	if node.Spec.RPC {
 		args = append(args, PolkadotArgRPCExternal)
 		args = append(args, PolkadotArgRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort))
+		args = append(args, PolkadotArgRPCMethods, node.Spec.RPCMethods)
+
 	}
 
 	if node.Spec.WS {
