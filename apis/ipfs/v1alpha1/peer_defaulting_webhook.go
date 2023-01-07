@@ -41,8 +41,15 @@ func (r *Peer) Default() {
 		r.Spec.APIPort = DefaultAPIPort
 	}
 
-	if r.Spec.APIHost == "" {
-		r.Spec.APIHost = DefaultHost
+	// APIHost value is ignored
+	// will be deprecated in the future
+	// 2 possible useful values:
+	//  127.0.0.1 -> don't serve external calls
+	//  0.0.0.0 -> serve external calls
+	if r.Spec.API {
+		r.Spec.APIHost = "0.0.0.0"
+	} else {
+		r.Spec.APIHost = LocalHost
 	}
 
 	if r.Spec.GatewayPort == 0 {

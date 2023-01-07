@@ -36,6 +36,7 @@ var _ = Describe("IPFS peer controller", func() {
 
 	spec := ipfsv1alpha1.PeerSpec{
 		Image:              &image,
+		API:                true,
 		APIPort:            3333,
 		GatewayPort:        4444,
 		Routing:            ipfsv1alpha1.DHTClientRouting,
