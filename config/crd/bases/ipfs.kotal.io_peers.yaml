@@ -39,6 +39,9 @@ spec:
           spec:
             description: PeerSpec defines the desired state of Peer
             properties:
+              api:
+                description: API enables API server
+                type: boolean
               apiHost:
                 description: APIHost is api server host
                 type: string

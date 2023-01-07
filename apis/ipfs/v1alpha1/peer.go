@@ -15,6 +15,8 @@ type PeerSpec struct {
 	// Profiles is the configuration profiles to apply after peer initialization
 	// +listType=set
 	Profiles []Profile `json:"profiles,omitempty"`
+	// API enables API server
+	API bool `json:"api,omitempty"`
 	// APIPort is api server port
 	APIPort uint `json:"apiPort,omitempty"`
 	// APIHost is api server host
