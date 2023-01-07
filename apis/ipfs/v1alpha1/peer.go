@@ -23,6 +23,8 @@ type PeerSpec struct {
 	APIHost string `json:"apiHost,omitempty"`
 	// GatewayPort is local gateway port
 	GatewayPort uint `json:"gatewayPort,omitempty"`
+	// Gateway enables IPFS gateway server
+	Gateway bool `json:"gateway,omitempty"`
 	// GatewayHost is local gateway host
 	GatewayHost string `json:"gatewayHost,omitempty"`
 	// Routing is the content routing mechanism

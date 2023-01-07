@@ -48,6 +48,9 @@ spec:
               apiPort:
                 description: APIPort is api server port
                 type: integer
+              gateway:
+                description: Gateway enables IPFS gateway server
+                type: boolean
               gatewayHost:
                 description: GatewayHost is local gateway host
                 type: string
