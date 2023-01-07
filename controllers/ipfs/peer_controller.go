@@ -132,14 +132,6 @@ func (r *PeerReconciler) specService(peer *ipfsv1alpha1.Peer, svc *corev1.Servic
 			TargetPort: intstr.FromInt(4001),
 			Protocol:   corev1.ProtocolUDP,
 		},
-		// TODO: update spec with .Gateway
-		// add gateway service port only if Gateway enabled
-		{
-			Name:       "gateway",
-			Port:       int32(peer.Spec.GatewayPort),
-			TargetPort: intstr.FromInt(int(peer.Spec.GatewayPort)),
-			Protocol:   corev1.ProtocolTCP,
-		},
 	}
 
 	if peer.Spec.API {
@@ -147,6 +139,15 @@ func (r *PeerReconciler) specService(peer *ipfsv1alpha1.Peer, svc *corev1.Servic
 			Name:       "api",
 			Port:       int32(peer.Spec.APIPort),
 			TargetPort: intstr.FromInt(int(peer.Spec.APIPort)),
+			Protocol:   corev1.ProtocolTCP,
+		})
+	}
+
+	if peer.Spec.Gateway {
+		ports = append(ports, corev1.ServicePort{
+			Name:       "gateway",
+			Port:       int32(peer.Spec.GatewayPort),
+			TargetPort: intstr.FromInt(int(peer.Spec.GatewayPort)),
 			Protocol:   corev1.ProtocolTCP,
 		})
 	}

@@ -8,7 +8,6 @@ import (
 
 var _ = Describe("IPFS peer defaulting", func() {
 	It("Should default ipfs peer", func() {
-		// bare peer
 		peer := Peer{
 			ObjectMeta: metav1.ObjectMeta{},
 			Spec:       PeerSpec{},
@@ -21,7 +20,7 @@ var _ = Describe("IPFS peer defaulting", func() {
 		Expect(peer.Spec.APIPort).To(Equal(DefaultAPIPort))
 		Expect(peer.Spec.APIHost).To(Equal(LocalHost))
 		Expect(peer.Spec.GatewayPort).To(Equal(DefaultGatewayPort))
-		Expect(peer.Spec.GatewayHost).To(Equal(DefaultHost))
+		Expect(peer.Spec.GatewayHost).To(Equal(LocalHost))
 		Expect(peer.Spec.Routing).To(Equal(DefaultRoutingMode))
 		Expect(peer.Spec.Resources.CPU).To(Equal(DefaultNodeCPURequest))
 		Expect(peer.Spec.Resources.CPULimit).To(Equal(DefaultNodeCPULimit))

@@ -3,4 +3,5 @@ kind: Peer
 metadata:
   name: bare-peer
 spec:
-  api: false
+  api: true
+  gateway: true

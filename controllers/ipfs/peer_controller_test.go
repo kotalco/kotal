@@ -38,6 +38,7 @@ var _ = Describe("IPFS peer controller", func() {
 		Image:              &image,
 		API:                true,
 		APIPort:            3333,
+		Gateway:            true,
 		GatewayPort:        4444,
 		Routing:            ipfsv1alpha1.DHTClientRouting,
 		SwarmKeySecretName: "my-swarm",
