@@ -1,13 +1,13 @@
-# permissions for end users to edit clusterpeers.
+# permissions for end users to edit validators.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: clusterpeer-editor-role
+  name: validator-editor-role
 rules:
   - apiGroups:
-      - ipfs.kotal.io
+      - ethereum2.kotal.io
     resources:
-      - clusterpeers
+      - validators
     verbs:
       - create
       - delete
@@ -17,8 +17,8 @@ rules:
       - update
       - watch
   - apiGroups:
-      - ipfs.kotal.io
+      - ethereum2.kotal.io
     resources:
-      - clusterpeers/status
+      - validators/status
     verbs:
       - get

@@ -1,19 +1,23 @@
-# permissions for end users to view nodes.
+# permissions for end users to edit nodes.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: node-viewer-role
+  name: node-editor-role
 rules:
   - apiGroups:
-      - graph.kotal.io
+      - stacks.kotal.io
     resources:
       - nodes
     verbs:
+      - create
+      - delete
       - get
       - list
+      - patch
+      - update
       - watch
   - apiGroups:
-      - graph.kotal.io
+      - stacks.kotal.io
     resources:
       - nodes/status
     verbs:

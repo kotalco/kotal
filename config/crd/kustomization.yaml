@@ -2,19 +2,19 @@
 # since it depends on service name and namespace that are out of this kustomize package.
 # It should be run by config/default
 resources:
-  - bases/filecoin.kotal.io_nodes.yaml
+  - bases/aptos.kotal.io_nodes.yaml
+  - bases/bitcoin.kotal.io_nodes.yaml
+  - bases/chainlink.kotal.io_nodes.yaml
   - bases/ethereum.kotal.io_nodes.yaml
   - bases/ethereum2.kotal.io_beaconnodes.yaml
   - bases/ethereum2.kotal.io_validators.yaml
+  - bases/filecoin.kotal.io_nodes.yaml
+  - bases/graph.kotal.io_nodes.yaml
   - bases/ipfs.kotal.io_peers.yaml
   - bases/ipfs.kotal.io_clusterpeers.yaml
-  - bases/polkadot.kotal.io_nodes.yaml
-  - bases/chainlink.kotal.io_nodes.yaml
   - bases/near.kotal.io_nodes.yaml
-  - bases/bitcoin.kotal.io_nodes.yaml
+  - bases/polkadot.kotal.io_nodes.yaml
   - bases/stacks.kotal.io_nodes.yaml
-  - bases/aptos.kotal.io_nodes.yaml
-  - bases/graph.kotal.io_nodes.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:
@@ -39,6 +39,7 @@ patchesStrategicMerge:
   - patches/cainjection_in_aptos_nodes.yaml
   - patches/cainjection_in_bitcoin_nodes.yaml
   - patches/cainjection_in_chainlink_nodes.yaml
+  - patches/cainjection_in_ethereum_nodes.yaml
   - patches/cainjection_in_ethereum2_beaconnodes.yaml
   - patches/cainjection_in_ethereum2_validators.yaml
   - patches/cainjection_in_filecoin_nodes.yaml

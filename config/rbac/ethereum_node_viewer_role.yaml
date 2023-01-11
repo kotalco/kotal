@@ -5,7 +5,7 @@ metadata:
   name: node-viewer-role
 rules:
   - apiGroups:
-      - graph.kotal.io
+      - ethereum.kotal.io
     resources:
       - nodes
     verbs:
@@ -13,7 +13,7 @@ rules:
       - list
       - watch
   - apiGroups:
-      - graph.kotal.io
+      - ethereum.kotal.io
     resources:
       - nodes/status
     verbs:

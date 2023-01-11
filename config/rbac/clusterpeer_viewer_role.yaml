@@ -4,17 +4,17 @@ kind: ClusterRole
 metadata:
   name: clusterpeer-viewer-role
 rules:
-- apiGroups:
-  - ipfs.kotal.io
-  resources:
-  - clusterpeers
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ipfs.kotal.io
-  resources:
-  - clusterpeers/status
-  verbs:
-  - get
+  - apiGroups:
+      - ipfs.kotal.io
+    resources:
+      - clusterpeers
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ipfs.kotal.io
+    resources:
+      - clusterpeers/status
+    verbs:
+      - get

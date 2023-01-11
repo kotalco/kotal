@@ -1,20 +1,20 @@
-# permissions for end users to view nodes.
+# permissions for end users to view beaconnodes.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: node-viewer-role
+  name: beaconnode-viewer-role
 rules:
   - apiGroups:
-      - graph.kotal.io
+      - ethereum2.kotal.io
     resources:
-      - nodes
+      - beaconnodes
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - graph.kotal.io
+      - ethereum2.kotal.io
     resources:
-      - nodes/status
+      - beaconnodes/status
     verbs:
       - get

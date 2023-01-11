@@ -19,11 +19,13 @@ spec:
   replicas: 1
   template:
     metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
       labels:
         control-plane: controller-manager
     spec:
       securityContext:
-        runAsUser: 65532
+        runAsNonRoot: true
       containers:
         - name: manager
           securityContext:
@@ -41,6 +43,18 @@ spec:
             - /manager
           args:
             - "--leader-elect"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
           resources:
             limits:
               cpu: 500m
@@ -48,4 +62,5 @@ spec:
             requests:
               cpu: 250m
               memory: 500Mi
+      serviceAccountName: controller-manager
       terminationGracePeriodSeconds: 10
