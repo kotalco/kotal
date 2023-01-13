@@ -41,6 +41,8 @@ type NodeSpec struct {
 	TLSPort uint `json:"tlsPort,omitempty"`
 	// P2PPort is port used for p2p communcations
 	P2PPort uint `json:"p2pPort,omitempty"`
+	// API enables node API server
+	API bool `json:"api,omitempty"`
 	// APIPort is port used for node API and GUI
 	APIPort uint `json:"apiPort,omitempty"`
 	// SecureCookies enables secure cookies for authentication

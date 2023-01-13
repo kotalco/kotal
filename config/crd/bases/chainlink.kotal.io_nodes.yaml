@@ -46,6 +46,9 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
+              api:
+                description: API enables node API server
+                type: boolean
               apiCredentials:
                 description: APICredentials is api credentials
                 properties:
