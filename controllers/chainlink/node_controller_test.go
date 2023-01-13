@@ -41,6 +41,7 @@ var _ = Describe("Chainlink node controller", func() {
 		LinkContractAddress:        "0x01BE23585060835E02B77ef475b0Cc51aA1e0709",
 		DatabaseURL:                "postgresql://postgres:password@postgres:5432/postgres",
 		KeystorePasswordSecretName: "keystore-password",
+		API:                        true,
 		APICredentials: chainlinkv1alpha1.APICredentials{
 			Email:              "mostafa@kotal.co",
 			PasswordSecretName: "api-password",
