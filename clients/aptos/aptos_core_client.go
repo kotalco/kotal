@@ -17,10 +17,6 @@ type AptosCoreClient struct {
 const (
 	// EnvAptosCoreImage is the environment variable used for Aptos Core client image
 	EnvAptosCoreImage = "APTOS_CORE_IMAGE"
-	// DefaultAptosCoreDevnetImage is the default Aptos core Devnet client image
-	DefaultAptosCoreDevnetImage = "aptoslab/validator:devnet"
-	// DefaultAptosCoreTestnetImage is the default Aptos core Testnet client image
-	DefaultAptosCoreTestnetImage = "aptoslab/validator:testnet"
 	// AptosCoreHomeDir is Aptos Core image home dir
 	// TODO: create aptos image with non root user and /home/aptos home directory
 	AptosCoreHomeDir = "/opt/aptos"
@@ -28,14 +24,6 @@ const (
 
 // Image returns Aptos Core client image
 func (c *AptosCoreClient) Image() string {
-	if img := c.node.Spec.Image; img != nil {
-		return *img
-	} else if c.node.Spec.Network == aptosv1alpha1.Devnet {
-		return DefaultAptosCoreDevnetImage
-	} else if c.node.Spec.Network == aptosv1alpha1.Testnet {
-		return DefaultAptosCoreTestnetImage
-	}
-
 	return os.Getenv(EnvAptosCoreImage)
 }
 

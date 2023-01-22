@@ -26,7 +26,7 @@ type Peer struct {
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Image is Aptos node client image
-	Image *string `json:"image,omitempty"`
+	Image string `json:"image,omitempty"`
 	// Network is Aptos network to join and sync
 	// +kubebuilder:validation:Enum=devnet;testnet
 	Network AptosNetwork `json:"network"`

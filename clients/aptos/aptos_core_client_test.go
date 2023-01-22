@@ -1,8 +1,6 @@
 package aptos
 
 import (
-	"os"
-
 	aptosv1alpha1 "github.com/kotalco/kotal/apis/aptos/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -24,17 +22,6 @@ var _ = Describe("Aptos core client", func() {
 	// TODO: default the node
 
 	client := NewClient(node)
-
-	It("Should get correct image", func() {
-		// after setting custom image
-		testImage := "kotalco/aptos-core:spec"
-		node.Spec.Image = &testImage
-		Expect(client.Image()).To(Equal(testImage))
-		// after setting custom image
-		testImage = "kotalco/aptos-core:test"
-		os.Setenv(EnvAptosCoreImage, testImage)
-		Expect(client.Image()).To(Equal(testImage))
-	})
 
 	It("Should get correct command", func() {
 		Expect(client.Command()).To(ConsistOf("/opt/aptos/bin/aptos-node"))

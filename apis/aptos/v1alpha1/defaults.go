@@ -17,6 +17,13 @@ const (
 )
 
 const (
+	// DefaultAptosCoreDevnetImage is the default Aptos core Devnet client image
+	DefaultAptosCoreDevnetImage = "aptoslab/validator:devnet"
+	// DefaultAptosCoreTestnetImage is the default Aptos core Testnet client image
+	DefaultAptosCoreTestnetImage = "aptoslab/validator:testnet"
+)
+
+const (
 	// DefaultAPIPort is the default API server port
 	DefaultAPIPort uint = 8080
 	// DefaultFullnodeP2PPort is the default full node p2p port

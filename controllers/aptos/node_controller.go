@@ -209,7 +209,6 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *aptosv1
 
 	client := aptosClients.NewClient(node)
 
-	img := client.Image()
 	homeDir := client.HomeDir()
 	cmd := client.Command()
 	args := client.Args()
@@ -219,7 +218,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *aptosv1
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		if err := r.specStatefulSet(node, sts, img, homeDir, env, cmd, args); err != nil {
+		if err := r.specStatefulSet(node, sts, homeDir, env, cmd, args); err != nil {
 			return err
 		}
 		return nil
@@ -229,7 +228,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *aptosv1
 }
 
 // specStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specStatefulSet(node *aptosv1alpha1.Node, sts *appsv1.StatefulSet, img, homeDir string, env []corev1.EnvVar, cmd, args []string) error {
+func (r *NodeReconciler) specStatefulSet(node *aptosv1alpha1.Node, sts *appsv1.StatefulSet, homeDir string, env []corev1.EnvVar, cmd, args []string) error {
 
 	sts.ObjectMeta.Labels = node.Labels
 
@@ -247,7 +246,7 @@ func (r *NodeReconciler) specStatefulSet(node *aptosv1alpha1.Node, sts *appsv1.S
 				Containers: []corev1.Container{
 					{
 						Name:    "node",
-						Image:   img,
+						Image:   node.Spec.Image,
 						Command: cmd,
 						Args:    args,
 						Env:     env,
