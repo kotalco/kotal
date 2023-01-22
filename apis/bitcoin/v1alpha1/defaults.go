@@ -13,6 +13,11 @@ const (
 	DefaultHost = "0.0.0.0"
 )
 
+const (
+	// DefaultBitcoinCoreImage is the default Bitcoin core client image
+	DefaultBitcoinCoreImage = "ruimarinho/bitcoin-core:23.0"
+)
+
 // Resources
 const (
 	// DefaultNodeCPURequest is the cpu requested by Bitcoin node

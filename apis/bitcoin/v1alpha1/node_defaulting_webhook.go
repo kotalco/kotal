@@ -1,6 +1,8 @@
 package v1alpha1
 
-import "sigs.k8s.io/controller-runtime/pkg/webhook"
+import (
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
+)
 
 // +kubebuilder:webhook:path=/mutate-bitcoin-kotal-io-v1alpha1-node,mutating=true,failurePolicy=fail,groups=bitcoin.kotal.io,resources=nodes,verbs=create;update,versions=v1alpha1,name=mutate-bitcoin-v1alpha1-node.kb.io,sideEffects=None,admissionReviewVersions=v1
 
@@ -33,6 +35,10 @@ func (r *Node) Default() {
 	nodelog.Info("default", "name", r.Name)
 
 	r.DefaultNodeResources()
+
+	if r.Spec.Image == "" {
+		r.Spec.Image = DefaultBitcoinCoreImage
+	}
 
 	if r.Spec.RPCPort == 0 {
 		if r.Spec.Network == Mainnet {

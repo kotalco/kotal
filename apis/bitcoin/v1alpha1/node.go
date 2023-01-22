@@ -24,7 +24,7 @@ type RPCUser struct {
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Image is Bitcoin node client image
-	Image *string `json:"image,omitempty"`
+	Image string `json:"image,omitempty"`
 	// Network is Bitcoin network to join and sync
 	// +kubebuilder:validation:Enum=mainnet;testnet
 	Network BitcoinNetwork `json:"network"`

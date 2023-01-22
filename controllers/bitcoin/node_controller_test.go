@@ -35,7 +35,7 @@ var _ = Describe("Bitcoin node controller", func() {
 	testImage := "kotalco/bitcoin-core:controller-test"
 
 	spec := bitcoinv1alpha1.NodeSpec{
-		Image:   &testImage,
+		Image:   testImage,
 		Network: bitcoinv1alpha1.Mainnet,
 		RPC:     true,
 	}

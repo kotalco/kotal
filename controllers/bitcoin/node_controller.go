@@ -180,7 +180,6 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *bitcoin
 
 	client := bitcoinClients.NewClient(node, r.Client)
 
-	img := client.Image()
 	homeDir := client.HomeDir()
 	cmd := client.Command()
 	args := client.Args()
@@ -190,7 +189,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *bitcoin
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		if err := r.specStatefulSet(node, sts, img, homeDir, env, cmd, args); err != nil {
+		if err := r.specStatefulSet(node, sts, homeDir, env, cmd, args); err != nil {
 			return err
 		}
 		return nil
@@ -200,7 +199,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *bitcoin
 }
 
 // specStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1.StatefulSet, img, homeDir string, env []corev1.EnvVar, cmd, args []string) error {
+func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1.StatefulSet, homeDir string, env []corev1.EnvVar, cmd, args []string) error {
 
 	sts.ObjectMeta.Labels = node.Labels
 
@@ -218,7 +217,7 @@ func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1
 				Containers: []corev1.Container{
 					{
 						Name:    "node",
-						Image:   img,
+						Image:   node.Spec.Image,
 						Command: cmd,
 						Args:    args,
 						Env:     env,

@@ -29,19 +29,12 @@ var hashCash map[string]string = map[string]string{}
 const (
 	// EnvBitcoinCoreImage is the environment variable used for Bitcoin core client image
 	EnvBitcoinCoreImage = "BITCOIN_CORE_IMAGE"
-	// DefaultBitcoinCoreImage is the default Bitcoin core client image
-	DefaultBitcoinCoreImage = "ruimarinho/bitcoin-core:23.0"
 	// BitcoinCoreHomeDir is Bitcoin core image home dir
 	BitcoinCoreHomeDir = "/home/bitcoin"
 )
 
 // Image returns Bitcoin core client image
 func (c *BitcoinCoreClient) Image() string {
-	if img := c.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvBitcoinCoreImage) == "" {
-		return DefaultBitcoinCoreImage
-	}
 	return os.Getenv(EnvBitcoinCoreImage)
 }
 

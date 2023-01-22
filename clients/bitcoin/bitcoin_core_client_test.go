@@ -1,8 +1,6 @@
 package bitcoin
 
 import (
-	"os"
-
 	bitcoinv1alpha1 "github.com/kotalco/kotal/apis/bitcoin/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -32,20 +30,6 @@ var _ = Describe("Bitcoin core client", func() {
 	// nil is passed because there's no reconciler client
 	// TODO: create test for rpcUsers where client is not nil
 	client := NewClient(node, nil)
-
-	It("Should get correct image", func() {
-		// default image
-		img := client.Image()
-		Expect(img).To(Equal(DefaultBitcoinCoreImage))
-		// after setting custom image
-		testImage := "kotalco/bitcoin-core:spec"
-		node.Spec.Image = &testImage
-		Expect(client.Image()).To(Equal(testImage))
-		// after setting custom image
-		testImage = "kotalco/bitcoin-core:test"
-		os.Setenv(EnvBitcoinCoreImage, testImage)
-		Expect(client.Image()).To(Equal(testImage))
-	})
 
 	It("Should get correct command", func() {
 		Expect(client.Command()).To(Equal([]string{
