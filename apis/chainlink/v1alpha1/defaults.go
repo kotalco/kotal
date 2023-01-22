@@ -14,6 +14,11 @@ var (
 	DefaultCorsDomains = []string{"*"}
 )
 
+const (
+	// DefaultChainlinkImage is the default chainlink client image
+	DefaultChainlinkImage = "kotalco/chainlink:v1.10.0"
+)
+
 // Resources
 const (
 	// DefaultNodeCPURequest is the cpu requested by chainlink node

@@ -20,8 +20,6 @@ type ChainlinkClient struct {
 const (
 	// EnvChainlinkImage is the environment variable used for chainlink client image
 	EnvChainlinkImage = "CHAINLINK_IMAGE"
-	// DefaultChainlinkImage is the default chainlink client image
-	DefaultChainlinkImage = "kotalco/chainlink:v1.10.0"
 	// ChainlinkHomeDir is chainlink image home dir
 	// TODO: update the home directory
 	ChainlinkHomeDir = "/home/chainlink"
@@ -29,11 +27,6 @@ const (
 
 // Image returns chainlink image
 func (c *ChainlinkClient) Image() string {
-	if img := c.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvChainlinkImage) == "" {
-		return DefaultChainlinkImage
-	}
 	return os.Getenv(EnvChainlinkImage)
 }
 

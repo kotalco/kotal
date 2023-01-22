@@ -286,7 +286,6 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *chainli
 
 	client := chainlinkClients.NewClient(node)
 
-	img := client.Image()
 	command := client.Command()
 	args := client.Args()
 	env := client.Env()
@@ -296,7 +295,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *chainli
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		if err := r.specStatefulSet(node, sts, img, homeDir, command, args, env); err != nil {
+		if err := r.specStatefulSet(node, sts, homeDir, command, args, env); err != nil {
 			return err
 		}
 		return nil
@@ -306,7 +305,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *chainli
 }
 
 // specStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *appsv1.StatefulSet, image, homeDir string, command, args []string, env []corev1.EnvVar) error {
+func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *appsv1.StatefulSet, homeDir string, command, args []string, env []corev1.EnvVar) error {
 
 	sts.ObjectMeta.Labels = node.Labels
 
@@ -347,7 +346,7 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 				Containers: []corev1.Container{
 					{
 						Name:    "node",
-						Image:   image,
+						Image:   node.Spec.Image,
 						Command: command,
 						Args:    args,
 						Env:     env,

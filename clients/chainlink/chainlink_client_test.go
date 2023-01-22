@@ -2,7 +2,6 @@ package chainlink
 
 import (
 	"fmt"
-	"os"
 
 	chainlinkv1alpha1 "github.com/kotalco/kotal/apis/chainlink/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
@@ -35,22 +34,6 @@ var _ = Describe("Chainlink Client", func() {
 	}
 
 	client := NewClient(node)
-
-	It("Should get correct image", func() {
-		// default image
-		img := client.Image()
-		Expect(img).To(Equal(DefaultChainlinkImage))
-		// after setting custom image
-		testImage := "kotalco/chainlink:spec"
-		node.Spec.Image = &testImage
-		img = client.Image()
-		Expect(img).To(Equal(testImage))
-		// after setting custom image
-		testImage = "kotalco/chainlink:test"
-		os.Setenv(EnvChainlinkImage, testImage)
-		img = client.Image()
-		Expect(img).To(Equal(testImage))
-	})
 
 	It("Should get correct command", func() {
 		Expect(client.Command()).To(ConsistOf("chainlink"))

@@ -35,7 +35,7 @@ var _ = Describe("Chainlink node controller", func() {
 	testImage := "kotalco/chainlink:controller-test"
 
 	spec := chainlinkv1alpha1.NodeSpec{
-		Image:                      &testImage,
+		Image:                      testImage,
 		EthereumChainId:            1,
 		EthereumWSEndpoint:         "wss://my-eth-node:8546",
 		LinkContractAddress:        "0x01BE23585060835E02B77ef475b0Cc51aA1e0709",
