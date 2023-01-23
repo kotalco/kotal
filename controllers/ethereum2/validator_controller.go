@@ -323,7 +323,7 @@ func (r *ValidatorReconciler) createValidatorVolumeMounts(validator *ethereum2v1
 }
 
 // specStatefulset updates vvalidator statefulset spec
-func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Validator, sts *appsv1.StatefulSet, img string, command, args []string, homeDir string) {
+func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Validator, sts *appsv1.StatefulSet, command, args []string, homeDir string) {
 
 	sts.Labels = validator.GetLabels()
 
@@ -339,7 +339,7 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 			keyDir := fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(homeDir), keystore.SecretName)
 			importKeystoreContainer := corev1.Container{
 				Name:  fmt.Sprintf("import-keystore-%s", keystore.SecretName),
-				Image: img,
+				Image: validator.Spec.Image,
 				Env: []corev1.EnvVar{
 					{
 						Name:  "KOTAL_NETWORK",
@@ -375,7 +375,7 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 			keyDir := fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(homeDir), keystore.SecretName)
 			importKeystoreContainer := corev1.Container{
 				Name:  fmt.Sprintf("import-keystore-%s", keystore.SecretName),
-				Image: img,
+				Image: validator.Spec.Image,
 				Env: []corev1.EnvVar{
 					{
 						Name:  "KOTAL_NETWORK",
@@ -409,7 +409,7 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 		validatorsPath := fmt.Sprintf("%s/kotal-validators", shared.PathData(homeDir))
 		copyValidators := corev1.Container{
 			Name:  "copy-validators",
-			Image: img,
+			Image: validator.Spec.Image,
 			Env: []corev1.EnvVar{
 				{
 					Name:  "KOTAL_SECRETS_PATH",
@@ -440,7 +440,7 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 				Containers: []corev1.Container{
 					{
 						Name:         "validator",
-						Image:        img,
+						Image:        validator.Spec.Image,
 						Command:      command,
 						Args:         args,
 						VolumeMounts: mounts,
@@ -476,7 +476,7 @@ func (r *ValidatorReconciler) reconcileStatefulset(ctx context.Context, validato
 	if err != nil {
 		return err
 	}
-	img := client.Image()
+
 	command := client.Command()
 	args := client.Args()
 	homeDir := client.HomeDir()
@@ -486,7 +486,7 @@ func (r *ValidatorReconciler) reconcileStatefulset(ctx context.Context, validato
 			return err
 		}
 
-		r.specStatefulset(validator, &sts, img, command, args, homeDir)
+		r.specStatefulset(validator, &sts, command, args, homeDir)
 
 		return nil
 	})

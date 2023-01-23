@@ -19,8 +19,6 @@ type TekuValidatorClient struct {
 const (
 	// EnvTekuValidatorImage is the environment variable used for PegaSys Teku validator client image
 	EnvTekuValidatorImage = "TEKU_VALIDATOR_CLIENT_IMAGE"
-	// DefaultTekuValidatorImage is PegaSys Teku validator client image
-	DefaultTekuValidatorImage = "consensys/teku:22.11.0"
 )
 
 // HomeDir returns container home directory
@@ -74,10 +72,5 @@ func (t *TekuValidatorClient) Command() (command []string) {
 
 // Image returns teku docker image
 func (t *TekuValidatorClient) Image() string {
-	if img := t.validator.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvTekuValidatorImage) == "" {
-		return DefaultTekuValidatorImage
-	}
 	return os.Getenv(EnvTekuValidatorImage)
 }

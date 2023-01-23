@@ -20,6 +20,23 @@ func (r *Validator) Default() {
 		r.Spec.FeeRecipient = ZeroAddress
 	}
 
+	if r.Spec.Image == "" {
+		var image string
+
+		switch r.Spec.Client {
+		case TekuClient:
+			image = DefaultTekuValidatorImage
+		case LighthouseClient:
+			image = DefaultLighthouseValidatorImage
+		case NimbusClient:
+			image = DefaultNimbusValidatorImage
+		case PrysmClient:
+			image = DefaultPrysmValidatorImage
+		}
+
+		r.Spec.Image = image
+	}
+
 	r.DefaultNodeResources()
 
 }

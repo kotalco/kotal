@@ -20,8 +20,6 @@ type NimbusValidatorClient struct {
 const (
 	// EnvNimbusValidatorImage is the environment variable used for Status Ethereum 2.0 validator client image
 	EnvNimbusValidatorImage = "NIMBUS_VALIDATOR_CLIENT_IMAGE"
-	// DefaultNimbusValidatorImage is the default Status Ethereum 2.0 validator client image
-	DefaultNimbusValidatorImage = "kotalco/nimbus:v22.10.1"
 )
 
 // HomeDir returns container home directory
@@ -68,10 +66,5 @@ func (t *NimbusValidatorClient) Command() (command []string) {
 
 // Image returns prysm docker image
 func (t *NimbusValidatorClient) Image() string {
-	if img := t.validator.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvNimbusValidatorImage) == "" {
-		return DefaultNimbusValidatorImage
-	}
 	return os.Getenv(EnvNimbusValidatorImage)
 }

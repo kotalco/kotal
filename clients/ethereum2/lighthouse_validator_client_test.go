@@ -1,8 +1,6 @@
 package ethereum2
 
 import (
-	"os"
-
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -29,22 +27,6 @@ var _ = Describe("Lighthouse validator client", func() {
 
 	validator.Default()
 	client, _ := NewClient(validator)
-
-	It("Should get correct image", func() {
-		// default image
-		img := client.Image()
-		Expect(img).To(Equal(DefaultLighthouseValidatorImage))
-		// after changing .spec.image
-		testImage := "kotalco/lighthouse:spec"
-		validator.Spec.Image = &testImage
-		img = client.Image()
-		Expect(img).To(Equal(testImage))
-		// after setting custom image
-		testImage = "kotalco/lighthouse:test"
-		os.Setenv(EnvLighthouseValidatorImage, testImage)
-		img = client.Image()
-		Expect(img).To(Equal(testImage))
-	})
 
 	It("Should get correct command", func() {
 		Expect(client.Command()).To(ConsistOf("lighthouse", "vc"))

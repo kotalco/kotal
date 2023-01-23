@@ -39,7 +39,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 		testImage := "kotalco/teku:test"
 
 		spec := ethereum2v1alpha1.ValidatorSpec{
-			Image:           &testImage,
+			Image:           testImage,
 			Network:         "mainnet",
 			Client:          ethereum2v1alpha1.TekuClient,
 			BeaconEndpoints: []string{"http://10.96.130.88:9999"},
@@ -213,7 +213,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 		testImage := "kotalco/prysm:test"
 
 		spec := ethereum2v1alpha1.ValidatorSpec{
-			Image:                &testImage,
+			Image:                testImage,
 			Network:              "mainnet",
 			Client:               ethereum2v1alpha1.PrysmClient,
 			BeaconEndpoints:      []string{"http://10.96.130.88:9999"},
@@ -471,7 +471,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 		testImage := "kotalco/lighthouse:test"
 
 		spec := ethereum2v1alpha1.ValidatorSpec{
-			Image:                &testImage,
+			Image:                testImage,
 			Network:              "mainnet",
 			Client:               ethereum2v1alpha1.LighthouseClient,
 			BeaconEndpoints:      []string{"http://10.96.130.88:9999"},
@@ -686,7 +686,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 		testImage := "kotalco/nimbus:test"
 
 		spec := ethereum2v1alpha1.ValidatorSpec{
-			Image:                &testImage,
+			Image:                testImage,
 			Network:              "mainnet",
 			Client:               ethereum2v1alpha1.NimbusClient,
 			BeaconEndpoints:      []string{"http://10.96.130.88:9999"},

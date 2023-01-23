@@ -19,8 +19,6 @@ type LighthouseValidatorClient struct {
 const (
 	// EnvLighthouseValidatorImage is the environment variable used for SigmaPrime Ethereum 2.0 validator client image
 	EnvLighthouseValidatorImage = "LIGHTHOUSE_VALIDATOR_CLIENT_IMAGE"
-	// DefaultLighthouseValidatorImage is the default SigmaPrime Ethereum 2.0 validator client image
-	DefaultLighthouseValidatorImage = "kotalco/lighthouse:v3.3.0"
 )
 
 // HomeDir returns container home directory
@@ -65,10 +63,5 @@ func (t *LighthouseValidatorClient) Command() (command []string) {
 
 // Image returns prysm docker image
 func (t *LighthouseValidatorClient) Image() string {
-	if img := t.validator.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvLighthouseValidatorImage) == "" {
-		return DefaultLighthouseValidatorImage
-	}
 	return os.Getenv(EnvLighthouseValidatorImage)
 }

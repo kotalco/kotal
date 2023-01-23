@@ -19,8 +19,6 @@ type PrysmValidatorClient struct {
 const (
 	// EnvPrysmValidatorImage is the environment variable used for Prysmatic Labs validator client image
 	EnvPrysmValidatorImage = "PRYSM_VALIDATOR_CLIENT_IMAGE"
-	// DefaultPrysmValidatorImage is Prysmatic Labs validator client image
-	DefaultPrysmValidatorImage = "kotalco/prysm:v3.1.2"
 )
 
 // HomeDir returns container home directory
@@ -75,10 +73,5 @@ func (t *PrysmValidatorClient) Command() (command []string) {
 
 // Image returns prysm docker image
 func (t *PrysmValidatorClient) Image() string {
-	if img := t.validator.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvPrysmValidatorImage) == "" {
-		return DefaultPrysmValidatorImage
-	}
 	return os.Getenv(EnvPrysmValidatorImage)
 }

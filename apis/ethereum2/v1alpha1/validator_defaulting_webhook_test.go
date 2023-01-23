@@ -11,9 +11,11 @@ var _ = Describe("Ethereum 2.0 validator client defaulting", func() {
 		node := Validator{
 			Spec: ValidatorSpec{
 				Network: "mainnet",
+				Client:  TekuClient,
 			},
 		}
 		node.Default()
+		Expect(node.Spec.Image).To(Equal(DefaultTekuValidatorImage))
 		Expect(node.Spec.Graffiti).To(Equal(DefaultGraffiti))
 		Expect(node.Spec.FeeRecipient).To(Equal(EthereumAddress(ZeroAddress)))
 		Expect(node.Spec.Logging).To(Equal(DefaultLogging))

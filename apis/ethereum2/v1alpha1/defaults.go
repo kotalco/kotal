@@ -42,6 +42,17 @@ const (
 )
 
 const (
+	// DefaultTekuValidatorImage is PegaSys Teku validator client image
+	DefaultTekuValidatorImage = "consensys/teku:22.11.0"
+	// DefaultPrysmValidatorImage is Prysmatic Labs validator client image
+	DefaultPrysmValidatorImage = "kotalco/prysm:v3.1.2"
+	// DefaultNimbusValidatorImage is the default Status Ethereum 2.0 validator client image
+	DefaultNimbusValidatorImage = "kotalco/nimbus:v22.10.1"
+	// DefaultLighthouseValidatorImage is the default SigmaPrime Ethereum 2.0 validator client image
+	DefaultLighthouseValidatorImage = "kotalco/lighthouse:v3.3.0"
+)
+
+const (
 	// DefaultCPURequest is the default CPU cores required by Ethereum 2.0 node
 	DefaultCPURequest = "4"
 	// DefaultCPULimit is the default CPU cores limit by Ethereum 2.0 node
