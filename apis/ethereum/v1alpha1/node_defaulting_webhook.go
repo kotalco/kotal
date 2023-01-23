@@ -1,6 +1,8 @@
 package v1alpha1
 
-import "sigs.k8s.io/controller-runtime/pkg/webhook"
+import (
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
+)
 
 // +kubebuilder:webhook:path=/mutate-ethereum-kotal-io-v1alpha1-node,mutating=true,failurePolicy=fail,groups=ethereum.kotal.io,resources=nodes,verbs=create;update,versions=v1alpha1,name=mutate-ethereum-v1alpha1-node.kb.io,sideEffects=None,admissionReviewVersions=v1
 
@@ -9,7 +11,23 @@ var _ webhook.Defaulter = &Node{}
 // Default implements webhook.Defaulter so a webhook will be registered for the type
 func (n *Node) Default() {
 	defaultAPIs := []API{Web3API, ETHAPI, NetworkAPI}
-	nethermindNode := n.Spec.Client == NethermindClient
+	client := n.Spec.Client
+	nethermindNode := client == NethermindClient
+
+	if n.Spec.Image == "" {
+		var image string
+
+		switch client {
+		case BesuClient:
+			image = DefaultBesuImage
+		case GethClient:
+			image = DefaultGethImage
+		case NethermindClient:
+			image = DefaultNethermindImage
+		}
+
+		n.Spec.Image = image
+	}
 
 	// default genesis block
 	if n.Spec.Genesis != nil {

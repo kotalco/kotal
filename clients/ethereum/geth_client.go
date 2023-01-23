@@ -21,8 +21,6 @@ type GethClient struct {
 const (
 	// EnvGethImage is the environment variable used for go ethereum image
 	EnvGethImage = "GETH_IMAGE"
-	// DefaultGethImage is go-ethereum image
-	DefaultGethImage = "kotalco/geth:v1.10.26"
 	// GethHomeDir is go-ethereum docker image home directory
 	GethHomeDir = "/home/ethereum"
 )
@@ -277,10 +275,5 @@ func (g *GethClient) Genesis() (content string, err error) {
 
 // Image returns geth docker image
 func (g *GethClient) Image() string {
-	if img := g.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvGethImage) == "" {
-		return DefaultGethImage
-	}
 	return os.Getenv(EnvGethImage)
 }

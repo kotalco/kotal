@@ -20,8 +20,6 @@ type BesuClient struct {
 const (
 	// EnvBesuImage is the environment variable used for hyperledger besu image
 	EnvBesuImage = "BESU_IMAGE"
-	// DefaultBesuImage is hyperledger besu image
-	DefaultBesuImage = "hyperledger/besu:22.10.0"
 	// BesuHomeDir is besu docker image home directory
 	BesuHomeDir = "/opt/besu"
 )
@@ -273,10 +271,5 @@ func (b *BesuClient) EncodeStaticNodes() string {
 
 // Image returns besu docker image
 func (b *BesuClient) Image() string {
-	if img := b.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvBesuImage) == "" {
-		return DefaultBesuImage
-	}
 	return os.Getenv(EnvBesuImage)
 }

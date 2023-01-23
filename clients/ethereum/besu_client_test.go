@@ -2,7 +2,6 @@ package ethereum
 
 import (
 	"fmt"
-	"os"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
@@ -34,18 +33,6 @@ var _ = Describe("Besu Client", func() {
 
 		It("should return correct home directory", func() {
 			Expect(client.HomeDir()).To(Equal(BesuHomeDir))
-		})
-
-		It("should return correct docker image tag", func() {
-			Expect(client.Image()).To(Equal(DefaultBesuImage))
-			// setting node spec.image
-			testImage := "kotalco/besu:spec"
-			node.Spec.Image = &testImage
-			Expect(client.Image()).To(Equal(testImage))
-			// setting besu image environment variable
-			testImage = "kotalco/besu:test"
-			os.Setenv(EnvBesuImage, testImage)
-			Expect(client.Image()).To(Equal(testImage))
 		})
 
 		It("should encode static nodes correctly", func() {

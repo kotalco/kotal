@@ -44,7 +44,7 @@ type NodeList struct {
 type NodeSpec struct {
 
 	// Image is Ethereum node client image
-	Image *string `json:"image,omitempty"`
+	Image string `json:"image,omitempty"`
 
 	// Genesis is genesis block configuration
 	Genesis *Genesis `json:"genesis,omitempty"`

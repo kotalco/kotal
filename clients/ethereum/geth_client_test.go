@@ -2,7 +2,6 @@ package ethereum
 
 import (
 	"fmt"
-	"os"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
@@ -33,18 +32,6 @@ var _ = Describe("Geth Client", func() {
 
 		It("should return correct home directory", func() {
 			Expect(client.HomeDir()).To(Equal(GethHomeDir))
-		})
-
-		It("should return correct docker image tag", func() {
-			Expect(client.Image()).To(Equal(DefaultGethImage))
-			// setting node spec.image
-			testImage := "kotalco/geth:spec"
-			node.Spec.Image = &testImage
-			Expect(client.Image()).To(Equal(testImage))
-			// setting geth image environment variable
-			testImage = "kotalco/geth:test"
-			os.Setenv(EnvGethImage, testImage)
-			Expect(client.Image()).To(Equal(testImage))
 		})
 
 		It("should encode static nodes correctly", func() {

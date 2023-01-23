@@ -9,6 +9,15 @@ var (
 	DefaultOrigins []string = []string{"*"}
 )
 
+const (
+	// DefaultBesuImage is hyperledger besu image
+	DefaultBesuImage = "hyperledger/besu:22.10.0"
+	// DefaultGethImage is go-ethereum image
+	DefaultGethImage = "kotalco/geth:v1.10.26"
+	// DefaultNethermindImage is nethermind image
+	DefaultNethermindImage = "kotalco/nethermind:v1.14.5"
+)
+
 // Node defaults
 const (
 	// DefaultLogging is the default logging verbosity level

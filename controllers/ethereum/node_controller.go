@@ -522,14 +522,14 @@ func (r *NodeReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, hom
 }
 
 // specStatefulset updates node statefulset spec
-func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv1.StatefulSet, img, homedir string, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount) {
+func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv1.StatefulSet, homedir string, args []string, volumes []corev1.Volume, volumeMounts []corev1.VolumeMount) {
 	labels := node.GetLabels()
 	// used by geth to init genesis and import account(s)
 	initContainers := []corev1.Container{}
 	// node client container
 	nodeContainer := corev1.Container{
 		Name:  "node",
-		Image: img,
+		Image: node.Spec.Image,
 		Args:  args,
 		Resources: corev1.ResourceRequirements{
 			Requests: corev1.ResourceList{
@@ -548,7 +548,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 		if node.Spec.Genesis != nil {
 			initGenesis := corev1.Container{
 				Name:  "init-geth-genesis",
-				Image: img,
+				Image: node.Spec.Image,
 				Env: []corev1.EnvVar{
 					{
 						Name:  EnvDataPath,
@@ -568,7 +568,7 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 		if node.Spec.Import != nil {
 			importAccount := corev1.Container{
 				Name:  "import-account",
-				Image: img,
+				Image: node.Spec.Image,
 				Env: []corev1.EnvVar{
 					{
 						Name:  EnvDataPath,
@@ -663,7 +663,6 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereu
 	if err != nil {
 		return err
 	}
-	img := client.Image()
 	homedir := client.HomeDir()
 	args := client.Args()
 	volumes := r.createNodeVolumes(node)
@@ -673,7 +672,7 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereu
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specStatefulset(node, sts, img, homedir, args, volumes, mounts)
+		r.specStatefulset(node, sts, homedir, args, volumes, mounts)
 		return nil
 	})
 

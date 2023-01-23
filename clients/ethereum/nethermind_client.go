@@ -14,8 +14,6 @@ import (
 const (
 	// EnvNethermindImage is the environment variable used for nethermind image
 	EnvNethermindImage = "NETHERMIND_IMAGE"
-	// DefaultNethermindImage is nethermind image
-	DefaultNethermindImage = "kotalco/nethermind:v1.14.5"
 	// NethermindHomeDir is nethermind docker image home directory
 	NethermindHomeDir = "/home/nethermind"
 )
@@ -148,10 +146,5 @@ func (n *NethermindClient) EncodeStaticNodes() string {
 
 // Image returns nethermind docker image
 func (n *NethermindClient) Image() string {
-	if img := n.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvNethermindImage) == "" {
-		return DefaultNethermindImage
-	}
 	return os.Getenv(EnvNethermindImage)
 }
