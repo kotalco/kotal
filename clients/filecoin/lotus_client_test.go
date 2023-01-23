@@ -1,8 +1,6 @@
 package filecoin
 
 import (
-	"os"
-
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
@@ -23,22 +21,6 @@ var _ = Describe("Lotus Filecoin Client", func() {
 	}
 
 	client := NewClient(&node)
-
-	It("Should get correct image", func() {
-		Expect(client.Image()).To(Equal(DefaultLotusCalibrationImage))
-		node.Spec.Network = filecoinv1alpha1.CalibrationNetwork
-		Expect(client.Image()).To(Equal(DefaultLotusCalibrationImage))
-		node.Spec.Network = filecoinv1alpha1.MainNetwork
-		Expect(client.Image()).To(Equal(DefaultLotusImage))
-		// set node image environment variable
-		testImage := "kotalco/lotus:spec"
-		node.Spec.Image = &testImage
-		Expect(client.Image()).To(Equal(testImage))
-		// set node image environment variable
-		testImage = "kotalco/lotus:test"
-		os.Setenv(EnvLotusImage, testImage)
-		Expect(client.Image()).To(Equal(testImage))
-	})
 
 	It("Should get correct args", func() {
 		Expect(client.Args()).To(BeNil())

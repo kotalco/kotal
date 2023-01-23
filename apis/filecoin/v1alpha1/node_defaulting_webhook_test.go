@@ -16,6 +16,7 @@ var _ = Describe("Filecoin node defaulting", func() {
 
 		node.Default()
 
+		Expect(node.Spec.Image).To((Equal(DefaultLotusImage)))
 		Expect(node.Spec.Resources.CPU).To((Equal(DefaultMainnetNodeCPURequest)))
 		Expect(node.Spec.Resources.CPULimit).To((Equal(DefaultMainnetNodeCPULimit)))
 		Expect(node.Spec.Resources.Memory).To((Equal(DefaultMainnetNodeMemoryRequest)))
@@ -39,6 +40,7 @@ var _ = Describe("Filecoin node defaulting", func() {
 
 		node.Default()
 
+		Expect(node.Spec.Image).To((Equal(DefaultLotusCalibrationImage)))
 		Expect(node.Spec.Resources.CPU).To((Equal(DefaultCalibrationNodeCPURequest)))
 		Expect(node.Spec.Resources.CPULimit).To((Equal(DefaultCalibrationNodeCPULimit)))
 		Expect(node.Spec.Resources.Memory).To((Equal(DefaultCalibrationNodeMemoryRequest)))

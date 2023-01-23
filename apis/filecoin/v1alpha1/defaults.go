@@ -36,3 +36,10 @@ const (
 	// DefaultCalibrationNodeStorageRequest is the default calibration node storage
 	DefaultCalibrationNodeStorageRequest = "200Gi"
 )
+
+const (
+	// DefaultLotusImage is the default lotus client image
+	DefaultLotusImage = "kotalco/lotus:v1.18.0"
+	// DefaultLotusCalibrationImage is the default lotus client image for calibration network
+	DefaultLotusCalibrationImage = "kotalco/lotus:v1.18.0-calibration"
+)

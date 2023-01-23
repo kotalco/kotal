@@ -18,26 +18,12 @@ type LotusClient struct {
 const (
 	// EnvLotusImage is the environment variable used for lotus filecoin client image
 	EnvLotusImage = "LOTUS_IMAGE"
-	// DefaultLotusImage is the default lotus client image
-	DefaultLotusImage = "kotalco/lotus:v1.18.0"
-	// DefaultLotusCalibrationImage is the default lotus client image for calibration network
-	DefaultLotusCalibrationImage = "kotalco/lotus:v1.18.0-calibration"
 	//  LotusHomeDir is lotus client image home dir
 	LotusHomeDir = "/home/filecoin"
 )
 
 // Image returns lotus image for node's network
 func (c *LotusClient) Image() string {
-	if img := c.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvLotusImage) == "" {
-		switch c.node.Spec.Network {
-		case filecoinv1alpha1.MainNetwork:
-			return DefaultLotusImage
-		case filecoinv1alpha1.CalibrationNetwork:
-			return DefaultLotusCalibrationImage
-		}
-	}
 	return os.Getenv(EnvLotusImage)
 }
 

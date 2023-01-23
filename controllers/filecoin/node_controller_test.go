@@ -33,7 +33,7 @@ var _ = Describe("Filecoin node controller", func() {
 	testImage := "kotalco/lotus:controller-test"
 
 	spec := filecoinv1alpha1.NodeSpec{
-		Image:   &testImage,
+		Image:   testImage,
 		Network: filecoinv1alpha1.CalibrationNetwork,
 		API:     true,
 	}

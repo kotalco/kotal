@@ -15,6 +15,19 @@ func (n *Node) Default() {
 	mainnet := n.Spec.Network == MainNetwork
 	calibration := n.Spec.Network == CalibrationNetwork
 
+	if n.Spec.Image == "" {
+		var image string
+
+		switch n.Spec.Network {
+		case MainNetwork:
+			image = DefaultLotusImage
+		case CalibrationNetwork:
+			image = DefaultLotusCalibrationImage
+		}
+
+		n.Spec.Image = image
+	}
+
 	if n.Spec.Logging == "" {
 		n.Spec.Logging = DefaultLogging
 	}
