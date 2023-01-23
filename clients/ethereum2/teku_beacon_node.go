@@ -19,8 +19,6 @@ type TekuBeaconNode struct {
 const (
 	// EnvTekuBeaconNodeImage is the environment variable used for PegaSys Teku beacon node image
 	EnvTekuBeaconNodeImage = "TEKU_BEACON_NODE_IMAGE"
-	// DefaultTekuBeaconNodeImage is PegaSys Teku beacon node image
-	DefaultTekuBeaconNodeImage = "consensys/teku:22.11.0"
 )
 
 // HomeDir returns container home directory
@@ -78,10 +76,5 @@ func (t *TekuBeaconNode) Env() []corev1.EnvVar {
 
 // Image returns teku docker image
 func (t *TekuBeaconNode) Image() string {
-	if img := t.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvTekuBeaconNodeImage) == "" {
-		return DefaultTekuBeaconNodeImage
-	}
 	return os.Getenv(EnvTekuBeaconNodeImage)
 }

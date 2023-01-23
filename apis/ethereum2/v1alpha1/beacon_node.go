@@ -12,7 +12,7 @@ type EthereumAddress string
 // BeaconNodeSpec defines the desired state of BeaconNode
 type BeaconNodeSpec struct {
 	// Image is Ethereum 2.0 Beacon node client image
-	Image *string `json:"image,omitempty"`
+	Image string `json:"image,omitempty"`
 
 	// Network is the network to join
 	Network string `json:"network"`

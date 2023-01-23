@@ -38,7 +38,7 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 		testImage := "kotalco/teku:controller-test"
 
 		spec := ethereum2v1alpha1.BeaconNodeSpec{
-			Image:   &testImage,
+			Image:   testImage,
 			Client:  ethereum2v1alpha1.TekuClient,
 			Network: "mainnet",
 		}

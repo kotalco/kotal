@@ -199,11 +199,10 @@ func (r *BeaconNodeReconciler) reconcileStatefulset(ctx context.Context, node *e
 		}
 
 		args := client.Args()
-		img := client.Image()
 		command := client.Command()
 		homeDir := client.HomeDir()
 
-		r.specStatefulset(node, &sts, args, command, img, homeDir)
+		r.specStatefulset(node, &sts, args, command, homeDir)
 
 		return nil
 	})
@@ -290,7 +289,7 @@ func (r *BeaconNodeReconciler) nodeVolumeMounts(node *ethereum2v1alpha1.BeaconNo
 }
 
 // specStatefulset updates beacon node statefulset spec
-func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNode, sts *appsv1.StatefulSet, args, command []string, img, homeDir string) {
+func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNode, sts *appsv1.StatefulSet, args, command []string, homeDir string) {
 
 	sts.Labels = node.GetLabels()
 
@@ -303,7 +302,7 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 	if node.Spec.Client == ethereum2v1alpha1.NimbusClient {
 		fixPermissionContainer := corev1.Container{
 			Name:  "fix-datadir-permission",
-			Image: img,
+			Image: node.Spec.Image,
 			Command: []string{
 				"/bin/sh",
 				"-c",
@@ -337,7 +336,7 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 						Name:         "node",
 						Command:      command,
 						Args:         args,
-						Image:        img,
+						Image:        node.Spec.Image,
 						VolumeMounts: volumeMounts,
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{

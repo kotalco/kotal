@@ -10,6 +10,23 @@ var _ webhook.Defaulter = &BeaconNode{}
 func (r *BeaconNode) Default() {
 	nodelog.Info("default", "name", r.Name)
 
+	if r.Spec.Image == "" {
+		var image string
+
+		switch r.Spec.Client {
+		case TekuClient:
+			image = DefaultTekuBeaconNodeImage
+		case PrysmClient:
+			image = DefaultPrysmBeaconNodeImage
+		case NimbusClient:
+			image = DefaultNimbusBeaconNodeImage
+		case LighthouseClient:
+			image = DefaultLighthouseBeaconNodeImage
+		}
+
+		r.Spec.Image = image
+	}
+
 	if r.Spec.P2PPort == 0 {
 		r.Spec.P2PPort = DefaultP2PPort
 	}

@@ -20,8 +20,6 @@ type PrysmBeaconNode struct {
 const (
 	// EnvPrysmBeaconNodeImage is the environment variable used for Prysmatic Labs beacon node image
 	EnvPrysmBeaconNodeImage = "PRYSM_BEACON_NODE_IMAGE"
-	// DefaultPrysmBeaconNodeImage is Prysmatic Labs beacon node image
-	DefaultPrysmBeaconNodeImage = "kotalco/prysm:v3.1.2"
 )
 
 // HomeDir returns container home directory
@@ -96,10 +94,5 @@ func (t *PrysmBeaconNode) Command() (command []string) {
 
 // Image returns prysm docker image
 func (t *PrysmBeaconNode) Image() string {
-	if img := t.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvPrysmBeaconNodeImage) == "" {
-		return DefaultPrysmBeaconNodeImage
-	}
 	return os.Getenv(EnvPrysmBeaconNodeImage)
 }

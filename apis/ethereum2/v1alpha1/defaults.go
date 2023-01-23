@@ -31,6 +31,17 @@ const (
 )
 
 const (
+	// DefaultLighthouseBeaconNodeImage is the default SigmaPrime Ethereum 2.0 beacon node image
+	DefaultLighthouseBeaconNodeImage = "kotalco/lighthouse:v3.3.0"
+	// DefaultTekuBeaconNodeImage is PegaSys Teku beacon node image
+	DefaultTekuBeaconNodeImage = "consensys/teku:22.11.0"
+	// DefaultPrysmBeaconNodeImage is Prysmatic Labs beacon node image
+	DefaultPrysmBeaconNodeImage = "kotalco/prysm:v3.1.2"
+	// DefaultNimbusBeaconNodeImage is the default Status Ethereum 2.0 beacon node image
+	DefaultNimbusBeaconNodeImage = "kotalco/nimbus:v22.10.1"
+)
+
+const (
 	// DefaultCPURequest is the default CPU cores required by Ethereum 2.0 node
 	DefaultCPURequest = "4"
 	// DefaultCPULimit is the default CPU cores limit by Ethereum 2.0 node

@@ -20,8 +20,6 @@ type LighthouseBeaconNode struct {
 const (
 	// EnvLighthouseBeaconNodeImage is the environment variable used for SigmaPrime Ethereum 2.0 beacon node image
 	EnvLighthouseBeaconNodeImage = "LIGHTHOUSE_BEACON_NODE_IMAGE"
-	// DefaultLighthouseBeaconNodeImage is the default SigmaPrime Ethereum 2.0 beacon node image
-	DefaultLighthouseBeaconNodeImage = "kotalco/lighthouse:v3.3.0"
 )
 
 // HomeDir returns container home directory
@@ -80,10 +78,5 @@ func (t *LighthouseBeaconNode) Command() (command []string) {
 
 // Image returns prysm docker image
 func (t *LighthouseBeaconNode) Image() string {
-	if img := t.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvLighthouseBeaconNodeImage) == "" {
-		return DefaultLighthouseBeaconNodeImage
-	}
 	return os.Getenv(EnvLighthouseBeaconNodeImage)
 }

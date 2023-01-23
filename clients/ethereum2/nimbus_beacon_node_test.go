@@ -2,7 +2,6 @@ package ethereum2
 
 import (
 	"fmt"
-	"os"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
@@ -20,22 +19,6 @@ var _ = Describe("Nimbus beacon node", func() {
 		},
 	}
 	client, _ := NewClient(&node)
-
-	It("Should get correct image", func() {
-		// default image
-		img := client.Image()
-		Expect(img).To(Equal(DefaultNimbusBeaconNodeImage))
-		// after changing .spec.image
-		testImage := "kotalco/nimbus:spec"
-		node.Spec.Image = &testImage
-		img = client.Image()
-		Expect(img).To(Equal(testImage))
-		// after setting custom image
-		testImage = "kotalco/nimbus:test"
-		os.Setenv(EnvNimbusBeaconNodeImage, testImage)
-		img = client.Image()
-		Expect(img).To(Equal(testImage))
-	})
 
 	It("Should get correct command", func() {
 		Expect(client.Command()).To(ConsistOf("nimbus_beacon_node"))
