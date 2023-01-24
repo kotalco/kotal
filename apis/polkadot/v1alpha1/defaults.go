@@ -23,6 +23,11 @@ const (
 	DefaultCORSDomain = "all"
 )
 
+const (
+	// DefaultPolkadotImage is the default polkadot client image
+	DefaultPolkadotImage = "parity/polkadot:v0.9.32"
+)
+
 // Resources
 const (
 	// DefaultNodeCPURequest is the cpu requested by polkadot node

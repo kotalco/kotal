@@ -178,7 +178,6 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *polkado
 
 	client := polkadotClients.NewClient(node)
 
-	img := client.Image()
 	args := client.Args()
 	homeDir := client.HomeDir()
 
@@ -186,7 +185,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *polkado
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		if err := r.specStatefulSet(node, sts, img, homeDir, args); err != nil {
+		if err := r.specStatefulSet(node, sts, homeDir, args); err != nil {
 			return err
 		}
 		return nil
@@ -265,7 +264,7 @@ func (r *NodeReconciler) nodeVolumeMounts(node *polkadotv1alpha1.Node, homeDir s
 }
 
 // specStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv1.StatefulSet, image, homeDir string, args []string) error {
+func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv1.StatefulSet, homeDir string, args []string) error {
 
 	sts.ObjectMeta.Labels = node.Labels
 
@@ -307,7 +306,7 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 				Containers: []corev1.Container{
 					{
 						Name:         "node",
-						Image:        image,
+						Image:        node.Spec.Image,
 						Args:         args,
 						VolumeMounts: r.nodeVolumeMounts(node, homeDir),
 						Resources: corev1.ResourceRequirements{

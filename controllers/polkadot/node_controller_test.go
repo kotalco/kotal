@@ -33,7 +33,7 @@ var _ = Describe("kusama node controller", func() {
 	testImage := "kotalco/polkadot:controller-test"
 
 	spec := polkadotv1alpha1.NodeSpec{
-		Image:      &testImage,
+		Image:      testImage,
 		Network:    "kusama",
 		RPC:        true,
 		WS:         true,

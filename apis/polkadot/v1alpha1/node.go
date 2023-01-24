@@ -20,7 +20,7 @@ const (
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Image is Polkadot node client image
-	Image *string `json:"image,omitempty"`
+	Image string `json:"image,omitempty"`
 	// Network is the polkadot network/chain to join
 	Network string `json:"network"`
 	// P2PPort is p2p protocol tcp port

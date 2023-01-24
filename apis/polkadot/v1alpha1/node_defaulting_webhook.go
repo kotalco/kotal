@@ -36,6 +36,10 @@ func (r *Node) Default() {
 
 	r.DefaultNodeResources()
 
+	if r.Spec.Image == "" {
+		r.Spec.Image = DefaultPolkadotImage
+	}
+
 	if r.Spec.SyncMode == "" {
 		r.Spec.SyncMode = DefaultSyncMode
 	}

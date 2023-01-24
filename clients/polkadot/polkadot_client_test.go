@@ -2,7 +2,6 @@ package polkadot
 
 import (
 	"fmt"
-	"os"
 
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
 	sharedAPI "github.com/kotalco/kotal/apis/shared"
@@ -45,19 +44,6 @@ var _ = Describe("Polkadot client", func() {
 
 	node.Default()
 	client := NewClient(node)
-
-	It("Should get correct image", func() {
-		// default image
-		Expect(client.Image()).To(Equal(DefaultPolkadotImage))
-		// after setting .spec.image
-		testImage := "kotalco/polkadot:spec"
-		node.Spec.Image = &testImage
-		Expect(client.Image()).To(Equal(testImage))
-		// after setting custom image environment variable
-		testImage = "kotalco/polkadot:test"
-		os.Setenv(EnvPolkadotImage, testImage)
-		Expect(client.Image()).To(Equal(testImage))
-	})
 
 	It("Should get correct command", func() {
 		Expect(client.Command()).To(BeNil())

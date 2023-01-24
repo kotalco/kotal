@@ -20,19 +20,12 @@ type PolkadotClient struct {
 const (
 	// EnvPolkadotImage is the environment variable used for polkadot client image
 	EnvPolkadotImage = "POLKADOT_IMAGE"
-	// DefaultPolkadotImage is the default polkadot client image
-	DefaultPolkadotImage = "parity/polkadot:v0.9.32"
 	//  PolkadotHomeDir is go ipfs image home dir
 	PolkadotHomeDir = "/polkadot"
 )
 
 // Image returns go-ipfs image
 func (c *PolkadotClient) Image() string {
-	if img := c.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvPolkadotImage) == "" {
-		return DefaultPolkadotImage
-	}
 	return os.Getenv(EnvPolkadotImage)
 }
 
