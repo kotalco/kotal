@@ -34,12 +34,13 @@ fi
 if [ "$K8S_PROVIDER" == "minikube" ]
 then
 # minikube cluster versions
-VERSIONS=("1.19.0" "1.20.0" "1.21.0" "1.22.0" "1.23.0" "1.24.0" "1.25.0")
+VERSIONS=("1.19.0" "1.20.0" "1.21.0" "1.22.0" "1.23.0" "1.24.0" "1.25.0" "1.26.0")
 echo "🗑 Deleting all Minikube clusters"
 minikube delete --all
 else
 # kind cluster versions
-VERSIONS=("1.19.16" "1.20.15" "1.21.14" "1.22.15" "1.23.13" "1.24.7" "1.25.3")
+# https://hub.docker.com/r/kindest/node/tags
+VERSIONS=("1.19.16" "1.20.15" "1.21.14" "1.22.15" "1.23.13" "1.24.7" "1.25.3" "1.26.0")
 echo "🗑 Deleting all Kind clusters"
 kind delete clusters --all
 fi
