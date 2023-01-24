@@ -17,6 +17,7 @@ var _ = Describe("Stacks node defaulting", func() {
 
 		node.Default()
 
+		Expect(node.Spec.Image).To(Equal(DefaultStacksNodeImage))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.Spec.P2PHost).To(Equal(DefaultHost))
 		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))

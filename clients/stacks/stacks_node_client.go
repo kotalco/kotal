@@ -19,8 +19,6 @@ type StacksNodeClient struct {
 const (
 	// EnvStacksNodeImage is the environment variable used for Stacks node client image
 	EnvStacksNodeImage = "STACKS_NODE_IMAGE"
-	// DefaultStacksNodeImage is the default Stacks node client image
-	DefaultStacksNodeImage = "kotalco/stacks:2.05.0.1.0"
 	// StacksNodeHomeDir is Stacks node image home dir
 	// TODO: update home dir after creating a new docker image
 	StacksNodeHomeDir = "/home/stacks"
@@ -28,11 +26,6 @@ const (
 
 // Image returns Stacks node client image
 func (c *StacksNodeClient) Image() string {
-	if img := c.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvStacksNodeImage) == "" {
-		return DefaultStacksNodeImage
-	}
 	return os.Getenv(EnvStacksNodeImage)
 }
 

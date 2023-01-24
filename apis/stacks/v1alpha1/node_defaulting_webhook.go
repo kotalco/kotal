@@ -36,6 +36,10 @@ func (r *Node) Default() {
 
 	r.DefaultNodeResources()
 
+	if r.Spec.Image == "" {
+		r.Spec.Image = DefaultStacksNodeImage
+	}
+
 	if r.Spec.P2PPort == 0 {
 		r.Spec.P2PPort = DefaultP2PPort
 	}

@@ -2,7 +2,6 @@ package stacks
 
 import (
 	"fmt"
-	"os"
 
 	stacksv1alpha1 "github.com/kotalco/kotal/apis/stacks/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -26,19 +25,6 @@ var _ = Describe("Stacks node client", func() {
 	node.Default()
 
 	client := NewClient(node)
-
-	It("Should get correct image", func() {
-		// default image
-		Expect(client.Image()).To(Equal(DefaultStacksNodeImage))
-		// after setting custom image
-		testImage := "kotalco/stacks-node:spec"
-		node.Spec.Image = &testImage
-		Expect(client.Image()).To(Equal(testImage))
-		// after setting custom image
-		testImage = "kotalco/stacks-node:test"
-		os.Setenv(EnvStacksNodeImage, testImage)
-		Expect(client.Image()).To(Equal(testImage))
-	})
 
 	It("Should get correct command", func() {
 		Expect(client.Command()).To(Equal(

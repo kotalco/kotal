@@ -35,7 +35,7 @@ var _ = Describe("Stacks node controller", func() {
 	testImage := "kotalco/stacks:controller-test"
 
 	spec := stacksv1alpha1.NodeSpec{
-		Image:   &testImage,
+		Image:   testImage,
 		Network: stacksv1alpha1.Mainnet,
 		BitcoinNode: stacksv1alpha1.BitcoinNode{
 			Endpoint:              "bitcoin.blockstack.com",
