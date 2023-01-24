@@ -252,7 +252,6 @@ func (r *PeerReconciler) reconcileStatefulSet(ctx context.Context, peer *ipfsv1a
 		return err
 	}
 
-	img := client.Image()
 	command := client.Command()
 	env := client.Env()
 	args := client.Args()
@@ -262,7 +261,7 @@ func (r *PeerReconciler) reconcileStatefulSet(ctx context.Context, peer *ipfsv1a
 		if err := ctrl.SetControllerReference(peer, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specStatefulSet(peer, sts, img, homeDir, env, command, args)
+		r.specStatefulSet(peer, sts, homeDir, env, command, args)
 		return nil
 	})
 
@@ -270,7 +269,7 @@ func (r *PeerReconciler) reconcileStatefulSet(ctx context.Context, peer *ipfsv1a
 }
 
 // specStatefulSet updates ipfs peer statefulset spec
-func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.StatefulSet, img, homeDir string, env []corev1.EnvVar, command, args []string) {
+func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.StatefulSet, homeDir string, env []corev1.EnvVar, command, args []string) {
 	labels := peer.Labels
 
 	sts.ObjectMeta.Labels = labels
@@ -354,7 +353,7 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 	}
 	initContainers = append(initContainers, corev1.Container{
 		Name:  "init-ipfs",
-		Image: img,
+		Image: peer.Spec.Image,
 		Env: []corev1.EnvVar{
 			{
 				Name:  ipfsClients.EnvIPFSPath,
@@ -380,7 +379,7 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 	// config ipfs
 	initContainers = append(initContainers, corev1.Container{
 		Name:  "config-ipfs",
-		Image: img,
+		Image: peer.Spec.Image,
 		Env: []corev1.EnvVar{
 			{
 				Name:  ipfsClients.EnvIPFSPath,
@@ -428,7 +427,7 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 				Containers: []corev1.Container{
 					{
 						Name:         "peer",
-						Image:        img,
+						Image:        peer.Spec.Image,
 						Env:          env,
 						Command:      command,
 						Args:         args,

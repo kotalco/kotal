@@ -17,6 +17,11 @@ const (
 	DefaultLogging = shared.InfoLogs
 )
 
+const (
+	// DefaultGoIPFSImage is the default go ipfs client image
+	DefaultGoIPFSImage = "kotalco/kubo:v0.17.0"
+)
+
 // Resources
 const (
 	// DefaultNodeCPURequest is the cpu requested by ipfs node

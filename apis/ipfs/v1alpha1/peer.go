@@ -8,7 +8,7 @@ import (
 // PeerSpec defines the desired state of Peer
 type PeerSpec struct {
 	// Image is ipfs peer client image
-	Image *string `json:"image,omitempty"`
+	Image string `json:"image,omitempty"`
 	// InitProfiles is the intial profiles to apply during
 	// +listType=set
 	InitProfiles []Profile `json:"initProfiles,omitempty"`

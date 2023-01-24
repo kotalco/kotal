@@ -18,19 +18,12 @@ type KuboClient struct {
 const (
 	// EnvGoIPFSImage is the environment variable used for go ipfs client image
 	EnvGoIPFSImage = "GO_IPFS_IMAGE"
-	// DefaultGoIPFSImage is the default go ipfs client image
-	DefaultGoIPFSImage = "kotalco/kubo:v0.17.0"
 	//  GoIPFSHomeDir is go ipfs image home dir
 	GoIPFSHomeDir = "/home/ipfs"
 )
 
 // Image returns kubo image
 func (c *KuboClient) Image() string {
-	if img := c.peer.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvGoIPFSImage) == "" {
-		return DefaultGoIPFSImage
-	}
 	return os.Getenv(EnvGoIPFSImage)
 }
 

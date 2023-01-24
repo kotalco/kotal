@@ -35,7 +35,7 @@ var _ = Describe("IPFS peer controller", func() {
 	image := "kotalco/kubo:test"
 
 	spec := ipfsv1alpha1.PeerSpec{
-		Image:              &image,
+		Image:              image,
 		API:                true,
 		APIPort:            3333,
 		Gateway:            true,

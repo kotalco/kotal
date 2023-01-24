@@ -33,6 +33,10 @@ func (r *Peer) DefaultPeerResources() {
 func (r *Peer) Default() {
 	peerlog.Info("default", "name", r.Name)
 
+	if r.Spec.Image == "" {
+		r.Spec.Image = DefaultGoIPFSImage
+	}
+
 	if r.Spec.Routing == "" {
 		r.Spec.Routing = DefaultRoutingMode
 	}
