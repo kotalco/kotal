@@ -17,8 +17,6 @@ type GraphNodeClient struct {
 const (
 	// EnvGraphNodeImage is the environment variable used for Graph node client image
 	EnvGraphNodeImage = "GRAPH_NODE_IMAGE"
-	// DefaultGraphNodeImage is the default Graph node client image
-	DefaultGraphNodeImage = "graphprotocol/graph-node:v0.27.0"
 	// GraphNodeHomeDir is Graph node image home dir
 	// TODO: update home dir after creating a new docker image
 	GraphNodeHomeDir = "/root"
@@ -26,11 +24,6 @@ const (
 
 // Image returns Graph node client image
 func (c *GraphNodeClient) Image() string {
-	if img := c.node.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvGraphNodeImage) == "" {
-		return DefaultGraphNodeImage
-	}
 	return os.Getenv(EnvGraphNodeImage)
 }
 

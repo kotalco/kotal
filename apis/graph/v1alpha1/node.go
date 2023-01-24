@@ -6,8 +6,9 @@ import (
 
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
+	// TODO: default node image
 	// Image is Graph node client image
-	Image *string `json:"image,omitempty"`
+	Image string `json:"image,omitempty"`
 }
 
 // NodeStatus defines the observed state of Node

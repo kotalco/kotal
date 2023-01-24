@@ -36,7 +36,8 @@ spec:
             description: NodeSpec defines the desired state of Node
             properties:
               image:
-                description: Image is Graph node client image
+                description: 'TODO: default node image Image is Graph node client
+                  image'
                 type: string
             type: object
           status:

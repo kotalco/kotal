@@ -1,8 +1,6 @@
 package graph
 
 import (
-	"os"
-
 	graphv1alpha1 "github.com/kotalco/kotal/apis/graph/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -22,19 +20,6 @@ var _ = Describe("Graph node client", func() {
 	// TODO: default node
 
 	client := NewClient(node)
-
-	It("Should get correct image", func() {
-		// default image
-		Expect(client.Image()).To(Equal(DefaultGraphNodeImage))
-		// after setting custom image
-		testImage := "kotalco/graph-node:spec"
-		node.Spec.Image = &testImage
-		Expect(client.Image()).To(Equal(testImage))
-		// after setting custom image
-		testImage = "kotalco/graph-node:test"
-		os.Setenv(EnvGraphNodeImage, testImage)
-		Expect(client.Image()).To(Equal(testImage))
-	})
 
 	It("Should get correct command", func() {
 		Expect(client.Command()).To(Equal(
