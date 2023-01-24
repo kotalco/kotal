@@ -13,6 +13,11 @@ const (
 	DefaultHost = "0.0.0.0"
 )
 
+const (
+	// DefaultNearImage is the default NEAR core client image
+	DefaultNearImage = "kotalco/nearcore:1.29.1"
+)
+
 // Resources
 const (
 	// DefaultNodeCPURequest is the cpu requested by NEAR node

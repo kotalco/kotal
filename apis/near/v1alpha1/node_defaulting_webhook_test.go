@@ -18,6 +18,7 @@ var _ = Describe("NEAR node defaulting", func() {
 
 		node.Default()
 
+		Expect(node.Spec.Image).To(Equal(DefaultNearImage))
 		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))
 		Expect(node.Spec.RPCHost).To(Equal(DefaultHost))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))

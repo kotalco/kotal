@@ -35,7 +35,7 @@ var _ = Describe("NEAR node controller", func() {
 	testImage := "kotalco/nearcore:controller-test"
 
 	spec := nearv1alpha1.NodeSpec{
-		Image:                    &testImage,
+		Image:                    testImage,
 		Network:                  "mainnet",
 		RPC:                      true,
 		Archive:                  true, // test volume storage size

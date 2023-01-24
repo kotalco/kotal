@@ -1,8 +1,6 @@
 package near
 
 import (
-	"os"
-
 	nearv1alpha1 "github.com/kotalco/kotal/apis/near/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
@@ -39,19 +37,6 @@ var _ = Describe("NEAR core client", func() {
 
 	node.Default()
 	client := NewClient(node)
-
-	It("Should get correct image", func() {
-		// default image
-		Expect(client.Image()).To(Equal(DefaultNearImage))
-		// after setting .spec.image
-		testImage := "kotalco/near:spec"
-		node.Spec.Image = &testImage
-		Expect(client.Image()).To(Equal(testImage))
-		// after setting custom image environment variable
-		testImage = "kotalco/near:test"
-		os.Setenv(EnvNearImage, testImage)
-		Expect(client.Image()).To(Equal(testImage))
-	})
 
 	It("Should get correct command", func() {
 		Expect(client.Command()).To(BeNil())

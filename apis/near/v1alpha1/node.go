@@ -8,7 +8,7 @@ import (
 // NodeSpec defines the desired state of Node
 type NodeSpec struct {
 	// Image is NEAR node client image
-	Image *string `json:"image,omitempty"`
+	Image string `json:"image,omitempty"`
 	// Network is NEAR network to join and sync
 	// +kubebuilder:validation:Enum=mainnet;testnet;betanet
 	Network string `json:"network"`

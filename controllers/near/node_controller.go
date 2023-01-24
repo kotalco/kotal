@@ -332,7 +332,6 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *nearv1a
 
 	client := nearClients.NewClient(node)
 
-	img := client.Image()
 	homeDir := client.HomeDir()
 	args := client.Args()
 
@@ -340,7 +339,7 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *nearv1a
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		r.specStatefulSet(node, sts, img, homeDir, args)
+		r.specStatefulSet(node, sts, homeDir, args)
 		return nil
 	})
 
@@ -348,14 +347,14 @@ func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *nearv1a
 }
 
 // specStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.StatefulSet, img, homeDir string, args []string) {
+func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.StatefulSet, homeDir string, args []string) {
 
 	sts.ObjectMeta.Labels = node.Labels
 
 	initContainers := []corev1.Container{
 		{
 			Name:  "init-near-node",
-			Image: img,
+			Image: node.Spec.Image,
 			Env: []corev1.EnvVar{
 				{
 					Name:  EnvDataPath,
@@ -427,7 +426,7 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 				Containers: []corev1.Container{
 					{
 						Name:         "node",
-						Image:        img,
+						Image:        node.Spec.Image,
 						Args:         args,
 						VolumeMounts: r.createVolumeMounts(node, homeDir),
 						Resources: corev1.ResourceRequirements{
