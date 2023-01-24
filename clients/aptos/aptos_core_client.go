@@ -1,8 +1,6 @@
 package aptos
 
 import (
-	"os"
-
 	aptosv1alpha1 "github.com/kotalco/kotal/apis/aptos/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 )
@@ -15,17 +13,10 @@ type AptosCoreClient struct {
 
 // Images
 const (
-	// EnvAptosCoreImage is the environment variable used for Aptos Core client image
-	EnvAptosCoreImage = "APTOS_CORE_IMAGE"
 	// AptosCoreHomeDir is Aptos Core image home dir
 	// TODO: create aptos image with non root user and /home/aptos home directory
 	AptosCoreHomeDir = "/opt/aptos"
 )
-
-// Image returns Aptos Core client image
-func (c *AptosCoreClient) Image() string {
-	return os.Getenv(EnvAptosCoreImage)
-}
 
 // Command returns environment variables for the client
 func (c *AptosCoreClient) Env() (env []corev1.EnvVar) {

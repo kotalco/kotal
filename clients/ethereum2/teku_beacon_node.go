@@ -2,7 +2,6 @@ package ethereum2
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
@@ -15,11 +14,6 @@ import (
 type TekuBeaconNode struct {
 	node *ethereum2v1alpha1.BeaconNode
 }
-
-const (
-	// EnvTekuBeaconNodeImage is the environment variable used for PegaSys Teku beacon node image
-	EnvTekuBeaconNodeImage = "TEKU_BEACON_NODE_IMAGE"
-)
 
 // HomeDir returns container home directory
 func (t *TekuBeaconNode) HomeDir() string {
@@ -72,9 +66,4 @@ func (t *TekuBeaconNode) Command() (command []string) {
 // Command returns environment variables for running the client
 func (t *TekuBeaconNode) Env() []corev1.EnvVar {
 	return nil
-}
-
-// Image returns teku docker image
-func (t *TekuBeaconNode) Image() string {
-	return os.Getenv(EnvTekuBeaconNodeImage)
 }

@@ -1,8 +1,6 @@
 package graph
 
 import (
-	"os"
-
 	graphv1alpha1 "github.com/kotalco/kotal/apis/graph/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 )
@@ -15,17 +13,10 @@ type GraphNodeClient struct {
 
 // Images
 const (
-	// EnvGraphNodeImage is the environment variable used for Graph node client image
-	EnvGraphNodeImage = "GRAPH_NODE_IMAGE"
 	// GraphNodeHomeDir is Graph node image home dir
 	// TODO: update home dir after creating a new docker image
 	GraphNodeHomeDir = "/root"
 )
-
-// Image returns Graph node client image
-func (c *GraphNodeClient) Image() string {
-	return os.Getenv(EnvGraphNodeImage)
-}
 
 // Command returns environment variables for the client
 func (c *GraphNodeClient) Env() (env []corev1.EnvVar) {

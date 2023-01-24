@@ -7,7 +7,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"os"
 
 	bitcoinv1alpha1 "github.com/kotalco/kotal/apis/bitcoin/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -27,16 +26,9 @@ var hashCash map[string]string = map[string]string{}
 
 // Images
 const (
-	// EnvBitcoinCoreImage is the environment variable used for Bitcoin core client image
-	EnvBitcoinCoreImage = "BITCOIN_CORE_IMAGE"
 	// BitcoinCoreHomeDir is Bitcoin core image home dir
 	BitcoinCoreHomeDir = "/home/bitcoin"
 )
-
-// Image returns Bitcoin core client image
-func (c *BitcoinCoreClient) Image() string {
-	return os.Getenv(EnvBitcoinCoreImage)
-}
 
 // Command returns environment variables for the client
 func (c *BitcoinCoreClient) Env() (env []corev1.EnvVar) {

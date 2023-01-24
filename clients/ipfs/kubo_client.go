@@ -1,8 +1,6 @@
 package ipfs
 
 import (
-	"os"
-
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
 	corev1 "k8s.io/api/core/v1"
@@ -16,16 +14,9 @@ type KuboClient struct {
 
 // Images
 const (
-	// EnvGoIPFSImage is the environment variable used for go ipfs client image
-	EnvGoIPFSImage = "GO_IPFS_IMAGE"
 	//  GoIPFSHomeDir is go ipfs image home dir
 	GoIPFSHomeDir = "/home/ipfs"
 )
-
-// Image returns kubo image
-func (c *KuboClient) Image() string {
-	return os.Getenv(EnvGoIPFSImage)
-}
 
 // Command is kubo entrypoint
 func (c *KuboClient) Command() []string {

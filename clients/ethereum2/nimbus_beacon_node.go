@@ -2,7 +2,6 @@ package ethereum2
 
 import (
 	"fmt"
-	"os"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -14,12 +13,6 @@ import (
 type NimbusBeaconNode struct {
 	node *ethereum2v1alpha1.BeaconNode
 }
-
-// Images
-const (
-	// EnvNimbusBeaconNodeImage is the environment variable used for Status Ethereum 2.0 beacon node image
-	EnvNimbusBeaconNodeImage = "NIMBUS_BEACON_NODE_IMAGE"
-)
 
 // HomeDir returns container home directory
 func (t *NimbusBeaconNode) HomeDir() string {
@@ -73,11 +66,6 @@ func (t *NimbusBeaconNode) Args() (args []string) {
 func (t *NimbusBeaconNode) Command() (command []string) {
 	command = []string{"nimbus_beacon_node"}
 	return
-}
-
-// Image returns prysm docker image
-func (t *NimbusBeaconNode) Image() string {
-	return os.Getenv(EnvNimbusBeaconNodeImage)
 }
 
 // nimbus accepts arguments in the form of --arg=val

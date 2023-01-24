@@ -2,7 +2,6 @@ package ethereum2
 
 import (
 	"fmt"
-	"os"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -14,12 +13,6 @@ import (
 type PrysmValidatorClient struct {
 	validator *ethereum2v1alpha1.Validator
 }
-
-// Images
-const (
-	// EnvPrysmValidatorImage is the environment variable used for Prysmatic Labs validator client image
-	EnvPrysmValidatorImage = "PRYSM_VALIDATOR_CLIENT_IMAGE"
-)
 
 // HomeDir returns container home directory
 func (t *PrysmValidatorClient) HomeDir() string {
@@ -69,9 +62,4 @@ func (t *PrysmValidatorClient) Args() (args []string) {
 func (t *PrysmValidatorClient) Command() (command []string) {
 	command = []string{"validator"}
 	return
-}
-
-// Image returns prysm docker image
-func (t *PrysmValidatorClient) Image() string {
-	return os.Getenv(EnvPrysmValidatorImage)
 }

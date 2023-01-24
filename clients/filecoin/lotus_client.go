@@ -1,8 +1,6 @@
 package filecoin
 
 import (
-	"os"
-
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
 	corev1 "k8s.io/api/core/v1"
@@ -16,16 +14,9 @@ type LotusClient struct {
 
 // Images
 const (
-	// EnvLotusImage is the environment variable used for lotus filecoin client image
-	EnvLotusImage = "LOTUS_IMAGE"
 	//  LotusHomeDir is lotus client image home dir
 	LotusHomeDir = "/home/filecoin"
 )
-
-// Image returns lotus image for node's network
-func (c *LotusClient) Image() string {
-	return os.Getenv(EnvLotusImage)
-}
 
 // Command is lotus image command
 func (c *LotusClient) Command() (command []string) {

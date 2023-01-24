@@ -2,7 +2,6 @@ package polkadot
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
@@ -18,16 +17,9 @@ type PolkadotClient struct {
 
 // Images
 const (
-	// EnvPolkadotImage is the environment variable used for polkadot client image
-	EnvPolkadotImage = "POLKADOT_IMAGE"
 	//  PolkadotHomeDir is go ipfs image home dir
 	PolkadotHomeDir = "/polkadot"
 )
-
-// Image returns go-ipfs image
-func (c *PolkadotClient) Image() string {
-	return os.Getenv(EnvPolkadotImage)
-}
 
 // Command returns environment variables for the client
 func (c *PolkadotClient) Env() []corev1.EnvVar {

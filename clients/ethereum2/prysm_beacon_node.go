@@ -2,7 +2,6 @@ package ethereum2
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
@@ -15,12 +14,6 @@ import (
 type PrysmBeaconNode struct {
 	node *ethereum2v1alpha1.BeaconNode
 }
-
-// Images
-const (
-	// EnvPrysmBeaconNodeImage is the environment variable used for Prysmatic Labs beacon node image
-	EnvPrysmBeaconNodeImage = "PRYSM_BEACON_NODE_IMAGE"
-)
 
 // HomeDir returns container home directory
 func (t *PrysmBeaconNode) HomeDir() string {
@@ -90,9 +83,4 @@ func (t *PrysmBeaconNode) Args() (args []string) {
 func (t *PrysmBeaconNode) Command() (command []string) {
 	command = []string{"beacon-chain"}
 	return
-}
-
-// Image returns prysm docker image
-func (t *PrysmBeaconNode) Image() string {
-	return os.Getenv(EnvPrysmBeaconNodeImage)
 }

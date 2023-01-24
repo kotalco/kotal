@@ -1,7 +1,6 @@
 package ethereum2
 
 import (
-	"os"
 	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
@@ -14,12 +13,6 @@ import (
 type LighthouseValidatorClient struct {
 	validator *ethereum2v1alpha1.Validator
 }
-
-// Images
-const (
-	// EnvLighthouseValidatorImage is the environment variable used for SigmaPrime Ethereum 2.0 validator client image
-	EnvLighthouseValidatorImage = "LIGHTHOUSE_VALIDATOR_CLIENT_IMAGE"
-)
 
 // HomeDir returns container home directory
 func (t *LighthouseValidatorClient) HomeDir() string {
@@ -59,9 +52,4 @@ func (t *LighthouseValidatorClient) Args() (args []string) {
 func (t *LighthouseValidatorClient) Command() (command []string) {
 	command = []string{"lighthouse", "vc"}
 	return
-}
-
-// Image returns prysm docker image
-func (t *LighthouseValidatorClient) Image() string {
-	return os.Getenv(EnvLighthouseValidatorImage)
 }

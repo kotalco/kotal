@@ -2,7 +2,6 @@ package chainlink
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	chainlinkv1alpha1 "github.com/kotalco/kotal/apis/chainlink/v1alpha1"
@@ -18,17 +17,10 @@ type ChainlinkClient struct {
 
 // Images
 const (
-	// EnvChainlinkImage is the environment variable used for chainlink client image
-	EnvChainlinkImage = "CHAINLINK_IMAGE"
 	// ChainlinkHomeDir is chainlink image home dir
 	// TODO: update the home directory
 	ChainlinkHomeDir = "/home/chainlink"
 )
-
-// Image returns chainlink image
-func (c *ChainlinkClient) Image() string {
-	return os.Getenv(EnvChainlinkImage)
-}
 
 // Command is chainlink entrypoint
 func (c *ChainlinkClient) Command() []string {

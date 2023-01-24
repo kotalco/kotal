@@ -2,7 +2,6 @@ package near
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	nearv1alpha1 "github.com/kotalco/kotal/apis/near/v1alpha1"
@@ -18,17 +17,10 @@ type NearClient struct {
 
 // Images
 const (
-	// EnvNearImage is the environment variable used for NEAR core client image
-	EnvNearImage = "NEAR_IMAGE"
 	// NearHomeDir is go ipfs image home dir
 	// TODO: update home dir after building docker image with non-root user and home dir
 	NearHomeDir = "/home/near"
 )
-
-// Image returns NEAR core client image
-func (c *NearClient) Image() string {
-	return os.Getenv(EnvNearImage)
-}
 
 // Command returns environment variables for the client
 func (c *NearClient) Env() []corev1.EnvVar {

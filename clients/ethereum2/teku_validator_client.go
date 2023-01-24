@@ -2,7 +2,6 @@ package ethereum2
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
@@ -15,11 +14,6 @@ import (
 type TekuValidatorClient struct {
 	validator *ethereum2v1alpha1.Validator
 }
-
-const (
-	// EnvTekuValidatorImage is the environment variable used for PegaSys Teku validator client image
-	EnvTekuValidatorImage = "TEKU_VALIDATOR_CLIENT_IMAGE"
-)
 
 // HomeDir returns container home directory
 func (t *TekuValidatorClient) HomeDir() string {
@@ -68,9 +62,4 @@ func (t *TekuValidatorClient) Args() (args []string) {
 // Command returns command for running the client
 func (t *TekuValidatorClient) Command() (command []string) {
 	return
-}
-
-// Image returns teku docker image
-func (t *TekuValidatorClient) Image() string {
-	return os.Getenv(EnvTekuValidatorImage)
 }

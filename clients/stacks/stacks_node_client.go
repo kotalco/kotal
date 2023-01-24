@@ -2,7 +2,6 @@ package stacks
 
 import (
 	"fmt"
-	"os"
 
 	stacksv1alpha1 "github.com/kotalco/kotal/apis/stacks/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -17,17 +16,10 @@ type StacksNodeClient struct {
 
 // Images
 const (
-	// EnvStacksNodeImage is the environment variable used for Stacks node client image
-	EnvStacksNodeImage = "STACKS_NODE_IMAGE"
 	// StacksNodeHomeDir is Stacks node image home dir
 	// TODO: update home dir after creating a new docker image
 	StacksNodeHomeDir = "/home/stacks"
 )
-
-// Image returns Stacks node client image
-func (c *StacksNodeClient) Image() string {
-	return os.Getenv(EnvStacksNodeImage)
-}
 
 // Command returns environment variables for the client
 func (c *StacksNodeClient) Env() (env []corev1.EnvVar) {

@@ -3,7 +3,6 @@ package ethereum
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
@@ -12,8 +11,6 @@ import (
 )
 
 const (
-	// EnvNethermindImage is the environment variable used for nethermind image
-	EnvNethermindImage = "NETHERMIND_IMAGE"
 	// NethermindHomeDir is nethermind docker image home directory
 	NethermindHomeDir = "/home/nethermind"
 )
@@ -142,9 +139,4 @@ func (n *NethermindClient) EncodeStaticNodes() string {
 
 	encoded, _ := json.Marshal(n.node.Spec.StaticNodes)
 	return string(encoded)
-}
-
-// Image returns nethermind docker image
-func (n *NethermindClient) Image() string {
-	return os.Getenv(EnvNethermindImage)
 }

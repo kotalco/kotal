@@ -8,5 +8,4 @@ type Interface interface {
 	Command() []string
 	Env() []corev1.EnvVar
 	HomeDir() string
-	Image() string
 }

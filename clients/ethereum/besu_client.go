@@ -3,7 +3,6 @@ package ethereum
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
@@ -18,8 +17,6 @@ type BesuClient struct {
 }
 
 const (
-	// EnvBesuImage is the environment variable used for hyperledger besu image
-	EnvBesuImage = "BESU_IMAGE"
 	// BesuHomeDir is besu docker image home directory
 	BesuHomeDir = "/opt/besu"
 )
@@ -267,9 +264,4 @@ func (b *BesuClient) EncodeStaticNodes() string {
 
 	encoded, _ := json.Marshal(b.node.Spec.StaticNodes)
 	return string(encoded)
-}
-
-// Image returns besu docker image
-func (b *BesuClient) Image() string {
-	return os.Getenv(EnvBesuImage)
 }

@@ -1,7 +1,6 @@
 package ipfs
 
 import (
-	"os"
 	"strings"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
@@ -16,16 +15,9 @@ type GoIPFSClusterClient struct {
 }
 
 const (
-	// EnvGoIPFSClusterImage is the environment variable used for go ipfs cluster client image
-	EnvGoIPFSClusterImage = "GO_IPFS_CLUSTER_IMAGE"
 	//  GoIPFSClusterHomeDir is go ipfs cluster image home dir
 	GoIPFSClusterHomeDir = "/home/ipfs-cluster"
 )
-
-// Image returns go ipfs cluster image
-func (c *GoIPFSClusterClient) Image() string {
-	return os.Getenv(EnvGoIPFSClusterImage)
-}
 
 // Command returns go ipfs cluster entrypoint
 func (c *GoIPFSClusterClient) Command() []string {

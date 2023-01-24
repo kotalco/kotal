@@ -3,7 +3,6 @@ package ethereum
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
@@ -19,8 +18,6 @@ type GethClient struct {
 }
 
 const (
-	// EnvGethImage is the environment variable used for go ethereum image
-	EnvGethImage = "GETH_IMAGE"
 	// GethHomeDir is go-ethereum docker image home directory
 	GethHomeDir = "/home/ethereum"
 )
@@ -271,9 +268,4 @@ func (g *GethClient) Genesis() (content string, err error) {
 	content = string(data)
 
 	return
-}
-
-// Image returns geth docker image
-func (g *GethClient) Image() string {
-	return os.Getenv(EnvGethImage)
 }

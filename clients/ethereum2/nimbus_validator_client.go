@@ -2,7 +2,6 @@ package ethereum2
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
@@ -15,12 +14,6 @@ import (
 type NimbusValidatorClient struct {
 	validator *ethereum2v1alpha1.Validator
 }
-
-// Images
-const (
-	// EnvNimbusValidatorImage is the environment variable used for Status Ethereum 2.0 validator client image
-	EnvNimbusValidatorImage = "NIMBUS_VALIDATOR_CLIENT_IMAGE"
-)
 
 // HomeDir returns container home directory
 func (t *NimbusValidatorClient) HomeDir() string {
@@ -62,9 +55,4 @@ func (t *NimbusValidatorClient) Args() (args []string) {
 func (t *NimbusValidatorClient) Command() (command []string) {
 	command = []string{"nimbus_validator_client"}
 	return
-}
-
-// Image returns prysm docker image
-func (t *NimbusValidatorClient) Image() string {
-	return os.Getenv(EnvNimbusValidatorImage)
 }
