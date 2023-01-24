@@ -255,7 +255,6 @@ func (r *ClusterPeerReconciler) reconcileStatefulset(ctx context.Context, peer *
 		return err
 	}
 
-	img := client.Image()
 	command := client.Command()
 	args := client.Args()
 	env := client.Env()
@@ -266,7 +265,7 @@ func (r *ClusterPeerReconciler) reconcileStatefulset(ctx context.Context, peer *
 			return err
 		}
 
-		r.specStatefulset(peer, &sts, img, homeDir, env, command, args)
+		r.specStatefulset(peer, &sts, homeDir, env, command, args)
 
 		return nil
 	})
@@ -275,7 +274,7 @@ func (r *ClusterPeerReconciler) reconcileStatefulset(ctx context.Context, peer *
 }
 
 // specStatefulset updates IPFS cluster peer statefulset
-func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, sts *appsv1.StatefulSet, img, homeDir string, env []corev1.EnvVar, command, args []string) {
+func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, sts *appsv1.StatefulSet, homeDir string, env []corev1.EnvVar, command, args []string) {
 	labels := peer.Labels
 
 	sts.Labels = labels
@@ -346,7 +345,7 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 				InitContainers: []corev1.Container{
 					{
 						Name:    "init-cluster-peer",
-						Image:   img,
+						Image:   peer.Spec.Image,
 						Command: []string{"/bin/sh"},
 						Env:     initClusterPeerENV,
 						Args: []string{
@@ -367,7 +366,7 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 				Containers: []corev1.Container{
 					{
 						Name:    "cluster-peer",
-						Image:   img,
+						Image:   peer.Spec.Image,
 						Command: command,
 						Env:     env,
 						Args:    args,

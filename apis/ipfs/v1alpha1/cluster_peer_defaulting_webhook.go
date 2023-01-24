@@ -33,6 +33,10 @@ func (r *ClusterPeer) DefaultResources() {
 func (r *ClusterPeer) Default() {
 	clusterpeerlog.Info("default", "name", r.Name)
 
+	if r.Spec.Image == "" {
+		r.Spec.Image = DefaultGoIPFSClusterImage
+	}
+
 	if r.Spec.Logging == "" {
 		r.Spec.Logging = DefaultLogging
 	}

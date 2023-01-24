@@ -18,19 +18,12 @@ type GoIPFSClusterClient struct {
 const (
 	// EnvGoIPFSClusterImage is the environment variable used for go ipfs cluster client image
 	EnvGoIPFSClusterImage = "GO_IPFS_CLUSTER_IMAGE"
-	// DefaultGoIPFSClusterImage is the default go ipfs cluster client image
-	DefaultGoIPFSClusterImage = "kotalco/ipfs-cluster:v0.14.2"
 	//  GoIPFSClusterHomeDir is go ipfs cluster image home dir
 	GoIPFSClusterHomeDir = "/home/ipfs-cluster"
 )
 
 // Image returns go ipfs cluster image
 func (c *GoIPFSClusterClient) Image() string {
-	if img := c.peer.Spec.Image; img != nil {
-		return *img
-	} else if os.Getenv(EnvGoIPFSClusterImage) == "" {
-		return DefaultGoIPFSClusterImage
-	}
 	return os.Getenv(EnvGoIPFSClusterImage)
 }
 

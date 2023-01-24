@@ -38,7 +38,7 @@ var _ = Describe("IPFS cluster peer controller", func() {
 	image := "kotalco/ipfs-cluster:test"
 
 	spec := ipfsv1alpha1.ClusterPeerSpec{
-		Image:                &image,
+		Image:                image,
 		ID:                   "12D3KooWBcEtY8GH4mNkri9kM3haeWhEXtQV7mi81ErWrqLYGuiq",
 		PrivateKeySecretName: "cluster-privatekey",
 		ClusterSecretName:    "cluster-secret",

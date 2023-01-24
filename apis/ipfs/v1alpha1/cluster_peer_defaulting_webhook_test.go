@@ -15,6 +15,7 @@ var _ = Describe("IPFS cluster peer defaulting", func() {
 
 		peer.Default()
 
+		Expect(peer.Spec.Image).To(Equal(DefaultGoIPFSClusterImage))
 		Expect(peer.Spec.Logging).To(Equal(DefaultLogging))
 		Expect(peer.Spec.Resources.CPU).To(Equal(DefaultNodeCPURequest))
 		Expect(peer.Spec.Resources.CPULimit).To(Equal(DefaultNodeCPULimit))

@@ -1,8 +1,6 @@
 package ipfs
 
 import (
-	"os"
-
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo"
@@ -23,22 +21,6 @@ var _ = Describe("Go IPFS Cluster Client", func() {
 	}
 
 	client, _ := NewClient(peer)
-
-	It("Should get correct image", func() {
-		// default image
-		img := client.Image()
-		Expect(img).To(Equal(DefaultGoIPFSClusterImage))
-		// after setting .spec.image
-		testImage := "kotalco/ipfs-cluster:spec"
-		peer.Spec.Image = &testImage
-		img = client.Image()
-		Expect(img).To(Equal(testImage))
-		// after setting image environment variable
-		testImage = "kotalco/ipfs-cluster:test"
-		os.Setenv(EnvGoIPFSClusterImage, testImage)
-		img = client.Image()
-		Expect(img).To(Equal(testImage))
-	})
 
 	It("Should get correct env", func() {
 		Expect(client.Env()).To(Equal(
