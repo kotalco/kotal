@@ -496,7 +496,7 @@ func (r *NodeReconciler) createNodeVolumeMounts(node *ethereumv1alpha1.Node, hom
 
 	volumeMounts := []corev1.VolumeMount{}
 
-	if node.Spec.NodePrivateKeySecretName != "" || node.Spec.Import != nil {
+	if node.Spec.NodePrivateKeySecretName != "" || node.Spec.Import != nil || node.Spec.JWTSecretName != "" {
 		secretsMount := corev1.VolumeMount{
 			Name:      "secrets",
 			MountPath: shared.PathSecrets(homedir),
