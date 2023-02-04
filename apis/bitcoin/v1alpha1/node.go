@@ -36,8 +36,6 @@ type NodeSpec struct {
 	RPC bool `json:"rpc,omitempty"`
 	// RPCPort is JSON-RPC server port
 	RPCPort uint `json:"rpcPort,omitempty"`
-	// RPCHost is JSON-RPC server host
-	RPCHost string `json:"rpcHost,omitempty"`
 	// RPCUsers is JSON-RPC users credentials
 	RPCUsers []RPCUser `json:"rpcUsers,omitempty"`
 	// Wallet load wallet and enables wallet RPC calls

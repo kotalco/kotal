@@ -49,10 +49,6 @@ func (r *Node) Default() {
 		}
 	}
 
-	if r.Spec.RPCHost == "" {
-		r.Spec.RPCHost = DefaultHost
-	}
-
 	if r.Spec.P2PPort == 0 {
 		if r.Spec.Network == Mainnet {
 			r.Spec.P2PPort = DefaultMainnetP2PPort

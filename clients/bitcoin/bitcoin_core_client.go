@@ -62,7 +62,7 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 	if c.node.Spec.RPC {
 		args = append(args, fmt.Sprintf("%s=1", BitcoinArgServer))
 		args = append(args, fmt.Sprintf("%s=%d", BitcoinArgRPCPort, node.Spec.RPCPort))
-		args = append(args, fmt.Sprintf("%s=%s", BitcoinArgRPCBind, node.Spec.RPCHost))
+		args = append(args, fmt.Sprintf("%s=%s", BitcoinArgRPCBind, shared.Host(node.Spec.RPC)))
 		args = append(args, fmt.Sprintf("%s=0.0.0.0/0", BitcoinArgRPCAllowIp))
 
 		for _, rpcUser := range node.Spec.RPCUsers {
