@@ -95,7 +95,7 @@ func (g *GethClient) Args() (args []string) {
 
 	if node.Spec.RPC {
 		args = append(args, GethRPCHTTPEnabled)
-		args = append(args, GethRPCHTTPHost, DefaultHost)
+		args = append(args, GethRPCHTTPHost, shared.Host(node.Spec.RPC))
 		args = append(args, GethRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
 		// JSON-RPC API
 		apis := []string{}
@@ -107,17 +107,15 @@ func (g *GethClient) Args() (args []string) {
 	}
 
 	if node.Spec.Engine {
-		args = append(args, GethAuthRPCAddress, DefaultHost)
 		args = append(args, GethAuthRPCPort, fmt.Sprintf("%d", node.Spec.EnginePort))
 		jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(g.HomeDir()))
 		args = append(args, GethAuthRPCJwtSecret, jwtSecretPath)
-	} else {
-		args = append(args, GethAuthRPCAddress, LocalHost)
 	}
+	args = append(args, GethAuthRPCAddress, shared.Host(node.Spec.Engine))
 
 	if node.Spec.WS {
 		args = append(args, GethRPCWSEnabled)
-		args = append(args, GethRPCWSHost, DefaultHost)
+		args = append(args, GethRPCWSHost, shared.Host(node.Spec.WS))
 		args = append(args, GethRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
 		// WebSocket API
 		apis := []string{}

@@ -96,7 +96,7 @@ func (n *NethermindClient) Args() (args []string) {
 	if node.Spec.RPC {
 		args = append(args, NethermindRPCHTTPEnabled, "true")
 		args = append(args, NethermindRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
-		args = append(args, NethermindRPCHTTPHost, DefaultHost)
+		args = append(args, NethermindRPCHTTPHost, shared.Host(node.Spec.RPC))
 		// JSON-RPC API
 		apis := []string{}
 		for _, api := range node.Spec.RPCAPI {
@@ -107,13 +107,11 @@ func (n *NethermindClient) Args() (args []string) {
 	}
 
 	if node.Spec.Engine {
-		args = append(args, NethermindRPCEngineHost, DefaultHost)
 		args = append(args, NethermindRPCEnginePort, fmt.Sprintf("%d", node.Spec.EnginePort))
 		jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(n.HomeDir()))
 		args = append(args, NethermindRPCJwtSecretFile, jwtSecretPath)
-	} else {
-		args = append(args, NethermindRPCEngineHost, LocalHost)
 	}
+	args = append(args, NethermindRPCEngineHost, shared.Host(node.Spec.Engine))
 
 	if node.Spec.WS {
 		args = append(args, NethermindRPCWSEnabled, "true")

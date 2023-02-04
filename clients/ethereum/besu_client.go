@@ -86,7 +86,7 @@ func (b *BesuClient) Args() (args []string) {
 
 	if node.Spec.RPC {
 		args = append(args, BesuRPCHTTPEnabled)
-		args = append(args, BesuRPCHTTPHost, DefaultHost)
+		args = append(args, BesuRPCHTTPHost, shared.Host(node.Spec.RPC))
 		args = append(args, BesuRPCHTTPPort, fmt.Sprintf("%d", node.Spec.RPCPort))
 		args = append(args, BesuRPCHTTPAPI, normalizedAPIs(node.Spec.RPCAPI))
 	}
@@ -100,14 +100,14 @@ func (b *BesuClient) Args() (args []string) {
 
 	if node.Spec.WS {
 		args = append(args, BesuRPCWSEnabled)
-		args = append(args, BesuRPCWSHost, DefaultHost)
+		args = append(args, BesuRPCWSHost, shared.Host(node.Spec.WS))
 		args = append(args, BesuRPCWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
 		args = append(args, BesuRPCWSAPI, normalizedAPIs(node.Spec.WSAPI))
 	}
 
 	if node.Spec.GraphQL {
 		args = append(args, BesuGraphQLHTTPEnabled)
-		args = append(args, BesuGraphQLHTTPHost, DefaultHost)
+		args = append(args, BesuGraphQLHTTPHost, shared.Host(node.Spec.GraphQL))
 		args = append(args, BesuGraphQLHTTPPort, fmt.Sprintf("%d", node.Spec.GraphQLPort))
 	}
 
