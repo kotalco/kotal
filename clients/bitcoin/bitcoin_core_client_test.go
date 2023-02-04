@@ -18,7 +18,6 @@ var _ = Describe("Bitcoin core client", func() {
 			Network:          "mainnet",
 			RPC:              true,
 			P2PPort:          8888,
-			P2PHost:          "127.0.0.1",
 			RPCPort:          7777,
 			Wallet:           false,
 			TransactionIndex: true,
