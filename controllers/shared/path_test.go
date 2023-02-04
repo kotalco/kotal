@@ -1,9 +1,6 @@
 package shared
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 const (
 	testHomeDir = "/users/test"
@@ -14,7 +11,7 @@ func TestPathData(t *testing.T) {
 	got := PathData(testHomeDir)
 
 	if got != expected {
-		t.Error(fmt.Sprintf("expected data directory to be %s, got %s", expected, got))
+		t.Errorf("expected data directory to be %s, got %s", expected, got)
 	}
 }
 
@@ -23,7 +20,7 @@ func TestPathConfig(t *testing.T) {
 	got := PathConfig(testHomeDir)
 
 	if got != expected {
-		t.Error(fmt.Sprintf("expected configuration directory to be %s, got %s", expected, got))
+		t.Errorf("expected configuration directory to be %s, got %s", expected, got)
 	}
 }
 
@@ -32,6 +29,6 @@ func TestPathSecrets(t *testing.T) {
 	got := PathSecrets(testHomeDir)
 
 	if got != expected {
-		t.Error(fmt.Sprintf("expected secrets directory to be %s, got %s", expected, got))
+		t.Errorf("expected secrets directory to be %s, got %s", expected, got)
 	}
 }

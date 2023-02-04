@@ -58,8 +58,4 @@ func (r *Node) Default() {
 		}
 	}
 
-	if r.Spec.P2PHost == "" {
-		r.Spec.P2PHost = DefaultHost
-	}
-
 }

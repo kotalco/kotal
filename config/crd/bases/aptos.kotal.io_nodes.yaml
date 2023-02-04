@@ -58,9 +58,6 @@ spec:
                 description: NodePrivateKeySecretName is the secret name holding node
                   private key
                 type: string
-              p2pHost:
-                description: P2PHost is p2p communications host
-                type: string
               p2pPort:
                 description: P2PPort is p2p communications port
                 type: integer

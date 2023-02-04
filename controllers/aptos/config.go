@@ -111,7 +111,7 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 			{
 				NetworkId:       "public",
 				DiscoveryMethod: "onchain",
-				ListenAddress:   fmt.Sprintf("/ip4/%s/tcp/%d", node.Spec.P2PHost, node.Spec.P2PPort),
+				ListenAddress:   fmt.Sprintf("/ip4/%s/tcp/%d", shared.Host(true), node.Spec.P2PPort),
 				Identity:        identity,
 				Seeds:           seeds,
 			},

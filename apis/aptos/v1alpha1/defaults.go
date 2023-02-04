@@ -30,6 +30,4 @@ const (
 	DefaultFullnodeP2PPort uint = 6182
 	// DefaultValidatorP2PPort is the default validator node p2p port
 	DefaultValidatorP2PPort uint = 6180
-	// DefaultHost is the default host
-	DefaultHost = "0.0.0.0"
 )
