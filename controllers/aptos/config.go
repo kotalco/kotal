@@ -118,7 +118,7 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 		},
 		API: API{
 			Enabled: node.Spec.API,
-			Address: fmt.Sprintf("%s:%d", node.Spec.APIHost, node.Spec.APIPort),
+			Address: fmt.Sprintf("%s:%d", shared.Host(node.Spec.API), node.Spec.APIPort),
 		},
 	}
 

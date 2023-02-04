@@ -46,8 +46,6 @@ type NodeSpec struct {
 	API bool `json:"api,omitempty"`
 	// APIPort is api server port
 	APIPort uint `json:"apiPort,omitempty"`
-	// APIHost is api server host
-	APIHost string `json:"apiHost,omitempty"`
 	// P2PPort is p2p communications port
 	P2PPort uint `json:"p2pPort,omitempty"`
 	// P2PHost is p2p communications host

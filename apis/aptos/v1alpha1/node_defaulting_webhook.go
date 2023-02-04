@@ -50,10 +50,6 @@ func (r *Node) Default() {
 		r.Spec.APIPort = DefaultAPIPort
 	}
 
-	if r.Spec.APIHost == "" {
-		r.Spec.APIHost = DefaultHost
-	}
-
 	if r.Spec.P2PPort == 0 {
 		if r.Spec.Validator {
 			r.Spec.P2PPort = DefaultValidatorP2PPort

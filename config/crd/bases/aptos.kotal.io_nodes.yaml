@@ -38,9 +38,6 @@ spec:
               api:
                 description: API enables REST API server
                 type: boolean
-              apiHost:
-                description: APIHost is api server host
-                type: string
               apiPort:
                 description: APIPort is api server port
                 type: integer
