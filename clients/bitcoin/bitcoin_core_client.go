@@ -63,7 +63,7 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 		args = append(args, fmt.Sprintf("%s=1", BitcoinArgServer))
 		args = append(args, fmt.Sprintf("%s=%d", BitcoinArgRPCPort, node.Spec.RPCPort))
 		args = append(args, fmt.Sprintf("%s=%s", BitcoinArgRPCBind, shared.Host(node.Spec.RPC)))
-		args = append(args, fmt.Sprintf("%s=%s/0", shared.Host(node.Spec.RPC), BitcoinArgRPCAllowIp))
+		args = append(args, fmt.Sprintf("%s=%s/0", BitcoinArgRPCAllowIp, shared.Host(node.Spec.RPC)))
 
 		for _, rpcUser := range node.Spec.RPCUsers {
 			name := types.NamespacedName{Name: rpcUser.PasswordSecretName, Namespace: node.Namespace}
