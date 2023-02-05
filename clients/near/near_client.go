@@ -41,11 +41,11 @@ func (c *NearClient) Args() (args []string) {
 	args = append(args, NearArgHome, shared.PathData(c.HomeDir()))
 	args = append(args, "run")
 
-	args = append(args, NearArgNetworkAddress, fmt.Sprintf("%s:%d", node.Spec.P2PHost, node.Spec.P2PPort))
+	args = append(args, NearArgNetworkAddress, fmt.Sprintf("%s:%d", shared.Host(true), node.Spec.P2PPort))
 
 	if node.Spec.RPC {
-		args = append(args, NearArgRPCAddress, fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.RPCPort))
-		args = append(args, NearArgPrometheusAddress, fmt.Sprintf("%s:%d", node.Spec.PrometheusHost, node.Spec.PrometheusPort))
+		args = append(args, NearArgRPCAddress, fmt.Sprintf("%s:%d", shared.Host(node.Spec.RPC), node.Spec.RPCPort))
+		args = append(args, NearArgPrometheusAddress, fmt.Sprintf("%s:%d", shared.Host(true), node.Spec.PrometheusPort))
 	} else {
 		args = append(args, NearArgDisableRPC)
 	}

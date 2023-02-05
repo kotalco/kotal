@@ -74,15 +74,9 @@ spec:
                 description: NodePrivateKeySecretName is the secret name holding node
                   Ed25519 private key
                 type: string
-              p2pHost:
-                description: P2PHost is p2p host
-                type: string
               p2pPort:
                 description: P2PPort is p2p port
                 type: integer
-              prometheusHost:
-                description: PrometheusHost is prometheus exporter host
-                type: string
               prometheusPort:
                 description: PrometheusPort is prometheus exporter port
                 type: integer
@@ -116,9 +110,6 @@ spec:
               rpc:
                 description: RPC enables JSON-RPC server
                 type: boolean
-              rpcHost:
-                description: RPCHost is JSON-RPC server listening host
-                type: string
               rpcPort:
                 description: RPCPort is JSON-RPC server listening port
                 type: integer

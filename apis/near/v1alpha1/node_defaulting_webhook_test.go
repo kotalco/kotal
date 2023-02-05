@@ -20,12 +20,9 @@ var _ = Describe("NEAR node defaulting", func() {
 
 		Expect(node.Spec.Image).To(Equal(DefaultNearImage))
 		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))
-		Expect(node.Spec.RPCHost).To(Equal(DefaultHost))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
-		Expect(node.Spec.P2PHost).To(Equal(DefaultHost))
 		Expect(node.Spec.MinPeers).To(Equal(DefaultMinPeers))
 		Expect(node.Spec.PrometheusPort).To(Equal(DefaultPrometheusPort))
-		Expect(node.Spec.PrometheusHost).To(Equal(DefaultHost))
 
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultNodeCPURequest))
 		Expect(node.Spec.Resources.CPULimit).To(Equal(DefaultNodeCPULimit))

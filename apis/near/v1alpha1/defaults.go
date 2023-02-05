@@ -9,8 +9,6 @@ const (
 	DefaultMinPeers uint = 5
 	// DefaultPrometheusPort is the default prometheus exporter port
 	DefaultPrometheusPort uint = 9615
-	// DefaultHost is the default JSON-RPC host
-	DefaultHost = "0.0.0.0"
 )
 
 const (

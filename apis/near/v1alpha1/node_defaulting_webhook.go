@@ -24,24 +24,12 @@ func (n *Node) Default() {
 		n.Spec.RPCPort = DefaultRPCPort
 	}
 
-	if n.Spec.RPCHost == "" {
-		n.Spec.RPCHost = DefaultHost
-	}
-
 	if n.Spec.PrometheusPort == 0 {
 		n.Spec.PrometheusPort = DefaultPrometheusPort
 	}
 
-	if n.Spec.PrometheusHost == "" {
-		n.Spec.PrometheusHost = DefaultHost
-	}
-
 	if n.Spec.P2PPort == 0 {
 		n.Spec.P2PPort = DefaultP2PPort
-	}
-
-	if n.Spec.P2PHost == "" {
-		n.Spec.P2PHost = DefaultHost
 	}
 
 	if n.Spec.CPU == "" {

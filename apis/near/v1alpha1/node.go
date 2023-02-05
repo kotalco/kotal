@@ -22,18 +22,12 @@ type NodeSpec struct {
 	Archive bool `json:"archive,omitempty"`
 	// P2PPort is p2p port
 	P2PPort uint `json:"p2pPort,omitempty"`
-	// P2PHost is p2p host
-	P2PHost string `json:"p2pHost,omitempty"`
 	// RPC enables JSON-RPC server
 	RPC bool `json:"rpc,omitempty"`
 	// RPCPort is JSON-RPC server listening port
 	RPCPort uint `json:"rpcPort,omitempty"`
-	// RPCHost is JSON-RPC server listening host
-	RPCHost string `json:"rpcHost,omitempty"`
 	// PrometheusPort is prometheus exporter port
 	PrometheusPort uint `json:"prometheusPort,omitempty"`
-	// PrometheusHost is prometheus exporter host
-	PrometheusHost string `json:"prometheusHost,omitempty"`
 	// TelemetryURL is telemetry service URL
 	TelemetryURL string `json:"telemetryURL,omitempty"`
 	// Bootnodes is array of boot nodes to bootstrap network from
