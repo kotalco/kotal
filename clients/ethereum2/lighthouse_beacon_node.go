@@ -46,19 +46,12 @@ func (t *LighthouseBeaconNode) Args() (args []string) {
 	if node.Spec.REST {
 		args = append(args, LighthouseHTTP)
 		args = append(args, LighthouseAllowOrigins, strings.Join(node.Spec.CORSDomains, ","))
-
-		if node.Spec.RESTPort != 0 {
-			args = append(args, LighthouseHTTPPort, fmt.Sprintf("%d", node.Spec.RESTPort))
-		}
-		if node.Spec.RESTHost != "" {
-			args = append(args, LighthouseHTTPAddress, node.Spec.RESTHost)
-		}
+		args = append(args, LighthouseHTTPPort, fmt.Sprintf("%d", node.Spec.RESTPort))
+		args = append(args, LighthouseHTTPAddress, shared.Host(node.Spec.REST))
 	}
 
-	if node.Spec.P2PPort != 0 {
-		args = append(args, LighthousePort, fmt.Sprintf("%d", node.Spec.P2PPort))
-		args = append(args, LighthouseDiscoveryPort, fmt.Sprintf("%d", node.Spec.P2PPort))
-	}
+	args = append(args, LighthousePort, fmt.Sprintf("%d", node.Spec.P2PPort))
+	args = append(args, LighthouseDiscoveryPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 
 	return
 }

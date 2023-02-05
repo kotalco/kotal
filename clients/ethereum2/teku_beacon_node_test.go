@@ -143,7 +143,6 @@ var _ = Describe("Teku beacon node", func() {
 					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 					RESTPort:                3333,
-					RESTHost:                "0.0.0.0",
 				},
 			},
 			result: []string{
@@ -176,7 +175,6 @@ var _ = Describe("Teku beacon node", func() {
 					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 					RESTPort:                3333,
-					RESTHost:                "0.0.0.0",
 				},
 			},
 			result: []string{

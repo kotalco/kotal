@@ -119,7 +119,6 @@ var _ = Describe("Nimbus beacon node", func() {
 					JWTSecretName:           "jwt-secret",
 					RPC:                     true,
 					RPCPort:                 30303,
-					RPCHost:                 "0.0.0.0",
 				},
 			},
 			result: []string{
@@ -144,7 +143,6 @@ var _ = Describe("Nimbus beacon node", func() {
 					FeeRecipient:            "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 					RPC:                     true,
 					RPCPort:                 30303,
-					RPCHost:                 "0.0.0.0",
 				},
 			},
 			result: []string{

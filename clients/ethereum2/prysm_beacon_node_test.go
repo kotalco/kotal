@@ -113,7 +113,6 @@ var _ = Describe("Prysm beacon node", func() {
 					JWTSecretName:           "jwt-secret",
 					RPC:                     true,
 					RPCPort:                 9976,
-					RPCHost:                 "0.0.0.0",
 				},
 			},
 			result: []string{
@@ -192,7 +191,6 @@ var _ = Describe("Prysm beacon node", func() {
 					JWTSecretName:           "jwt-secret",
 					GRPC:                    true,
 					GRPCPort:                4445,
-					GRPCHost:                "0.0.0.0",
 				},
 			},
 			result: []string{
@@ -222,7 +220,6 @@ var _ = Describe("Prysm beacon node", func() {
 					JWTSecretName:           "jwt-secret",
 					GRPC:                    true,
 					GRPCPort:                4445,
-					GRPCHost:                "0.0.0.0",
 				},
 			},
 			result: []string{

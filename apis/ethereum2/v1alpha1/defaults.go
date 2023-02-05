@@ -18,12 +18,6 @@ const (
 	DefaultRPCPort uint = 4000
 	// DefaultGRPCPort is the default GRPC gateway server port
 	DefaultGRPCPort uint = 3500
-	// DefaultRPCHost is the default host on which RPC server should listen
-	DefaultRPCHost = "0.0.0.0"
-	// DefaultGRPCHost is the default host on which GRPC gateway server should listen
-	DefaultGRPCHost = "0.0.0.0"
-	// DefaultRestHost is the default Beacon REST api host
-	DefaultRestHost = "0.0.0.0"
 	// DefaultGraffiti is the default text to include in proposed blocks
 	DefaultGraffiti = "Powered by Kotal"
 	// DefaultLogging is the default logging verbosity

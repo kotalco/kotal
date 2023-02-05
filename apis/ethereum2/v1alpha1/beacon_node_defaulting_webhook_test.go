@@ -47,7 +47,6 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		}
 		node.Default()
 		Expect(node.Spec.RESTPort).To(Equal(DefaultRestPort))
-		Expect(node.Spec.RESTHost).To(Equal(DefaultRestHost))
 		Expect(node.Spec.CORSDomains).To(ConsistOf(DefaultOrigins))
 		Expect(node.Spec.Hosts).To(ConsistOf(DefaultOrigins))
 	})
@@ -63,7 +62,6 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		node.Default()
 		Expect(node.Spec.Image).To(Equal(DefaultNimbusBeaconNodeImage))
 		Expect(node.Spec.RPCPort).To(Equal(DefaultRPCPort))
-		Expect(node.Spec.RPCHost).To(Equal(DefaultRPCHost))
 		Expect(node.Spec.CORSDomains).To(ConsistOf(DefaultOrigins))
 		Expect(node.Spec.Hosts).To(ConsistOf(DefaultOrigins))
 	})
@@ -92,7 +90,6 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 			},
 		}
 		node.Default()
-		Expect(node.Spec.GRPCHost).To(Equal(DefaultGRPCHost))
 		Expect(node.Spec.CORSDomains).To(ConsistOf(DefaultOrigins))
 		Expect(node.Spec.Hosts).To(ConsistOf(DefaultOrigins))
 	})

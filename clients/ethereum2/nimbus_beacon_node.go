@@ -46,18 +46,12 @@ func (t *NimbusBeaconNode) Args() (args []string) {
 
 	if node.Spec.RPC {
 		args = append(args, NimbusRPC)
-		if node.Spec.RPCPort != 0 {
-			args = append(args, argWithVal(NimbusRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort)))
-		}
-		if node.Spec.RPCHost != "" {
-			args = append(args, argWithVal(NimbusRPCAddress, node.Spec.RPCHost))
-		}
+		args = append(args, argWithVal(NimbusRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort)))
+		args = append(args, argWithVal(NimbusRPCAddress, shared.Host(node.Spec.RPC)))
 	}
 
-	if node.Spec.P2PPort != 0 {
-		args = append(args, argWithVal(NimbusTCPPort, fmt.Sprintf("%d", node.Spec.P2PPort)))
-		args = append(args, argWithVal(NimbusUDPPort, fmt.Sprintf("%d", node.Spec.P2PPort)))
-	}
+	args = append(args, argWithVal(NimbusTCPPort, fmt.Sprintf("%d", node.Spec.P2PPort)))
+	args = append(args, argWithVal(NimbusUDPPort, fmt.Sprintf("%d", node.Spec.P2PPort)))
 
 	return
 }

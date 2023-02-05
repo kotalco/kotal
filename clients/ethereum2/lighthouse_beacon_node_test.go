@@ -139,7 +139,6 @@ var _ = Describe("Lighthouse beacon node", func() {
 					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 					RESTPort:                4444,
-					RESTHost:                "0.0.0.0",
 				},
 			},
 			result: []string{
@@ -170,7 +169,6 @@ var _ = Describe("Lighthouse beacon node", func() {
 					JWTSecretName:           "jwt-secret",
 					REST:                    true,
 					RESTPort:                4444,
-					RESTHost:                "0.0.0.0",
 				},
 			},
 			result: []string{

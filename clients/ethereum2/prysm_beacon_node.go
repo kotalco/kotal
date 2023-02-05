@@ -49,19 +49,13 @@ func (t *PrysmBeaconNode) Args() (args []string) {
 		args = append(args, PrysmRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort))
 	}
 
-	if node.Spec.RPCHost != "" {
-		args = append(args, PrysmRPCHost, node.Spec.RPCHost)
-	}
+	// RPC is always on in prysm
+	args = append(args, PrysmRPCHost, shared.Host(true))
 
 	if node.Spec.GRPC {
 		args = append(args, PrysmGRPCGatewayCorsDomains, strings.Join(node.Spec.CORSDomains, ","))
-
-		if node.Spec.GRPCPort != 0 {
-			args = append(args, PrysmGRPCPort, fmt.Sprintf("%d", node.Spec.GRPCPort))
-		}
-		if node.Spec.GRPCHost != "" {
-			args = append(args, PrysmGRPCHost, node.Spec.GRPCHost)
-		}
+		args = append(args, PrysmGRPCPort, fmt.Sprintf("%d", node.Spec.GRPCPort))
+		args = append(args, PrysmGRPCHost, shared.Host(node.Spec.GRPC))
 	} else {
 		args = append(args, PrysmDisableGRPC)
 	}
@@ -71,10 +65,8 @@ func (t *PrysmBeaconNode) Args() (args []string) {
 		args = append(args, PrysmTLSKey, fmt.Sprintf("%s/tls.key", shared.PathSecrets(t.HomeDir())))
 	}
 
-	if node.Spec.P2PPort != 0 {
-		args = append(args, PrysmP2PTCPPort, fmt.Sprintf("%d", node.Spec.P2PPort))
-		args = append(args, PrysmP2PUDPPort, fmt.Sprintf("%d", node.Spec.P2PPort))
-	}
+	args = append(args, PrysmP2PTCPPort, fmt.Sprintf("%d", node.Spec.P2PPort))
+	args = append(args, PrysmP2PUDPPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 
 	return
 }

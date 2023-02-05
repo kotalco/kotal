@@ -42,18 +42,11 @@ func (t *TekuBeaconNode) Args() (args []string) {
 		args = append(args, TekuRestEnabled)
 		args = append(args, TekuRESTAPICorsOrigins, strings.Join(node.Spec.CORSDomains, ","))
 		args = append(args, TekuRESTAPIHostAllowlist, strings.Join(node.Spec.Hosts, ","))
-
-		if node.Spec.RESTPort != 0 {
-			args = append(args, TekuRestPort, fmt.Sprintf("%d", node.Spec.RESTPort))
-		}
-		if node.Spec.RESTHost != "" {
-			args = append(args, TekuRestHost, node.Spec.RESTHost)
-		}
+		args = append(args, TekuRestPort, fmt.Sprintf("%d", node.Spec.RESTPort))
+		args = append(args, TekuRestHost, shared.Host(node.Spec.REST))
 	}
 
-	if node.Spec.P2PPort != 0 {
-		args = append(args, TekuP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
-	}
+	args = append(args, TekuP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 
 	return
 }
