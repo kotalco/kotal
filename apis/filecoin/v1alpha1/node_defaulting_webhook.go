@@ -35,18 +35,12 @@ func (n *Node) Default() {
 	if n.Spec.APIPort == 0 {
 		n.Spec.APIPort = DefaultAPIPort
 	}
-	if n.Spec.APIHost == "" {
-		n.Spec.APIHost = DefaultHost
-	}
 	if n.Spec.APIRequestTimeout == 0 {
 		n.Spec.APIRequestTimeout = DefaultAPIRequestTimeout
 	}
 
 	if n.Spec.P2PPort == 0 {
 		n.Spec.P2PPort = DefaultP2PPort
-	}
-	if n.Spec.P2PHost == "" {
-		n.Spec.P2PHost = DefaultHost
 	}
 
 	if n.Spec.Resources.CPU == "" {

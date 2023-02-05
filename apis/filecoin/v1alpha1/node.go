@@ -13,16 +13,12 @@ type NodeSpec struct {
 	API bool `json:"api,omitempty"`
 	// APIPort is API server listening port
 	APIPort uint `json:"apiPort,omitempty"`
-	// APIHost is API server host
-	APIHost string `json:"apiHost,omitempty"`
 	// APIRequestTimeout is API request timeout in seconds
 	APIRequestTimeout uint `json:"apiRequestTimeout,omitempty"`
 	// DisableMetadataLog disables metadata log
 	DisableMetadataLog bool `json:"disableMetadataLog,omitempty"`
 	// P2PPort is p2p port
 	P2PPort uint `json:"p2pPort,omitempty"`
-	// P2PHost is p2p host
-	P2PHost string `json:"p2pHost,omitempty"`
 	// Network is the Filecoin network the node will join and sync
 	Network FilecoinNetwork `json:"network"`
 	// IPFSPeerEndpoint is ipfs peer endpoint

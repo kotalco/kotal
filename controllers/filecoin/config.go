@@ -6,6 +6,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 )
 
 type API struct {
@@ -41,14 +42,14 @@ func ConfigFromSpec(node *filecoinv1alpha1.Node) (config string, err error) {
 
 	if node.Spec.API {
 		c.API = &API{
-			ListenAddress: fmt.Sprintf("/ip4/%s/tcp/%d/http", node.Spec.APIHost, node.Spec.APIPort),
+			ListenAddress: fmt.Sprintf("/ip4/%s/tcp/%d/http", shared.Host(node.Spec.API), node.Spec.APIPort),
 		}
 		c.API.RequestTimeout = fmt.Sprintf("%ds", node.Spec.APIRequestTimeout)
 	}
 
 	c.Backup.DisableMetadataLog = node.Spec.DisableMetadataLog
 
-	c.LibP2P.ListenAddresses = []string{fmt.Sprintf("/ip4/%s/tcp/%d", node.Spec.P2PHost, node.Spec.P2PPort)}
+	c.LibP2P.ListenAddresses = []string{fmt.Sprintf("/ip4/%s/tcp/%d", shared.Host(true), node.Spec.P2PPort)}
 
 	if node.Spec.IPFSPeerEndpoint != "" {
 		c.Client = &Client{
