@@ -21,9 +21,7 @@ metadata:
 spec:
   network: mainnet
   p2pPort: 8888
-  p2pHost: 0.0.0.0
   rpcPort: 7777
-  rpcHost: 0.0.0.0
   miner: true
   mineMicroblocks: true
   seedPrivateKeySecretName: seed-private-key

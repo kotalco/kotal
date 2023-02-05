@@ -24,9 +24,7 @@ spec:
   txIndex: true
   rpc: true
   rpcPort: 7777
-  rpcHost: 0.0.0.0
   p2pPort: 8888
-  p2pHost: 0.0.0.0
   rpcUsers:
     - username: kotal
       passwordSecretName: kotal-json-rpc-user-password

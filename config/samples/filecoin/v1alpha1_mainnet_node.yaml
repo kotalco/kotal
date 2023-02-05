@@ -6,12 +6,10 @@ spec:
   network: mainnet
   api: true
   apiPort: 1234
-  apiHost: 0.0.0.0
   apiRequestTimeout: 30
   disableMetadataLog: false
   logging: debug
   p2pPort: 4444
-  p2pHost: 0.0.0.0
   ipfsPeerEndpoint: /dns4/peer-sample/tcp/5001
   ipfsOnlineMode: false
   resources:

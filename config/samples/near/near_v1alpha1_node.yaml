@@ -36,7 +36,5 @@ spec:
   archive: true
   rpc: true
   rpcPort: 8888
-  rpcHost: "0.0.0.0"
   prometheusPort: 9999
-  prometheusHost: "0.0.0.0"
   telemetryURL: "https://explorer.mainnet.near.org/api/nodes"

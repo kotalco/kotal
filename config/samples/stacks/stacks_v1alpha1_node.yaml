@@ -21,9 +21,7 @@ spec:
   network: mainnet
   nodePrivateKeySecretName: node-private-key
   p2pPort: 8888
-  p2pHost: 0.0.0.0
   rpcPort: 7777
-  rpcHost: 0.0.0.0
   bitcoinNode:
     endpoint: bitcoin.blockstack.com
     rpcPort: 8332
