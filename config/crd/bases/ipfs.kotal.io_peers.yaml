@@ -42,18 +42,12 @@ spec:
               api:
                 description: API enables API server
                 type: boolean
-              apiHost:
-                description: APIHost is api server host
-                type: string
               apiPort:
                 description: APIPort is api server port
                 type: integer
               gateway:
                 description: Gateway enables IPFS gateway server
                 type: boolean
-              gatewayHost:
-                description: GatewayHost is local gateway host
-                type: string
               gatewayPort:
                 description: GatewayPort is local gateway port
                 type: integer

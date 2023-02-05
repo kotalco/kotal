@@ -19,14 +19,10 @@ type PeerSpec struct {
 	API bool `json:"api,omitempty"`
 	// APIPort is api server port
 	APIPort uint `json:"apiPort,omitempty"`
-	// APIHost is api server host
-	APIHost string `json:"apiHost,omitempty"`
-	// GatewayPort is local gateway port
-	GatewayPort uint `json:"gatewayPort,omitempty"`
 	// Gateway enables IPFS gateway server
 	Gateway bool `json:"gateway,omitempty"`
-	// GatewayHost is local gateway host
-	GatewayHost string `json:"gatewayHost,omitempty"`
+	// GatewayPort is local gateway port
+	GatewayPort uint `json:"gatewayPort,omitempty"`
 	// Routing is the content routing mechanism
 	Routing RoutingMechanism `json:"routing,omitempty"`
 	// SwarmKeySecretName is the k8s secret holding swarm key

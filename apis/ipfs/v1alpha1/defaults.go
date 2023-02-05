@@ -9,10 +9,6 @@ const (
 	DefaultAPIPort uint = 5001
 	// DefaultGatewayPort is the default local gateway port
 	DefaultGatewayPort uint = 8080
-	// LocalHost is the local host
-	LocalHost = "127.0.0.1"
-	// DefaultHost is the default API host
-	DefaultHost = "0.0.0.0"
 	// DefaultLogging is the default logging verbosity level
 	DefaultLogging = shared.InfoLogs
 )

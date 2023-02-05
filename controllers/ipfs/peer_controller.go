@@ -391,7 +391,7 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 			},
 			{
 				Name:  ipfsClients.EnvIPFSAPIHost,
-				Value: peer.Spec.APIHost,
+				Value: shared.Host(peer.Spec.API),
 			},
 			{
 				Name:  ipfsClients.EnvIPFSGatewayPort,
@@ -399,7 +399,7 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 			},
 			{
 				Name:  ipfsClients.EnvIPFSGatewayHost,
-				Value: peer.Spec.GatewayHost,
+				Value: shared.Host(peer.Spec.Gateway),
 			},
 			{
 				Name:  ipfsClients.EnvIPFSProfiles,
