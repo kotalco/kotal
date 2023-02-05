@@ -44,8 +44,8 @@ func ConfigFromSpec(node *stacksv1alpha1.Node, client client.Client) (config str
 
 	c.Node = Node{
 		WorkingDir: shared.PathData(stacksClients.StacksNodeHomeDir),
-		RPCBind:    fmt.Sprintf("%s:%d", node.Spec.RPCHost, node.Spec.RPCPort),
-		P2PBind:    fmt.Sprintf("%s:%d", node.Spec.P2PHost, node.Spec.P2PPort),
+		RPCBind:    fmt.Sprintf("%s:%d", shared.Host(node.Spec.RPC), node.Spec.RPCPort),
+		P2PBind:    fmt.Sprintf("%s:%d", shared.Host(true), node.Spec.P2PPort),
 		Miner:      node.Spec.Miner,
 	}
 

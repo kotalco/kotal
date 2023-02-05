@@ -90,9 +90,6 @@ spec:
                 description: NodePrivateKeySecretName is k8s secret holding node private
                   key
                 type: string
-              p2pHost:
-                description: P2PHost is p2p bind host
-                type: string
               p2pPort:
                 description: P2PPort is p2p bind port
                 type: integer
@@ -126,9 +123,6 @@ spec:
               rpc:
                 description: RPC enables JSON-RPC server
                 type: boolean
-              rpcHost:
-                description: RPCHost is JSON-RPC server host
-                type: string
               rpcPort:
                 description: RPCPort is JSON-RPC server port
                 type: integer

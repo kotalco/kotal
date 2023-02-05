@@ -44,16 +44,8 @@ func (r *Node) Default() {
 		r.Spec.P2PPort = DefaultP2PPort
 	}
 
-	if r.Spec.P2PHost == "" {
-		r.Spec.P2PHost = DefaultHost
-	}
-
 	if r.Spec.RPCPort == 0 {
 		r.Spec.RPCPort = DefaultRPCPort
-	}
-
-	if r.Spec.RPCHost == "" {
-		r.Spec.RPCHost = DefaultHost
 	}
 
 }

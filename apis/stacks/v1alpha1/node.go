@@ -38,12 +38,8 @@ type NodeSpec struct {
 	RPC bool `json:"rpc,omitempty"`
 	// RPCPort is JSON-RPC server port
 	RPCPort uint `json:"rpcPort,omitempty"`
-	// RPCHost is JSON-RPC server host
-	RPCHost string `json:"rpcHost,omitempty"`
 	// P2PPort is p2p bind port
 	P2PPort uint `json:"p2pPort,omitempty"`
-	// P2PHost is p2p bind host
-	P2PHost string `json:"p2pHost,omitempty"`
 	// BitcoinNode is Bitcoin node
 	BitcoinNode BitcoinNode `json:"bitcoinNode"`
 	// Miner enables mining
