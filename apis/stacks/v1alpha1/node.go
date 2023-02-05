@@ -34,6 +34,8 @@ type NodeSpec struct {
 	// Network is stacks network
 	// +kubebuilder:validation:Enum=mainnet;testnet
 	Network StacksNetwork `json:"network"`
+	// RPC enables JSON-RPC server
+	RPC bool `json:"rpc,omitempty"`
 	// RPCPort is JSON-RPC server port
 	RPCPort uint `json:"rpcPort,omitempty"`
 	// RPCHost is JSON-RPC server host
