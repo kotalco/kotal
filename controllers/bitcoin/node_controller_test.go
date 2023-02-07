@@ -9,7 +9,7 @@ import (
 	bitcoinv1alpha1 "github.com/kotalco/kotal/apis/bitcoin/v1alpha1"
 	bitcoinClients "github.com/kotalco/kotal/clients/bitcoin"
 	"github.com/kotalco/kotal/controllers/shared"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gstruct"
 	appsv1 "k8s.io/api/apps/v1"
