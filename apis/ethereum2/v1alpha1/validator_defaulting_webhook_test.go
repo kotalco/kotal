@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"github.com/kotalco/kotal/apis/shared"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -17,7 +18,7 @@ var _ = Describe("Ethereum 2.0 validator client defaulting", func() {
 		node.Default()
 		Expect(node.Spec.Image).To(Equal(DefaultTekuValidatorImage))
 		Expect(node.Spec.Graffiti).To(Equal(DefaultGraffiti))
-		Expect(node.Spec.FeeRecipient).To(Equal(EthereumAddress(ZeroAddress)))
+		Expect(node.Spec.FeeRecipient).To(Equal(shared.EthereumAddress(ZeroAddress)))
 		Expect(node.Spec.Logging).To(Equal(DefaultLogging))
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultCPURequest))
 		Expect(node.Spec.Resources.CPULimit).To(Equal(DefaultCPULimit))

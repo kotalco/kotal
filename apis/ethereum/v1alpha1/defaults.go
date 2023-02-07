@@ -41,7 +41,7 @@ const (
 // Genesis block defaults
 const (
 	// DefaultCoinbase is the default coinbase
-	DefaultCoinbase = EthereumAddress("0x0000000000000000000000000000000000000000")
+	DefaultCoinbase = shared.EthereumAddress("0x0000000000000000000000000000000000000000")
 	// DefaultDifficulty is the default difficulty
 	DefaultDifficulty = HexString("0x1")
 	// DefaultMixHash is the default mix hash

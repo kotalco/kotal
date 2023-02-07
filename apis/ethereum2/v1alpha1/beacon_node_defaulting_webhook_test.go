@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"github.com/kotalco/kotal/apis/shared"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -18,7 +19,7 @@ var _ = Describe("Ethereum 2.0 beacon node defaulting", func() {
 		Expect(node.Spec.Image).To(Equal(DefaultTekuBeaconNodeImage))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.Spec.Logging).To(Equal(DefaultLogging))
-		Expect(node.Spec.FeeRecipient).To(Equal(EthereumAddress(ZeroAddress)))
+		Expect(node.Spec.FeeRecipient).To(Equal(shared.EthereumAddress(ZeroAddress)))
 	})
 
 	It("Should default beacon node with missing node resources", func() {

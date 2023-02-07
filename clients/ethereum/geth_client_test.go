@@ -150,7 +150,7 @@ var _ = Describe("Geth Client", func() {
 				},
 				Client:   ethereumv1alpha1.GethClient,
 				Miner:    true,
-				Coinbase: ethereumv1alpha1.EthereumAddress(coinbase),
+				Coinbase: sharedAPI.EthereumAddress(coinbase),
 				Import: &ethereumv1alpha1.ImportedAccount{
 					PrivateKeySecretName: "geth-pow-account-key",
 					PasswordSecretName:   "geth-pow-account-password",
@@ -190,7 +190,7 @@ var _ = Describe("Geth Client", func() {
 					ChainID:   12345,
 					NetworkID: 12345,
 					Clique: &ethereumv1alpha1.Clique{
-						Signers: []ethereumv1alpha1.EthereumAddress{
+						Signers: []sharedAPI.EthereumAddress{
 							"0xcF2C3fB8F36A863FD1A8c72E2473f81744B4CA6C",
 							"0x1990E5760d9f8Ae0ec55dF8B0819C77e59846Ff2",
 							"0xB87c1c66b36D98D1A74a9875EbA12c001e0bcEda",
@@ -200,7 +200,7 @@ var _ = Describe("Geth Client", func() {
 				Client:   ethereumv1alpha1.GethClient,
 				SyncMode: ethereumv1alpha1.FullSynchronization,
 				Miner:    true,
-				Coinbase: ethereumv1alpha1.EthereumAddress(coinbase),
+				Coinbase: sharedAPI.EthereumAddress(coinbase),
 				Import: &ethereumv1alpha1.ImportedAccount{
 					PrivateKeySecretName: "geth-poa-account-key",
 					PasswordSecretName:   "geth-poa-account-password",

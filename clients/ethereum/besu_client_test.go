@@ -154,7 +154,7 @@ var _ = Describe("Besu Client", func() {
 				Client:                   ethereumv1alpha1.BesuClient,
 				Miner:                    true,
 				NodePrivateKeySecretName: "besu-pow-nodekey",
-				Coinbase:                 ethereumv1alpha1.EthereumAddress(coinbase),
+				Coinbase:                 sharedAPI.EthereumAddress(coinbase),
 			},
 		}
 		node.Default()
@@ -190,7 +190,7 @@ var _ = Describe("Besu Client", func() {
 					ChainID:   12345,
 					NetworkID: 12345,
 					Clique: &ethereumv1alpha1.Clique{
-						Signers: []ethereumv1alpha1.EthereumAddress{
+						Signers: []sharedAPI.EthereumAddress{
 							"0xcF2C3fB8F36A863FD1A8c72E2473f81744B4CA6C",
 							"0x1990E5760d9f8Ae0ec55dF8B0819C77e59846Ff2",
 							"0xB87c1c66b36D98D1A74a9875EbA12c001e0bcEda",
@@ -200,7 +200,7 @@ var _ = Describe("Besu Client", func() {
 				Client:                   ethereumv1alpha1.BesuClient,
 				Miner:                    true,
 				NodePrivateKeySecretName: "besu-poa-nodekey",
-				Coinbase:                 ethereumv1alpha1.EthereumAddress(coinbase),
+				Coinbase:                 sharedAPI.EthereumAddress(coinbase),
 			},
 		}
 		node.Default()
@@ -236,7 +236,7 @@ var _ = Describe("Besu Client", func() {
 					ChainID:   12345,
 					NetworkID: 12345,
 					IBFT2: &ethereumv1alpha1.IBFT2{
-						Validators: []ethereumv1alpha1.EthereumAddress{
+						Validators: []sharedAPI.EthereumAddress{
 							"0xcF2C3fB8F36A863FD1A8c72E2473f81744B4CA6C",
 							"0x1990E5760d9f8Ae0ec55dF8B0819C77e59846Ff2",
 							"0xB87c1c66b36D98D1A74a9875EbA12c001e0bcEda",
@@ -246,7 +246,7 @@ var _ = Describe("Besu Client", func() {
 				Client:                   ethereumv1alpha1.BesuClient,
 				Miner:                    true,
 				NodePrivateKeySecretName: "besu-ibft2-nodekey",
-				Coinbase:                 ethereumv1alpha1.EthereumAddress(coinbase),
+				Coinbase:                 sharedAPI.EthereumAddress(coinbase),
 			},
 		}
 		node.Default()

@@ -5,10 +5,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EthereumAddress is ethereum address
-// +kubebuilder:validation:Pattern="^0[xX][0-9a-fA-F]{40}$"
-type EthereumAddress string
-
 // BeaconNodeSpec defines the desired state of BeaconNode
 type BeaconNodeSpec struct {
 	// Image is Ethereum 2.0 Beacon node client image
@@ -23,7 +19,7 @@ type BeaconNodeSpec struct {
 	// JWTSecretName is kubernetes secret name holding JWT secret
 	JWTSecretName string `json:"jwtSecretName"`
 	// FeeRecipient is ethereum address collecting transaction fees
-	FeeRecipient EthereumAddress `json:"feeRecipient,omitempty"`
+	FeeRecipient shared.EthereumAddress `json:"feeRecipient,omitempty"`
 
 	// REST enables Beacon REST API
 	REST bool `json:"rest,omitempty"`

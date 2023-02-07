@@ -83,7 +83,7 @@ type NodeSpec struct {
 	Logging shared.VerbosityLevel `json:"logging,omitempty"`
 
 	// Coinbase is the account to which mining rewards are paid
-	Coinbase EthereumAddress `json:"coinbase,omitempty"`
+	Coinbase shared.EthereumAddress `json:"coinbase,omitempty"`
 
 	// Hosts is a list of hostnames to to whitelist for RPC access
 	// +listType=set

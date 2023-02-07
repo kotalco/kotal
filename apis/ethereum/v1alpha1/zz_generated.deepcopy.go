@@ -6,6 +6,7 @@
 package v1alpha1
 
 import (
+	"github.com/kotalco/kotal/apis/shared"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -37,7 +38,7 @@ func (in *Clique) DeepCopyInto(out *Clique) {
 	out.PoA = in.PoA
 	if in.Signers != nil {
 		in, out := &in.Signers, &out.Signers
-		*out = make([]EthereumAddress, len(*in))
+		*out = make([]shared.EthereumAddress, len(*in))
 		copy(*out, *in)
 	}
 }
@@ -140,7 +141,7 @@ func (in *IBFT2) DeepCopyInto(out *IBFT2) {
 	out.PoA = in.PoA
 	if in.Validators != nil {
 		in, out := &in.Validators, &out.Validators
-		*out = make([]EthereumAddress, len(*in))
+		*out = make([]shared.EthereumAddress, len(*in))
 		copy(*out, *in)
 	}
 }

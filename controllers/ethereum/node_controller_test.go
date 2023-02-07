@@ -30,7 +30,7 @@ var _ = Describe("Ethereum network controller", func() {
 		privatekey = "608e9b6f67c65e47531e08e8e501386dfae63a540fa3c48802c8aad854510b4e"
 		// imported account
 		accountKey      = "5df5eff7ef9e4e82739b68a34c6b23608d79ee8daf3b598a01ffb0dd7aa3a2fd"
-		accountAddress  = ethereumv1alpha1.EthereumAddress("0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d")
+		accountAddress  = sharedAPI.EthereumAddress("0x2b3430337f12Ce89EaBC7b0d865F4253c7744c0d")
 		accountPassword = "secret"
 	)
 
@@ -425,8 +425,8 @@ var _ = Describe("Ethereum network controller", func() {
 				ChainID:   55555,
 				NetworkID: networkID,
 				Clique: &ethereumv1alpha1.Clique{
-					Signers: []ethereumv1alpha1.EthereumAddress{
-						ethereumv1alpha1.EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706"),
+					Signers: []sharedAPI.EthereumAddress{
+						sharedAPI.EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706"),
 					},
 				},
 			},
@@ -843,7 +843,7 @@ var _ = Describe("Ethereum network controller", func() {
 				ChainID:   55555,
 				NetworkID: networkID,
 				IBFT2: &ethereumv1alpha1.IBFT2{
-					Validators: []ethereumv1alpha1.EthereumAddress{
+					Validators: []sharedAPI.EthereumAddress{
 						"0x427e2c7cecd72bc4cdd4f7ebb8bb6e49789c8044",
 						"0xd2c21213027cbf4d46c16b55fa98e5252b048706",
 						"0x8e1f6c7c76a1d7f74eda342d330ca9749f31cc2b",

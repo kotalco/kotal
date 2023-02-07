@@ -15,7 +15,7 @@ type ValidatorSpec struct {
 	// Client is the Ethereum 2.0 client to use
 	Client Ethereum2Client `json:"client"`
 	// FeeRecipient is ethereum address collecting transaction fees
-	FeeRecipient EthereumAddress `json:"feeRecipient,omitempty"`
+	FeeRecipient shared.EthereumAddress `json:"feeRecipient,omitempty"`
 	// BeaconEndpoints is beacon node endpoints
 	// +kubebuilder:validation:MinItems=1
 	// +listType=set

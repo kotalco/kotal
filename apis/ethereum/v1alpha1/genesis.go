@@ -1,5 +1,7 @@
 package v1alpha1
 
+import "github.com/kotalco/kotal/apis/shared"
+
 // Genesis is genesis block sepcficition
 type Genesis struct {
 	// Accounts is array of accounts to fund or associate with code and storage
@@ -13,7 +15,7 @@ type Genesis struct {
 	ChainID uint `json:"chainId"`
 
 	// Address to pay mining rewards to
-	Coinbase EthereumAddress `json:"coinbase,omitempty"`
+	Coinbase shared.EthereumAddress `json:"coinbase,omitempty"`
 
 	// Difficulty is the diffculty of the genesis block
 	Difficulty HexString `json:"difficulty,omitempty"`
@@ -58,7 +60,7 @@ type IBFT2 struct {
 
 	// Validators are initial ibft2 validators
 	// +kubebuilder:validation:MinItems=1
-	Validators []EthereumAddress `json:"validators,omitempty"`
+	Validators []shared.EthereumAddress `json:"validators,omitempty"`
 
 	// RequestTimeout is the timeout for each consensus round in seconds
 	RequestTimeout uint `json:"requestTimeout,omitempty"`
@@ -82,7 +84,7 @@ type Clique struct {
 
 	// Signers are PoA initial signers, at least one signer is required
 	// +kubebuilder:validation:MinItems=1
-	Signers []EthereumAddress `json:"signers,omitempty"`
+	Signers []shared.EthereumAddress `json:"signers,omitempty"`
 }
 
 // Ethash configurations
@@ -136,7 +138,7 @@ type Forks struct {
 // Account is Ethereum account
 type Account struct {
 	// Address is account address
-	Address EthereumAddress `json:"address"`
+	Address shared.EthereumAddress `json:"address"`
 
 	// Balance is account balance in wei
 	Balance HexString `json:"balance,omitempty"`

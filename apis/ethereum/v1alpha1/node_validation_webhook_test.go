@@ -16,7 +16,7 @@ var _ = Describe("Ethereum node validation", func() {
 	var (
 		networkID       uint = 77777
 		fixedDifficulty uint = 1500
-		coinbase             = EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706")
+		coinbase             = shared.EthereumAddress("0xd2c21213027cbf4d46c16b55fa98e5252b048706")
 	)
 
 	createCases := []struct {
@@ -121,7 +121,7 @@ var _ = Describe("Ethereum node validation", func() {
 						ChainID: 55555,
 						IBFT2:   &IBFT2{},
 					},
-					Coinbase: EthereumAddress("0x676aEda2E67D24eb304cFf75A5190824831E3399"),
+					Coinbase: shared.EthereumAddress("0x676aEda2E67D24eb304cFf75A5190824831E3399"),
 					Client:   BesuClient,
 				},
 			},

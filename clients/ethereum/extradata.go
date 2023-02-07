@@ -7,11 +7,11 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/rlp"
-	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
+	"github.com/kotalco/kotal/apis/shared"
 )
 
 // createExtraDataFromSigners creates extraDta genesis field value from initial signers
-func createExtraDataFromSigners(signers []ethereumv1alpha1.EthereumAddress) string {
+func createExtraDataFromSigners(signers []shared.EthereumAddress) string {
 	extraData := "0x"
 	// vanity data
 	extraData += strings.Repeat("00", 32)
@@ -26,7 +26,7 @@ func createExtraDataFromSigners(signers []ethereumv1alpha1.EthereumAddress) stri
 }
 
 // createExtraDataFromValidators creates extraDta genesis field value from initial validators
-func createExtraDataFromValidators(validators []ethereumv1alpha1.EthereumAddress) (string, error) {
+func createExtraDataFromValidators(validators []shared.EthereumAddress) (string, error) {
 	data := []interface{}{}
 	extraData := "0x"
 

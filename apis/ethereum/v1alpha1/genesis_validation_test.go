@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	"fmt"
 
+	"github.com/kotalco/kotal/apis/shared"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -90,7 +91,7 @@ var _ = Describe("Genesis Block validation", func() {
 				Ethash:    &Ethash{},
 				Accounts: []Account{
 					{
-						Address: EthereumAddress("0x0000000000000000000000000000000000000015"),
+						Address: shared.EthereumAddress("0x0000000000000000000000000000000000000015"),
 						Balance: HexString("0xffffff"),
 					},
 				},
@@ -131,7 +132,7 @@ var _ = Describe("Genesis Block validation", func() {
 				{
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.genesis.coinbase",
-					BadValue: EthereumAddress("0x0000000000000000000000000000000000000001"),
+					BadValue: shared.EthereumAddress("0x0000000000000000000000000000000000000001"),
 					Detail:   "field is immutable",
 				},
 			},
@@ -265,7 +266,7 @@ var _ = Describe("Genesis Block validation", func() {
 				Forks:     &Forks{},
 				Accounts: []Account{
 					{
-						Address: EthereumAddress("0xB1368D309179D8E7f25B34398e4cF9D9dEFdC75C"),
+						Address: shared.EthereumAddress("0xB1368D309179D8E7f25B34398e4cF9D9dEFdC75C"),
 						Balance: HexString("0xffffff"),
 					},
 				},
@@ -277,7 +278,7 @@ var _ = Describe("Genesis Block validation", func() {
 				Forks:     &Forks{},
 				Accounts: []Account{
 					{
-						Address: EthereumAddress("0xB1368D309179D8E7f25B34398e4cF9D9dEFdC75C"),
+						Address: shared.EthereumAddress("0xB1368D309179D8E7f25B34398e4cF9D9dEFdC75C"),
 						Balance: HexString("0x111111"), // change account balance
 					},
 				},
