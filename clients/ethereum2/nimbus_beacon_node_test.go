@@ -70,14 +70,13 @@ var _ = Describe("Nimbus beacon node", func() {
 			},
 		},
 		{
-			title: "beacon node syncing mainnet with eth1 endpoint and rpc",
+			title: "beacon node syncing mainnet with eth1 endpoint",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:                  ethereum2v1alpha1.NimbusClient,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
 					JWTSecretName:           "jwt-secret",
-					RPC:                     true,
 				},
 			},
 			result: []string{
@@ -85,19 +84,16 @@ var _ = Describe("Nimbus beacon node", func() {
 				argWithVal(NimbusNetwork, "mainnet"),
 				argWithVal(NimbusExecutionEngineEndpoint, "https://localhost:8551"),
 				argWithVal(NimbusJwtSecretFile, fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir()))),
-				NimbusRPC,
 			},
 		},
 		{
-			title: "beacon node syncing mainnet with eth1 endpoint and rpc and rpc port",
+			title: "beacon node syncing mainnet with eth1 endpoint",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:                  ethereum2v1alpha1.NimbusClient,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
 					JWTSecretName:           "jwt-secret",
-					RPC:                     true,
-					RPCPort:                 30303,
 				},
 			},
 			result: []string{
@@ -105,20 +101,16 @@ var _ = Describe("Nimbus beacon node", func() {
 				argWithVal(NimbusNetwork, "mainnet"),
 				argWithVal(NimbusExecutionEngineEndpoint, "https://localhost:8551"),
 				argWithVal(NimbusJwtSecretFile, fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir()))),
-				NimbusRPC,
-				argWithVal(NimbusRPCPort, fmt.Sprintf("%d", 30303)),
 			},
 		},
 		{
-			title: "beacon node syncing mainnet with eth1 endpoint and rpc with rpc port and host",
+			title: "beacon node syncing mainnet with eth1 endpoint",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:                  ethereum2v1alpha1.NimbusClient,
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
 					JWTSecretName:           "jwt-secret",
-					RPC:                     true,
-					RPCPort:                 30303,
 				},
 			},
 			result: []string{
@@ -126,13 +118,10 @@ var _ = Describe("Nimbus beacon node", func() {
 				argWithVal(NimbusNetwork, "mainnet"),
 				argWithVal(NimbusExecutionEngineEndpoint, "https://localhost:8551"),
 				argWithVal(NimbusJwtSecretFile, fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir()))),
-				NimbusRPC,
-				argWithVal(NimbusRPCPort, fmt.Sprintf("%d", 30303)),
-				argWithVal(NimbusRPCAddress, "0.0.0.0"),
 			},
 		},
 		{
-			title: "beacon node syncing mainnet with p2p port, eth1 endpoint and rpc with rpc port and host",
+			title: "beacon node syncing mainnet with p2p port, eth1 endpoint",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:                  ethereum2v1alpha1.NimbusClient,
@@ -141,8 +130,6 @@ var _ = Describe("Nimbus beacon node", func() {
 					ExecutionEngineEndpoint: "https://localhost:8551",
 					JWTSecretName:           "jwt-secret",
 					FeeRecipient:            "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
-					RPC:                     true,
-					RPCPort:                 30303,
 				},
 			},
 			result: []string{
@@ -152,9 +139,6 @@ var _ = Describe("Nimbus beacon node", func() {
 				argWithVal(NimbusNetwork, "mainnet"),
 				argWithVal(NimbusExecutionEngineEndpoint, "https://localhost:8551"),
 				argWithVal(NimbusJwtSecretFile, fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir()))),
-				NimbusRPC,
-				argWithVal(NimbusRPCPort, fmt.Sprintf("%d", 30303)),
-				argWithVal(NimbusRPCAddress, "0.0.0.0"),
 				argWithVal(NimbusFeeRecipient, "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"),
 			},
 		},

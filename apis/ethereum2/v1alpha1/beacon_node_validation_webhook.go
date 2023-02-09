@@ -26,8 +26,8 @@ func (r *BeaconNode) validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
-	// rpc is supported by nimbus and prysm only
-	if r.Spec.RPC && r.Spec.Client != NimbusClient && r.Spec.Client != PrysmClient {
+	// rpc is supported by prysm only
+	if r.Spec.RPC && r.Spec.Client != PrysmClient {
 		err := field.Invalid(path.Child("rpc"), r.Spec.RPC, fmt.Sprintf("not supported by %s client", r.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
 	}

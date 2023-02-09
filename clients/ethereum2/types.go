@@ -158,12 +158,6 @@ const (
 	NimbusJwtSecretFile = "--jwt-secret"
 	// NimbusFeeRecipient is the argument used to set fee recipient
 	NimbusFeeRecipient = "--suggested-fee-recipient"
-	// NimbusRPC is the argument used to enable RPC server
-	NimbusRPC = "--rpc"
-	// NimbusRPCPort is the argument used for RPC server port
-	NimbusRPCPort = "--rpc-port"
-	// NimbusRPCAddress is the argument used for host on which RPC server should listen
-	NimbusRPCAddress = "--rpc-address"
 	// NimbusTCPPort is the argument used for p2p tcp port
 	NimbusTCPPort = "--tcp-port"
 	// NimbusUDPPort is the argument used for discovery udp port

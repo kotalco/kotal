@@ -13,8 +13,6 @@ spec:
   network: goerli
   client: nimbus
   logging: info
-  rpc: true
-  rpcPort: 8888
   executionEngineEndpoint: http://goerli-geth-node:8551
   jwtSecretName: "jwt-secret"
   feeRecipient: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
