@@ -40,7 +40,7 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 			Node: &BeaconNode{
 				Spec: BeaconNodeSpec{
 					Network: "mainnet",
-					Client:  NimbusClient,
+					Client:  PrysmClient,
 					REST:    true,
 				},
 			},
@@ -49,7 +49,7 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 					Type:     field.ErrorTypeInvalid,
 					Field:    "spec.rest",
 					BadValue: true,
-					Detail:   "not supported by nimbus client",
+					Detail:   "not supported by prysm client",
 				},
 			},
 		},

@@ -60,6 +60,9 @@ var _ = Describe("Nimbus beacon node", func() {
 					Network:                 "mainnet",
 					ExecutionEngineEndpoint: "https://localhost:8551",
 					JWTSecretName:           "jwt-secret",
+					REST:                    true,
+					RESTPort:                8957,
+					CORSDomains:             []string{"kotal.pro", "kotal.cloud"},
 				},
 			},
 			result: []string{
@@ -67,6 +70,9 @@ var _ = Describe("Nimbus beacon node", func() {
 				argWithVal(NimbusNetwork, "mainnet"),
 				argWithVal(NimbusExecutionEngineEndpoint, "https://localhost:8551"),
 				argWithVal(NimbusJwtSecretFile, fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir()))),
+				argWithVal(NimbusRESTAddress, "0.0.0.0"),
+				argWithVal(NimbusRESTPort, "8957"),
+				argWithVal(NimbusRESTAllowOrigin, "kotal.pro,kotal.cloud"),
 			},
 		},
 		{

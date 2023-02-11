@@ -20,8 +20,8 @@ func (r *BeaconNode) validate() field.ErrorList {
 
 	path := field.NewPath("spec")
 
-	// rest is supported by teku and lighthouse only
-	if r.Spec.REST && r.Spec.Client != TekuClient && r.Spec.Client != LighthouseClient {
+	// rest is supported by all clients except prysm
+	if r.Spec.REST && r.Spec.Client == PrysmClient {
 		err := field.Invalid(path.Child("rest"), r.Spec.REST, fmt.Sprintf("not supported by %s client", r.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
 	}
@@ -32,6 +32,7 @@ func (r *BeaconNode) validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	// validate verbosity level support
 	if !r.Spec.Client.SupportsVerbosityLevel(r.Spec.Logging, false) {
 		err := field.Invalid(path.Child("logging"), r.Spec.Logging, fmt.Sprintf("not supported by %s client", r.Spec.Client))
 		nodeErrors = append(nodeErrors, err)
@@ -43,6 +44,7 @@ func (r *BeaconNode) validate() field.ErrorList {
 		nodeErrors = append(nodeErrors, err)
 	}
 
+	// validate cert secret name is supported by prysm only
 	if r.Spec.CertSecretName != "" && r.Spec.Client != PrysmClient {
 		err := field.Invalid(path.Child("certSecretName"), r.Spec.CertSecretName, fmt.Sprintf("not supported by %s client", r.Spec.Client))
 		nodeErrors = append(nodeErrors, err)

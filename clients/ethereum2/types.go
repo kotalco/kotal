@@ -164,7 +164,14 @@ const (
 	NimbusUDPPort = "--udp-port"
 	// NimbusLogging is the argument used to set logging verbosity level
 	NimbusLogging = "--log-level"
-
+	// NimbusREST is the argument used to enable REST server
+	NimbusREST = "--rest"
+	// NimbusRESTPort is the argument used to set REST server port
+	NimbusRESTPort = "--rest-port"
+	// NimbusRESTAddress is the argument used to set REST server listening address
+	NimbusRESTAddress = "--rest-address"
+	// NimbusRESTAllowOrigin is the argument used to limit access to the REST API
+	NimbusRESTAllowOrigin = "--rest-allow-origin"
 	// NimbusGraffiti is the argument used to include in proposed blocks
 	NimbusGraffiti = "--graffiti"
 	// NimbusValidatorsDir is the argument used to locate validator keystores directory

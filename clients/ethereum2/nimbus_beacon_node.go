@@ -2,6 +2,7 @@ package ethereum2
 
 import (
 	"fmt"
+	"strings"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -43,6 +44,13 @@ func (t *NimbusBeaconNode) Args() (args []string) {
 
 	jwtSecretPath := fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(t.HomeDir()))
 	args = append(args, argWithVal(NimbusJwtSecretFile, jwtSecretPath))
+
+	if node.Spec.REST {
+		args = append(args, NimbusREST)
+		args = append(args, argWithVal(NimbusRESTAddress, shared.Host(node.Spec.REST)))
+		args = append(args, argWithVal(NimbusRESTPort, fmt.Sprintf("%d", node.Spec.RESTPort)))
+		args = append(args, argWithVal(NimbusRESTAllowOrigin, strings.Join(node.Spec.CORSDomains, ",")))
+	}
 
 	args = append(args, argWithVal(NimbusTCPPort, fmt.Sprintf("%d", node.Spec.P2PPort)))
 	args = append(args, argWithVal(NimbusUDPPort, fmt.Sprintf("%d", node.Spec.P2PPort)))
