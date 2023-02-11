@@ -46,6 +46,9 @@ spec:
                 description: CertSecretName is k8s secret name that holds tls.key
                   and tls.cert
                 type: string
+              checkpointSyncUrl:
+                description: CheckpointSyncURL is trusted beacon node rest api endpoint
+                type: string
               client:
                 description: Client is the Ethereum 2.0 client to use
                 enum:

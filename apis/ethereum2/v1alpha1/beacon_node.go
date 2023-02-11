@@ -21,6 +21,9 @@ type BeaconNodeSpec struct {
 	// FeeRecipient is ethereum address collecting transaction fees
 	FeeRecipient shared.EthereumAddress `json:"feeRecipient,omitempty"`
 
+	// CheckpointSyncURL is trusted beacon node rest api endpoint
+	CheckpointSyncURL string `json:"checkpointSyncUrl,omitempty"`
+
 	// REST enables Beacon REST API
 	REST bool `json:"rest,omitempty"`
 	// RESTPort is Beacon REST API server port
