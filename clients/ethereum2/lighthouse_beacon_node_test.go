@@ -79,7 +79,7 @@ var _ = Describe("Lighthouse beacon node", func() {
 			},
 		},
 		{
-			title: "beacon node syncing mainnet and http enabled",
+			title: "beacon node syncing mainnet and http enabled with checkpoint syncing",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:                  ethereum2v1alpha1.LighthouseClient,
@@ -87,6 +87,7 @@ var _ = Describe("Lighthouse beacon node", func() {
 					ExecutionEngineEndpoint: "https://localhost:8551",
 					JWTSecretName:           "jwt-secret",
 					REST:                    true,
+					CheckpointSyncURL:       "https://kotal.cloud/eth2/beacon/checkpoint",
 				},
 			},
 			result: []string{
@@ -100,6 +101,8 @@ var _ = Describe("Lighthouse beacon node", func() {
 				LighthouseHTTP,
 				LighthouseAllowOrigins,
 				"*",
+				LighthouseCheckpointSyncUrl,
+				"https://kotal.cloud/eth2/beacon/checkpoint",
 			},
 		},
 		{

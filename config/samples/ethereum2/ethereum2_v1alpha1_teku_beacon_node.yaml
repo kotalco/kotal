@@ -16,6 +16,7 @@ spec:
   rest: true
   restPort: 8888
   executionEngineEndpoint: http://goerli-geth-node:8551
+  checkpointSyncUrl: "https://beaconstate-goerli.chainsafe.io/eth/v2/debug/beacon/states/finalized"
   jwtSecretName: "jwt-secret"
   feeRecipient: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
   resources:

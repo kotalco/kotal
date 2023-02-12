@@ -50,6 +50,10 @@ func (t *LighthouseBeaconNode) Args() (args []string) {
 		args = append(args, LighthouseHTTPAddress, shared.Host(node.Spec.REST))
 	}
 
+	if node.Spec.CheckpointSyncURL != "" {
+		args = append(args, LighthouseCheckpointSyncUrl, node.Spec.CheckpointSyncURL)
+	}
+
 	args = append(args, LighthousePort, fmt.Sprintf("%d", node.Spec.P2PPort))
 	args = append(args, LighthouseDiscoveryPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 

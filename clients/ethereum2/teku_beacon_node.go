@@ -46,6 +46,10 @@ func (t *TekuBeaconNode) Args() (args []string) {
 		args = append(args, TekuRestHost, shared.Host(node.Spec.REST))
 	}
 
+	if node.Spec.CheckpointSyncURL != "" {
+		args = append(args, TekuInitialState, node.Spec.CheckpointSyncURL)
+	}
+
 	args = append(args, TekuP2PPort, fmt.Sprintf("%d", node.Spec.P2PPort))
 
 	return

@@ -45,6 +45,11 @@ func (t *PrysmBeaconNode) Args() (args []string) {
 
 	args = append(args, fmt.Sprintf("--%s", node.Spec.Network))
 
+	if node.Spec.CheckpointSyncURL != "" {
+		args = append(args, PrysmCheckpointSyncUrl, node.Spec.CheckpointSyncURL)
+		args = append(args, PrysmGenesisBeaconApiUrl, node.Spec.CheckpointSyncURL)
+	}
+
 	if node.Spec.RPCPort != 0 {
 		args = append(args, PrysmRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort))
 	}

@@ -38,7 +38,8 @@ const (
 	TekuRESTAPIHostAllowlist = "--rest-api-host-allowlist"
 	// TekuLogging is the argument used to set logging verbosity level
 	TekuLogging = "--logging"
-
+	// TekuInitialState is the argument used for checkpoint sync
+	TekuInitialState = "--initial-state"
 	// TekuVC is the argument used to run validator client
 	TekuVC = "vc"
 	// TekuBeaconNodeEndpoint is the argument used for beacon node api endpoint
@@ -61,6 +62,10 @@ const (
 	PrysmFeeRecipient = "--suggested-fee-recipient"
 	// PrysmJwtSecretFile is the argument used to locate jwt secret file
 	PrysmJwtSecretFile = "--jwt-secret"
+	// PrysmCheckpointSyncUrl is the argument used to set checkpoint sync beacon node rest api endpoint
+	PrysmCheckpointSyncUrl = "--checkpoint-sync-url"
+	// PrysmGenesisBeaconApiUrl is the argument used to set genesis beacon node api url
+	PrysmGenesisBeaconApiUrl = "--genesis-beacon-api-url"
 	// PrysmAcceptTermsOfUse is the argument used for accepting terms of use
 	PrysmAcceptTermsOfUse = "--accept-terms-of-use"
 	// PrysmRPCPort is the argument used for RPC server port
@@ -107,6 +112,8 @@ const (
 	LighthouseDataDir = "--datadir"
 	// LighthouseNetwork is the argument used for selecting network
 	LighthouseNetwork = "--network"
+	// LighthouseCheckpointSyncUrl is the argument used for checkpoint sync
+	LighthouseCheckpointSyncUrl = "--checkpoint-sync-url"
 	// LighthouseHTTP is the argument used to enable Beacon REST API
 	LighthouseHTTP = "--http"
 	// LighthouseAllowOrigins is the argument used to whitelist domains for cross domain requests

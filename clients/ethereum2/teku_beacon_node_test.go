@@ -56,7 +56,7 @@ var _ = Describe("Teku beacon node", func() {
 			},
 		},
 		{
-			title: "beacon node syncing mainnet",
+			title: "beacon node syncing mainnet with checkpoint syncing",
 			node: &ethereum2v1alpha1.BeaconNode{
 				Spec: ethereum2v1alpha1.BeaconNodeSpec{
 					Client:                  ethereum2v1alpha1.TekuClient,
@@ -64,6 +64,7 @@ var _ = Describe("Teku beacon node", func() {
 					ExecutionEngineEndpoint: "https://localhost:8551",
 					JWTSecretName:           "jwt-secret",
 					FeeRecipient:            "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+					CheckpointSyncURL:       "https://kotal.cloud/eth2/beacon/checkpoint",
 				},
 			},
 			result: []string{
@@ -76,6 +77,8 @@ var _ = Describe("Teku beacon node", func() {
 				fmt.Sprintf("%s/jwt.secret", shared.PathSecrets(client.HomeDir())),
 				TekuFeeRecipient,
 				"0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+				TekuInitialState,
+				"https://kotal.cloud/eth2/beacon/checkpoint",
 			},
 		},
 		{

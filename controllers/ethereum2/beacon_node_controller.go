@@ -298,8 +298,8 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 
 	initContainers := []corev1.Container{}
 
-	// Nimbus client requires data dir path to be read and write only by the owner 0700
 	if node.Spec.Client == ethereum2v1alpha1.NimbusClient {
+		// Nimbus client requires data dir path to be read and write only by the owner 0700
 		fixPermissionContainer := corev1.Container{
 			Name:  "fix-datadir-permission",
 			Image: node.Spec.Image,
@@ -318,6 +318,21 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 			VolumeMounts: volumeMounts,
 		}
 		initContainers = append(initContainers, fixPermissionContainer)
+
+		if node.Spec.CheckpointSyncURL != "" {
+			checkpointSyncContainer := corev1.Container{
+				Name:    "checkpoint-sync",
+				Image:   node.Spec.Image,
+				Command: []string{"nimbus_beacon_node", "trustedNodeSync"},
+				Args: []string{
+					fmt.Sprintf("--network=%s", node.Spec.Network),
+					fmt.Sprintf("--data-dir=%s", shared.PathData(homeDir)),
+					fmt.Sprintf("--trusted-node-url=%s", node.Spec.CheckpointSyncURL),
+				},
+				VolumeMounts: volumeMounts,
+			}
+			initContainers = append(initContainers, checkpointSyncContainer)
+		}
 	}
 
 	sts.Spec = appsv1.StatefulSetSpec{
