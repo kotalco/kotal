@@ -3,7 +3,7 @@ package controllers
 import (
 	"context"
 	_ "embed"
-	"fmt"
+	"path/filepath"
 
 	filecoinv1alpha1 "github.com/kotalco/kotal/apis/filecoin/v1alpha1"
 	filecoinClients "github.com/kotalco/kotal/clients/filecoin"
@@ -264,34 +264,6 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 			},
 			Spec: corev1.PodSpec{
 				SecurityContext: shared.SecurityContext(),
-				InitContainers: []corev1.Container{
-					{
-						Name:  "copy-config-toml",
-						Image: shared.BusyboxImage,
-						Env: []corev1.EnvVar{
-							{
-								Name:  EnvDataPath,
-								Value: shared.PathData(homeDir),
-							},
-							{
-								Name:  EnvConfigPath,
-								Value: shared.PathConfig(homeDir),
-							},
-						},
-						Command: []string{"/bin/sh"},
-						Args:    []string{fmt.Sprintf("%s/copy_config_toml.sh", shared.PathConfig(homeDir))},
-						VolumeMounts: []corev1.VolumeMount{
-							{
-								Name:      "data",
-								MountPath: shared.PathData(homeDir),
-							},
-							{
-								Name:      "config",
-								MountPath: shared.PathConfig(homeDir),
-							},
-						},
-					},
-				},
 				Containers: []corev1.Container{
 					{
 						Name:  "node",
@@ -302,6 +274,11 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 							{
 								Name:      "data",
 								MountPath: shared.PathData(homeDir),
+							},
+							{
+								Name:      "config",
+								MountPath: filepath.Join(shared.PathData(homeDir), "config.toml"),
+								SubPath:   "config.toml",
 							},
 						},
 						Resources: corev1.ResourceRequirements{
