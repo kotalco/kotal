@@ -25,6 +25,13 @@ type ValidatorReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+const (
+	envNetwork        = "KOTAL_NETWORK"
+	envKeyDir         = "KOTAL_KEY_DIR"
+	envKeystoreIndex  = "KOTAL_KEYSTORE_INDEX"
+	envValidatorsPath = "KOTAL_VALIDATORS_PATH"
+)
+
 var (
 	//go:embed prysm_import_keystore.sh
 	PrysmImportKeyStore string
@@ -342,23 +349,23 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 				Image: validator.Spec.Image,
 				Env: []corev1.EnvVar{
 					{
-						Name:  "KOTAL_NETWORK",
+						Name:  envNetwork,
 						Value: validator.Spec.Network,
 					},
 					{
-						Name:  "KOTAL_DATA_PATH",
+						Name:  shared.EnvDataPath,
 						Value: shared.PathData(homeDir),
 					},
 					{
-						Name:  "KOTAL_KEY_DIR",
+						Name:  envKeyDir,
 						Value: keyDir,
 					},
 					{
-						Name:  "KOTAL_KEYSTORE_INDEX",
+						Name:  envKeystoreIndex,
 						Value: fmt.Sprintf("%d", i),
 					},
 					{
-						Name:  "KOTAL_SECRETS_PATH",
+						Name:  shared.EnvSecretsPath,
 						Value: shared.PathSecrets(homeDir),
 					},
 				},
@@ -378,19 +385,19 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 				Image: validator.Spec.Image,
 				Env: []corev1.EnvVar{
 					{
-						Name:  "KOTAL_NETWORK",
+						Name:  envNetwork,
 						Value: validator.Spec.Network,
 					},
 					{
-						Name:  "KOTAL_DATA_PATH",
+						Name:  shared.EnvDataPath,
 						Value: shared.PathData(homeDir),
 					},
 					{
-						Name:  "KOTAL_KEY_DIR",
+						Name:  envKeyDir,
 						Value: keyDir,
 					},
 					{
-						Name:  "KOTAL_KEYSTORE_INDEX",
+						Name:  envKeystoreIndex,
 						Value: fmt.Sprintf("%d", i),
 					},
 				},
@@ -412,11 +419,11 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 			Image: validator.Spec.Image,
 			Env: []corev1.EnvVar{
 				{
-					Name:  "KOTAL_SECRETS_PATH",
+					Name:  shared.EnvSecretsPath,
 					Value: shared.PathSecrets(homeDir),
 				},
 				{
-					Name:  "KOTAL_VALIDATORS_PATH",
+					Name:  envValidatorsPath,
 					Value: validatorsPath,
 				},
 			},

@@ -2,7 +2,7 @@
 
 set -e
 
-mkdir -p $DATA_PATH
+mkdir -p $KOTAL_DATA_PATH
 
 # convert node private key to binary format
-xxd -r -p -c 32 $SECRETS_PATH/nodekey > $DATA_PATH/kotal_nodekey
+xxd -r -p -c 32 $KOTAL_SECRETS_PATH/nodekey > $KOTAL_DATA_PATH/kotal_nodekey

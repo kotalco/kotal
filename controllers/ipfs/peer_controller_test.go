@@ -11,6 +11,7 @@ import (
 	"github.com/onsi/gomega/gstruct"
 
 	ipfsv1alpha1 "github.com/kotalco/kotal/apis/ipfs/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -67,7 +68,7 @@ var _ = Describe("IPFS peer controller", func() {
 	})
 
 	It("should create ipfs peer", func() {
-		if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+		if os.Getenv(shared.EnvUseExistingCluster) != "true" {
 			toCreate.Default()
 		}
 		Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())

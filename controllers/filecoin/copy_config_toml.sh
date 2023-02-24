@@ -2,6 +2,6 @@
 
 set -e
 
-mkdir -p $DATA_PATH
+mkdir -p $KOTAL_DATA_PATH
 
-cp $CONFIG_PATH/config.toml $DATA_PATH
+cp $KOTAL_CONFIG_PATH/config.toml $KOTAL_DATA_PATH

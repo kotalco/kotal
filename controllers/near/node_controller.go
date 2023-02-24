@@ -26,6 +26,10 @@ type NodeReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+const (
+	envNetwork = "KOTAL_NEAR_NETWORK"
+)
+
 var (
 	//go:embed init_near_node.sh
 	InitNearNode string
@@ -357,11 +361,11 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 			Image: node.Spec.Image,
 			Env: []corev1.EnvVar{
 				{
-					Name:  EnvDataPath,
+					Name:  shared.EnvDataPath,
 					Value: shared.PathData(homeDir),
 				},
 				{
-					Name:  EnvNetwork,
+					Name:  envNetwork,
 					Value: node.Spec.Network,
 				},
 			},
@@ -378,11 +382,11 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 			Command: []string{"/bin/sh"},
 			Env: []corev1.EnvVar{
 				{
-					Name:  EnvDataPath,
+					Name:  shared.EnvDataPath,
 					Value: shared.PathData(homeDir),
 				},
 				{
-					Name:  EnvSecretsPath,
+					Name:  shared.EnvSecretsPath,
 					Value: shared.PathSecrets(homeDir),
 				},
 			},
@@ -398,11 +402,11 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 			Command: []string{"/bin/sh"},
 			Env: []corev1.EnvVar{
 				{
-					Name:  EnvDataPath,
+					Name:  shared.EnvDataPath,
 					Value: shared.PathData(homeDir),
 				},
 				{
-					Name:  EnvSecretsPath,
+					Name:  shared.EnvSecretsPath,
 					Value: shared.PathSecrets(homeDir),
 				},
 			},

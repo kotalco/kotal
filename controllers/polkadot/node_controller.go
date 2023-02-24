@@ -276,11 +276,11 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 			Image: shared.BusyboxImage,
 			Env: []corev1.EnvVar{
 				{
-					Name:  EnvDataPath,
+					Name:  shared.EnvDataPath,
 					Value: shared.PathData(homeDir),
 				},
 				{
-					Name:  EnvSecretsPath,
+					Name:  shared.EnvSecretsPath,
 					Value: shared.PathSecrets(homeDir),
 				},
 			},

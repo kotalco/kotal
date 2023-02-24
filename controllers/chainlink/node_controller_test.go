@@ -73,7 +73,7 @@ var _ = Describe("Chainlink node controller", func() {
 	})
 
 	It("should create chainlink node", func() {
-		if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+		if os.Getenv(shared.EnvUseExistingCluster) != "true" {
 			toCreate.Default()
 		}
 		Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
@@ -105,15 +105,15 @@ var _ = Describe("Chainlink node controller", func() {
 		))
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Env).To(ContainElements(
 			corev1.EnvVar{
-				Name:  "KOTAL_DATA_PATH",
+				Name:  shared.EnvDataPath,
 				Value: shared.PathData(client.HomeDir()),
 			},
 			corev1.EnvVar{
-				Name:  "KOTAL_EMAIL",
+				Name:  envApiEmail,
 				Value: toCreate.Spec.APICredentials.Email,
 			},
 			corev1.EnvVar{
-				Name:  "KOTAL_SECRETS_PATH",
+				Name:  shared.EnvSecretsPath,
 				Value: shared.PathSecrets(client.HomeDir()),
 			},
 		))

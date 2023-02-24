@@ -26,6 +26,10 @@ type NodeReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+const (
+	envApiEmail = "KOTAL_API_EMAIL"
+)
+
 var (
 	//go:embed copy_api_credentials.sh
 	CopyAPICredentials string
@@ -327,15 +331,15 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 						Command: []string{"/bin/sh"},
 						Env: []corev1.EnvVar{
 							{
-								Name:  "KOTAL_DATA_PATH",
+								Name:  shared.EnvDataPath,
 								Value: shared.PathData(homeDir),
 							},
 							{
-								Name:  "KOTAL_EMAIL",
+								Name:  envApiEmail,
 								Value: node.Spec.APICredentials.Email,
 							},
 							{
-								Name:  "KOTAL_SECRETS_PATH",
+								Name:  shared.EnvSecretsPath,
 								Value: shared.PathSecrets(homeDir),
 							},
 						},

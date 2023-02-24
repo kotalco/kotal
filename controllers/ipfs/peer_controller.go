@@ -333,7 +333,7 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 					Value: shared.PathData(homeDir),
 				},
 				{
-					Name:  ipfsClients.EnvSecretsPath,
+					Name:  shared.EnvSecretsPath,
 					Value: shared.PathSecrets(homeDir),
 				},
 			},

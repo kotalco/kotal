@@ -18,6 +18,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	aptosv1alpha1 "github.com/kotalco/kotal/apis/aptos/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -42,7 +43,7 @@ var _ = BeforeSuite(func() {
 
 	By("bootstrapping test environment")
 	// create new test environment
-	if os.Getenv("USE_EXISTING_CLUSTER") == "true" {
+	if os.Getenv(shared.EnvUseExistingCluster) == "true" {
 		t := true
 		testEnv = &envtest.Environment{
 			UseExistingCluster: &t,

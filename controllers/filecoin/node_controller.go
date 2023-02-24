@@ -270,11 +270,11 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 						Image: shared.BusyboxImage,
 						Env: []corev1.EnvVar{
 							{
-								Name:  EnvDataPath,
+								Name:  shared.EnvDataPath,
 								Value: shared.PathData(homeDir),
 							},
 							{
-								Name:  EnvConfigPath,
+								Name:  shared.EnvConfigPath,
 								Value: shared.PathConfig(homeDir),
 							},
 						},

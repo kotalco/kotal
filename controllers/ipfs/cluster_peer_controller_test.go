@@ -101,7 +101,7 @@ var _ = Describe("IPFS cluster peer controller", func() {
 	})
 
 	It("should create ipfs cluster peer", func() {
-		if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+		if os.Getenv(shared.EnvUseExistingCluster) != "true" {
 			toCreate.Default()
 		}
 		Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())

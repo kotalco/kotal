@@ -30,6 +30,10 @@ type NodeReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+const (
+	envCoinbase = "KOTAL_COINBASE"
+)
+
 var (
 	//go:embed geth_init_genesis.sh
 	GethInitGenesisScript string
@@ -551,11 +555,11 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 				Image: node.Spec.Image,
 				Env: []corev1.EnvVar{
 					{
-						Name:  EnvDataPath,
+						Name:  shared.EnvDataPath,
 						Value: shared.PathData(homedir),
 					},
 					{
-						Name:  EnvConfigPath,
+						Name:  shared.EnvConfigPath,
 						Value: shared.PathConfig(homedir),
 					},
 				},
@@ -571,11 +575,11 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 				Image: node.Spec.Image,
 				Env: []corev1.EnvVar{
 					{
-						Name:  EnvDataPath,
+						Name:  shared.EnvDataPath,
 						Value: shared.PathData(homedir),
 					},
 					{
-						Name:  EnvSecretsPath,
+						Name:  shared.EnvSecretsPath,
 						Value: shared.PathSecrets(homedir),
 					},
 				},
@@ -593,11 +597,11 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 				Image: shared.BusyboxImage,
 				Env: []corev1.EnvVar{
 					{
-						Name:  EnvDataPath,
+						Name:  shared.EnvDataPath,
 						Value: shared.PathData(homedir),
 					},
 					{
-						Name:  EnvSecretsPath,
+						Name:  shared.EnvSecretsPath,
 						Value: shared.PathSecrets(homedir),
 					},
 				},
@@ -614,15 +618,15 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 				Image: shared.BusyboxImage,
 				Env: []corev1.EnvVar{
 					{
-						Name:  EnvDataPath,
+						Name:  shared.EnvDataPath,
 						Value: shared.PathData(homedir),
 					},
 					{
-						Name:  EnvSecretsPath,
+						Name:  shared.EnvSecretsPath,
 						Value: shared.PathSecrets(homedir),
 					},
 					{
-						Name:  "COINBASE",
+						Name:  envCoinbase,
 						Value: strings.ToLower(string(node.Spec.Coinbase))[2:],
 					},
 				},

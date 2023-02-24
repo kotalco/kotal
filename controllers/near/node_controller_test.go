@@ -68,7 +68,7 @@ var _ = Describe("NEAR node controller", func() {
 	})
 
 	It("should create NEAR node", func() {
-		if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+		if os.Getenv(shared.EnvUseExistingCluster) != "true" {
 			toCreate.Default()
 		}
 		Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
@@ -101,11 +101,11 @@ var _ = Describe("NEAR node controller", func() {
 		))
 		Expect(fetched.Spec.Template.Spec.InitContainers[0].Env).To(ContainElements(
 			corev1.EnvVar{
-				Name:  EnvDataPath,
+				Name:  shared.EnvDataPath,
 				Value: shared.PathData(client.HomeDir()),
 			},
 			corev1.EnvVar{
-				Name:  EnvNetwork,
+				Name:  envNetwork,
 				Value: toCreate.Spec.Network,
 			},
 		))
@@ -132,11 +132,11 @@ var _ = Describe("NEAR node controller", func() {
 		))
 		Expect(fetched.Spec.Template.Spec.InitContainers[1].Env).To(ContainElements(
 			corev1.EnvVar{
-				Name:  EnvDataPath,
+				Name:  shared.EnvDataPath,
 				Value: shared.PathData(client.HomeDir()),
 			},
 			corev1.EnvVar{
-				Name:  EnvSecretsPath,
+				Name:  shared.EnvSecretsPath,
 				Value: shared.PathSecrets(client.HomeDir()),
 			},
 		))
@@ -163,11 +163,11 @@ var _ = Describe("NEAR node controller", func() {
 		))
 		Expect(fetched.Spec.Template.Spec.InitContainers[2].Env).To(ContainElements(
 			corev1.EnvVar{
-				Name:  EnvDataPath,
+				Name:  shared.EnvDataPath,
 				Value: shared.PathData(client.HomeDir()),
 			},
 			corev1.EnvVar{
-				Name:  EnvSecretsPath,
+				Name:  shared.EnvSecretsPath,
 				Value: shared.PathSecrets(client.HomeDir()),
 			},
 		))

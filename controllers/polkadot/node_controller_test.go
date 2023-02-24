@@ -7,6 +7,7 @@ import (
 	"time"
 
 	polkadotv1alpha1 "github.com/kotalco/kotal/apis/polkadot/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gstruct"
@@ -63,7 +64,7 @@ var _ = Describe("kusama node controller", func() {
 	})
 
 	It("should create kusama node", func() {
-		if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+		if os.Getenv(shared.EnvUseExistingCluster) != "true" {
 			toCreate.Default()
 		}
 		Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())

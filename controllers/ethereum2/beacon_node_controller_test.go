@@ -15,6 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -66,7 +67,7 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 		})
 
 		It("Should create beacon node", func() {
-			if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+			if os.Getenv(shared.EnvUseExistingCluster) != "true" {
 				toCreate.Default()
 			}
 			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())

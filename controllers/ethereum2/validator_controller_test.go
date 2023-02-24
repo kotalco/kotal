@@ -74,7 +74,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 		})
 
 		It("Should create validator client", func() {
-			if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+			if os.Getenv(shared.EnvUseExistingCluster) != "true" {
 				toCreate.Default()
 			}
 			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
@@ -250,7 +250,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 		})
 
 		It("Should create validator client", func() {
-			if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+			if os.Getenv(shared.EnvUseExistingCluster) != "true" {
 				toCreate.Default()
 			}
 			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
@@ -369,23 +369,23 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(testImage))
 			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Env).To(ContainElements(
 				corev1.EnvVar{
-					Name:  "KOTAL_NETWORK",
+					Name:  envNetwork,
 					Value: "mainnet",
 				},
 				corev1.EnvVar{
-					Name:  "KOTAL_DATA_PATH",
+					Name:  shared.EnvDataPath,
 					Value: shared.PathData(ethereum2Clients.PrysmHomeDir),
 				},
 				corev1.EnvVar{
-					Name:  "KOTAL_KEY_DIR",
+					Name:  envKeyDir,
 					Value: fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(ethereum2Clients.PrysmHomeDir), "my-validator"),
 				},
 				corev1.EnvVar{
-					Name:  "KOTAL_KEYSTORE_INDEX",
+					Name:  envKeystoreIndex,
 					Value: "0",
 				},
 				corev1.EnvVar{
-					Name:  "KOTAL_SECRETS_PATH",
+					Name:  shared.EnvSecretsPath,
 					Value: shared.PathSecrets(ethereum2Clients.PrysmHomeDir),
 				},
 			))
@@ -508,7 +508,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 		})
 
 		It("Should create validator client", func() {
-			if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+			if os.Getenv(shared.EnvUseExistingCluster) != "true" {
 				toCreate.Default()
 			}
 			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
@@ -593,19 +593,19 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(testImage))
 			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Env).To(ContainElements(
 				corev1.EnvVar{
-					Name:  "KOTAL_NETWORK",
+					Name:  envNetwork,
 					Value: "mainnet",
 				},
 				corev1.EnvVar{
-					Name:  "KOTAL_DATA_PATH",
+					Name:  shared.EnvDataPath,
 					Value: shared.PathData(ethereum2Clients.LighthouseHomeDir),
 				},
 				corev1.EnvVar{
-					Name:  "KOTAL_KEY_DIR",
+					Name:  envKeyDir,
 					Value: fmt.Sprintf("%s/validator-keys/%s", shared.PathSecrets(ethereum2Clients.LighthouseHomeDir), "my-validator"),
 				},
 				corev1.EnvVar{
-					Name:  "KOTAL_KEYSTORE_INDEX",
+					Name:  envKeystoreIndex,
 					Value: "0",
 				},
 			))
@@ -722,7 +722,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 		})
 
 		It("Should create validator client", func() {
-			if os.Getenv("USE_EXISTING_CLUSTER") != "true" {
+			if os.Getenv(shared.EnvUseExistingCluster) != "true" {
 				toCreate.Default()
 			}
 			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
@@ -831,11 +831,11 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Image).To(Equal(testImage))
 			Expect(validatorSts.Spec.Template.Spec.InitContainers[0].Env).To(ContainElements(
 				corev1.EnvVar{
-					Name:  "KOTAL_SECRETS_PATH",
+					Name:  shared.EnvSecretsPath,
 					Value: shared.PathSecrets(ethereum2Clients.NimbusHomeDir),
 				},
 				corev1.EnvVar{
-					Name:  "KOTAL_VALIDATORS_PATH",
+					Name:  envValidatorsPath,
 					Value: fmt.Sprintf("%s/kotal-validators", shared.PathData(ethereum2Clients.NimbusHomeDir)),
 				},
 			))
