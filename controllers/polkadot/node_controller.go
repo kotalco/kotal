@@ -35,6 +35,8 @@ var (
 // +kubebuilder:rbac:groups=core,resources=services;configmaps;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+	defer shared.IgnoreConflicts(&err)
+
 	var node polkadotv1alpha1.Node
 
 	if err = r.Client.Get(ctx, req.NamespacedName, &node); err != nil {

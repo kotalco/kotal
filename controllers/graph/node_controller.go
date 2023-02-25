@@ -27,6 +27,8 @@ type NodeReconciler struct {
 //+kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=watch;get;list;create;update;delete
 
 func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+	defer shared.IgnoreConflicts(&err)
+
 	var node graphv1alpha1.Node
 
 	if err = r.Client.Get(ctx, req.NamespacedName, &node); err != nil {

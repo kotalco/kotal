@@ -31,6 +31,8 @@ type NodeReconciler struct {
 // +kubebuilder:rbac:groups=core,resources=services;configmaps,verbs=watch;get;create;update;list;delete
 
 func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+	defer shared.IgnoreConflicts(&err)
+
 	var node stacksv1alpha1.Node
 
 	if err = r.Client.Get(ctx, req.NamespacedName, &node); err != nil {

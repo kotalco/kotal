@@ -39,6 +39,7 @@ var (
 // +kubebuilder:rbac:groups=core,resources=configmaps;services;persistentvolumeclaims,verbs=watch;get;create;update;list;delete
 
 func (r *ClusterPeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+	defer shared.IgnoreConflicts(&err)
 
 	var peer ipfsv1alpha1.ClusterPeer
 

@@ -31,6 +31,8 @@ type BeaconNodeReconciler struct {
 
 // Reconcile reconciles Ethereum 2.0 beacon node
 func (r *BeaconNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+	defer shared.IgnoreConflicts(&err)
+
 	var node ethereum2v1alpha1.BeaconNode
 
 	if err = r.Client.Get(ctx, req.NamespacedName, &node); err != nil {

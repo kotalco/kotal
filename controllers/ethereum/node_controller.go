@@ -52,6 +52,7 @@ var (
 
 // Reconcile reconciles ethereum networks
 func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+	defer shared.IgnoreConflicts(&err)
 
 	var node ethereumv1alpha1.Node
 

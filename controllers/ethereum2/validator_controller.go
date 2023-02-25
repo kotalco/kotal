@@ -48,6 +48,8 @@ var (
 
 // Reconcile reconciles Ethereum 2.0 validator client
 func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+	defer shared.IgnoreConflicts(&err)
+
 	var validator ethereum2v1alpha1.Validator
 
 	if err = r.Client.Get(ctx, req.NamespacedName, &validator); err != nil {
