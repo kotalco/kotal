@@ -23,6 +23,9 @@ type Genesis struct {
 	// MixHash is hash combined with nonce to prove effort spent to create block
 	MixHash Hash `json:"mixHash,omitempty"`
 
+	// ParentHash is the hash value of the previous block
+	ParentHash Hash `json:"parentHash,omitempty"`
+
 	// Ethash PoW engine configuration
 	Ethash *Ethash `json:"ethash,omitempty"`
 
@@ -133,6 +136,15 @@ type Forks struct {
 
 	// ArrowGlacier fork
 	ArrowGlacier uint `json:"arrowGlacier,omitempty"`
+
+	// MergeFor fork
+	MergeFor uint `json:"mergeFor,omitempty"`
+
+	// TerminalTotalDifficulty fork
+	TerminalTotalDifficulty uint `json:"terminalTotalDifficulty,omitempty"`
+
+	// ShanghaiTime timestamp-based fork
+	ShanghaiTime uint `json:"shanghaiTime,omitempty"`
 }
 
 // Account is Ethereum account

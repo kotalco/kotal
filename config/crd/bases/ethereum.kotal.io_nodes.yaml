@@ -191,11 +191,20 @@ spec:
                       london:
                         description: London fork
                         type: integer
+                      mergeFor:
+                        description: MergeFor fork
+                        type: integer
                       muirglacier:
                         description: MuirGlacier fork
                         type: integer
                       petersburg:
                         description: Petersburg fork
+                        type: integer
+                      shanghaiTime:
+                        description: ShanghaiTime timestamp-based fork
+                        type: integer
+                      terminalTotalDifficulty:
+                        description: TerminalTotalDifficulty fork
                         type: integer
                     type: object
                   gasLimit:
@@ -251,6 +260,10 @@ spec:
                   nonce:
                     description: Nonce is random number used in block computation
                     pattern: ^0[xX][0-9a-fA-F]+$
+                    type: string
+                  parentHash:
+                    description: ParentHash is the hash value of the previous block
+                    pattern: ^0[xX][0-9a-fA-F]{64}$
                     type: string
                   timestamp:
                     description: Timestamp is block creation date
