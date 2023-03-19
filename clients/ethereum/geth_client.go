@@ -185,7 +185,7 @@ func (g *GethClient) Genesis() (content string, err error) {
 	mixHash := genesis.MixHash
 	parentHash := genesis.ParentHash
 	nonce := genesis.Nonce
-	extraData := "0x00"
+	extraData := genesis.ExtraData
 	difficulty := genesis.Difficulty
 	result := map[string]interface{}{}
 

@@ -23,6 +23,9 @@ type Genesis struct {
 	// MixHash is hash combined with nonce to prove effort spent to create block
 	MixHash Hash `json:"mixHash,omitempty"`
 
+	// ExtraData is arbitrary data to include in block
+	ExtraData string `json:"extraData,omitempty"`
+
 	// ParentHash is the hash value of the previous block
 	ParentHash Hash `json:"parentHash,omitempty"`
 

@@ -154,6 +154,9 @@ spec:
                           in private PoW networks
                         type: integer
                     type: object
+                  extraData:
+                    description: ExtraData is arbitrary data to include in block
+                    type: string
                   forks:
                     description: Forks is supported forks (network upgrade) and corresponding
                       block number
