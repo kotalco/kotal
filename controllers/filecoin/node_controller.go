@@ -207,13 +207,14 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *filecoi
 	client := filecoinClients.NewClient(node)
 	args := client.Args()
 	env := client.Env()
+	cmd := client.Command()
 	homeDir := client.HomeDir()
 
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
 		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
 			return err
 		}
-		if err := r.specStatefulSet(node, sts, homeDir, args, env); err != nil {
+		if err := r.specStatefulSet(node, sts, homeDir, cmd, args, env); err != nil {
 			return err
 		}
 		return nil
@@ -250,7 +251,7 @@ func (r *NodeReconciler) specService(node *filecoinv1alpha1.Node, svc *corev1.Se
 }
 
 // specStatefulSet updates node statefulset spec
-func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv1.StatefulSet, homeDir string, args []string, env []corev1.EnvVar) error {
+func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv1.StatefulSet, homeDir string, cmd, args []string, env []corev1.EnvVar) error {
 	labels := node.Labels
 
 	sts.ObjectMeta.Labels = labels
@@ -296,10 +297,11 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 				},
 				Containers: []corev1.Container{
 					{
-						Name:  "node",
-						Image: node.Spec.Image,
-						Args:  args,
-						Env:   env,
+						Name:    "node",
+						Image:   node.Spec.Image,
+						Args:    args,
+						Command: cmd,
+						Env:     env,
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",
