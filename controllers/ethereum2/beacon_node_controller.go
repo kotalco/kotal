@@ -45,7 +45,7 @@ func (r *BeaconNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		node.Default()
 	}
 
-	shared.UpdateLabels(&node, string(node.Spec.Client))
+	shared.UpdateLabels(&node, string(node.Spec.Client), node.Spec.Network)
 
 	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return

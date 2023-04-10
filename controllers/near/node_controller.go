@@ -59,7 +59,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
-	shared.UpdateLabels(&node, "nearcore")
+	shared.UpdateLabels(&node, "nearcore", node.Spec.Network)
 
 	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return

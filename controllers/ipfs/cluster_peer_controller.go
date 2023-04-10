@@ -53,7 +53,7 @@ func (r *ClusterPeerReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		peer.Default()
 	}
 
-	shared.UpdateLabels(&peer, "ipfs-cluster-service")
+	shared.UpdateLabels(&peer, "ipfs-cluster-service", "")
 
 	if err = r.reconcileService(ctx, &peer); err != nil {
 		return

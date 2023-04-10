@@ -46,7 +46,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
-	shared.UpdateLabels(&node, "bitcoind")
+	shared.UpdateLabels(&node, "bitcoind", string(node.Spec.Network))
 
 	if err = r.reconcilePVC(ctx, &node); err != nil {
 		return

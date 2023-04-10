@@ -38,7 +38,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	// TODO: default the node if webhooks are disabled
 
-	shared.UpdateLabels(&node, "graph-node")
+	shared.UpdateLabels(&node, "graph-node", "")
 
 	if err = r.reconcileStatefulset(ctx, &node); err != nil {
 		return

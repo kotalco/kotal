@@ -66,7 +66,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
-	shared.UpdateLabels(&node, string(node.Spec.Client))
+	shared.UpdateLabels(&node, string(node.Spec.Client), node.Spec.Network)
 	r.updateStaticNodes(ctx, &node)
 	r.updateBootnodes(ctx, &node)
 

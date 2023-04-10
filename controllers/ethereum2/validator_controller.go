@@ -62,7 +62,7 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		validator.Default()
 	}
 
-	shared.UpdateLabels(&validator, string(validator.Spec.Client))
+	shared.UpdateLabels(&validator, string(validator.Spec.Client), validator.Spec.Network)
 
 	if err = r.reconcileConfigmap(ctx, &validator); err != nil {
 		return

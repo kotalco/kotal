@@ -52,7 +52,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
-	shared.UpdateLabels(&node, "lotus")
+	shared.UpdateLabels(&node, "lotus", string(node.Spec.Network))
 
 	if err = r.reconcileService(ctx, &node); err != nil {
 		return

@@ -29,7 +29,7 @@ func TestUpdateLabels(t *testing.T) {
 		},
 	}
 
-	UpdateLabels(&ethereumNode, string(ethereumNode.Spec.Client))
+	UpdateLabels(&ethereumNode, string(ethereumNode.Spec.Client), ethereumv1alpha1.GoerliNetwork)
 
 	labels := map[string]string{
 		"app.kubernetes.io/name":       string(ethereumNode.Spec.Client),
@@ -38,6 +38,7 @@ func TestUpdateLabels(t *testing.T) {
 		"app.kubernetes.io/managed-by": "kotal-operator",
 		"app.kubernetes.io/created-by": "ethereum-node-controller",
 		"kotal.io/protocol":            "ethereum",
+		"kotal.io/network":             ethereumv1alpha1.GoerliNetwork,
 	}
 
 	for k, v := range labels {

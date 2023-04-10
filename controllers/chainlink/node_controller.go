@@ -55,7 +55,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
-	shared.UpdateLabels(&node, "chainlink")
+	shared.UpdateLabels(&node, "chainlink", "")
 
 	if err = r.reconcileService(ctx, &node); err != nil {
 		return

@@ -57,7 +57,7 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		peer.Default()
 	}
 
-	shared.UpdateLabels(&peer, "kubo")
+	shared.UpdateLabels(&peer, "kubo", "")
 
 	if err = r.reconcileConfigmap(ctx, &peer); err != nil {
 		return

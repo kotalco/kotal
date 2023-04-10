@@ -49,7 +49,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		node.Default()
 	}
 
-	shared.UpdateLabels(&node, "polkadot")
+	shared.UpdateLabels(&node, "polkadot", node.Spec.Network)
 
 	if err = r.reconcileConfigmap(ctx, &node); err != nil {
 		return
