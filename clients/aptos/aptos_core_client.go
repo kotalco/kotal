@@ -25,7 +25,7 @@ func (c *AptosCoreClient) Env() (env []corev1.EnvVar) {
 
 // Command is Aptos Core client entrypoint
 func (c *AptosCoreClient) Command() (command []string) {
-	command = append(command, "/opt/aptos/bin/aptos-node")
+	command = append(command, "aptos-node")
 	return
 }
 
