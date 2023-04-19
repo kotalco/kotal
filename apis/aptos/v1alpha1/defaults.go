@@ -18,9 +18,11 @@ const (
 
 const (
 	// DefaultAptosCoreDevnetImage is the default Aptos core Devnet client image
-	DefaultAptosCoreDevnetImage = "aptoslab/validator:devnet"
+	DefaultAptosCoreDevnetImage = "aptoslabs/validator:devnet"
+	// DefaultAptosCoreMainnetImage is the default Aptos core Mainnet client image
+	DefaultAptosCoreMainnetImage = "aptoslabs/validator:mainnet"
 	// DefaultAptosCoreTestnetImage is the default Aptos core Testnet client image
-	DefaultAptosCoreTestnetImage = "aptoslab/validator:testnet"
+	DefaultAptosCoreTestnetImage = "aptoslabs/validator:testnet"
 )
 
 const (
