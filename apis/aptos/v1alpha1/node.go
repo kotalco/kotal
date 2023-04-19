@@ -10,6 +10,7 @@ type AptosNetwork string
 
 const (
 	Devnet  AptosNetwork = "devnet"
+	Mainnet AptosNetwork = "mainnet"
 	Testnet AptosNetwork = "testnet"
 )
 
@@ -28,7 +29,7 @@ type NodeSpec struct {
 	// Image is Aptos node client image
 	Image string `json:"image,omitempty"`
 	// Network is Aptos network to join and sync
-	// +kubebuilder:validation:Enum=devnet;testnet
+	// +kubebuilder:validation:Enum=devnet;testnet;mainnet
 	Network AptosNetwork `json:"network"`
 	// Validator enables validator mode
 	Validator bool `json:"validator,omitempty"`

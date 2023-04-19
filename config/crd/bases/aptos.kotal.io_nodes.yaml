@@ -53,6 +53,7 @@ spec:
                 enum:
                 - devnet
                 - testnet
+                - mainnet
                 type: string
               nodePrivateKeySecretName:
                 description: NodePrivateKeySecretName is the secret name holding node
