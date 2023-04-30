@@ -1,7 +1,10 @@
 package aptos
 
 import (
+	"fmt"
+
 	aptosv1alpha1 "github.com/kotalco/kotal/apis/aptos/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -31,7 +34,8 @@ func (c *AptosCoreClient) Command() (command []string) {
 
 // Args returns Aptos Core client args
 func (c *AptosCoreClient) Args() (args []string) {
-	args = append(args, AptosArgConfig, "/opt/aptos/config/config.yaml")
+	configPath := fmt.Sprintf("%s/config.yaml", shared.PathConfig(c.HomeDir()))
+	args = append(args, AptosArgConfig, configPath)
 	return
 }
 

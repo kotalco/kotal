@@ -265,12 +265,12 @@ func (r *NodeReconciler) specStatefulSet(node *aptosv1alpha1.Node, sts *appsv1.S
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "config",
-								MountPath: "/opt/aptos/config",
+								MountPath: shared.PathConfig(homeDir),
 								ReadOnly:  true,
 							},
 							{
 								Name:      "data",
-								MountPath: "/opt/aptos/data",
+								MountPath: shared.PathData(homeDir),
 							},
 						},
 					},

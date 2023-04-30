@@ -1,6 +1,6 @@
 package shared
 
-// Host returns localhost of toggle is not enabled
+// Host returns localhost if toggle is not enabled
 // otherwise returns the wildcard address
 func Host(toggle bool) string {
 	if toggle {

@@ -1,7 +1,10 @@
 package aptos
 
 import (
+	"fmt"
+
 	aptosv1alpha1 "github.com/kotalco/kotal/apis/aptos/v1alpha1"
+	"github.com/kotalco/kotal/controllers/shared"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -19,12 +22,12 @@ var _ = Describe("Aptos core client", func() {
 		},
 	}
 
-	// TODO: default the node
+	node.Default()
 
 	client := NewClient(node)
 
 	It("Should get correct command", func() {
-		Expect(client.Command()).To(ConsistOf("/opt/aptos/bin/aptos-node"))
+		Expect(client.Command()).To(ConsistOf("aptos-node"))
 	})
 
 	It("Should get correct environment variables", func() {
@@ -36,7 +39,11 @@ var _ = Describe("Aptos core client", func() {
 	})
 
 	It("Should generate correct client arguments", func() {
-		Expect(client.Args()).To(ContainElements([]string{}))
+
+		Expect(client.Args()).To(ContainElements([]string{
+			AptosArgConfig,
+			fmt.Sprintf("%s/config.yaml", shared.PathConfig(client.HomeDir())),
+		}))
 	})
 
 })

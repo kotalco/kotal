@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	aptosv1alpha1 "github.com/kotalco/kotal/apis/aptos/v1alpha1"
+	aptosClients "github.com/kotalco/kotal/clients/aptos"
 	"github.com/kotalco/kotal/controllers/shared"
 	"gopkg.in/yaml.v2"
 	"k8s.io/apimachinery/pkg/types"
@@ -96,16 +97,19 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 		}
 	}
 
+	homeDir := aptosClients.NewClient(node).HomeDir()
+	configDir := shared.PathConfig(homeDir)
+
 	c := Config{
 		Base: Base{
 			Role:    role,
-			DataDir: "/opt/aptos/data",
+			DataDir: shared.PathData(homeDir),
 			Waypoint: Waypoint{
 				FromConfig: node.Spec.Waypoint,
 			},
 		},
 		Execution: Execution{
-			GenesisFileLocation: "/opt/aptos/config/genesis.blob",
+			GenesisFileLocation: fmt.Sprintf("%s/genesis.blob", configDir),
 		},
 		FullNodeNetworks: []Network{
 			{
