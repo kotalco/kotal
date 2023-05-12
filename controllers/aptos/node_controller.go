@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"context"
+	_ "embed"
+	"fmt"
 
 	aptosv1alpha1 "github.com/kotalco/kotal/apis/aptos/v1alpha1"
 	aptosClients "github.com/kotalco/kotal/clients/aptos"
@@ -21,6 +23,11 @@ type NodeReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 }
+
+var (
+	//go:embed download_waypoint.sh
+	downloadWaypoint string
+)
 
 // +kubebuilder:rbac:groups=aptos.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=aptos.kotal.io,resources=nodes/status,verbs=get;update;patch
@@ -77,6 +84,7 @@ func (n *NodeReconciler) specConfigmap(node *aptosv1alpha1.Node, configmap *core
 	}
 
 	configmap.Data["config.yaml"] = config
+	configmap.Data["download_waypoint.sh"] = downloadWaypoint
 
 }
 
@@ -234,6 +242,38 @@ func (r *NodeReconciler) specStatefulSet(node *aptosv1alpha1.Node, sts *appsv1.S
 
 	sts.ObjectMeta.Labels = node.Labels
 
+	initContainers := []corev1.Container{}
+
+	if node.Spec.Waypoint == "" {
+		initContainers = append(initContainers, corev1.Container{
+			Name:  "download-waypoint",
+			Image: "curlimages/curl:8.00.1",
+			Env: []corev1.EnvVar{
+				{
+					Name:  "KOTAL_NETWORK",
+					Value: string(node.Spec.Network),
+				},
+				{
+					Name:  shared.EnvDataPath,
+					Value: shared.PathData(homeDir),
+				},
+			},
+			Command: []string{"/bin/sh"},
+			Args:    []string{fmt.Sprintf("%s/download_waypoint.sh", shared.PathConfig(homeDir))},
+			VolumeMounts: []corev1.VolumeMount{
+				{
+					Name:      "config",
+					MountPath: shared.PathConfig(homeDir),
+					ReadOnly:  true,
+				},
+				{
+					Name:      "data",
+					MountPath: shared.PathData(homeDir),
+				},
+			},
+		})
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.Labels,
@@ -245,6 +285,7 @@ func (r *NodeReconciler) specStatefulSet(node *aptosv1alpha1.Node, sts *appsv1.S
 			},
 			Spec: corev1.PodSpec{
 				SecurityContext: shared.SecurityContext(),
+				InitContainers:  initContainers,
 				Containers: []corev1.Container{
 					{
 						Name:    "node",

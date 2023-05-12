@@ -13,7 +13,8 @@ import (
 )
 
 type Waypoint struct {
-	FromConfig string `yaml:"from_config"`
+	FromConfig string `yaml:"from_config,omitempty"`
+	FromFile   string `yaml:"from_file,omitempty"`
 }
 
 type Execution struct {
@@ -100,13 +101,19 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 	homeDir := aptosClients.NewClient(node).HomeDir()
 	configDir := shared.PathConfig(homeDir)
 
+	waypoint := Waypoint{}
+
+	if node.Spec.Waypoint == "" {
+		waypoint.FromFile = fmt.Sprintf("%s/kotal_waypoint.txt", shared.PathData(homeDir))
+	} else {
+		waypoint.FromConfig = node.Spec.Waypoint
+	}
+
 	c := Config{
 		Base: Base{
-			Role:    role,
-			DataDir: shared.PathData(homeDir),
-			Waypoint: Waypoint{
-				FromConfig: node.Spec.Waypoint,
-			},
+			Role:     role,
+			DataDir:  shared.PathData(homeDir),
+			Waypoint: waypoint,
 		},
 		Execution: Execution{
 			GenesisFileLocation: fmt.Sprintf("%s/genesis.blob", configDir),

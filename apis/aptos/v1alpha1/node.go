@@ -34,7 +34,7 @@ type NodeSpec struct {
 	// Validator enables validator mode
 	Validator bool `json:"validator,omitempty"`
 	// Waypoint provides an off-chain mechanism to verify the sync process after restart or epoch change
-	Waypoint string `json:"waypoint"`
+	Waypoint string `json:"waypoint,omitempty"`
 	// GenesisConfigmapName is Kubernetes configmap name holding genesis blob
 	GenesisConfigmapName string `json:"genesisConfigmapName"`
 	// NodePrivateKeySecretName is the secret name holding node private key
