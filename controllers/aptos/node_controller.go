@@ -27,6 +27,8 @@ type NodeReconciler struct {
 var (
 	//go:embed download_waypoint.sh
 	downloadWaypoint string
+	//go:embed download_genesis_block.sh
+	downloadGenesisBlock string
 )
 
 // +kubebuilder:rbac:groups=aptos.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
@@ -85,6 +87,7 @@ func (n *NodeReconciler) specConfigmap(node *aptosv1alpha1.Node, configmap *core
 
 	configmap.Data["config.yaml"] = config
 	configmap.Data["download_waypoint.sh"] = downloadWaypoint
+	configmap.Data["download_genesis_block.sh"] = downloadGenesisBlock
 
 }
 
@@ -274,6 +277,56 @@ func (r *NodeReconciler) specStatefulSet(node *aptosv1alpha1.Node, sts *appsv1.S
 		})
 	}
 
+	sources := []corev1.VolumeProjection{
+		{
+			// config.yaml
+			ConfigMap: &corev1.ConfigMapProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Name,
+				},
+			},
+		},
+	}
+
+	if node.Spec.GenesisConfigmapName == "" {
+		initContainers = append(initContainers, corev1.Container{
+			Name:  "download-genesis-block",
+			Image: "curlimages/curl:8.00.1",
+			Env: []corev1.EnvVar{
+				{
+					Name:  "KOTAL_NETWORK",
+					Value: string(node.Spec.Network),
+				},
+				{
+					Name:  shared.EnvDataPath,
+					Value: shared.PathData(homeDir),
+				},
+			},
+			Command: []string{"/bin/sh"},
+			Args:    []string{fmt.Sprintf("%s/download_genesis_block.sh", shared.PathConfig(homeDir))},
+			VolumeMounts: []corev1.VolumeMount{
+				{
+					Name:      "config",
+					MountPath: shared.PathConfig(homeDir),
+					ReadOnly:  true,
+				},
+				{
+					Name:      "data",
+					MountPath: shared.PathData(homeDir),
+				},
+			},
+		})
+	} else {
+		sources = append(sources, corev1.VolumeProjection{
+			// genesis.blob
+			ConfigMap: &corev1.ConfigMapProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: node.Spec.GenesisConfigmapName,
+				},
+			},
+		})
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.Labels,
@@ -329,24 +382,7 @@ func (r *NodeReconciler) specStatefulSet(node *aptosv1alpha1.Node, sts *appsv1.S
 						Name: "config",
 						VolumeSource: corev1.VolumeSource{
 							Projected: &corev1.ProjectedVolumeSource{
-								Sources: []corev1.VolumeProjection{
-									{
-										// config.yaml
-										ConfigMap: &corev1.ConfigMapProjection{
-											LocalObjectReference: corev1.LocalObjectReference{
-												Name: node.Name,
-											},
-										},
-									},
-									{
-										// genesis.blob
-										ConfigMap: &corev1.ConfigMapProjection{
-											LocalObjectReference: corev1.LocalObjectReference{
-												Name: node.Spec.GenesisConfigmapName,
-											},
-										},
-									},
-								},
+								Sources: sources,
 							},
 						},
 					},

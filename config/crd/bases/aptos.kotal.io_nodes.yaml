@@ -120,7 +120,6 @@ spec:
                   sync process after restart or epoch change
                 type: string
             required:
-            - genesisConfigmapName
             - network
             type: object
           status:

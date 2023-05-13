@@ -100,13 +100,21 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 
 	homeDir := aptosClients.NewClient(node).HomeDir()
 	configDir := shared.PathConfig(homeDir)
+	dataDir := shared.PathData(homeDir)
 
 	waypoint := Waypoint{}
+	var genesisFileLocation string
 
 	if node.Spec.Waypoint == "" {
 		waypoint.FromFile = fmt.Sprintf("%s/kotal_waypoint.txt", shared.PathData(homeDir))
 	} else {
 		waypoint.FromConfig = node.Spec.Waypoint
+	}
+
+	if node.Spec.GenesisConfigmapName == "" {
+		genesisFileLocation = fmt.Sprintf("%s/kotal_genesis.blob", dataDir)
+	} else {
+		genesisFileLocation = fmt.Sprintf("%s/genesis.blob", configDir)
 	}
 
 	c := Config{
@@ -116,7 +124,7 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 			Waypoint: waypoint,
 		},
 		Execution: Execution{
-			GenesisFileLocation: fmt.Sprintf("%s/genesis.blob", configDir),
+			GenesisFileLocation: genesisFileLocation,
 		},
 		FullNodeNetworks: []Network{
 			{

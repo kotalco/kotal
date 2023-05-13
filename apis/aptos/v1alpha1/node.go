@@ -36,7 +36,7 @@ type NodeSpec struct {
 	// Waypoint provides an off-chain mechanism to verify the sync process after restart or epoch change
 	Waypoint string `json:"waypoint,omitempty"`
 	// GenesisConfigmapName is Kubernetes configmap name holding genesis blob
-	GenesisConfigmapName string `json:"genesisConfigmapName"`
+	GenesisConfigmapName string `json:"genesisConfigmapName,omitempty"`
 	// NodePrivateKeySecretName is the secret name holding node private key
 	NodePrivateKeySecretName string `json:"nodePrivateKeySecretName,omitempty"`
 	// PeerId is the node identity
