@@ -51,11 +51,16 @@ type API struct {
 	Address string `yaml:"address"`
 }
 
+type InspectionService struct {
+	Port uint `yaml:"port"`
+}
+
 type Config struct {
-	Base             Base      `yaml:"base"`
-	Execution        Execution `yaml:"execution"`
-	FullNodeNetworks []Network `yaml:"full_node_networks,omitempty"`
-	API              API       `yaml:"api"`
+	Base              Base              `yaml:"base"`
+	Execution         Execution         `yaml:"execution"`
+	FullNodeNetworks  []Network         `yaml:"full_node_networks,omitempty"`
+	API               API               `yaml:"api"`
+	InspectionService InspectionService `yaml:"inspection_service"`
 }
 
 // ConfigFromSpec generates config.toml file from node spec
@@ -138,6 +143,9 @@ func ConfigFromSpec(node *aptosv1alpha1.Node, client client.Client) (config stri
 		API: API{
 			Enabled: node.Spec.API,
 			Address: fmt.Sprintf("%s:%d", shared.Host(node.Spec.API), node.Spec.APIPort),
+		},
+		InspectionService: InspectionService{
+			Port: node.Spec.MetricsPort,
 		},
 	}
 

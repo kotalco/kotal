@@ -34,11 +34,12 @@ var _ = Describe("aptos node controller", func() {
 	testImage := "kotalco/aptos:controller-test"
 
 	spec := aptosv1alpha1.NodeSpec{
-		Image:   testImage,
-		Network: "testnet",
-		API:     true,
-		APIPort: 4321,
-		P2PPort: 5432,
+		Image:       testImage,
+		Network:     "testnet",
+		API:         true,
+		APIPort:     4321,
+		P2PPort:     5432,
+		MetricsPort: 9099,
 	}
 
 	toCreate := &aptosv1alpha1.Node{
@@ -141,8 +142,8 @@ var _ = Describe("aptos node controller", func() {
 				},
 				{
 					Name:       "metrics",
-					Port:       int32(9101),
-					TargetPort: intstr.FromInt(9101),
+					Port:       int32(spec.MetricsPort),
+					TargetPort: intstr.FromInt(int(spec.MetricsPort)),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{

@@ -21,6 +21,7 @@ spec:
   api: true
   apiPort: 6789
   p2pPort: 7555
+  metricsPort: 9102
   waypoint: "0:2f485c632e01f81a4ea23e5ed963335527c0d14e727e48ba188169df56987872"
   genesisConfigmapName: devnet-genesis
   nodePrivateKeySecretName: node-private-key

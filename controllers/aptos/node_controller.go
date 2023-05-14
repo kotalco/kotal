@@ -191,10 +191,9 @@ func (r *NodeReconciler) specService(node *aptosv1alpha1.Node, svc *corev1.Servi
 			Protocol:   corev1.ProtocolTCP,
 		},
 		{
-			// TODO: update node.spec with metricsPort
 			Name:       "metrics",
-			Port:       int32(9101),
-			TargetPort: intstr.FromInt(9101),
+			Port:       int32(node.Spec.MetricsPort),
+			TargetPort: intstr.FromInt(int(node.Spec.MetricsPort)),
 			Protocol:   corev1.ProtocolTCP,
 		},
 	}
