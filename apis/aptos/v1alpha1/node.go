@@ -49,6 +49,8 @@ type NodeSpec struct {
 	APIPort uint `json:"apiPort,omitempty"`
 	// P2PPort is p2p communications port
 	P2PPort uint `json:"p2pPort,omitempty"`
+	// MetricsPort is metrics server port
+	MetricsPort uint `json:"metricsPort,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }

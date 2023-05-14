@@ -48,6 +48,9 @@ spec:
               image:
                 description: Image is Aptos node client image
                 type: string
+              metricsPort:
+                description: MetricsPort is metrics server port
+                type: integer
               network:
                 description: Network is Aptos network to join and sync
                 enum:
