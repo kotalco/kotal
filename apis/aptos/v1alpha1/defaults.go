@@ -26,6 +26,8 @@ const (
 )
 
 const (
+	// DefaultMetricsPort is the default metrics server port
+	DefaultMetricsPort uint = 9101
 	// DefaultAPIPort is the default API server port
 	DefaultAPIPort uint = 8080
 	// DefaultFullnodeP2PPort is the default full node p2p port

@@ -26,6 +26,7 @@ var _ = Describe("Aptos node defaulting", func() {
 		Expect(node.Spec.MemoryLimit).To(Equal(DefaultNodeMemoryLimit))
 		Expect(node.Spec.Storage).To(Equal(DefaultNodeStorageRequest))
 		Expect(node.Spec.APIPort).To(Equal(DefaultAPIPort))
+		Expect(node.Spec.MetricsPort).To(Equal(DefaultMetricsPort))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultValidatorP2PPort))
 
 	})

@@ -48,6 +48,10 @@ func (r *Node) Default() {
 		}
 	}
 
+	if r.Spec.MetricsPort == 0 {
+		r.Spec.MetricsPort = DefaultMetricsPort
+	}
+
 	if r.Spec.APIPort == 0 {
 		r.Spec.APIPort = DefaultAPIPort
 	}
