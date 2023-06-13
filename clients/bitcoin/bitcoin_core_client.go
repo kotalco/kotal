@@ -27,7 +27,7 @@ var hashCash map[string]string = map[string]string{}
 // Images
 const (
 	// BitcoinCoreHomeDir is Bitcoin core image home dir
-	BitcoinCoreHomeDir = "/home/bitcoin"
+	BitcoinCoreHomeDir = "/data"
 )
 
 // Command returns environment variables for the client
