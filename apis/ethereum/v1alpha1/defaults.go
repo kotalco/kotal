@@ -11,11 +11,11 @@ var (
 
 const (
 	// DefaultBesuImage is hyperledger besu image
-	DefaultBesuImage = "hyperledger/besu:22.10.0"
+	DefaultBesuImage = "hyperledger/besu:23.4.1"
 	// DefaultGethImage is go-ethereum image
-	DefaultGethImage = "kotalco/geth:v1.10.26"
+	DefaultGethImage = "kotalco/geth:v1.12.0"
 	// DefaultNethermindImage is nethermind image
-	DefaultNethermindImage = "kotalco/nethermind:v1.14.5"
+	DefaultNethermindImage = "kotalco/nethermind:v1.19.2"
 )
 
 // Node defaults
