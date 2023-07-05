@@ -4,10 +4,10 @@ metadata:
   name: lighthouse-validator
 spec:
   client: lighthouse
-  network: mainnet
+  network: goerli
   logging: info
   beaconEndpoints:
-    - http://10.96.130.88:9999
+    - http://lighthouse-beacon-node:8888
   graffiti: Validated by Kotal
   keystores:
     - secretName: my-validator
