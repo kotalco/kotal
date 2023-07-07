@@ -154,8 +154,7 @@ func (r *NodeReconciler) specService(node *bitcoinv1alpha1.Node, svc *corev1.Ser
 		{
 			Name:       "p2p",
 			Port:       int32(node.Spec.P2PPort),
-			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("p2p"),
 		},
 	}
 
@@ -163,8 +162,7 @@ func (r *NodeReconciler) specService(node *bitcoinv1alpha1.Node, svc *corev1.Ser
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "rpc",
 			Port:       int32(node.Spec.RPCPort),
-			TargetPort: intstr.FromInt(int(node.Spec.RPCPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("rpc"),
 		})
 	}
 
@@ -205,6 +203,20 @@ func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1
 
 	sts.ObjectMeta.Labels = node.Labels
 
+	ports := []corev1.ContainerPort{
+		{
+			Name:          "p2p",
+			ContainerPort: int32(node.Spec.P2PPort),
+		},
+	}
+
+	if node.Spec.RPC {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "rpc",
+			ContainerPort: int32(node.Spec.RPCPort),
+		})
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.Labels,
@@ -223,6 +235,7 @@ func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1
 						Command: cmd,
 						Args:    args,
 						Env:     env,
+						Ports:   ports,
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",

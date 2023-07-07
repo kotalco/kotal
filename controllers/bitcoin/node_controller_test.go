@@ -152,13 +152,13 @@ var _ = Describe("Bitcoin node controller", func() {
 				{
 					Name:       "p2p",
 					Port:       int32(bitcoinv1alpha1.DefaultMainnetP2PPort),
-					TargetPort: intstr.FromInt(int(bitcoinv1alpha1.DefaultMainnetP2PPort)),
+					TargetPort: intstr.FromString("p2p"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
 					Name:       "rpc",
 					Port:       int32(bitcoinv1alpha1.DefaultMainnetRPCPort),
-					TargetPort: intstr.FromInt(int(bitcoinv1alpha1.DefaultMainnetRPCPort)),
+					TargetPort: intstr.FromString("rpc"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			},
