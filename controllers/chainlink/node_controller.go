@@ -122,8 +122,7 @@ func (r *NodeReconciler) specService(node *chainlinkv1alpha1.Node, svc *corev1.S
 		{
 			Name:       "p2p",
 			Port:       int32(node.Spec.P2PPort),
-			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("p2p"),
 		},
 	}
 
@@ -131,8 +130,7 @@ func (r *NodeReconciler) specService(node *chainlinkv1alpha1.Node, svc *corev1.S
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "api",
 			Port:       int32(node.Spec.APIPort),
-			TargetPort: intstr.FromInt(int(node.Spec.APIPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("api"),
 		})
 	}
 
@@ -140,8 +138,7 @@ func (r *NodeReconciler) specService(node *chainlinkv1alpha1.Node, svc *corev1.S
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "tls",
 			Port:       int32(node.Spec.TLSPort),
-			TargetPort: intstr.FromInt(int(node.Spec.TLSPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("tls"),
 		})
 	}
 
@@ -314,6 +311,27 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 
 	sts.ObjectMeta.Labels = node.Labels
 
+	ports := []corev1.ContainerPort{
+		{
+			Name:          "p2p",
+			ContainerPort: int32(node.Spec.P2PPort),
+		},
+	}
+
+	if node.Spec.API {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "api",
+			ContainerPort: int32(node.Spec.APIPort),
+		})
+	}
+
+	if node.Spec.TLSPort != 0 {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "tls",
+			ContainerPort: int32(node.Spec.TLSPort),
+		})
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.Labels,
@@ -355,6 +373,7 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 						Command: command,
 						Args:    args,
 						Env:     env,
+						Ports:   ports,
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
 								corev1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPU),

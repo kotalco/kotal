@@ -181,13 +181,13 @@ var _ = Describe("Chainlink node controller", func() {
 				{
 					Name:       "p2p",
 					Port:       int32(toCreate.Spec.P2PPort),
-					TargetPort: intstr.FromInt(int(toCreate.Spec.P2PPort)),
+					TargetPort: intstr.FromString("p2p"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
 					Name:       "api",
 					Port:       int32(toCreate.Spec.APIPort),
-					TargetPort: intstr.FromInt(int(toCreate.Spec.APIPort)),
+					TargetPort: intstr.FromString("api"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			},
