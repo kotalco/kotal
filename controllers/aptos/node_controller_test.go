@@ -137,19 +137,19 @@ var _ = Describe("aptos node controller", func() {
 				{
 					Name:       "p2p",
 					Port:       int32(spec.P2PPort),
-					TargetPort: intstr.FromInt(int(spec.P2PPort)),
+					TargetPort: intstr.FromString("p2p"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
 					Name:       "metrics",
 					Port:       int32(spec.MetricsPort),
-					TargetPort: intstr.FromInt(int(spec.MetricsPort)),
+					TargetPort: intstr.FromString("metrics"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
 					Name:       "api",
 					Port:       int32(spec.APIPort),
-					TargetPort: intstr.FromInt(int(spec.APIPort)),
+					TargetPort: intstr.FromString("api"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			},
