@@ -125,13 +125,12 @@ func (r *PeerReconciler) specService(peer *ipfsv1alpha1.Peer, svc *corev1.Servic
 		{
 			Name:       "swarm",
 			Port:       4001,
-			TargetPort: intstr.FromInt(4001),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("swarm"),
 		},
 		{
 			Name:       "swarm-udp",
 			Port:       4001,
-			TargetPort: intstr.FromInt(4001),
+			TargetPort: intstr.FromString("swarm-udp"),
 			Protocol:   corev1.ProtocolUDP,
 		},
 	}
@@ -140,8 +139,7 @@ func (r *PeerReconciler) specService(peer *ipfsv1alpha1.Peer, svc *corev1.Servic
 		ports = append(ports, corev1.ServicePort{
 			Name:       "api",
 			Port:       int32(peer.Spec.APIPort),
-			TargetPort: intstr.FromInt(int(peer.Spec.APIPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("api"),
 		})
 	}
 
@@ -149,8 +147,7 @@ func (r *PeerReconciler) specService(peer *ipfsv1alpha1.Peer, svc *corev1.Servic
 		ports = append(ports, corev1.ServicePort{
 			Name:       "gateway",
 			Port:       int32(peer.Spec.GatewayPort),
-			TargetPort: intstr.FromInt(int(peer.Spec.GatewayPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("gateway"),
 		})
 	}
 
@@ -415,6 +412,32 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 		VolumeMounts: volumeMounts,
 	})
 
+	ports := []corev1.ContainerPort{
+		{
+			Name:          "swarm",
+			ContainerPort: 4001,
+		},
+		{
+			Name:          "swarm-udp",
+			ContainerPort: 4001,
+			Protocol:      corev1.ProtocolUDP,
+		},
+	}
+
+	if peer.Spec.API {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "api",
+			ContainerPort: int32(peer.Spec.APIPort),
+		})
+	}
+
+	if peer.Spec.Gateway {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "gateway",
+			ContainerPort: int32(peer.Spec.GatewayPort),
+		})
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: labels,
@@ -433,6 +456,7 @@ func (r *PeerReconciler) specStatefulSet(peer *ipfsv1alpha1.Peer, sts *appsv1.St
 						Env:          env,
 						Command:      command,
 						Args:         args,
+						Ports:        ports,
 						VolumeMounts: volumeMounts,
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{

@@ -121,44 +121,44 @@ func (r *ClusterPeerReconciler) specService(peer *ipfsv1alpha1.ClusterPeer, svc 
 		{
 			Name:       "swarm",
 			Port:       9096,
-			TargetPort: intstr.FromInt(9096),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("swarm"),
 		},
 		{
 			Name:       "swarm-udp",
 			Port:       9096,
-			TargetPort: intstr.FromInt(9096),
+			TargetPort: intstr.FromString("swarm-udp"),
 			Protocol:   corev1.ProtocolUDP,
 		},
 		{
+			// Pinning service API
+			// https://ipfscluster.io/documentation/reference/pinsvc_api/
 			Name:       "api",
 			Port:       5001,
-			TargetPort: intstr.FromInt(int(5001)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("api"),
 		},
 		{
+			// Proxy API
+			// https://ipfscluster.io/documentation/reference/proxy/
 			Name:       "proxy-api",
 			Port:       9095,
-			TargetPort: intstr.FromInt(int(9095)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("proxy-api"),
 		},
 		{
+			// REST API
+			//https://ipfscluster.io/documentation/reference/api/
 			Name:       "rest",
 			Port:       9094,
-			TargetPort: intstr.FromInt(int(9094)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("rest"),
 		},
 		{
 			Name:       "metrics",
 			Port:       8888,
-			TargetPort: intstr.FromInt(int(8888)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("metrics"),
 		},
 		{
 			Name:       "tracing",
 			Port:       6831,
-			TargetPort: intstr.FromInt(int(6831)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("tracing"),
 		},
 	}
 
@@ -333,6 +333,38 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 		})
 	}
 
+	ports := []corev1.ContainerPort{
+		{
+			Name:          "swarm",
+			ContainerPort: 9096,
+		},
+		{
+			Name:          "swarm-udp",
+			ContainerPort: 9096,
+			Protocol:      corev1.ProtocolUDP,
+		},
+		{
+			Name:          "api",
+			ContainerPort: 5001,
+		},
+		{
+			Name:          "proxy-api",
+			ContainerPort: 9095,
+		},
+		{
+			Name:          "rest",
+			ContainerPort: 9094,
+		},
+		{
+			Name:          "metrics",
+			ContainerPort: 8888,
+		},
+		{
+			Name:          "tracing",
+			ContainerPort: 6831,
+		},
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: labels,
@@ -371,6 +403,7 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 						Command: command,
 						Env:     env,
 						Args:    args,
+						Ports:   ports,
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",

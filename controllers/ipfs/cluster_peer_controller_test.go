@@ -238,49 +238,43 @@ var _ = Describe("IPFS cluster peer controller", func() {
 				{
 					Name:       "swarm",
 					Port:       9096,
-					TargetPort: intstr.FromInt(9096),
+					TargetPort: intstr.FromString("swarm"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
 					Name:       "swarm-udp",
 					Port:       9096,
-					TargetPort: intstr.FromInt(9096),
+					TargetPort: intstr.FromString("swarm-udp"),
 					Protocol:   corev1.ProtocolUDP,
 				},
 				{
-					// Pinning service API
-					// https://ipfscluster.io/documentation/reference/pinsvc_api/
 					Name:       "api",
 					Port:       5001,
-					TargetPort: intstr.FromInt(int(5001)),
+					TargetPort: intstr.FromString("api"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
-					// Proxy API
-					// https://ipfscluster.io/documentation/reference/proxy/
 					Name:       "proxy-api",
 					Port:       9095,
-					TargetPort: intstr.FromInt(int(9095)),
+					TargetPort: intstr.FromString("proxy-api"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
-					// REST API
-					//https://ipfscluster.io/documentation/reference/api/
 					Name:       "rest",
 					Port:       9094,
-					TargetPort: intstr.FromInt(int(9094)),
+					TargetPort: intstr.FromString("rest"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
 					Name:       "metrics",
 					Port:       8888,
-					TargetPort: intstr.FromInt(int(8888)),
+					TargetPort: intstr.FromString("metrics"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
 					Name:       "tracing",
 					Port:       6831,
-					TargetPort: intstr.FromInt(int(6831)),
+					TargetPort: intstr.FromString("tracing"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			},
