@@ -134,13 +134,13 @@ var _ = Describe("Filecoin node controller", func() {
 				{
 					Name:       "p2p",
 					Port:       int32(filecoinv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(filecoinv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("p2p"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
 					Name:       "api",
 					Port:       int32(filecoinv1alpha1.DefaultAPIPort),
-					TargetPort: intstr.FromInt(int(filecoinv1alpha1.DefaultAPIPort)),
+					TargetPort: intstr.FromString("api"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			},

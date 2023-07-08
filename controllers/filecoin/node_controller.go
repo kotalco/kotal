@@ -233,8 +233,7 @@ func (r *NodeReconciler) specService(node *filecoinv1alpha1.Node, svc *corev1.Se
 		{
 			Name:       "p2p",
 			Port:       int32(node.Spec.P2PPort),
-			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("p2p"),
 		},
 	}
 
@@ -242,8 +241,7 @@ func (r *NodeReconciler) specService(node *filecoinv1alpha1.Node, svc *corev1.Se
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "api",
 			Port:       int32(node.Spec.APIPort),
-			TargetPort: intstr.FromInt(int(node.Spec.APIPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("api"),
 		})
 	}
 
@@ -255,6 +253,20 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 	labels := node.Labels
 
 	sts.ObjectMeta.Labels = labels
+
+	ports := []corev1.ContainerPort{
+		{
+			Name:          "p2p",
+			ContainerPort: int32(node.Spec.P2PPort),
+		},
+	}
+
+	if node.Spec.API {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "api",
+			ContainerPort: int32(node.Spec.APIPort),
+		})
+	}
 
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
@@ -302,6 +314,7 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 						Args:    args,
 						Command: cmd,
 						Env:     env,
+						Ports:   ports,
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "data",
