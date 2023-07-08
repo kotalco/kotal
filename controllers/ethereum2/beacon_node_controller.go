@@ -92,14 +92,13 @@ func (r *BeaconNodeReconciler) specService(node *ethereum2v1alpha1.BeaconNode, s
 		{
 			Name:       "discovery",
 			Port:       int32(node.Spec.P2PPort),
-			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
+			TargetPort: intstr.FromString("discovery"),
 			Protocol:   corev1.ProtocolUDP,
 		},
 		{
 			Name:       "p2p",
 			Port:       int32(node.Spec.P2PPort),
-			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("p2p"),
 		},
 	}
 
@@ -107,8 +106,7 @@ func (r *BeaconNodeReconciler) specService(node *ethereum2v1alpha1.BeaconNode, s
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "rpc",
 			Port:       int32(node.Spec.RPCPort),
-			TargetPort: intstr.FromInt(int(node.Spec.RPCPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("rpc"),
 		})
 	}
 
@@ -116,8 +114,7 @@ func (r *BeaconNodeReconciler) specService(node *ethereum2v1alpha1.BeaconNode, s
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "grpc",
 			Port:       int32(node.Spec.GRPCPort),
-			TargetPort: intstr.FromInt(int(node.Spec.GRPCPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("grpc"),
 		})
 	}
 
@@ -125,8 +122,7 @@ func (r *BeaconNodeReconciler) specService(node *ethereum2v1alpha1.BeaconNode, s
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "rest",
 			Port:       int32(node.Spec.RESTPort),
-			TargetPort: intstr.FromInt(int(node.Spec.RESTPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("rest"),
 		})
 	}
 
@@ -335,6 +331,39 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 			}
 			initContainers = append(initContainers, checkpointSyncContainer)
 		}
+	}
+
+	ports := []corev1.ContainerPort{
+		{
+			Name:          "discovery",
+			ContainerPort: int32(node.Spec.P2PPort),
+			Protocol:      corev1.ProtocolUDP,
+		},
+		{
+			Name:          "p2p",
+			ContainerPort: int32(node.Spec.P2PPort),
+		},
+	}
+
+	if node.Spec.RPC {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "rpc",
+			ContainerPort: int32(node.Spec.RPCPort),
+		})
+	}
+
+	if node.Spec.GRPC {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "grpc",
+			ContainerPort: int32(node.Spec.GRPCPort),
+		})
+	}
+
+	if node.Spec.REST {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "rest",
+			ContainerPort: int32(node.Spec.RESTPort),
+		})
 	}
 
 	sts.Spec = appsv1.StatefulSetSpec{

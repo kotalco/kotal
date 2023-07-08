@@ -131,13 +131,13 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 				{
 					Name:       "discovery",
 					Port:       int32(ethereum2v1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereum2v1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("discovery"),
 					Protocol:   corev1.ProtocolUDP,
 				},
 				{
 					Name:       "p2p",
 					Port:       int32(ethereum2v1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereum2v1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("p2p"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			}))
