@@ -134,8 +134,7 @@ func (r *NodeReconciler) specService(node *polkadotv1alpha1.Node, svc *corev1.Se
 		{
 			Name:       "p2p",
 			Port:       int32(node.Spec.P2PPort),
-			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("p2p"),
 		},
 	}
 
@@ -143,8 +142,7 @@ func (r *NodeReconciler) specService(node *polkadotv1alpha1.Node, svc *corev1.Se
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "prometheus",
 			Port:       int32(node.Spec.PrometheusPort),
-			TargetPort: intstr.FromInt(int(node.Spec.PrometheusPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("prometheus"),
 		})
 	}
 
@@ -152,8 +150,7 @@ func (r *NodeReconciler) specService(node *polkadotv1alpha1.Node, svc *corev1.Se
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "rpc",
 			Port:       int32(node.Spec.RPCPort),
-			TargetPort: intstr.FromInt(int(node.Spec.RPCPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("rpc"),
 		})
 	}
 
@@ -161,8 +158,7 @@ func (r *NodeReconciler) specService(node *polkadotv1alpha1.Node, svc *corev1.Se
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "ws",
 			Port:       int32(node.Spec.WSPort),
-			TargetPort: intstr.FromInt(int(node.Spec.WSPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("ws"),
 		})
 	}
 
@@ -293,6 +289,34 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 		initContainers = append(initContainers, convertEnodePrivateKey)
 	}
 
+	ports := []corev1.ContainerPort{
+		{
+			Name:          "p2p",
+			ContainerPort: int32(node.Spec.P2PPort),
+		},
+	}
+
+	if node.Spec.Prometheus {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "prometheus",
+			ContainerPort: int32(node.Spec.PrometheusPort),
+		})
+	}
+
+	if node.Spec.RPC {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "rpc",
+			ContainerPort: int32(node.Spec.RPCPort),
+		})
+	}
+
+	if node.Spec.WS {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "ws",
+			ContainerPort: int32(node.Spec.WSPort),
+		})
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.Labels,
@@ -310,6 +334,7 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 						Name:         "node",
 						Image:        node.Spec.Image,
 						Args:         args,
+						Ports:        ports,
 						VolumeMounts: r.nodeVolumeMounts(node, homeDir),
 						Resources: corev1.ResourceRequirements{
 							Requests: map[corev1.ResourceName]resource.Quantity{
