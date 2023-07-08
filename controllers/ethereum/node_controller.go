@@ -531,11 +531,58 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 	labels := node.GetLabels()
 	// used by geth to init genesis and import account(s)
 	initContainers := []corev1.Container{}
+
+	client := node.Spec.Client
+	ports := []corev1.ContainerPort{
+		{
+			Name:          "discovery",
+			ContainerPort: int32(node.Spec.P2PPort),
+			Protocol:      corev1.ProtocolUDP,
+		},
+		{
+			Name:          "p2p",
+			ContainerPort: int32(node.Spec.P2PPort),
+		},
+	}
+
+	if node.Spec.RPC {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "rpc",
+			ContainerPort: int32(node.Spec.RPCPort),
+		})
+	}
+
+	if node.Spec.WS {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "ws",
+			ContainerPort: int32(node.Spec.WSPort),
+		})
+	}
+
+	if node.Spec.Engine {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "engine",
+			ContainerPort: int32(node.Spec.EnginePort),
+		})
+	}
+
+	if node.Spec.GraphQL {
+		targetPort := node.Spec.GraphQLPort
+		if client == ethereumv1alpha1.GethClient {
+			targetPort = node.Spec.RPCPort
+		}
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "graphql",
+			ContainerPort: int32(targetPort),
+		})
+	}
+
 	// node client container
 	nodeContainer := corev1.Container{
 		Name:  "node",
 		Image: node.Spec.Image,
 		Args:  args,
+		Ports: ports,
 		Resources: corev1.ResourceRequirements{
 			Requests: corev1.ResourceList{
 				corev1.ResourceCPU:    resource.MustParse(node.Spec.Resources.CPU),
@@ -768,21 +815,19 @@ func (r *NodeReconciler) reconcileSecret(ctx context.Context, node *ethereumv1al
 // specService updates node service spec
 func (r *NodeReconciler) specService(node *ethereumv1alpha1.Node, svc *corev1.Service) {
 	labels := node.GetLabels()
-	client := node.Spec.Client
 
 	svc.ObjectMeta.Labels = labels
 	svc.Spec.Ports = []corev1.ServicePort{
 		{
 			Name:       "discovery",
 			Port:       int32(node.Spec.P2PPort),
-			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
+			TargetPort: intstr.FromString("discovery"),
 			Protocol:   corev1.ProtocolUDP,
 		},
 		{
 			Name:       "p2p",
 			Port:       int32(node.Spec.P2PPort),
-			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("p2p"),
 		},
 	}
 
@@ -790,8 +835,7 @@ func (r *NodeReconciler) specService(node *ethereumv1alpha1.Node, svc *corev1.Se
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "rpc",
 			Port:       int32(node.Spec.RPCPort),
-			TargetPort: intstr.FromInt(int(node.Spec.RPCPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("rpc"),
 		})
 	}
 
@@ -799,8 +843,7 @@ func (r *NodeReconciler) specService(node *ethereumv1alpha1.Node, svc *corev1.Se
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "ws",
 			Port:       int32(node.Spec.WSPort),
-			TargetPort: intstr.FromInt(int(node.Spec.WSPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("ws"),
 		})
 	}
 
@@ -808,21 +851,15 @@ func (r *NodeReconciler) specService(node *ethereumv1alpha1.Node, svc *corev1.Se
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "engine",
 			Port:       int32(node.Spec.EnginePort),
-			TargetPort: intstr.FromInt(int(node.Spec.EnginePort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("engine"),
 		})
 	}
 
 	if node.Spec.GraphQL {
-		targetPort := node.Spec.GraphQLPort
-		if client == ethereumv1alpha1.GethClient {
-			targetPort = node.Spec.RPCPort
-		}
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "graphql",
 			Port:       int32(node.Spec.GraphQLPort),
-			TargetPort: intstr.FromInt(int(targetPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("graphql"),
 		})
 	}
 

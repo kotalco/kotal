@@ -122,13 +122,13 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name:       "discovery",
 					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("discovery"),
 					Protocol:   corev1.ProtocolUDP,
 				},
 				{
 					Name:       "p2p",
 					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("p2p"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			}))
@@ -314,13 +314,13 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name:       "discovery",
 					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("discovery"),
 					Protocol:   corev1.ProtocolUDP,
 				},
 				{
 					Name:       "p2p",
 					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("p2p"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			}))
@@ -516,13 +516,13 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name:       "discovery",
 					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("discovery"),
 					Protocol:   corev1.ProtocolUDP,
 				},
 				{
 					Name:       "p2p",
 					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("p2p"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			}))
@@ -730,13 +730,13 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name:       "discovery",
 					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("discovery"),
 					Protocol:   corev1.ProtocolUDP,
 				},
 				{
 					Name:       "p2p",
 					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("p2p"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			}))
@@ -921,13 +921,13 @@ var _ = Describe("Ethereum network controller", func() {
 				{
 					Name:       "discovery",
 					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("discovery"),
 					Protocol:   corev1.ProtocolUDP,
 				},
 				{
 					Name:       "p2p",
 					Port:       int32(ethereumv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(ethereumv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("p2p"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			}))
