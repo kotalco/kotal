@@ -126,13 +126,12 @@ func (r *NodeReconciler) specService(node *nearv1alpha1.Node, svc *corev1.Servic
 		{
 			Name:       "p2p",
 			Port:       int32(node.Spec.P2PPort),
-			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("p2p"),
 		},
 		{
 			Name:       "discovery",
 			Port:       int32(node.Spec.P2PPort),
-			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
+			TargetPort: intstr.FromString("discovery"),
 			Protocol:   corev1.ProtocolUDP,
 		},
 	}
@@ -141,14 +140,12 @@ func (r *NodeReconciler) specService(node *nearv1alpha1.Node, svc *corev1.Servic
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "rpc",
 			Port:       int32(node.Spec.RPCPort),
-			TargetPort: intstr.FromInt(int(node.Spec.RPCPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("rpc"),
 		})
 		svc.Spec.Ports = append(svc.Spec.Ports, corev1.ServicePort{
 			Name:       "prometheus",
 			Port:       int32(node.Spec.PrometheusPort),
-			TargetPort: intstr.FromInt(int(node.Spec.PrometheusPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("prometheus"),
 		})
 	}
 
@@ -417,6 +414,29 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 		})
 	}
 
+	ports := []corev1.ContainerPort{
+		{
+			Name:          "p2p",
+			ContainerPort: int32(node.Spec.P2PPort),
+		},
+		{
+			Name:          "discovery",
+			ContainerPort: int32(node.Spec.P2PPort),
+			Protocol:      corev1.ProtocolUDP,
+		},
+	}
+
+	if node.Spec.RPC {
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "rpc",
+			ContainerPort: int32(node.Spec.RPCPort),
+		})
+		ports = append(ports, corev1.ContainerPort{
+			Name:          "prometheus",
+			ContainerPort: int32(node.Spec.PrometheusPort),
+		})
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.Labels,
@@ -434,6 +454,7 @@ func (r *NodeReconciler) specStatefulSet(node *nearv1alpha1.Node, sts *appsv1.St
 						Name:         "node",
 						Image:        node.Spec.Image,
 						Args:         args,
+						Ports:        ports,
 						VolumeMounts: r.createVolumeMounts(node, homeDir),
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
