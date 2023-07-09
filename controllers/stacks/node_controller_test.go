@@ -195,13 +195,13 @@ var _ = Describe("Stacks node controller", func() {
 				{
 					Name:       "p2p",
 					Port:       int32(stacksv1alpha1.DefaultP2PPort),
-					TargetPort: intstr.FromInt(int(stacksv1alpha1.DefaultP2PPort)),
+					TargetPort: intstr.FromString("p2p"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 				{
 					Name:       "rpc",
 					Port:       int32(stacksv1alpha1.DefaultRPCPort),
-					TargetPort: intstr.FromInt(int(stacksv1alpha1.DefaultRPCPort)),
+					TargetPort: intstr.FromString("rpc"),
 					Protocol:   corev1.ProtocolTCP,
 				},
 			},

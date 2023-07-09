@@ -196,16 +196,12 @@ func (r *NodeReconciler) specService(node *stacksv1alpha1.Node, svc *corev1.Serv
 		{
 			Name:       "p2p",
 			Port:       int32(node.Spec.P2PPort),
-			TargetPort: intstr.FromInt(int(node.Spec.P2PPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("p2p"),
 		},
-		// TODO: update spec with .RPC
-		// add rpc service port only if RPC is enabled
 		{
 			Name:       "rpc",
 			Port:       int32(node.Spec.RPCPort),
-			TargetPort: intstr.FromInt(int(node.Spec.RPCPort)),
-			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.FromString("rpc"),
 		},
 	}
 
@@ -246,6 +242,17 @@ func (r *NodeReconciler) specStatefulSet(node *stacksv1alpha1.Node, sts *appsv1.
 
 	sts.ObjectMeta.Labels = node.Labels
 
+	ports := []corev1.ContainerPort{
+		{
+			Name:          "p2p",
+			ContainerPort: int32(node.Spec.P2PPort),
+		},
+		{
+			Name:          "rpc",
+			ContainerPort: int32(node.Spec.RPCPort),
+		},
+	}
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.Labels,
@@ -263,6 +270,7 @@ func (r *NodeReconciler) specStatefulSet(node *stacksv1alpha1.Node, sts *appsv1.
 						Image:   node.Spec.Image,
 						Command: cmd,
 						Args:    args,
+						Ports:   ports,
 						Env:     env,
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
