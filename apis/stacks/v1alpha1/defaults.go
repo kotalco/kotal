@@ -11,7 +11,7 @@ const (
 
 const (
 	// DefaultStacksNodeImage is the default Stacks node client image
-	DefaultStacksNodeImage = "kotalco/stacks:2.05.0.1.0"
+	DefaultStacksNodeImage = "kotalco/stacks:2.4.0.0.0"
 )
 
 // Resources
