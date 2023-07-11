@@ -21,10 +21,6 @@ const (
 	PolkadotArgRPCPort = "--rpc-port"
 	// PolkadotArgRPCCors is argument used to set origins allowed to access the JSON-RPC HTTP and WS servers
 	PolkadotArgRPCCors = "--rpc-cors"
-	// PolkadotArgWSExternal is argument used to enable websocket server
-	PolkadotArgWSExternal = "--ws-external"
-	// PolkadotArgWSPort is argument used to set websocket server port
-	PolkadotArgWSPort = "--ws-port"
 	// PolkadotArgNodeKeyFile is argument used to locate node key
 	PolkadotArgNodeKeyFile = "--node-key-file"
 	// PolkadotArgNodeKeyType is argument used to set node key type

@@ -313,7 +313,7 @@ func (r *NodeReconciler) specStatefulSet(node *polkadotv1alpha1.Node, sts *appsv
 	if node.Spec.WS {
 		ports = append(ports, corev1.ContainerPort{
 			Name:          "ws",
-			ContainerPort: int32(node.Spec.WSPort),
+			ContainerPort: int32(node.Spec.RPCPort),
 		})
 	}
 

@@ -52,17 +52,9 @@ func (c *PolkadotClient) Args() (args []string) {
 		}
 	}
 
-	if node.Spec.RPC {
-		args = append(args, PolkadotArgRPCExternal)
-		args = append(args, PolkadotArgRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort))
-	}
-
-	if node.Spec.WS {
-		args = append(args, PolkadotArgWSExternal)
-		args = append(args, PolkadotArgWSPort, fmt.Sprintf("%d", node.Spec.WSPort))
-	}
-
 	if node.Spec.WS || node.Spec.RPC {
+		args = append(args, PolkadotArgRPCPort, fmt.Sprintf("%d", node.Spec.RPCPort))
+		args = append(args, PolkadotArgRPCExternal)
 		args = append(args, PolkadotArgRPCCors, strings.Join(node.Spec.CORSDomains, ","))
 	}
 
