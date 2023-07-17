@@ -320,6 +320,10 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 								Name:      "data",
 								MountPath: shared.PathData(homeDir),
 							},
+							{
+								Name:      "proof-parameters",
+								MountPath: "/var/tmp/filecoin-proof-parameters",
+							},
 						},
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
@@ -350,6 +354,12 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 									Name: node.Name,
 								},
 							},
+						},
+					},
+					{
+						Name: "proof-parameters",
+						VolumeSource: corev1.VolumeSource{
+							EmptyDir: &corev1.EmptyDirVolumeSource{},
 						},
 					},
 				},

@@ -29,11 +29,16 @@ type Client struct {
 	IpfsUseForRetrieval bool
 }
 
+type Chainstore struct {
+	EnableSplitstore bool
+}
+
 type Config struct {
-	API    *API `toml:"API,omitempty"`
-	Backup Backup
-	LibP2P LibP2P `toml:"Libp2p"`
-	Client *Client
+	API        *API `toml:"API,omitempty"`
+	Backup     Backup
+	LibP2P     LibP2P `toml:"Libp2p"`
+	Client     *Client
+	Chainstore Chainstore
 }
 
 // ConfigFromSpec generates config.toml file from node spec
@@ -59,6 +64,8 @@ func ConfigFromSpec(node *filecoinv1alpha1.Node) (config string, err error) {
 			IpfsUseForRetrieval: node.Spec.IPFSForRetrieval,
 		}
 	}
+
+	c.Chainstore.EnableSplitstore = true
 
 	var buff bytes.Buffer
 	enc := toml.NewEncoder(&buff)

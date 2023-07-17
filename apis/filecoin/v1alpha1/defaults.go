@@ -37,7 +37,7 @@ const (
 
 const (
 	// DefaultLotusImage is the default lotus client image
-	DefaultLotusImage = "kotalco/lotus:v1.18.0"
+	DefaultLotusImage = "kotalco/lotus:v1.23.2"
 	// DefaultLotusCalibrationImage is the default lotus client image for calibration network
-	DefaultLotusCalibrationImage = "kotalco/lotus:v1.18.0-calibration"
+	DefaultLotusCalibrationImage = "kotalco/lotus:v1.23.2-calibration"
 )

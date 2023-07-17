@@ -42,7 +42,7 @@ var _ = Describe("Bitcoin core client", func() {
 	It("Should generate correct client arguments", func() {
 		Expect(client.Args()).To(ContainElements([]string{
 			"-chain=main",
-			"-datadir=/home/bitcoin/kotal-data",
+			"-datadir=/data/kotal-data",
 			"-server=1",
 			"-bind=0.0.0.0:8888",
 			"-rpcport=7777",
