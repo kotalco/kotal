@@ -154,12 +154,24 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *chainlink
 		},
 	}
 
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, config, func() error {
+	homeDir := chainlinkClients.NewClient(node).HomeDir()
+
+	configToml, err := ConfigFromSpec(node, homeDir)
+	if err != nil {
+		return err
+	}
+
+	secretsConfigToml, err := SecretsFromSpec(node, homeDir, r.Client)
+	if err != nil {
+		return err
+	}
+
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, config, func() error {
 		if err := ctrl.SetControllerReference(node, config, r.Scheme); err != nil {
 			return err
 		}
 
-		r.specConfigmap(node, config)
+		r.specConfigmap(node, config, configToml, secretsConfigToml)
 
 		return nil
 	})
@@ -169,13 +181,15 @@ func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *chainlink
 }
 
 // specConfigmap updates chainlink node configmap spec
-func (r *NodeReconciler) specConfigmap(node *chainlinkv1alpha1.Node, config *corev1.ConfigMap) {
+func (r *NodeReconciler) specConfigmap(node *chainlinkv1alpha1.Node, config *corev1.ConfigMap, configToml, secretsConfigToml string) {
 	config.ObjectMeta.Labels = node.Labels
 
 	if config.Data == nil {
 		config.Data = make(map[string]string)
 	}
 
+	config.Data["config.toml"] = configToml
+	config.Data["secrets.toml"] = secretsConfigToml
 	config.Data["copy_api_credentials.sh"] = CopyAPICredentials
 }
 
@@ -206,19 +220,6 @@ func (r *NodeReconciler) createVolumes(node *chainlinkv1alpha1.Node) []corev1.Vo
 
 	// projected volume sources
 	sources := []corev1.VolumeProjection{
-		{
-			Secret: &corev1.SecretProjection{
-				LocalObjectReference: corev1.LocalObjectReference{
-					Name: node.Spec.KeystorePasswordSecretName,
-				},
-				Items: []corev1.KeyToPath{
-					{
-						Key:  "password",
-						Path: "keystore-password",
-					},
-				},
-			},
-		},
 		{
 			Secret: &corev1.SecretProjection{
 				LocalObjectReference: corev1.LocalObjectReference{

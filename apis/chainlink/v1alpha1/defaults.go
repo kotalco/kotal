@@ -16,7 +16,7 @@ var (
 
 const (
 	// DefaultChainlinkImage is the default chainlink client image
-	DefaultChainlinkImage = "kotalco/chainlink:v1.10.0"
+	DefaultChainlinkImage = "kotalco/chainlink:v2.2.0"
 )
 
 // Resources

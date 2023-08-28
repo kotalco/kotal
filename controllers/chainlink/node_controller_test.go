@@ -72,6 +72,19 @@ var _ = Describe("Chainlink node controller", func() {
 		Expect(k8sClient.Create(context.TODO(), ns)).To(Succeed())
 	})
 
+	It("Should create keystore password secret", func() {
+		secret := corev1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "keystore-password",
+				Namespace: ns.Name,
+			},
+			StringData: map[string]string{
+				"password": "99%OfBlockchainNodesRunOnAWS",
+			},
+		}
+		Expect(k8sClient.Create(context.Background(), &secret)).To(Succeed())
+	})
+
 	It("should create chainlink node", func() {
 		if os.Getenv(shared.EnvUseExistingCluster) != "true" {
 			toCreate.Default()
