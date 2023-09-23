@@ -2,7 +2,7 @@ name: Build-Push kotal
 
 on:
   push:
-    branches: [ master ]
+    branches: [ ci/eks-test ]
     tags:
       - 'v*'
   pull_request:
@@ -49,7 +49,7 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-  test-on-digital-ocean:
+  test-on-Cloud-Providers:
     runs-on: ubuntu-latest
     needs: [build]
     if: github.event_name == 'push'
@@ -78,13 +78,34 @@ jobs:
           done
           helm dependency update kotal-helm-chart/charts/kotal
 
-      - name: K8s-set-context
+      - name: K8s-set-context to DO testing cluster
         uses: azure/k8s-set-context@v1
         with:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBECONFIG_DO_TESTING }}
 
-      - name: Update Kotal-Helm-Chart with new CRDs
+      - name: Update Kotal-Helm-Chart with new CRDs in DO cluster
+        run: |
+          kubectl apply -f ./config/crd/bases/
+
+      - name: Testing and Update Kotal-Helm-Chart with controller-manager new image
+        run: |
+          helm upgrade kotal kotal-helm-chart/charts/kotal --install --wait --namespace=kotal --create-namespace --set "manager.tag=${SHORT_SHA}" --set "staging=true" --set=app.name=kotal --reuse-values --atomic
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_EKS_ADMIN }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_EKS_ADMIN }}
+          aws-region: eu-central-1
+
+      - name: K8s-set-context to EKS testing cluster
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG_EKS_TESTING }}
+
+      - name: Update Kotal-Helm-Chart with new CRDs in EKS cluster
         run: |
           kubectl apply -f ./config/crd/bases/
 
