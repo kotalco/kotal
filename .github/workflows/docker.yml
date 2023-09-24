@@ -2,7 +2,7 @@ name: Build-Push kotal
 
 on:
   push:
-    branches: [ ci/eks-test ]
+    branches: [ master ]
     tags:
       - 'v*'
   pull_request:
