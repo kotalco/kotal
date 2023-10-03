@@ -33,6 +33,7 @@ import (
 	ipfscontroller "github.com/kotalco/kotal/controllers/ipfs"
 	nearcontroller "github.com/kotalco/kotal/controllers/near"
 	polkadotcontroller "github.com/kotalco/kotal/controllers/polkadot"
+	"github.com/kotalco/kotal/controllers/shared"
 	stackscontroller "github.com/kotalco/kotal/controllers/stacks"
 	// +kubebuilder:scaffold:imports
 )
@@ -217,8 +218,10 @@ func main() {
 	}
 
 	if err = (&bitcoincontroller.NodeReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Reconciler: shared.Reconciler{
+			Client: mgr.GetClient(),
+			Scheme: mgr.GetScheme(),
+		},
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Node")
 		os.Exit(1)

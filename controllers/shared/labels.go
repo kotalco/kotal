@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"strings"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 type CustomResource interface {
+	metav1.Object
 	GroupVersionKind() schema.GroupVersionKind
-	GetName() string
-	SetLabels(map[string]string)
-	GetLabels() map[string]string
 }
 
 // UpdateLabels adds missing labels to the resource
