@@ -83,8 +83,10 @@ var _ = BeforeSuite(func() {
 
 	// start node reconciler
 	nodeReconciler := &NodeReconciler{
-		Client: k8sManager.GetClient(),
-		Scheme: scheme.Scheme,
+		Reconciler: shared.Reconciler{
+			Client: k8sManager.GetClient(),
+			Scheme: scheme.Scheme,
+		},
 	}
 	nodeReconciler.SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())

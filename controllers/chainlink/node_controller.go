@@ -12,7 +12,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -22,8 +21,7 @@ import (
 
 // NodeReconciler reconciles a Node object
 type NodeReconciler struct {
-	client.Client
-	Scheme *runtime.Scheme
+	shared.Reconciler
 }
 
 const (
@@ -57,19 +55,51 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	shared.UpdateLabels(&node, "chainlink", "")
 
-	if err = r.reconcileService(ctx, &node); err != nil {
+	// reconcile service
+	if err = r.ReconcileOwned(ctx, &node, &corev1.Service{}, func(obj client.Object) error {
+		r.specService(&node, obj.(*corev1.Service))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcileConfigmap(ctx, &node); err != nil {
+	// reconcile config map
+	if err = r.ReconcileOwned(ctx, &node, &corev1.ConfigMap{}, func(obj client.Object) error {
+		homeDir := chainlinkClients.NewClient(&node).HomeDir()
+
+		configToml, err := ConfigFromSpec(&node, homeDir)
+		if err != nil {
+			return err
+		}
+
+		secretsConfigToml, err := SecretsFromSpec(&node, homeDir, r.Client)
+		if err != nil {
+			return err
+		}
+		r.specConfigmap(&node, obj.(*corev1.ConfigMap), configToml, secretsConfigToml)
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcilePVC(ctx, &node); err != nil {
+	// reconcile persistent volume claim
+	if err = r.ReconcileOwned(ctx, &node, &corev1.PersistentVolumeClaim{}, func(obj client.Object) error {
+		r.specPVC(&node, obj.(*corev1.PersistentVolumeClaim))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcileStatefulset(ctx, &node); err != nil {
+	// reconcile stateful set
+	if err = r.ReconcileOwned(ctx, &node, &appsv1.StatefulSet{}, func(obj client.Object) error {
+		client := chainlinkClients.NewClient(&node)
+
+		command := client.Command()
+		args := client.Args()
+		env := client.Env()
+		homeDir := client.HomeDir()
+		return r.specStatefulSet(&node, obj.(*appsv1.StatefulSet), homeDir, command, args, env)
+	}); err != nil {
 		return
 	}
 
@@ -90,26 +120,6 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *chainlinkv1alph
 	}
 
 	return nil
-}
-
-// reconcileService reconciles node service
-func (r *NodeReconciler) reconcileService(ctx context.Context, node *chainlinkv1alpha1.Node) error {
-	svc := &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
-		if err := ctrl.SetControllerReference(node, svc, r.Scheme); err != nil {
-			return err
-		}
-		r.specService(node, svc)
-		return nil
-	})
-
-	return err
 }
 
 // specService updates node service spec
@@ -143,41 +153,6 @@ func (r *NodeReconciler) specService(node *chainlinkv1alpha1.Node, svc *corev1.S
 	}
 
 	svc.Spec.Selector = labels
-}
-
-// reconcileConfigmap reconciles chainlink node configmap
-func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *chainlinkv1alpha1.Node) error {
-	config := &corev1.ConfigMap{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	homeDir := chainlinkClients.NewClient(node).HomeDir()
-
-	configToml, err := ConfigFromSpec(node, homeDir)
-	if err != nil {
-		return err
-	}
-
-	secretsConfigToml, err := SecretsFromSpec(node, homeDir, r.Client)
-	if err != nil {
-		return err
-	}
-
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, config, func() error {
-		if err := ctrl.SetControllerReference(node, config, r.Scheme); err != nil {
-			return err
-		}
-
-		r.specConfigmap(node, config, configToml, secretsConfigToml)
-
-		return nil
-	})
-
-	return err
-
 }
 
 // specConfigmap updates chainlink node configmap spec
@@ -278,35 +253,6 @@ func (r *NodeReconciler) createVolumeMounts(node *chainlinkv1alpha1.Node, homeDi
 	}
 }
 
-// reconcileStatefulset reconciles node statefulset
-func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *chainlinkv1alpha1.Node) error {
-	sts := &appsv1.StatefulSet{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	client := chainlinkClients.NewClient(node)
-
-	command := client.Command()
-	args := client.Args()
-	env := client.Env()
-	homeDir := client.HomeDir()
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
-		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
-			return err
-		}
-		if err := r.specStatefulSet(node, sts, homeDir, command, args, env); err != nil {
-			return err
-		}
-		return nil
-	})
-
-	return err
-}
-
 // specStatefulSet updates node statefulset spec
 func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *appsv1.StatefulSet, homeDir string, command, args []string, env []corev1.EnvVar) error {
 
@@ -394,28 +340,6 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 	}
 
 	return nil
-}
-
-// reconcilePVC reconciles chainlink node persistent volume claim
-func (r *NodeReconciler) reconcilePVC(ctx context.Context, node *chainlinkv1alpha1.Node) error {
-	pvc := &corev1.PersistentVolumeClaim{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
-		if err := ctrl.SetControllerReference(node, pvc, r.Scheme); err != nil {
-			return err
-		}
-
-		r.specPVC(node, pvc)
-
-		return nil
-	})
-
-	return err
 }
 
 // specPVC updates chainlink persistent volume claim
