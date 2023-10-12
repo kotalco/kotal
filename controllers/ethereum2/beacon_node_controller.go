@@ -326,6 +326,7 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 						Name:         "node",
 						Command:      command,
 						Args:         args,
+						Ports:        ports,
 						Image:        node.Spec.Image,
 						VolumeMounts: volumeMounts,
 						Resources: corev1.ResourceRequirements{
