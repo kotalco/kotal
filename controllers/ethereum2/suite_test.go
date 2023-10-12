@@ -93,8 +93,10 @@ var _ = BeforeSuite(func() {
 
 	// start validator reconciler
 	validatorReconciler := &ValidatorReconciler{
-		Client: k8sManager.GetClient(),
-		Scheme: scheme.Scheme,
+		Reconciler: shared.Reconciler{
+			Client: k8sManager.GetClient(),
+			Scheme: scheme.Scheme,
+		},
 	}
 	validatorReconciler.SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())

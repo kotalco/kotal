@@ -9,10 +9,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	ethereum2v1alpha1 "github.com/kotalco/kotal/apis/ethereum2/v1alpha1"
 	ethereum2Clients "github.com/kotalco/kotal/clients/ethereum2"
@@ -21,8 +19,7 @@ import (
 
 // ValidatorReconciler reconciles a Validator object
 type ValidatorReconciler struct {
-	client.Client
-	Scheme *runtime.Scheme
+	shared.Reconciler
 }
 
 const (
@@ -64,41 +61,40 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	shared.UpdateLabels(&validator, string(validator.Spec.Client), validator.Spec.Network)
 
-	if err = r.reconcileConfigmap(ctx, &validator); err != nil {
+	// reconcile config map
+	if err = r.ReconcileOwned(ctx, &validator, &corev1.ConfigMap{}, func(obj client.Object) error {
+		r.specConfigmap(&validator, obj.(*corev1.ConfigMap))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcilePVC(ctx, &validator); err != nil {
+	// reconcile persistent volume claim
+	if err = r.ReconcileOwned(ctx, &validator, &corev1.PersistentVolumeClaim{}, func(obj client.Object) error {
+		r.specPVC(&validator, obj.(*corev1.PersistentVolumeClaim))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcileStatefulset(ctx, &validator); err != nil {
+	// reconcile stateful set
+	if err = r.ReconcileOwned(ctx, &validator, &appsv1.StatefulSet{}, func(obj client.Object) error {
+		client, err := ethereum2Clients.NewClient(&validator)
+		if err != nil {
+			return err
+		}
+
+		command := client.Command()
+		args := client.Args()
+		homeDir := client.HomeDir()
+
+		r.specStatefulset(&validator, obj.(*appsv1.StatefulSet), command, args, homeDir)
+		return nil
+	}); err != nil {
 		return
 	}
 
 	return
-}
-
-// reconcilePVC reconciles validator persistent volume claim
-func (r *ValidatorReconciler) reconcilePVC(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
-	pvc := corev1.PersistentVolumeClaim{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      validator.Name,
-			Namespace: validator.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &pvc, func() error {
-		if err := ctrl.SetControllerReference(validator, &pvc, r.Scheme); err != nil {
-			return err
-		}
-
-		r.specPVC(validator, &pvc)
-
-		return nil
-	})
-
-	return err
 }
 
 // specPVC updates validator persistent volume claim spec
@@ -472,37 +468,6 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 	}
 }
 
-// reconcileStatefulset reconciles validator statefulset
-func (r *ValidatorReconciler) reconcileStatefulset(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
-	sts := appsv1.StatefulSet{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      validator.Name,
-			Namespace: validator.Namespace,
-		},
-	}
-
-	client, err := ethereum2Clients.NewClient(validator)
-	if err != nil {
-		return err
-	}
-
-	command := client.Command()
-	args := client.Args()
-	homeDir := client.HomeDir()
-
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, &sts, func() error {
-		if err := ctrl.SetControllerReference(validator, &sts, r.Scheme); err != nil {
-			return err
-		}
-
-		r.specStatefulset(validator, &sts, command, args, homeDir)
-
-		return nil
-	})
-
-	return err
-}
-
 // specConfigmap updates validator configmap spec
 func (r *ValidatorReconciler) specConfigmap(validator *ethereum2v1alpha1.Validator, configmap *corev1.ConfigMap) {
 	if configmap.Data == nil {
@@ -518,30 +483,6 @@ func (r *ValidatorReconciler) specConfigmap(validator *ethereum2v1alpha1.Validat
 		configmap.Data["nimbus_copy_validators.sh"] = NimbusCopyValidators
 	}
 
-}
-
-// reconcileConfigmap reconciles validator config map
-func (r *ValidatorReconciler) reconcileConfigmap(ctx context.Context, validator *ethereum2v1alpha1.Validator) error {
-
-	configmap := &corev1.ConfigMap{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      validator.Name,
-			Namespace: validator.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
-		if err := ctrl.SetControllerReference(validator, configmap, r.Scheme); err != nil {
-			log.FromContext(ctx).Error(err, "Unable to set controller reference on validator configmap")
-			return err
-		}
-
-		r.specConfigmap(validator, configmap)
-
-		return nil
-	})
-
-	return err
 }
 
 // SetupWithManager adds reconciler to the manager
