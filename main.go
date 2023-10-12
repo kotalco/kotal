@@ -120,8 +120,10 @@ func main() {
 	}
 
 	if err = (&ethereum2controller.BeaconNodeReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Reconciler: shared.Reconciler{
+			Client: mgr.GetClient(),
+			Scheme: mgr.GetScheme(),
+		},
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "BeaconNode")
 		os.Exit(1)

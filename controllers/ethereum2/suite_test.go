@@ -83,8 +83,10 @@ var _ = BeforeSuite(func() {
 
 	// start beacon node reconciler
 	beaconNodeReconciler := &BeaconNodeReconciler{
-		Client: k8sManager.GetClient(),
-		Scheme: scheme.Scheme,
+		Reconciler: shared.Reconciler{
+			Client: k8sManager.GetClient(),
+			Scheme: scheme.Scheme,
+		},
 	}
 	beaconNodeReconciler.SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())

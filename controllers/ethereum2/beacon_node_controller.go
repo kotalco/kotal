@@ -8,7 +8,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -20,8 +19,7 @@ import (
 
 // BeaconNodeReconciler reconciles a Node object
 type BeaconNodeReconciler struct {
-	client.Client
-	Scheme *runtime.Scheme
+	shared.Reconciler
 }
 
 // +kubebuilder:rbac:groups=ethereum2.kotal.io,resources=beaconnodes,verbs=get;list;watch;create;update;patch;delete
@@ -47,41 +45,40 @@ func (r *BeaconNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 
 	shared.UpdateLabels(&node, string(node.Spec.Client), node.Spec.Network)
 
-	if err = r.reconcilePVC(ctx, &node); err != nil {
+	// reconcile persistent volume clain
+	if err = r.ReconcileOwned(ctx, &node, &corev1.PersistentVolumeClaim{}, func(obj client.Object) error {
+		r.specPVC(&node, obj.(*corev1.PersistentVolumeClaim))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcileService(ctx, &node); err != nil {
+	// reconcile service
+	if err = r.ReconcileOwned(ctx, &node, &corev1.Service{}, func(obj client.Object) error {
+		r.specService(&node, obj.(*corev1.Service))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcileStatefulset(ctx, &node); err != nil {
+	// reconcile service
+	if err = r.ReconcileOwned(ctx, &node, &appsv1.StatefulSet{}, func(obj client.Object) error {
+		client, err := ethereum2Clients.NewClient(&node)
+		if err != nil {
+			return err
+		}
+
+		args := client.Args()
+		command := client.Command()
+		homeDir := client.HomeDir()
+
+		r.specStatefulset(&node, obj.(*appsv1.StatefulSet), args, command, homeDir)
+		return nil
+	}); err != nil {
 		return
 	}
 
 	return
-}
-
-// reconcileService reconciles beacon node service
-func (r *BeaconNodeReconciler) reconcileService(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
-	svc := corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &svc, func() error {
-		if err := ctrl.SetControllerReference(node, &svc, r.Scheme); err != nil {
-			return err
-		}
-
-		r.specService(node, &svc)
-
-		return nil
-	})
-
-	return err
 }
 
 func (r *BeaconNodeReconciler) specService(node *ethereum2v1alpha1.BeaconNode, svc *corev1.Service) {
@@ -129,28 +126,6 @@ func (r *BeaconNodeReconciler) specService(node *ethereum2v1alpha1.BeaconNode, s
 	svc.Spec.Selector = labels
 }
 
-// reconcilePVC reconciles beacon node persistent volume claim
-func (r *BeaconNodeReconciler) reconcilePVC(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
-	pvc := corev1.PersistentVolumeClaim{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &pvc, func() error {
-		if err := ctrl.SetControllerReference(node, &pvc, r.Scheme); err != nil {
-			return err
-		}
-
-		r.specPVC(node, &pvc)
-
-		return nil
-	})
-
-	return err
-}
-
 // specPVC updates beacon node persistent volume claim spec
 func (r *BeaconNodeReconciler) specPVC(node *ethereum2v1alpha1.BeaconNode, pvc *corev1.PersistentVolumeClaim) {
 
@@ -175,37 +150,6 @@ func (r *BeaconNodeReconciler) specPVC(node *ethereum2v1alpha1.BeaconNode, pvc *
 		},
 		StorageClassName: node.Spec.Resources.StorageClass,
 	}
-}
-
-// reconcileStatefulset reconcile Ethereum 2.0 beacon node
-func (r *BeaconNodeReconciler) reconcileStatefulset(ctx context.Context, node *ethereum2v1alpha1.BeaconNode) error {
-	sts := appsv1.StatefulSet{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, &sts, func() error {
-		if err := ctrl.SetControllerReference(node, &sts, r.Scheme); err != nil {
-			return err
-		}
-
-		client, err := ethereum2Clients.NewClient(node)
-		if err != nil {
-			return err
-		}
-
-		args := client.Args()
-		command := client.Command()
-		homeDir := client.HomeDir()
-
-		r.specStatefulset(node, &sts, args, command, homeDir)
-
-		return nil
-	})
-
-	return err
 }
 
 // nodeVolumes returns node volumes
