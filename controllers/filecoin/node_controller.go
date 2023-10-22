@@ -12,7 +12,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -22,8 +21,7 @@ import (
 
 // NodeReconciler reconciles a Node object
 type NodeReconciler struct {
-	client.Client
-	Scheme *runtime.Scheme
+	shared.Reconciler
 }
 
 var (
@@ -54,19 +52,44 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	shared.UpdateLabels(&node, "lotus", string(node.Spec.Network))
 
-	if err = r.reconcileService(ctx, &node); err != nil {
+	// reconcile service
+	if err = r.ReconcileOwned(ctx, &node, &corev1.Service{}, func(obj client.Object) error {
+		r.specService(&node, obj.(*corev1.Service))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcileConfigmap(ctx, &node); err != nil {
+	// reconcile ConfigMap
+	if err = r.ReconcileOwned(ctx, &node, &corev1.ConfigMap{}, func(obj client.Object) error {
+		// generates filecoin config.toml file from node spec
+		configToml, err := ConfigFromSpec(&node)
+		if err != nil {
+			return err
+		}
+		r.specConfigmap(&node, obj.(*corev1.ConfigMap), configToml)
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcilePVC(ctx, &node); err != nil {
+	// reconcile persistent volume claim
+	if err = r.ReconcileOwned(ctx, &node, &corev1.PersistentVolumeClaim{}, func(obj client.Object) error {
+		r.specPVC(&node, obj.(*corev1.PersistentVolumeClaim))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcileStatefulSet(ctx, &node); err != nil {
+	// reconcile stateful set
+	if err = r.ReconcileOwned(ctx, &node, &appsv1.StatefulSet{}, func(obj client.Object) error {
+		client := filecoinClients.NewClient(&node)
+		args := client.Args()
+		env := client.Env()
+		cmd := client.Command()
+		homeDir := client.HomeDir()
+		return r.specStatefulSet(&node, obj.(*appsv1.StatefulSet), homeDir, cmd, args, env)
+	}); err != nil {
 		return
 	}
 
@@ -87,26 +110,6 @@ func (r *NodeReconciler) updateStatus(ctx context.Context, node *filecoinv1alpha
 	}
 
 	return nil
-}
-
-// reconcilePVC reconciles node pvc
-func (r *NodeReconciler) reconcilePVC(ctx context.Context, node *filecoinv1alpha1.Node) error {
-	pvc := &corev1.PersistentVolumeClaim{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
-		if err := ctrl.SetControllerReference(node, pvc, r.Scheme); err != nil {
-			return err
-		}
-		r.specPVC(node, pvc)
-		return nil
-	})
-
-	return err
 }
 
 // specPVC updates node PVC spec
@@ -134,27 +137,6 @@ func (r *NodeReconciler) specPVC(node *filecoinv1alpha1.Node, pvc *corev1.Persis
 	}
 }
 
-// reconcileService reconciles node service
-func (r *NodeReconciler) reconcileService(ctx context.Context, node *filecoinv1alpha1.Node) error {
-
-	svc := &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
-		if err := ctrl.SetControllerReference(node, svc, r.Scheme); err != nil {
-			return err
-		}
-		r.specService(node, svc)
-		return nil
-	})
-
-	return err
-}
-
 // specConfigmap updates node statefulset spec
 func (r *NodeReconciler) specConfigmap(node *filecoinv1alpha1.Node, configmap *corev1.ConfigMap, configToml string) {
 	configmap.ObjectMeta.Labels = node.Labels
@@ -166,61 +148,6 @@ func (r *NodeReconciler) specConfigmap(node *filecoinv1alpha1.Node, configmap *c
 	configmap.Data["config.toml"] = configToml
 	configmap.Data["copy_config_toml.sh"] = CopyConfigToml
 
-}
-
-// reconcileConfigmap reconciles node configmap
-func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *filecoinv1alpha1.Node) error {
-
-	configmap := &corev1.ConfigMap{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	// filecoin generates config.toml file from node spec
-	configToml, err := ConfigFromSpec(node)
-	if err != nil {
-		return err
-	}
-
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
-		if err := ctrl.SetControllerReference(node, configmap, r.Scheme); err != nil {
-			return err
-		}
-		r.specConfigmap(node, configmap, configToml)
-		return nil
-	})
-
-	return err
-}
-
-// reconcileStatefulSet reconciles node stateful set
-func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *filecoinv1alpha1.Node) error {
-	sts := &appsv1.StatefulSet{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	client := filecoinClients.NewClient(node)
-	args := client.Args()
-	env := client.Env()
-	cmd := client.Command()
-	homeDir := client.HomeDir()
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
-		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
-			return err
-		}
-		if err := r.specStatefulSet(node, sts, homeDir, cmd, args, env); err != nil {
-			return err
-		}
-		return nil
-	})
-
-	return err
 }
 
 // specService updates node statefulset spec
