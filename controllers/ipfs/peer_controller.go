@@ -10,7 +10,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -24,8 +23,7 @@ import (
 
 // PeerReconciler reconciles a Peer object
 type PeerReconciler struct {
-	client.Client
-	Scheme *runtime.Scheme
+	shared.Reconciler
 }
 
 var (
@@ -59,19 +57,45 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	shared.UpdateLabels(&peer, "kubo", "")
 
-	if err = r.reconcileConfigmap(ctx, &peer); err != nil {
+	// reconcile config map
+	if err = r.ReconcileOwned(ctx, &peer, &corev1.ConfigMap{}, func(obj client.Object) error {
+		r.specConfigmap(&peer, obj.(*corev1.ConfigMap))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcileService(ctx, &peer); err != nil {
+	// reconcile service
+	if err = r.ReconcileOwned(ctx, &peer, &corev1.Service{}, func(obj client.Object) error {
+		r.specService(&peer, obj.(*corev1.Service))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcilePVC(ctx, &peer); err != nil {
+	// reconcile persistent volume claim
+	if err = r.ReconcileOwned(ctx, &peer, &corev1.PersistentVolumeClaim{}, func(obj client.Object) error {
+		r.specPVC(&peer, obj.(*corev1.PersistentVolumeClaim))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcileStatefulSet(ctx, &peer); err != nil {
+	// reconcile stateful set
+	if err = r.ReconcileOwned(ctx, &peer, &appsv1.StatefulSet{}, func(obj client.Object) error {
+		client, err := ipfsClients.NewClient(&peer)
+		if err != nil {
+			return err
+		}
+
+		command := client.Command()
+		env := client.Env()
+		args := client.Args()
+		homeDir := client.HomeDir()
+
+		r.specStatefulSet(&peer, obj.(*appsv1.StatefulSet), homeDir, env, command, args)
+		return nil
+	}); err != nil {
 		return
 	}
 
@@ -93,26 +117,6 @@ func (r *PeerReconciler) updateStatus(ctx context.Context, peer *ipfsv1alpha1.Pe
 	}
 
 	return nil
-}
-
-// reconcileService reconciles ipfs peer service
-func (r *PeerReconciler) reconcileService(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
-	svc := &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      peer.Name,
-			Namespace: peer.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
-		if err := ctrl.SetControllerReference(peer, svc, r.Scheme); err != nil {
-			return err
-		}
-		r.specService(peer, svc)
-		return nil
-	})
-
-	return err
 }
 
 // specService updates ipfs peer service spec
@@ -156,29 +160,6 @@ func (r *PeerReconciler) specService(peer *ipfsv1alpha1.Peer, svc *corev1.Servic
 	svc.Spec.Selector = labels
 }
 
-// reconcileConfigmap reconciles ipfs peer config map
-func (r *PeerReconciler) reconcileConfigmap(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
-	config := &corev1.ConfigMap{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      peer.Name,
-			Namespace: peer.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, config, func() error {
-		if err := ctrl.SetControllerReference(peer, config, r.Scheme); err != nil {
-			return err
-		}
-
-		r.specConfigmap(peer, config)
-
-		return nil
-	})
-
-	return err
-
-}
-
 // specConfigmap updates ipfs peer config spec
 func (r *PeerReconciler) specConfigmap(peer *ipfsv1alpha1.Peer, config *corev1.ConfigMap) {
 	config.ObjectMeta.Labels = peer.Labels
@@ -188,28 +169,6 @@ func (r *PeerReconciler) specConfigmap(peer *ipfsv1alpha1.Peer, config *corev1.C
 	config.Data["init_ipfs_config.sh"] = initIPFSConfigScript
 	config.Data["copy_swarm_key.sh"] = copySwarmKeyScript
 	config.Data["config_ipfs.sh"] = configIPFSScript
-}
-
-// reconcilePVC reconciles ipfs peer persistent volume claim
-func (r *PeerReconciler) reconcilePVC(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
-	pvc := &corev1.PersistentVolumeClaim{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      peer.Name,
-			Namespace: peer.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
-		if err := ctrl.SetControllerReference(peer, pvc, r.Scheme); err != nil {
-			return err
-		}
-
-		r.specPVC(peer, pvc)
-
-		return nil
-	})
-
-	return err
 }
 
 // specPVC updates ipfs peer persistent volume claim
@@ -234,37 +193,6 @@ func (r *PeerReconciler) specPVC(peer *ipfsv1alpha1.Peer, pvc *corev1.Persistent
 		},
 		StorageClassName: peer.Spec.Resources.StorageClass,
 	}
-}
-
-// reconcileStatefulSet reconciles ipfs peer statefulset
-func (r *PeerReconciler) reconcileStatefulSet(ctx context.Context, peer *ipfsv1alpha1.Peer) error {
-
-	sts := &appsv1.StatefulSet{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      peer.Name,
-			Namespace: peer.Namespace,
-		},
-	}
-
-	client, err := ipfsClients.NewClient(peer)
-	if err != nil {
-		return err
-	}
-
-	command := client.Command()
-	env := client.Env()
-	args := client.Args()
-	homeDir := client.HomeDir()
-
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
-		if err := ctrl.SetControllerReference(peer, sts, r.Scheme); err != nil {
-			return err
-		}
-		r.specStatefulSet(peer, sts, homeDir, env, command, args)
-		return nil
-	})
-
-	return err
 }
 
 // specStatefulSet updates ipfs peer statefulset spec

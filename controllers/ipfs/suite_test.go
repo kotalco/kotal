@@ -84,16 +84,20 @@ var _ = BeforeSuite(func() {
 
 	// start peer reconciler
 	peerReconciler := &PeerReconciler{
-		Client: k8sManager.GetClient(),
-		Scheme: scheme.Scheme,
+		Reconciler: shared.Reconciler{
+			Client: k8sManager.GetClient(),
+			Scheme: scheme.Scheme,
+		},
 	}
 	peerReconciler.SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
 	// start cluster peer reconciler
 	clusterPeerReconciler := &ClusterPeerReconciler{
-		Client: k8sManager.GetClient(),
-		Scheme: scheme.Scheme,
+		Reconciler: shared.Reconciler{
+			Client: k8sManager.GetClient(),
+			Scheme: scheme.Scheme,
+		},
 	}
 	clusterPeerReconciler.SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
