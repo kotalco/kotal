@@ -8,7 +8,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -21,8 +20,7 @@ import (
 
 // NodeReconciler reconciles a Node object
 type NodeReconciler struct {
-	client.Client
-	Scheme *runtime.Scheme
+	shared.Reconciler
 }
 
 // +kubebuilder:rbac:groups=stacks.kotal.io,resources=nodes,verbs=get;list;watch;create;update;patch;delete
@@ -47,19 +45,45 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 
 	shared.UpdateLabels(&node, "stacks-node", string(node.Spec.Network))
 
-	if err = r.reconcileConfigmap(ctx, &node); err != nil {
+	// reconcile config map
+	if err = r.ReconcileOwned(ctx, &node, &corev1.ConfigMap{}, func(obj client.Object) error {
+		configToml, err := ConfigFromSpec(&node, r.Client)
+		if err != nil {
+			return err
+		}
+		r.specConfigmap(&node, obj.(*corev1.ConfigMap), configToml)
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcilePVC(ctx, &node); err != nil {
+	// reconcile persistent volume claim
+	if err = r.ReconcileOwned(ctx, &node, &corev1.PersistentVolumeClaim{}, func(obj client.Object) error {
+		r.specPVC(&node, obj.(*corev1.PersistentVolumeClaim))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcileService(ctx, &node); err != nil {
+	// reconcile service
+	if err = r.ReconcileOwned(ctx, &node, &corev1.Service{}, func(obj client.Object) error {
+		r.specService(&node, obj.(*corev1.Service))
+		return nil
+	}); err != nil {
 		return
 	}
 
-	if err = r.reconcileStatefulset(ctx, &node); err != nil {
+	// reconcile stateful set
+	if err = r.ReconcileOwned(ctx, &node, &appsv1.StatefulSet{}, func(obj client.Object) error {
+		client := stacksClients.NewClient(&node)
+
+		homeDir := client.HomeDir()
+		cmd := client.Command()
+		args := client.Args()
+		env := client.Env()
+
+		return r.specStatefulSet(&node, obj.(*appsv1.StatefulSet), homeDir, env, cmd, args)
+	}); err != nil {
 		return
 	}
 
@@ -94,55 +118,6 @@ func (r *NodeReconciler) specConfigmap(node *stacksv1alpha1.Node, configmap *cor
 
 }
 
-// reconcileConfigmap reconciles node configmap
-func (r *NodeReconciler) reconcileConfigmap(ctx context.Context, node *stacksv1alpha1.Node) error {
-
-	configmap := &corev1.ConfigMap{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	// filecoin generates config.toml file from node spec
-	configToml, err := ConfigFromSpec(node, r.Client)
-	if err != nil {
-		return err
-	}
-
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, configmap, func() error {
-		if err := ctrl.SetControllerReference(node, configmap, r.Scheme); err != nil {
-			return err
-		}
-		r.specConfigmap(node, configmap, configToml)
-		return nil
-	})
-
-	return err
-}
-
-// reconcilePVC reconciles Stacks node persistent volume claim
-func (r *NodeReconciler) reconcilePVC(ctx context.Context, node *stacksv1alpha1.Node) error {
-	pvc := &corev1.PersistentVolumeClaim{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, pvc, func() error {
-		if err := ctrl.SetControllerReference(node, pvc, r.Scheme); err != nil {
-			return err
-		}
-
-		r.specPVC(node, pvc)
-
-		return nil
-	})
-
-	return err
-}
-
 // specPVC updates Stacks node persistent volume claim
 func (r *NodeReconciler) specPVC(node *stacksv1alpha1.Node, pvc *corev1.PersistentVolumeClaim) {
 	request := corev1.ResourceList{
@@ -166,26 +141,6 @@ func (r *NodeReconciler) specPVC(node *stacksv1alpha1.Node, pvc *corev1.Persiste
 	}
 }
 
-// reconcileService reconciles Bitcoin node service
-func (r *NodeReconciler) reconcileService(ctx context.Context, node *stacksv1alpha1.Node) error {
-	svc := &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, func() error {
-		if err := ctrl.SetControllerReference(node, svc, r.Scheme); err != nil {
-			return err
-		}
-		r.specService(node, svc)
-		return nil
-	})
-
-	return err
-}
-
 // specService updates Bitcoin node service spec
 func (r *NodeReconciler) specService(node *stacksv1alpha1.Node, svc *corev1.Service) {
 	labels := node.Labels
@@ -206,35 +161,6 @@ func (r *NodeReconciler) specService(node *stacksv1alpha1.Node, svc *corev1.Serv
 	}
 
 	svc.Spec.Selector = labels
-}
-
-// reconcileStatefulset reconciles node statefulset
-func (r *NodeReconciler) reconcileStatefulset(ctx context.Context, node *stacksv1alpha1.Node) error {
-	sts := &appsv1.StatefulSet{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      node.Name,
-			Namespace: node.Namespace,
-		},
-	}
-
-	client := stacksClients.NewClient(node)
-
-	homeDir := client.HomeDir()
-	cmd := client.Command()
-	args := client.Args()
-	env := client.Env()
-
-	_, err := ctrl.CreateOrUpdate(ctx, r.Client, sts, func() error {
-		if err := ctrl.SetControllerReference(node, sts, r.Scheme); err != nil {
-			return err
-		}
-		if err := r.specStatefulSet(node, sts, homeDir, env, cmd, args); err != nil {
-			return err
-		}
-		return nil
-	})
-
-	return err
 }
 
 // specStatefulSet updates node statefulset spec
