@@ -28,6 +28,8 @@ type Peer struct {
 type NodeSpec struct {
 	// Image is Aptos node client image
 	Image string `json:"image,omitempty"`
+	// ExtraArgs is extra arguments to pass down to the cli
+	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
 	// Network is Aptos network to join and sync
 	// +kubebuilder:validation:Enum=devnet;testnet;mainnet
 	Network AptosNetwork `json:"network"`
