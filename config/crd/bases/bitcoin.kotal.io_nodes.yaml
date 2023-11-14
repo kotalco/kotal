@@ -42,6 +42,11 @@ spec:
           spec:
             description: NodeSpec defines the desired state of Node
             properties:
+              extraArgs:
+                additionalProperties:
+                  type: string
+                description: ExtraArgs is extra arguments to pass down to the cli
+                type: object
               image:
                 description: Image is Bitcoin node client image
                 type: string

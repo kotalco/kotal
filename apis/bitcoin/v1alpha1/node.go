@@ -25,6 +25,8 @@ type RPCUser struct {
 type NodeSpec struct {
 	// Image is Bitcoin node client image
 	Image string `json:"image,omitempty"`
+	// ExtraArgs is extra arguments to pass down to the cli
+	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
 	// Network is Bitcoin network to join and sync
 	// +kubebuilder:validation:Enum=mainnet;testnet
 	Network BitcoinNetwork `json:"network"`
