@@ -17,6 +17,8 @@ type APICredentials struct {
 type NodeSpec struct {
 	// Image is Chainlink node client image
 	Image string `json:"image,omitempty"`
+	// ExtraArgs is extra arguments to pass down to the cli
+	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
 	// EthereumChainId is ethereum chain id
 	EthereumChainId uint `json:"ethereumChainId"`
 	// EthereumWSEndpoint is ethereum websocket endpoint

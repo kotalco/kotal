@@ -92,6 +92,11 @@ spec:
               ethereumWsEndpoint:
                 description: EthereumWSEndpoint is ethereum websocket endpoint
                 type: string
+              extraArgs:
+                additionalProperties:
+                  type: string
+                description: ExtraArgs is extra arguments to pass down to the cli
+                type: object
               image:
                 description: Image is Chainlink node client image
                 type: string
