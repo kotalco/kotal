@@ -46,6 +46,9 @@ type NodeSpec struct {
 	// Image is Ethereum node client image
 	Image string `json:"image,omitempty"`
 
+	// ExtraArgs is extra arguments to pass down to the cli
+	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
+
 	// Genesis is genesis block configuration
 	Genesis *Genesis `json:"genesis,omitempty"`
 

@@ -81,6 +81,11 @@ spec:
               enginePort:
                 description: EnginePort is engine authenticated RPC APIs port
                 type: integer
+              extraArgs:
+                additionalProperties:
+                  type: string
+                description: ExtraArgs is extra arguments to pass down to the cli
+                type: object
               genesis:
                 description: Genesis is genesis block configuration
                 properties:

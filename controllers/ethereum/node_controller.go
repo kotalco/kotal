@@ -717,6 +717,7 @@ func (r *NodeReconciler) reconcileStatefulSet(ctx context.Context, node *ethereu
 	}
 	homedir := client.HomeDir()
 	args := client.Args()
+	args = append(args, node.Spec.ExtraArgs.Encode(false)...)
 	volumes := r.createNodeVolumes(node)
 	mounts := r.createNodeVolumeMounts(node, homedir)
 
