@@ -9,6 +9,8 @@ import (
 type ValidatorSpec struct {
 	// Image is Ethereum 2.0 validator client image
 	Image string `json:"image,omitempty"`
+	// ExtraArgs is extra arguments to pass down to the cli
+	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
 
 	// Network is the network this validator is validating blocks for
 	Network string `json:"network"`

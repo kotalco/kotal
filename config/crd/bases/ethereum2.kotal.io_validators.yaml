@@ -60,6 +60,11 @@ spec:
                 - lighthouse
                 - nimbus
                 type: string
+              extraArgs:
+                additionalProperties:
+                  type: string
+                description: ExtraArgs is extra arguments to pass down to the cli
+                type: object
               feeRecipient:
                 description: FeeRecipient is ethereum address collecting transaction
                   fees

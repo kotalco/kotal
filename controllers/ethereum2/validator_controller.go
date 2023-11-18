@@ -86,6 +86,9 @@ func (r *ValidatorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 		command := client.Command()
 		args := client.Args()
+		// encode extra arguments as key=value only if client is numbus
+		kv := validator.Spec.Client == ethereum2v1alpha1.NimbusClient
+		args = append(args, validator.Spec.ExtraArgs.Encode(kv)...)
 		homeDir := client.HomeDir()
 
 		r.specStatefulset(&validator, obj.(*appsv1.StatefulSet), command, args, homeDir)

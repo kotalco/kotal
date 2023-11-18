@@ -9,6 +9,8 @@ import (
 type BeaconNodeSpec struct {
 	// Image is Ethereum 2.0 Beacon node client image
 	Image string `json:"image,omitempty"`
+	// ExtraArgs is extra arguments to pass down to the cli
+	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
 
 	// Network is the network to join
 	Network string `json:"network"`

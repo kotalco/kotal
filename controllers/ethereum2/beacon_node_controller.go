@@ -69,6 +69,9 @@ func (r *BeaconNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		}
 
 		args := client.Args()
+		// encode extra arguments as key=value only if client is numbus
+		kv := node.Spec.Client == ethereum2v1alpha1.NimbusClient
+		args = append(args, node.Spec.ExtraArgs.Encode(kv)...)
 		command := client.Command()
 		homeDir := client.HomeDir()
 
