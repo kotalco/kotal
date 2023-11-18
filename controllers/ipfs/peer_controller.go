@@ -91,6 +91,7 @@ func (r *PeerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		command := client.Command()
 		env := client.Env()
 		args := client.Args()
+		args = append(args, peer.Spec.ExtraArgs.Encode(false)...)
 		homeDir := client.HomeDir()
 
 		r.specStatefulSet(&peer, obj.(*appsv1.StatefulSet), homeDir, env, command, args)

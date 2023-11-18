@@ -86,6 +86,7 @@ func (r *ClusterPeerReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 		command := client.Command()
 		args := client.Args()
+		args = append(args, peer.Spec.ExtraArgs.Encode(false)...)
 		env := client.Env()
 		homeDir := client.HomeDir()
 

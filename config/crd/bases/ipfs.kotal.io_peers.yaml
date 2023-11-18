@@ -45,6 +45,11 @@ spec:
               apiPort:
                 description: APIPort is api server port
                 type: integer
+              extraArgs:
+                additionalProperties:
+                  type: string
+                description: ExtraArgs is extra arguments to pass down to the cli
+                type: object
               gateway:
                 description: Gateway enables IPFS gateway server
                 type: boolean

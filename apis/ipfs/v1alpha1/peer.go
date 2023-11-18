@@ -9,6 +9,8 @@ import (
 type PeerSpec struct {
 	// Image is ipfs peer client image
 	Image string `json:"image,omitempty"`
+	// ExtraArgs is extra arguments to pass down to the cli
+	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
 	// InitProfiles is the intial profiles to apply during
 	// +listType=set
 	InitProfiles []Profile `json:"initProfiles,omitempty"`

@@ -57,6 +57,11 @@ spec:
                 - crdt
                 - raft
                 type: string
+              extraArgs:
+                additionalProperties:
+                  type: string
+                description: ExtraArgs is extra arguments to pass down to the cli
+                type: object
               id:
                 description: ID is the the cluster peer id
                 type: string
