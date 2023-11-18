@@ -71,6 +71,11 @@ spec:
                 - rpcPort
                 - rpcUsername
                 type: object
+              extraArgs:
+                additionalProperties:
+                  type: string
+                description: ExtraArgs is extra arguments to pass down to the cli
+                type: object
               image:
                 description: Image is Stacks node client image
                 type: string

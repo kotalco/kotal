@@ -80,6 +80,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 		homeDir := client.HomeDir()
 		cmd := client.Command()
 		args := client.Args()
+		args = append(args, node.Spec.ExtraArgs.Encode(false)...)
 		env := client.Env()
 
 		return r.specStatefulSet(&node, obj.(*appsv1.StatefulSet), homeDir, env, cmd, args)

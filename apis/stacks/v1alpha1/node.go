@@ -31,6 +31,8 @@ type BitcoinNode struct {
 type NodeSpec struct {
 	// Image is Stacks node client image
 	Image string `json:"image,omitempty"`
+	// ExtraArgs is extra arguments to pass down to the cli
+	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
 	// Network is stacks network
 	// +kubebuilder:validation:Enum=mainnet;testnet
 	Network StacksNetwork `json:"network"`
