@@ -9,6 +9,8 @@ import (
 type NodeSpec struct {
 	// Image is NEAR node client image
 	Image string `json:"image,omitempty"`
+	// ExtraArgs is extra arguments to pass down to the cli
+	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
 	// Network is NEAR network to join and sync
 	// +kubebuilder:validation:Enum=mainnet;testnet;betanet
 	Network string `json:"network"`
