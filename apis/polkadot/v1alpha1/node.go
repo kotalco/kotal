@@ -21,6 +21,8 @@ const (
 type NodeSpec struct {
 	// Image is Polkadot node client image
 	Image string `json:"image,omitempty"`
+	// ExtraArgs is extra arguments to pass down to the cli
+	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
 	// Network is the polkadot network/chain to join
 	Network string `json:"network"`
 	// P2PPort is p2p protocol tcp port

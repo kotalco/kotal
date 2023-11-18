@@ -77,6 +77,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	if err = r.ReconcileOwned(ctx, &node, &appsv1.StatefulSet{}, func(obj client.Object) error {
 		client := polkadotClients.NewClient(&node)
 		args := client.Args()
+		args = append(args, node.Spec.ExtraArgs.Encode(false)...)
 		homeDir := client.HomeDir()
 
 		return r.specStatefulSet(&node, obj.(*appsv1.StatefulSet), homeDir, args)

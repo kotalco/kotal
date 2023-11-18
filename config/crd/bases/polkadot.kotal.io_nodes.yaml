@@ -49,6 +49,11 @@ spec:
                   type: string
                 type: array
                 x-kubernetes-list-type: set
+              extraArgs:
+                additionalProperties:
+                  type: string
+                description: ExtraArgs is extra arguments to pass down to the cli
+                type: object
               image:
                 description: Image is Polkadot node client image
                 type: string
