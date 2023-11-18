@@ -9,6 +9,8 @@ import (
 type NodeSpec struct {
 	// Image is Filecoin node client image
 	Image string `json:"image,omitempty"`
+	// ExtraArgs is extra arguments to pass down to the cli
+	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
 	// API enables API server
 	API bool `json:"api,omitempty"`
 	// APIPort is API server listening port

@@ -85,6 +85,7 @@ func (r *NodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (resul
 	if err = r.ReconcileOwned(ctx, &node, &appsv1.StatefulSet{}, func(obj client.Object) error {
 		client := filecoinClients.NewClient(&node)
 		args := client.Args()
+		args = append(args, node.Spec.ExtraArgs.Encode(false)...)
 		env := client.Env()
 		cmd := client.Command()
 		homeDir := client.HomeDir()

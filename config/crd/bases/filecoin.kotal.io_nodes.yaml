@@ -54,6 +54,11 @@ spec:
               disableMetadataLog:
                 description: DisableMetadataLog disables metadata log
                 type: boolean
+              extraArgs:
+                additionalProperties:
+                  type: string
+                description: ExtraArgs is extra arguments to pass down to the cli
+                type: object
               image:
                 description: Image is Filecoin node client image
                 type: string
