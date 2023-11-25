@@ -9,6 +9,8 @@ const (
 	DefaultMainnetP2PPort uint = 8333
 	// DefaultTestnetP2PPort is the default p2p port for testnet
 	DefaultTestnetP2PPort uint = 18333
+	// DefaltReplicas is the default replicas
+	DefaltReplicas uint = 1
 )
 
 const (

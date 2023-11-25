@@ -161,10 +161,13 @@ func (r *NodeReconciler) specStatefulSet(node *bitcoinv1alpha1.Node, sts *appsv1
 		})
 	}
 
+	replicas := int32(*node.Spec.Replicas)
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.Labels,
 		},
+		Replicas:    &replicas,
 		ServiceName: node.Name,
 		Template: corev1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{

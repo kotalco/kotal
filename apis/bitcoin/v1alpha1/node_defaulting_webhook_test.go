@@ -20,6 +20,7 @@ var _ = Describe("Bitcoin node defaulting", func() {
 		Expect(node.Spec.Image).To(Equal(DefaultBitcoinCoreImage))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultMainnetP2PPort))
 		Expect(node.Spec.RPCPort).To(Equal(DefaultMainnetRPCPort))
+		Expect(*node.Spec.Replicas).To(Equal(DefaltReplicas))
 		Expect(node.Spec.CPU).To(Equal(DefaultNodeCPURequest))
 		Expect(node.Spec.CPULimit).To(Equal(DefaultNodeCPULimit))
 		Expect(node.Spec.Memory).To(Equal(DefaultNodeMemoryRequest))
