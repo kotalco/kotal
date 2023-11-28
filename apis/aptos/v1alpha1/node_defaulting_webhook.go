@@ -48,6 +48,12 @@ func (r *Node) Default() {
 		}
 	}
 
+	if r.Spec.Replicas == nil {
+		// constants are not addressable
+		replicas := DefaltReplicas
+		r.Spec.Replicas = &replicas
+	}
+
 	if r.Spec.MetricsPort == 0 {
 		r.Spec.MetricsPort = DefaultMetricsPort
 	}

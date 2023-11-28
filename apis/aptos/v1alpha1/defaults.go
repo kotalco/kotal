@@ -26,6 +26,8 @@ const (
 )
 
 const (
+	// DefaltReplicas is the default replicas
+	DefaltReplicas uint = 1
 	// DefaultMetricsPort is the default metrics server port
 	DefaultMetricsPort uint = 9101
 	// DefaultAPIPort is the default API server port

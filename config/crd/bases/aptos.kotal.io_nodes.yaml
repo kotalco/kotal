@@ -73,6 +73,12 @@ spec:
               peerId:
                 description: PeerId is the node identity
                 type: string
+              replicas:
+                description: Replicas is number of replicas
+                enum:
+                - 0
+                - 1
+                type: integer
               resources:
                 description: Resources is node compute and storage resources
                 properties:
