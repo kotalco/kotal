@@ -1,6 +1,8 @@
 package v1alpha1
 
 const (
+	// DefaltReplicas is the default replicas
+	DefaltReplicas uint = 1
 	// DefaultAPIPort is the default API and GUI port
 	DefaultAPIPort uint = 6688
 	// DefaultTLSPort is the default tls port

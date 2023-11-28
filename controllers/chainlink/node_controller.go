@@ -280,10 +280,13 @@ func (r *NodeReconciler) specStatefulSet(node *chainlinkv1alpha1.Node, sts *apps
 		})
 	}
 
+	replicas := int32(*node.Spec.Replicas)
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.Labels,
 		},
+		Replicas:    &replicas,
 		ServiceName: node.Name,
 		Template: corev1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
