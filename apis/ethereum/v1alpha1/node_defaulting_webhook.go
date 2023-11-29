@@ -29,6 +29,12 @@ func (n *Node) Default() {
 		n.Spec.Image = image
 	}
 
+	if n.Spec.Replicas == nil {
+		// constants are not addressable
+		replicas := DefaltReplicas
+		n.Spec.Replicas = &replicas
+	}
+
 	// default genesis block
 	if n.Spec.Genesis != nil {
 		n.Spec.Genesis.Default()

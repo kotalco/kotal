@@ -35,6 +35,7 @@ var _ = Describe("Ethereum defaulting", func() {
 
 		// node1 defaulting
 		Expect(node1.Spec.Image).To(Equal(DefaultBesuImage))
+		Expect(*node1.Spec.Replicas).To(Equal(DefaltReplicas))
 		Expect(node1.Spec.EnginePort).To(Equal(DefaultEngineRPCPort))
 		Expect(node1.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node1.Spec.SyncMode).To(Equal(DefaultPublicNetworkSyncMode))
@@ -46,6 +47,7 @@ var _ = Describe("Ethereum defaulting", func() {
 		Expect(node1.Spec.Logging).To(Equal(DefaultLogging))
 		// node2 defaulting
 		Expect(node2.Spec.Image).To(Equal(DefaultNethermindImage))
+		Expect(*node2.Spec.Replicas).To(Equal(DefaltReplicas))
 		Expect(node2.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node2.Spec.SyncMode).To(Equal(FullSynchronization))
 		Expect(node2.Spec.Resources.CPU).To(Equal(DefaultPublicNetworkNodeCPURequest))
@@ -94,6 +96,7 @@ var _ = Describe("Ethereum defaulting", func() {
 
 		node.Default()
 		Expect(node.Spec.Image).To(Equal(DefaultGethImage))
+		Expect(*node.Spec.Replicas).To(Equal(DefaltReplicas))
 		Expect(node.Spec.P2PPort).To(Equal(DefaultP2PPort))
 		Expect(node.Spec.SyncMode).To(Equal(SnapSynchronization))
 		Expect(node.Spec.Resources.CPU).To(Equal(DefaultPublicNetworkNodeCPURequest))

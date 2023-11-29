@@ -49,6 +49,10 @@ type NodeSpec struct {
 	// ExtraArgs is extra arguments to pass down to the cli
 	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
 
+	// Replicas is number of replicas
+	// +kubebuilder:validation:Enum=0;1
+	Replicas *uint `json:"replicas,omitempty"`
+
 	// Genesis is genesis block configuration
 	Genesis *Genesis `json:"genesis,omitempty"`
 

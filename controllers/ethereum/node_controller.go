@@ -690,6 +690,10 @@ func (r *NodeReconciler) specStatefulset(node *ethereumv1alpha1.Node, sts *appsv
 	if sts.Spec.Selector == nil {
 		sts.Spec.Selector = &metav1.LabelSelector{}
 	}
+
+	replicas := int32(*node.Spec.Replicas)
+
+	sts.Spec.Replicas = &replicas
 	sts.Spec.ServiceName = node.Name
 	sts.Spec.Selector.MatchLabels = labels
 	sts.Spec.Template.ObjectMeta.Labels = labels

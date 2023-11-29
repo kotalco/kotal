@@ -7,6 +7,8 @@ var (
 	DefaultAPIs []API = []API{Web3API, ETHAPI, NetworkAPI}
 	// DefaultOrigins is the default origins
 	DefaultOrigins []string = []string{"*"}
+	// DefaltReplicas is the default replicas
+	DefaltReplicas uint = 1
 )
 
 const (
