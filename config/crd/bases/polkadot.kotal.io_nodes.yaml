@@ -85,6 +85,12 @@ spec:
               pruning:
                 description: Pruning keeps recent or all blocks
                 type: boolean
+              replicas:
+                description: Replicas is number of replicas
+                enum:
+                - 0
+                - 1
+                type: integer
               resources:
                 description: Resources is node compute and storage resources
                 properties:

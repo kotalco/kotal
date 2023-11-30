@@ -40,6 +40,12 @@ func (r *Node) Default() {
 		r.Spec.Image = DefaultPolkadotImage
 	}
 
+	if r.Spec.Replicas == nil {
+		// constants are not addressable
+		replicas := DefaltReplicas
+		r.Spec.Replicas = &replicas
+	}
+
 	if r.Spec.SyncMode == "" {
 		r.Spec.SyncMode = DefaultSyncMode
 	}
