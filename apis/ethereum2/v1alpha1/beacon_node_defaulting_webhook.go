@@ -27,6 +27,12 @@ func (r *BeaconNode) Default() {
 		r.Spec.Image = image
 	}
 
+	if r.Spec.Replicas == nil {
+		// constants are not addressable
+		replicas := DefaltReplicas
+		r.Spec.Replicas = &replicas
+	}
+
 	if r.Spec.P2PPort == 0 {
 		r.Spec.P2PPort = DefaultP2PPort
 	}

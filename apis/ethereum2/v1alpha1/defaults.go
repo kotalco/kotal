@@ -8,6 +8,8 @@ var (
 )
 
 const (
+	// DefaltReplicas is the default replicas
+	DefaltReplicas uint = 1
 	// ZeroAddress is Ethereum zero address
 	ZeroAddress = "0x0000000000000000000000000000000000000000"
 	// DefaultP2PPort is the default port used for p2p and discovery

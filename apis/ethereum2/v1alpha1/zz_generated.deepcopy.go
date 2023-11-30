@@ -79,6 +79,11 @@ func (in *BeaconNodeSpec) DeepCopyInto(out *BeaconNodeSpec) {
 			(*out)[key] = val
 		}
 	}
+	if in.Replicas != nil {
+		in, out := &in.Replicas, &out.Replicas
+		*out = new(uint)
+		**out = **in
+	}
 	if in.Hosts != nil {
 		in, out := &in.Hosts, &out.Hosts
 		*out = make([]string, len(*in))
@@ -200,6 +205,11 @@ func (in *ValidatorSpec) DeepCopyInto(out *ValidatorSpec) {
 		for key, val := range *in {
 			(*out)[key] = val
 		}
+	}
+	if in.Replicas != nil {
+		in, out := &in.Replicas, &out.Replicas
+		*out = new(uint)
+		**out = **in
 	}
 	if in.BeaconEndpoints != nil {
 		in, out := &in.BeaconEndpoints, &out.BeaconEndpoints

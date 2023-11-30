@@ -435,10 +435,13 @@ func (r *ValidatorReconciler) specStatefulset(validator *ethereum2v1alpha1.Valid
 		initContainers = append(initContainers, copyValidators)
 	}
 
+	replicas := int32(*validator.Spec.Replicas)
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: validator.GetLabels(),
 		},
+		Replicas: &replicas,
 		Template: corev1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
 				Labels: validator.GetLabels(),

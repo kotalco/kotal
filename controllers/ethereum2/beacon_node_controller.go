@@ -313,10 +313,13 @@ func (r *BeaconNodeReconciler) specStatefulset(node *ethereum2v1alpha1.BeaconNod
 		})
 	}
 
+	replicas := int32(*node.Spec.Replicas)
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: node.GetLabels(),
 		},
+		Replicas: &replicas,
 		Template: corev1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
 				Labels: node.GetLabels(),
