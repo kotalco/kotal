@@ -11,6 +11,9 @@ type NodeSpec struct {
 	Image string `json:"image,omitempty"`
 	// ExtraArgs is extra arguments to pass down to the cli
 	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
+	// Replicas is number of replicas
+	// +kubebuilder:validation:Enum=0;1
+	Replicas *uint `json:"replicas,omitempty"`
 	// API enables API server
 	API bool `json:"api,omitempty"`
 	// APIPort is API server listening port

@@ -196,11 +196,14 @@ func (r *NodeReconciler) specStatefulSet(node *filecoinv1alpha1.Node, sts *appsv
 		})
 	}
 
+	replicas := int32(*node.Spec.Replicas)
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: labels,
 		},
 		ServiceName: node.Name,
+		Replicas:    &replicas,
 		Template: corev1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
 				Labels: labels,

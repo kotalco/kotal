@@ -3,6 +3,8 @@ package v1alpha1
 import "github.com/kotalco/kotal/apis/shared"
 
 const (
+	// DefaltReplicas is the default replicas
+	DefaltReplicas uint = 1
 	// DefaultAPIPort is the default port the API server is listening to
 	DefaultAPIPort uint = 1234
 	// DefaultP2PPort is the default p2p port
