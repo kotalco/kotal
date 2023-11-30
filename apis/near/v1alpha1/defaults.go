@@ -1,6 +1,8 @@
 package v1alpha1
 
 const (
+	// DefaltReplicas is the default replicas
+	DefaltReplicas uint = 1
 	// DefaultRPCPort is the default JSON-RPC port
 	DefaultRPCPort uint = 3030
 	// DefaultP2PPort is the default p2p port

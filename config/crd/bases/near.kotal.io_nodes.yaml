@@ -85,6 +85,12 @@ spec:
               prometheusPort:
                 description: PrometheusPort is prometheus exporter port
                 type: integer
+              replicas:
+                description: Replicas is number of replicas
+                enum:
+                - 0
+                - 1
+                type: integer
               resources:
                 description: Resources is node compute and storage resources
                 properties:

@@ -16,6 +16,12 @@ func (n *Node) Default() {
 		n.Spec.Image = DefaultNearImage
 	}
 
+	if n.Spec.Replicas == nil {
+		// constants are not addressable
+		replicas := DefaltReplicas
+		n.Spec.Replicas = &replicas
+	}
+
 	if n.Spec.MinPeers == 0 {
 		n.Spec.MinPeers = DefaultMinPeers
 	}

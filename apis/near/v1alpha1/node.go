@@ -11,6 +11,9 @@ type NodeSpec struct {
 	Image string `json:"image,omitempty"`
 	// ExtraArgs is extra arguments to pass down to the cli
 	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
+	// Replicas is number of replicas
+	// +kubebuilder:validation:Enum=0;1
+	Replicas *uint `json:"replicas,omitempty"`
 	// Network is NEAR network to join and sync
 	// +kubebuilder:validation:Enum=mainnet;testnet;betanet
 	Network string `json:"network"`

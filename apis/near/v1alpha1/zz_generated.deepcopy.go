@@ -79,6 +79,11 @@ func (in *NodeSpec) DeepCopyInto(out *NodeSpec) {
 			(*out)[key] = val
 		}
 	}
+	if in.Replicas != nil {
+		in, out := &in.Replicas, &out.Replicas
+		*out = new(uint)
+		**out = **in
+	}
 	if in.Bootnodes != nil {
 		in, out := &in.Bootnodes, &out.Bootnodes
 		*out = make([]string, len(*in))
