@@ -296,10 +296,13 @@ func (r *ClusterPeerReconciler) specStatefulset(peer *ipfsv1alpha1.ClusterPeer, 
 		},
 	}
 
+	replicas := int32(*peer.Spec.Replicas)
+
 	sts.Spec = appsv1.StatefulSetSpec{
 		Selector: &metav1.LabelSelector{
 			MatchLabels: labels,
 		},
+		Replicas: &replicas,
 		Template: corev1.PodTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
 				Labels: labels,

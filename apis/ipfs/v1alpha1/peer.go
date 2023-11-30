@@ -11,6 +11,9 @@ type PeerSpec struct {
 	Image string `json:"image,omitempty"`
 	// ExtraArgs is extra arguments to pass down to the cli
 	ExtraArgs shared.ExtraArgs `json:"extraArgs,omitempty"`
+	// Replicas is number of replicas
+	// +kubebuilder:validation:Enum=0;1
+	Replicas *uint `json:"replicas,omitempty"`
 	// InitProfiles is the intial profiles to apply during
 	// +listType=set
 	InitProfiles []Profile `json:"initProfiles,omitempty"`

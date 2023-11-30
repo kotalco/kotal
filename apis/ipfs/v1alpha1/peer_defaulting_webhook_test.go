@@ -16,6 +16,7 @@ var _ = Describe("IPFS peer defaulting", func() {
 		peer.Default()
 
 		Expect(peer.Spec.Image).To(Equal(DefaultGoIPFSImage))
+		Expect(*peer.Spec.Replicas).To(Equal(DefaltReplicas))
 		Expect(peer.Spec.Logging).To(Equal(DefaultLogging))
 		Expect(peer.Spec.InitProfiles).To(ContainElements(DefaultDatastoreProfile))
 		Expect(peer.Spec.APIPort).To(Equal(DefaultAPIPort))

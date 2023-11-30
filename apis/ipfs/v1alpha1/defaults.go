@@ -3,6 +3,8 @@ package v1alpha1
 import "github.com/kotalco/kotal/apis/shared"
 
 const (
+	// DefaltReplicas is the default replicas
+	DefaltReplicas uint = 1
 	// DefaultRoutingMode is the default content routing mechanism
 	DefaultRoutingMode = DHTRouting
 	// DefaultAPIPort is the default API port

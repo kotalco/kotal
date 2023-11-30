@@ -37,6 +37,12 @@ func (r *ClusterPeer) Default() {
 		r.Spec.Image = DefaultGoIPFSClusterImage
 	}
 
+	if r.Spec.Replicas == nil {
+		// constants are not addressable
+		replicas := DefaltReplicas
+		r.Spec.Replicas = &replicas
+	}
+
 	if r.Spec.Logging == "" {
 		r.Spec.Logging = DefaultLogging
 	}

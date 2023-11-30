@@ -103,6 +103,12 @@ spec:
                   type: string
                 type: array
                 x-kubernetes-list-type: set
+              replicas:
+                description: Replicas is number of replicas
+                enum:
+                - 0
+                - 1
+                type: integer
               resources:
                 description: Resources is node compute and storage resources
                 properties:

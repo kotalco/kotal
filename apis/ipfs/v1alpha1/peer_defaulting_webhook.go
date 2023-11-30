@@ -37,6 +37,12 @@ func (r *Peer) Default() {
 		r.Spec.Image = DefaultGoIPFSImage
 	}
 
+	if r.Spec.Replicas == nil {
+		// constants are not addressable
+		replicas := DefaltReplicas
+		r.Spec.Replicas = &replicas
+	}
+
 	if r.Spec.Routing == "" {
 		r.Spec.Routing = DefaultRoutingMode
 	}

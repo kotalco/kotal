@@ -79,6 +79,11 @@ func (in *ClusterPeerSpec) DeepCopyInto(out *ClusterPeerSpec) {
 			(*out)[key] = val
 		}
 	}
+	if in.Replicas != nil {
+		in, out := &in.Replicas, &out.Replicas
+		*out = new(uint)
+		**out = **in
+	}
 	if in.TrustedPeers != nil {
 		in, out := &in.TrustedPeers, &out.TrustedPeers
 		*out = make([]string, len(*in))
@@ -185,6 +190,11 @@ func (in *PeerSpec) DeepCopyInto(out *PeerSpec) {
 		for key, val := range *in {
 			(*out)[key] = val
 		}
+	}
+	if in.Replicas != nil {
+		in, out := &in.Replicas, &out.Replicas
+		*out = new(uint)
+		**out = **in
 	}
 	if in.InitProfiles != nil {
 		in, out := &in.InitProfiles, &out.InitProfiles
