@@ -1,6 +1,8 @@
 package v1alpha1
 
 const (
+	// DefaltReplicas is the default replicas
+	DefaltReplicas uint = 1
 	// DefaultHost is the default JSON-RPC server host
 	DefaultHost = "0.0.0.0"
 	// DefaultRPCPort is the default JSON-RPC port

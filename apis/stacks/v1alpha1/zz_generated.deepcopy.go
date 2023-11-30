@@ -94,6 +94,11 @@ func (in *NodeSpec) DeepCopyInto(out *NodeSpec) {
 			(*out)[key] = val
 		}
 	}
+	if in.Replicas != nil {
+		in, out := &in.Replicas, &out.Replicas
+		*out = new(uint)
+		**out = **in
+	}
 	out.BitcoinNode = in.BitcoinNode
 	in.Resources.DeepCopyInto(&out.Resources)
 }
