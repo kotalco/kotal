@@ -37,6 +37,12 @@ func (r *Validator) Default() {
 		r.Spec.Image = image
 	}
 
+	if r.Spec.Replicas == nil {
+		// constants are not addressable
+		replicas := DefaltReplicas
+		r.Spec.Replicas = &replicas
+	}
+
 	r.DefaultNodeResources()
 
 }
