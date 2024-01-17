@@ -48,7 +48,7 @@ var _ = Describe("Filecoin node validation", func() {
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.NewNode.Default()
 					cc.OldNode.Default()
-					err := cc.NewNode.ValidateUpdate(cc.OldNode)
+					_, err := cc.NewNode.ValidateUpdate(cc.OldNode)
 
 					errStatus := err.(*errors.StatusError)
 

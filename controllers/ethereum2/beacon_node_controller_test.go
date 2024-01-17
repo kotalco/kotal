@@ -113,7 +113,7 @@ var _ = Describe("Ethereum 2.0 beacon node", func() {
 
 		It("Should create data persistent volume with correct resources", func() {
 			nodePVC := &corev1.PersistentVolumeClaim{}
-			expectedResources := corev1.ResourceRequirements{
+			expectedResources := corev1.VolumeResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse(ethereum2v1alpha1.DefaultStorage),
 				},

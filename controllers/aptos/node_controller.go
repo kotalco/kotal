@@ -121,7 +121,7 @@ func (r *NodeReconciler) specPVC(node *aptosv1alpha1.Node, pvc *corev1.Persisten
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
 		},
-		Resources: corev1.ResourceRequirements{
+		Resources: corev1.VolumeResourceRequirements{
 			Requests: request,
 		},
 	}

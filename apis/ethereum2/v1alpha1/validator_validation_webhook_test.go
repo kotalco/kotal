@@ -227,7 +227,7 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.Validator.Default()
-					err := cc.Validator.ValidateCreate()
+					_, err := cc.Validator.ValidateCreate()
 
 					errStatus := err.(*errors.StatusError)
 
@@ -246,7 +246,7 @@ var _ = Describe("Ethereum 2.0 validator client validation", func() {
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.OldValidator.Default()
 					cc.NewValidator.Default()
-					err := cc.NewValidator.ValidateUpdate(cc.OldValidator)
+					_, err := cc.NewValidator.ValidateUpdate(cc.OldValidator)
 
 					errStatus := err.(*errors.StatusError)
 

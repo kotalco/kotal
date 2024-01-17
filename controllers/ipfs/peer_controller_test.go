@@ -124,7 +124,7 @@ var _ = Describe("IPFS peer controller", func() {
 		fetched := &corev1.PersistentVolumeClaim{}
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 		Expect(fetched.OwnerReferences).To(ContainElements(peerOwnerReference))
-		expectedResources := corev1.ResourceRequirements{
+		expectedResources := corev1.VolumeResourceRequirements{
 			Requests: corev1.ResourceList{
 				corev1.ResourceStorage: resource.MustParse(ipfsv1alpha1.DefaultNodeStorageRequest),
 			},

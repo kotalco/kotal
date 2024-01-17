@@ -182,7 +182,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 
 		It("Should create data persistent volume with correct resources", func() {
 			validatorPVC := &corev1.PersistentVolumeClaim{}
-			expectedResources := corev1.ResourceRequirements{
+			expectedResources := corev1.VolumeResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse(ethereum2v1alpha1.DefaultStorage),
 				},
@@ -440,7 +440,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 
 		It("Should create data persistent volume with correct resources", func() {
 			validatorPVC := &corev1.PersistentVolumeClaim{}
-			expectedResources := corev1.ResourceRequirements{
+			expectedResources := corev1.VolumeResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse(ethereum2v1alpha1.DefaultStorage),
 				},
@@ -655,7 +655,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 
 		It("Should create data persistent volume with correct resources", func() {
 			validatorPVC := &corev1.PersistentVolumeClaim{}
-			expectedResources := corev1.ResourceRequirements{
+			expectedResources := corev1.VolumeResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse(ethereum2v1alpha1.DefaultStorage),
 				},
@@ -885,7 +885,7 @@ var _ = Describe("Ethereum 2.0 validator client", func() {
 
 		It("Should create data persistent volume with correct resources", func() {
 			validatorPVC := &corev1.PersistentVolumeClaim{}
-			expectedResources := corev1.ResourceRequirements{
+			expectedResources := corev1.VolumeResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse(ethereum2v1alpha1.DefaultStorage),
 				},

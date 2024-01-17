@@ -119,7 +119,7 @@ func (r *ValidatorReconciler) specPVC(validator *ethereum2v1alpha1.Validator, pv
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
 		},
-		Resources: corev1.ResourceRequirements{
+		Resources: corev1.VolumeResourceRequirements{
 			Requests: request,
 		},
 		StorageClassName: validator.Spec.Resources.StorageClass,

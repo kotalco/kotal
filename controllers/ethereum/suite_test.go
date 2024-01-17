@@ -15,6 +15,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
 	ethereumv1alpha1 "github.com/kotalco/kotal/apis/ethereum/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -72,8 +73,8 @@ var _ = BeforeSuite(func() {
 
 	// create new controller manager
 	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
-		MetricsBindAddress: "0",
-		Scheme:             scheme.Scheme,
+		Metrics: server.Options{BindAddress: "0"},
+		Scheme:  scheme.Scheme,
 	})
 	Expect(err).ToNot(HaveOccurred())
 

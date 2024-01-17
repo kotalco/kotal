@@ -204,7 +204,7 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.Node.Default()
-					err := cc.Node.ValidateCreate()
+					_, err := cc.Node.ValidateCreate()
 					Expect(err).ToNot(BeNil())
 
 					errStatus := err.(*errors.StatusError)
@@ -224,7 +224,7 @@ var _ = Describe("Ethereum 2.0 beacon node validation", func() {
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.NewNode.Default()
 					cc.OldNode.Default()
-					err := cc.NewNode.ValidateUpdate(cc.OldNode)
+					_, err := cc.NewNode.ValidateUpdate(cc.OldNode)
 					Expect(err).ToNot(BeNil())
 
 					errStatus := err.(*errors.StatusError)

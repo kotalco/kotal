@@ -6,6 +6,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
 // +kubebuilder:webhook:verbs=create;update,path=/validate-aptos-kotal-io-v1alpha1-node,mutating=false,failurePolicy=fail,groups=aptos.kotal.io,resources=nodes,versions=v1alpha1,name=validate-aptos-v1alpha1-node.kb.io,sideEffects=None,admissionReviewVersions=v1
@@ -30,7 +31,7 @@ func (r *Node) validate() field.ErrorList {
 }
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (r *Node) ValidateCreate() error {
+func (r *Node) ValidateCreate() (admission.Warnings, error) {
 	var allErrors field.ErrorList
 
 	nodelog.Info("validate create", "name", r.Name)
@@ -39,14 +40,14 @@ func (r *Node) ValidateCreate() error {
 	allErrors = append(allErrors, r.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
-		return nil
+		return nil, nil
 	}
 
-	return apierrors.NewInvalid(schema.GroupKind{}, r.Name, allErrors)
+	return nil, apierrors.NewInvalid(schema.GroupKind{}, r.Name, allErrors)
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (r *Node) ValidateUpdate(old runtime.Object) error {
+func (r *Node) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
 	var allErrors field.ErrorList
 	oldNode := old.(*Node)
 
@@ -61,15 +62,15 @@ func (r *Node) ValidateUpdate(old runtime.Object) error {
 	}
 
 	if len(allErrors) == 0 {
-		return nil
+		return nil, nil
 	}
 
-	return apierrors.NewInvalid(schema.GroupKind{}, r.Name, allErrors)
+	return nil, apierrors.NewInvalid(schema.GroupKind{}, r.Name, allErrors)
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (r *Node) ValidateDelete() error {
+func (r *Node) ValidateDelete() (admission.Warnings, error) {
 	nodelog.Info("validate delete", "name", r.Name)
 
-	return nil
+	return nil, nil
 }

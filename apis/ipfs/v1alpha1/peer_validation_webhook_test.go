@@ -172,7 +172,7 @@ var _ = Describe("IPFS peer validation", func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.Peer.Default()
-					err := cc.Peer.ValidateCreate()
+					_, err := cc.Peer.ValidateCreate()
 
 					// all test cases has validation errors
 					Expect(err).NotTo(BeNil())
@@ -194,7 +194,7 @@ var _ = Describe("IPFS peer validation", func() {
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.Peer.Default()
 					cc.NewPeer.Default()
-					err := cc.NewPeer.ValidateUpdate(cc.Peer)
+					_, err := cc.NewPeer.ValidateUpdate(cc.Peer)
 
 					// all test cases has validation errors
 					Expect(err).NotTo(BeNil())

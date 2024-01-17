@@ -714,7 +714,7 @@ var _ = Describe("Ethereum node validation", func() {
 				cc := c
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.Node.Default()
-					err := cc.Node.ValidateCreate()
+					_, err := cc.Node.ValidateCreate()
 
 					errStatus := err.(*errors.StatusError)
 
@@ -733,7 +733,7 @@ var _ = Describe("Ethereum node validation", func() {
 				It(fmt.Sprintf("Should validate %s", cc.Title), func() {
 					cc.OldNode.Default()
 					cc.NewNode.Default()
-					err := cc.NewNode.ValidateUpdate(cc.OldNode)
+					_, err := cc.NewNode.ValidateUpdate(cc.OldNode)
 
 					errStatus := err.(*errors.StatusError)
 

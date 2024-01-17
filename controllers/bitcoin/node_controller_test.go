@@ -135,7 +135,7 @@ var _ = Describe("Bitcoin node controller", func() {
 		fetched := &corev1.PersistentVolumeClaim{}
 		Expect(k8sClient.Get(context.Background(), key, fetched)).To(Succeed())
 		Expect(fetched.OwnerReferences).To(ContainElements(nodeOwnerReference))
-		expectedResources := corev1.ResourceRequirements{
+		expectedResources := corev1.VolumeResourceRequirements{
 			Requests: corev1.ResourceList{
 				corev1.ResourceStorage: resource.MustParse(bitcoinv1alpha1.DefaultNodeStorageRequest),
 			},

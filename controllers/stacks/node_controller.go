@@ -136,7 +136,7 @@ func (r *NodeReconciler) specPVC(node *stacksv1alpha1.Node, pvc *corev1.Persiste
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
 		},
-		Resources: corev1.ResourceRequirements{
+		Resources: corev1.VolumeResourceRequirements{
 			Requests: request,
 		},
 	}

@@ -6,6 +6,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
 // +kubebuilder:webhook:verbs=create;update,path=/validate-filecoin-kotal-io-v1alpha1-node,mutating=false,failurePolicy=fail,groups=filecoin.kotal.io,resources=nodes,versions=v1alpha1,name=validate-filecoin-v1alpha1-node.kb.io,sideEffects=None,admissionReviewVersions=v1
@@ -13,7 +14,7 @@ import (
 var _ webhook.Validator = &Node{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (n *Node) ValidateCreate() error {
+func (n *Node) ValidateCreate() (admission.Warnings, error) {
 	nodelog.Info("validate create", "name", n.Name)
 
 	var allErrors field.ErrorList
@@ -21,14 +22,14 @@ func (n *Node) ValidateCreate() error {
 	allErrors = append(allErrors, n.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
-		return nil
+		return nil, nil
 	}
 
-	return apierrors.NewInvalid(schema.GroupKind{}, n.Name, allErrors)
+	return nil, apierrors.NewInvalid(schema.GroupKind{}, n.Name, allErrors)
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (n *Node) ValidateUpdate(old runtime.Object) error {
+func (n *Node) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
 	nodelog.Info("validate update", "name", n.Name)
 
 	var allErrors field.ErrorList
@@ -44,16 +45,16 @@ func (n *Node) ValidateUpdate(old runtime.Object) error {
 	allErrors = append(allErrors, n.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
 	if len(allErrors) == 0 {
-		return nil
+		return nil, nil
 	}
 
-	return apierrors.NewInvalid(schema.GroupKind{}, n.Name, allErrors)
+	return nil, apierrors.NewInvalid(schema.GroupKind{}, n.Name, allErrors)
 
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (n *Node) ValidateDelete() error {
+func (n *Node) ValidateDelete() (admission.Warnings, error) {
 	nodelog.Info("validate delete", "name", n.Name)
 
-	return nil
+	return nil, nil
 }

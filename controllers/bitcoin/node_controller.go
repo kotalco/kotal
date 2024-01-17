@@ -111,7 +111,7 @@ func (r *NodeReconciler) specPVC(node *bitcoinv1alpha1.Node, pvc *corev1.Persist
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
 		},
-		Resources: corev1.ResourceRequirements{
+		Resources: corev1.VolumeResourceRequirements{
 			Requests: request,
 		},
 	}

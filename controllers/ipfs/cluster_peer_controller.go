@@ -198,7 +198,7 @@ func (r *ClusterPeerReconciler) specPVC(peer *ipfsv1alpha1.ClusterPeer, pvc *cor
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
 		},
-		Resources: corev1.ResourceRequirements{
+		Resources: corev1.VolumeResourceRequirements{
 			Requests: request,
 		},
 		StorageClassName: peer.Spec.Resources.StorageClass,

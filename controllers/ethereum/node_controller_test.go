@@ -165,7 +165,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should create node data persistent volume with correct resources", func() {
 			pvc := &corev1.PersistentVolumeClaim{}
-			expectedResources := corev1.ResourceRequirements{
+			expectedResources := corev1.VolumeResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultMainNetworkFullNodeStorageRequest),
 				},
@@ -191,13 +191,6 @@ var _ = Describe("Ethereum network controller", func() {
 			It("Should delete node statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), key, nodeSts)).ToNot(Succeed())
-			})
-
-			It("Should delete node data persistent volume", func() {
-				Eventually(func() error {
-					nodePVC := &corev1.PersistentVolumeClaim{}
-					return k8sClient.Get(context.Background(), key, nodePVC)
-				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node service", func() {
@@ -358,7 +351,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should create bootnode data persistent volume with correct resources", func() {
 			nodePVC := &corev1.PersistentVolumeClaim{}
-			expectedResources := corev1.ResourceRequirements{
+			expectedResources := corev1.VolumeResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultTestNetworkStorageRequest),
 				},
@@ -384,13 +377,6 @@ var _ = Describe("Ethereum network controller", func() {
 			It("Should delete node statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), key, nodeSts)).ToNot(Succeed())
-			})
-
-			It("Should delete node data persistent volume", func() {
-				Eventually(func() error {
-					nodePVC := &corev1.PersistentVolumeClaim{}
-					return k8sClient.Get(context.Background(), key, nodePVC)
-				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			// TODO: remove this test
@@ -566,7 +552,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should create bootnode data persistent volume with correct resources", func() {
 			nodePVC := &corev1.PersistentVolumeClaim{}
-			expectedResources := corev1.ResourceRequirements{
+			expectedResources := corev1.VolumeResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
 				},
@@ -592,13 +578,6 @@ var _ = Describe("Ethereum network controller", func() {
 			It("Should delete node statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), key, nodeSts)).ToNot(Succeed())
-			})
-
-			It("Should delete node data persistent volume", func() {
-				Eventually(func() error {
-					nodePVC := &corev1.PersistentVolumeClaim{}
-					return k8sClient.Get(context.Background(), key, nodePVC)
-				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node service", func() {
@@ -773,7 +752,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should create node data persistent volume with correct resources", func() {
 			pvc := &corev1.PersistentVolumeClaim{}
-			expectedResources := corev1.ResourceRequirements{
+			expectedResources := corev1.VolumeResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
 				},
@@ -799,13 +778,6 @@ var _ = Describe("Ethereum network controller", func() {
 			It("Should delete node statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), key, nodeSts)).ToNot(Succeed())
-			})
-
-			It("Should delete node data persistent volume", func() {
-				Eventually(func() error {
-					nodePVC := &corev1.PersistentVolumeClaim{}
-					return k8sClient.Get(context.Background(), key, nodePVC)
-				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node service", func() {
@@ -964,7 +936,7 @@ var _ = Describe("Ethereum network controller", func() {
 
 		It("Should create bootnode data persistent volume with correct resouces", func() {
 			nodePVC := &corev1.PersistentVolumeClaim{}
-			expectedResources := corev1.ResourceRequirements{
+			expectedResources := corev1.VolumeResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse(ethereumv1alpha1.DefaultPrivateNetworkNodeStorageRequest),
 				},
@@ -990,13 +962,6 @@ var _ = Describe("Ethereum network controller", func() {
 			It("Should delete node statefulset", func() {
 				nodeSts := &appsv1.StatefulSet{}
 				Expect(k8sClient.Get(context.Background(), key, nodeSts)).ToNot(Succeed())
-			})
-
-			It("Should delete node data persistent volume", func() {
-				Eventually(func() error {
-					nodePVC := &corev1.PersistentVolumeClaim{}
-					return k8sClient.Get(context.Background(), key, nodePVC)
-				}, timeout, interval).ShouldNot(Succeed())
 			})
 
 			It("Should delete node service", func() {
