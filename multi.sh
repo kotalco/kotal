@@ -40,7 +40,7 @@ minikube delete --all
 else
 # kind cluster versions
 # https://hub.docker.com/r/kindest/node/tags
-VERSIONS=("1.19.16" "1.20.15" "1.21.14" "1.22.15" "1.23.13" "1.24.7" "1.25.3" "1.26.0")
+VERSIONS=("1.19.16" "1.20.15" "1.21.14" "1.22.17" "1.23.17" "1.24.15" "1.25.11" "1.26.6" "1.27.3" "1.28.0" "1.29.0")
 echo "🗑 Deleting all Kind clusters"
 kind delete clusters --all
 fi
