@@ -3,7 +3,7 @@ module github.com/kotalco/kotal
 go 1.20
 
 require (
-	github.com/BurntSushi/toml v1.2.0
+	github.com/BurntSushi/toml v1.3.2
 	github.com/ethereum/go-ethereum v1.13.10
 	github.com/onsi/ginkgo/v2 v2.14.0
 	github.com/onsi/gomega v1.30.0
