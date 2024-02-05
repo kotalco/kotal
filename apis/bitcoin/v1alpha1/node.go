@@ -8,6 +8,7 @@ import (
 // BitcoinNetwork is Bitcoin network
 type BitcoinNetwork string
 
+// Bitcoin networks
 const (
 	Mainnet BitcoinNetwork = "mainnet"
 	Testnet BitcoinNetwork = "testnet"
@@ -41,6 +42,9 @@ type NodeSpec struct {
 	RPCPort uint `json:"rpcPort,omitempty"`
 	// RPCUsers is JSON-RPC users credentials
 	RPCUsers []RPCUser `json:"rpcUsers,omitempty"`
+	// RPCWhilelist is a list of whitelisted rpc method
+	// +listType=set
+	RPCWhitelist []string `json:"rpcWhilelist,omitempty"`
 	// Wallet load wallet and enables wallet RPC calls
 	Wallet bool `json:"wallet,omitempty"`
 	// TransactionIndex maintains a full tx index

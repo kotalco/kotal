@@ -89,6 +89,11 @@ func (in *NodeSpec) DeepCopyInto(out *NodeSpec) {
 		*out = make([]RPCUser, len(*in))
 		copy(*out, *in)
 	}
+	if in.RPCWhitelist != nil {
+		in, out := &in.RPCWhitelist, &out.RPCWhitelist
+		*out = make([]string, len(*in))
+		copy(*out, *in)
+	}
 	in.Resources.DeepCopyInto(&out.Resources)
 }
 

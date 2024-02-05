@@ -115,6 +115,12 @@ spec:
                   - username
                   type: object
                 type: array
+              rpcWhilelist:
+                description: RPCWhilelist is a list of whitelisted rpc method
+                items:
+                  type: string
+                type: array
+                x-kubernetes-list-type: set
               txIndex:
                 description: TransactionIndex maintains a full tx index
                 type: boolean
