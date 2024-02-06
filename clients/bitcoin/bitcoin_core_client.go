@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"strings"
 
 	bitcoinv1alpha1 "github.com/kotalco/kotal/apis/bitcoin/v1alpha1"
 	"github.com/kotalco/kotal/controllers/shared"
@@ -65,6 +66,7 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 		args = append(args, fmt.Sprintf("%s=%s", BitcoinArgRPCBind, shared.Host(node.Spec.RPC)))
 		args = append(args, fmt.Sprintf("%s=%s/0", BitcoinArgRPCAllowIp, shared.Host(node.Spec.RPC)))
 
+		// TODO: mock k8s secret getter to test rpc users and whitelist
 		for _, rpcUser := range node.Spec.RPCUsers {
 			name := types.NamespacedName{Name: rpcUser.PasswordSecretName, Namespace: node.Namespace}
 			password, _ := shared.GetSecret(context.TODO(), c.client, name, "password")
@@ -75,7 +77,13 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 				hashCash[password] = saltedHash
 			}
 			args = append(args, fmt.Sprintf("%s=%s:%s", BitcoinArgRPCAuth, rpcUser.Username, saltedHash))
+
+			if len(node.Spec.RPCWhitelist) != 0 {
+				list := strings.Join(node.Spec.RPCWhitelist, ",")
+				args = append(args, fmt.Sprintf("%s=%s:%s", BitcoinArgRpcWhitelist, rpcUser.Username, list))
+			}
 		}
+
 	} else {
 		args = append(args, fmt.Sprintf("%s=0", BitcoinArgServer))
 	}

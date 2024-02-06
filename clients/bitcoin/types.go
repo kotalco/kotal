@@ -24,4 +24,6 @@ const (
 	BitcoinArgRPCAuth = "-rpcauth"
 	// BitcoinArgDisableWallet is argument used to disable wallet and RPC calls
 	BitcoinArgDisableWallet = "-disablewallet"
+	// BitcoinArgRpcWhitelist is argument used to set default rpc whitelist
+	BitcoinArgRpcWhitelist = "-rpcwhitelist"
 )

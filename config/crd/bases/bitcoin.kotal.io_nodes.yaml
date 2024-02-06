@@ -115,8 +115,8 @@ spec:
                   - username
                   type: object
                 type: array
-              rpcWhilelist:
-                description: RPCWhilelist is a list of whitelisted rpc method
+              rpcWhitelist:
+                description: RPCWhitelist is a list of whitelisted rpc method
                 items:
                   type: string
                 type: array
