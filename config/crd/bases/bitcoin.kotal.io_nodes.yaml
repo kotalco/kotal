@@ -45,6 +45,10 @@ spec:
               blocksOnly:
                 description: BlocksOnly rejects transactions from network peers https://bitcointalk.org/index.php?topic=1377345.0
                 type: boolean
+              coinStatsIndex:
+                description: CoinStatsIndex maintains coinstats index used by the
+                  gettxoutsetinfo RPC
+                type: boolean
               extraArgs:
                 additionalProperties:
                   type: string
