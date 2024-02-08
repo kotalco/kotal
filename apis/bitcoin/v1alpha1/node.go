@@ -49,6 +49,9 @@ type NodeSpec struct {
 	Wallet bool `json:"wallet,omitempty"`
 	// TransactionIndex maintains a full tx index
 	TransactionIndex bool `json:"txIndex,omitempty"`
+	// BlocksOnly rejects transactions from network peers
+	// https://bitcointalk.org/index.php?topic=1377345.0
+	BlocksOnly bool `json:"blocksOnly,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
 }
