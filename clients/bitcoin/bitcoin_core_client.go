@@ -88,11 +88,16 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 		args = append(args, fmt.Sprintf("%s=0", BitcoinArgServer))
 	}
 
-	var txIndex uint
-	if node.Spec.TransactionIndex {
-		txIndex = 1
+	// convert bool to 0 or 1
+	var Btoi = func(b bool) uint {
+		if b {
+			return 1
+		}
+		return 0
 	}
-	args = append(args, fmt.Sprintf("-txindex=%d", txIndex))
+
+	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgTransactionIndex, Btoi(node.Spec.TransactionIndex)))
+	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgBlocksOnly, Btoi(node.Spec.BlocksOnly)))
 
 	if !node.Spec.Wallet {
 		args = append(args, BitcoinArgDisableWallet)

@@ -21,6 +21,7 @@ var _ = Describe("Bitcoin core client", func() {
 			RPCPort:          7777,
 			Wallet:           false,
 			TransactionIndex: true,
+			BlocksOnly:       true,
 		},
 	}
 
@@ -50,6 +51,7 @@ var _ = Describe("Bitcoin core client", func() {
 			"-rpcallowip=0.0.0.0/0",
 			"-disablewallet",
 			"-txindex=1",
+			"-blocksonly=1",
 		}))
 	})
 

@@ -24,6 +24,10 @@ const (
 	BitcoinArgRPCAuth = "-rpcauth"
 	// BitcoinArgDisableWallet is argument used to disable wallet and RPC calls
 	BitcoinArgDisableWallet = "-disablewallet"
+	// BitcoinArgTransactionIndex is argument used to maintain a full transaction index
+	BitcoinArgTransactionIndex = "-txindex"
+	// BitcoinArgBlocksOnly is argument used to reject transactions from network peers
+	BitcoinArgBlocksOnly = "-blocksonly"
 	// BitcoinArgRpcWhitelist is argument used to set default rpc whitelist
 	BitcoinArgRpcWhitelist = "-rpcwhitelist"
 )
