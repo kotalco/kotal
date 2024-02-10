@@ -16,7 +16,30 @@ var _ = Describe("Bitcoin node validation", func() {
 		Title  string
 		Node   *Node
 		Errors field.ErrorList
-	}{}
+	}{
+
+		{
+			Title: "updated transactionIndex",
+			Node: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					Network:          "mainnet",
+					Pruning:          true,
+					TransactionIndex: true,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.pruning",
+					BadValue: true,
+					Detail:   "must be false if transaction index is enabled",
+				},
+			},
+		},
+	}
 
 	updateCases := []struct {
 		Title   string
@@ -48,6 +71,36 @@ var _ = Describe("Bitcoin node validation", func() {
 					Field:    "spec.network",
 					BadValue: "testnet",
 					Detail:   "field is immutable",
+				},
+			},
+		},
+		{
+			Title: "updated transactionIndex",
+			OldNode: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					Network: "mainnet",
+					Pruning: true,
+				},
+			},
+			NewNode: &Node{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "my-node",
+				},
+				Spec: NodeSpec{
+					Network:          "mainnet",
+					Pruning:          true,
+					TransactionIndex: true,
+				},
+			},
+			Errors: field.ErrorList{
+				{
+					Type:     field.ErrorTypeInvalid,
+					Field:    "spec.pruning",
+					BadValue: true,
+					Detail:   "must be false if transaction index is enabled",
 				},
 			},
 		},

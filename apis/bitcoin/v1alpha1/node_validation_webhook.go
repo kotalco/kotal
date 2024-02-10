@@ -13,12 +13,26 @@ import (
 
 var _ webhook.Validator = &Node{}
 
+// Validate is common create and update validation rules
+func (n *Node) validate() field.ErrorList {
+	var nodeErrors field.ErrorList
+
+	// can't work in pruning and transaction index mode at the same time
+	if n.Spec.TransactionIndex && n.Spec.Pruning {
+		err := field.Invalid(field.NewPath("spec").Child("pruning"), n.Spec.Pruning, "must be false if transaction index is enabled")
+		nodeErrors = append(nodeErrors, err)
+	}
+
+	return nodeErrors
+}
+
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (r *Node) ValidateCreate() (admission.Warnings, error) {
 	var allErrors field.ErrorList
 
 	nodelog.Info("validate create", "name", r.Name)
 
+	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateCreate()...)
 
 	if len(allErrors) == 0 {
@@ -35,6 +49,7 @@ func (r *Node) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
 
 	nodelog.Info("validate update", "name", r.Name)
 
+	allErrors = append(allErrors, r.validate()...)
 	allErrors = append(allErrors, r.Spec.Resources.ValidateUpdate(&oldNode.Spec.Resources)...)
 
 	if r.Spec.Network != oldNode.Spec.Network {
