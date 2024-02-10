@@ -23,6 +23,7 @@ var _ = Describe("Bitcoin core client", func() {
 			TransactionIndex: true,
 			CoinStatsIndex:   true,
 			BlocksOnly:       true,
+			Pruning:          true,
 		},
 	}
 
@@ -54,6 +55,7 @@ var _ = Describe("Bitcoin core client", func() {
 			"-txindex=1",
 			"-blocksonly=1",
 			"-coinstatsindex=1",
+			"-prune=1",
 		}))
 	})
 

@@ -30,6 +30,8 @@ const (
 	BitcoinArgCoinStatsIndex = "-coinstatsindex"
 	// BitcoinArgBlocksOnly is argument used to reject transactions from network peers
 	BitcoinArgBlocksOnly = "-blocksonly"
+	// BitcoinArgPrune is argument used to allows pruneblockchain RPC to be called to delete specific blocks
+	BitcoinArgPrune = "-prune"
 	// BitcoinArgRpcWhitelist is argument used to set default rpc whitelist
 	BitcoinArgRpcWhitelist = "-rpcwhitelist"
 )
