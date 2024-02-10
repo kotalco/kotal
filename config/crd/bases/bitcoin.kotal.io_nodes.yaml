@@ -66,6 +66,10 @@ spec:
               p2pPort:
                 description: P2PPort is p2p communications port
                 type: integer
+              pruning:
+                description: Pruning allows pruneblockchain RPC to delete specific
+                  blocks
+                type: boolean
               replicas:
                 description: Replicas is number of replicas
                 enum:
