@@ -57,6 +57,9 @@ spec:
               image:
                 description: Image is Bitcoin node client image
                 type: string
+              listen:
+                description: Listen accepts connections from outside
+                type: boolean
               network:
                 description: Network is Bitcoin network to join and sync
                 enum:

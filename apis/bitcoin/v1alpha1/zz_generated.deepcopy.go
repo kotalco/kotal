@@ -84,6 +84,11 @@ func (in *NodeSpec) DeepCopyInto(out *NodeSpec) {
 		*out = new(uint)
 		**out = **in
 	}
+	if in.Listen != nil {
+		in, out := &in.Listen, &out.Listen
+		*out = new(bool)
+		**out = **in
+	}
 	if in.RPCUsers != nil {
 		in, out := &in.RPCUsers, &out.RPCUsers
 		*out = make([]RPCUser, len(*in))
