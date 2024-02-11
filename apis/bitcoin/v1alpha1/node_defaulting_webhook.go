@@ -64,4 +64,10 @@ func (r *Node) Default() {
 		r.Spec.Replicas = &replicas
 	}
 
+	if r.Spec.Listen == nil {
+		// constants are not addressable
+		defaultListen := DefaultListen
+		r.Spec.Listen = &defaultListen
+	}
+
 }

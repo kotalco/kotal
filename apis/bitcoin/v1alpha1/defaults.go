@@ -11,6 +11,8 @@ const (
 	DefaultTestnetP2PPort uint = 18333
 	// DefaltReplicas is the default replicas
 	DefaltReplicas uint = 1
+	// DefaultListen is the default connection to outside strategy
+	DefaultListen = true
 )
 
 const (
