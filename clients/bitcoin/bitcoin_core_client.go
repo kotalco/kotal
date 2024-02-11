@@ -56,7 +56,16 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 		"testnet": "test",
 	}
 
+	// convert bool to 0 or 1
+	var Btoi = func(b bool) uint {
+		if b {
+			return 1
+		}
+		return 0
+	}
+
 	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgDataDir, shared.PathData(c.HomeDir())))
+	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgListen, Btoi(*node.Spec.Listen)))
 	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgChain, networks[string(node.Spec.Network)]))
 	args = append(args, fmt.Sprintf("%s=%s:%d", BitcoinArgBind, shared.Host(true), node.Spec.P2PPort))
 
@@ -86,14 +95,6 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 
 	} else {
 		args = append(args, fmt.Sprintf("%s=0", BitcoinArgServer))
-	}
-
-	// convert bool to 0 or 1
-	var Btoi = func(b bool) uint {
-		if b {
-			return 1
-		}
-		return 0
 	}
 
 	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgTransactionIndex, Btoi(node.Spec.TransactionIndex)))

@@ -8,6 +8,8 @@ const (
 const (
 	// BitcoinArgChain is argument used to set chain
 	BitcoinArgChain = "-chain"
+	// BitcoinArgListen is argument used to accept connections from outside
+	BitcoinArgListen = "-listen"
 	// BitcoinArgBind is argument used to bind and listen to the given address
 	BitcoinArgBind = "-bind"
 	// BitcoinArgServer is argument used to enable CLI and JSON-RPC server

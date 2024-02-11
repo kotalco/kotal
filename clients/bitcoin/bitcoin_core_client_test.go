@@ -9,6 +9,7 @@ import (
 
 var _ = Describe("Bitcoin core client", func() {
 
+	listen := false
 	node := &bitcoinv1alpha1.Node{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "bitcoin-node",
@@ -16,6 +17,7 @@ var _ = Describe("Bitcoin core client", func() {
 		},
 		Spec: bitcoinv1alpha1.NodeSpec{
 			Network:          "mainnet",
+			Listen:           &listen,
 			RPC:              true,
 			P2PPort:          8888,
 			RPCPort:          7777,
@@ -45,6 +47,7 @@ var _ = Describe("Bitcoin core client", func() {
 	It("Should generate correct client arguments", func() {
 		Expect(client.Args()).To(ContainElements([]string{
 			"-chain=main",
+			"-listen=0",
 			"-datadir=/data/kotal-data",
 			"-server=1",
 			"-bind=0.0.0.0:8888",
