@@ -97,6 +97,7 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 		args = append(args, fmt.Sprintf("%s=0", BitcoinArgServer))
 	}
 
+	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgReIndex, Btoi(node.Spec.ReIndex)))
 	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgTransactionIndex, Btoi(node.Spec.TransactionIndex)))
 	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgBlocksOnly, Btoi(node.Spec.BlocksOnly)))
 	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgCoinStatsIndex, Btoi(node.Spec.CoinStatsIndex)))

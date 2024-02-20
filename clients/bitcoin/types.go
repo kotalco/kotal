@@ -26,6 +26,8 @@ const (
 	BitcoinArgRPCAuth = "-rpcauth"
 	// BitcoinArgDisableWallet is argument used to disable wallet and RPC calls
 	BitcoinArgDisableWallet = "-disablewallet"
+	// BitcoinArgReIndex is argument used to rebuild chain state and block index
+	BitcoinArgReIndex = "-reindex"
 	// BitcoinArgTransactionIndex is argument used to maintain a full transaction index
 	BitcoinArgTransactionIndex = "-txindex"
 	// BitcoinArgCoinStatsIndex is argument used to maintain coinstats index
