@@ -51,6 +51,8 @@ spec:
                 type: boolean
               dbCacheSize:
                 description: DBCacheSize is database cache size
+                maximum: 16384
+                minimum: 4
                 type: integer
               extraArgs:
                 additionalProperties:

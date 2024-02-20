@@ -59,6 +59,8 @@ type NodeSpec struct {
 	// https://bitcointalk.org/index.php?topic=1377345.0
 	BlocksOnly bool `json:"blocksOnly,omitempty"`
 	// DBCacheSize is database cache size
+	// +kubebuilder:validation:Minimum=4
+	// +kubebuilder:validation:Maximum=16384
 	DBCacheSize uint `json:"dbCacheSize,omitempty"`
 	// Resources is node compute and storage resources
 	shared.Resources `json:"resources,omitempty"`
