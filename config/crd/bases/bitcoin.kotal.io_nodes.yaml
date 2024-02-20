@@ -49,6 +49,9 @@ spec:
                 description: CoinStatsIndex maintains coinstats index used by the
                   gettxoutsetinfo RPC
                 type: boolean
+              dbCacheSize:
+                description: DBCacheSize is database cache size
+                type: integer
               extraArgs:
                 additionalProperties:
                   type: string
