@@ -102,6 +102,8 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgCoinStatsIndex, Btoi(node.Spec.CoinStatsIndex)))
 	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgPrune, Btoi(node.Spec.Pruning)))
 
+	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgDBCacheSize, node.Spec.DBCacheSize))
+
 	if !node.Spec.Wallet {
 		args = append(args, BitcoinArgDisableWallet)
 	}

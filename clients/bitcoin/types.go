@@ -36,4 +36,6 @@ const (
 	BitcoinArgPrune = "-prune"
 	// BitcoinArgRpcWhitelist is argument used to set default rpc whitelist
 	BitcoinArgRpcWhitelist = "-rpcwhitelist"
+	// BitcoinArgDBCacheSize is argument used to set maximum database cache size
+	BitcoinArgDBCacheSize = "-dbcache"
 )

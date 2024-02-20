@@ -26,6 +26,7 @@ var _ = Describe("Bitcoin core client", func() {
 			CoinStatsIndex:   true,
 			BlocksOnly:       true,
 			Pruning:          true,
+			DBCacheSize:      2048,
 		},
 	}
 
@@ -59,6 +60,7 @@ var _ = Describe("Bitcoin core client", func() {
 			"-blocksonly=1",
 			"-coinstatsindex=1",
 			"-prune=1",
+			"-dbcache=2048",
 		}))
 	})
 
