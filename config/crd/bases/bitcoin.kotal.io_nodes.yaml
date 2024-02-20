@@ -78,6 +78,9 @@ spec:
                 description: Pruning allows pruneblockchain RPC to delete specific
                   blocks
                 type: boolean
+              reIndex:
+                description: ReIndex rebuild chain state and block index
+                type: boolean
               replicas:
                 description: Replicas is number of replicas
                 enum:

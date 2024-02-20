@@ -53,6 +53,8 @@ type NodeSpec struct {
 	TransactionIndex bool `json:"txIndex,omitempty"`
 	// CoinStatsIndex maintains coinstats index used by the gettxoutsetinfo RPC
 	CoinStatsIndex bool `json:"coinStatsIndex,omitempty"`
+	// ReIndex rebuild chain state and block index
+	ReIndex bool `json:"reIndex,omitempty"`
 	// Pruning allows pruneblockchain RPC to delete specific blocks
 	Pruning bool `json:"pruning,omitempty"`
 	// BlocksOnly rejects transactions from network peers
