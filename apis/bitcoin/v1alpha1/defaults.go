@@ -13,6 +13,8 @@ const (
 	DefaltReplicas uint = 1
 	// DefaultListen is the default connection to outside strategy
 	DefaultListen = true
+	// DefaultDBCacheSize is the default database cache size
+	DefaultDBCacheSize uint = 450
 )
 
 const (

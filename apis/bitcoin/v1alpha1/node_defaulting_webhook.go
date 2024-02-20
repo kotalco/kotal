@@ -70,4 +70,8 @@ func (r *Node) Default() {
 		r.Spec.Listen = &defaultListen
 	}
 
+	if r.Spec.DBCacheSize == 0 {
+		r.Spec.DBCacheSize = DefaultDBCacheSize
+	}
+
 }
