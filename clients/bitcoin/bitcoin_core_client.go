@@ -66,6 +66,7 @@ func (c *BitcoinCoreClient) Args() (args []string) {
 
 	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgDataDir, shared.PathData(c.HomeDir())))
 	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgListen, Btoi(*node.Spec.Listen)))
+	args = append(args, fmt.Sprintf("%s=%d", BitcoinArgMaxConnections, *node.Spec.MaxConnections))
 	args = append(args, fmt.Sprintf("%s=%s", BitcoinArgChain, networks[string(node.Spec.Network)]))
 	args = append(args, fmt.Sprintf("%s=%s:%d", BitcoinArgBind, shared.Host(true), node.Spec.P2PPort))
 

@@ -40,4 +40,6 @@ const (
 	BitcoinArgRpcWhitelist = "-rpcwhitelist"
 	// BitcoinArgDBCacheSize is argument used to set maximum database cache size
 	BitcoinArgDBCacheSize = "-dbcache"
+	// BitcoinArgMaxConnections is argument used to set maximum connections to peers
+	BitcoinArgMaxConnections = "-maxconnections"
 )

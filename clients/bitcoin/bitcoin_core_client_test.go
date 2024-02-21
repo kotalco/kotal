@@ -10,6 +10,7 @@ import (
 var _ = Describe("Bitcoin core client", func() {
 
 	listen := false
+	var maxConnections uint = 123
 	node := &bitcoinv1alpha1.Node{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "bitcoin-node",
@@ -18,6 +19,7 @@ var _ = Describe("Bitcoin core client", func() {
 		Spec: bitcoinv1alpha1.NodeSpec{
 			Network:          "mainnet",
 			Listen:           &listen,
+			MaxConnections:   &maxConnections,
 			RPC:              true,
 			P2PPort:          8888,
 			RPCPort:          7777,
@@ -63,6 +65,7 @@ var _ = Describe("Bitcoin core client", func() {
 			"-coinstatsindex=1",
 			"-prune=1",
 			"-dbcache=2048",
+			"-maxconnections=123",
 		}))
 	})
 
