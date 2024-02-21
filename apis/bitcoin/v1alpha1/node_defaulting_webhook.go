@@ -74,4 +74,10 @@ func (r *Node) Default() {
 		r.Spec.DBCacheSize = DefaultDBCacheSize
 	}
 
+	if r.Spec.MaxConnections == nil {
+		// constants are not addressable
+		maxConnections := DefaultMaxConnections
+		r.Spec.MaxConnections = &maxConnections
+	}
+
 }

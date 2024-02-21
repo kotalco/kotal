@@ -89,6 +89,11 @@ func (in *NodeSpec) DeepCopyInto(out *NodeSpec) {
 		*out = new(bool)
 		**out = **in
 	}
+	if in.MaxConnections != nil {
+		in, out := &in.MaxConnections, &out.MaxConnections
+		*out = new(uint)
+		**out = **in
+	}
 	if in.RPCUsers != nil {
 		in, out := &in.RPCUsers, &out.RPCUsers
 		*out = make([]RPCUser, len(*in))

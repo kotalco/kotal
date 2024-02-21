@@ -15,6 +15,8 @@ const (
 	DefaultListen = true
 	// DefaultDBCacheSize is the default database cache size
 	DefaultDBCacheSize uint = 450
+	// DefaultMaxConnections is the default maximum connections to peers
+	DefaultMaxConnections uint = 125
 )
 
 const (

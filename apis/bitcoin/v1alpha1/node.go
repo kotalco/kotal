@@ -39,7 +39,7 @@ type NodeSpec struct {
 	// P2PPort is p2p communications port
 	P2PPort uint `json:"p2pPort,omitempty"`
 	// MaxConnections is maximum connections to peers
-	MaxConnections uint `json:"maxConnections,omitempty"`
+	MaxConnections *uint `json:"maxConnections,omitempty"`
 	// RPC enables JSON-RPC server
 	RPC bool `json:"rpc,omitempty"`
 	// RPCPort is JSON-RPC server port
