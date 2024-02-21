@@ -65,6 +65,9 @@ spec:
               listen:
                 description: Listen accepts connections from outside
                 type: boolean
+              maxConnections:
+                description: MaxConnections is maximum connections to peers
+                type: integer
               network:
                 description: Network is Bitcoin network to join and sync
                 enum:
