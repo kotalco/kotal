@@ -68,6 +68,11 @@ spec:
                 type: string
               network:
                 description: Network is the polkadot network/chain to join
+                enum:
+                - polkadot
+                - kusama
+                - rococo
+                - westend
                 type: string
               nodePrivateKeySecretName:
                 description: NodePrivateKeySecretName is the secret name holding node

@@ -27,6 +27,7 @@ type NodeSpec struct {
 	// +kubebuilder:validation:Enum=0;1
 	Replicas *uint `json:"replicas,omitempty"`
 	// Network is the polkadot network/chain to join
+	// +kubebuilder:validation:Enum=polkadot;kusama;rococo;westend
 	Network string `json:"network"`
 	// P2PPort is p2p protocol tcp port
 	P2PPort uint `json:"p2pPort,omitempty"`
