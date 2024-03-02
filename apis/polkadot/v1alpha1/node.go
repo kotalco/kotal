@@ -41,6 +41,9 @@ type NodeSpec struct {
 	Pruning *bool `json:"pruning,omitempty"`
 	// RetainedBlocks is the number of blocks to keep state for
 	RetainedBlocks uint `json:"retainedBlocks,omitempty"`
+	// Database is database backend
+	// +kubebuilder:validation:Enum=auto;paritydb;rocksdb
+	Database string `json:"database,omitempty"`
 	// Logging is logging verboisty level
 	// +kubebuilder:validation:Enum=error;warn;info;debug;trace
 	Logging shared.VerbosityLevel `json:"logging,omitempty"`

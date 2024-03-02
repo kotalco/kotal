@@ -49,6 +49,13 @@ spec:
                   type: string
                 type: array
                 x-kubernetes-list-type: set
+              database:
+                description: Database is database backend
+                enum:
+                - auto
+                - paritydb
+                - rocksdb
+                type: string
               extraArgs:
                 additionalProperties:
                   type: string
