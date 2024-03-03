@@ -13,6 +13,8 @@ const (
 	PolkadotArgSync = "--sync"
 	// PolkadotArgPruning is argument used to keep recent blocks or archive all
 	PolkadotArgPruning = "--pruning"
+	// PolkadotArgDatabase is argument to set database backend
+	PolkadotArgDatabase = "--database"
 	// PolkadotArgLogging is argument to set logging verbosity
 	PolkadotArgLogging = "--log"
 	// PolkadotArgRPCExternal is argument used to enable rpc server on all hosts

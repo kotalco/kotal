@@ -43,6 +43,8 @@ func (c *PolkadotClient) Args() (args []string) {
 	args = append(args, PolkadotArgSync, string(node.Spec.SyncMode))
 	args = append(args, PolkadotArgLogging, string(node.Spec.Logging))
 
+	args = append(args, PolkadotArgDatabase, string(node.Spec.Database))
+
 	if node.Spec.Pruning != nil {
 		var pruning bool = *node.Spec.Pruning
 		if pruning {

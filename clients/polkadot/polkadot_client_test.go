@@ -36,6 +36,7 @@ var _ = Describe("Polkadot client", func() {
 			PrometheusPort:           5432,
 			Pruning:                  &t,
 			CORSDomains:              []string{"kotal.com"},
+			Database:                 polkadotv1alpha1.ParityDB,
 			// TODO: create test for node with telemetry disabled
 			// TODO: create test for node with prometheus disabled
 			// TODO: create test for node with pruning true
@@ -89,6 +90,8 @@ var _ = Describe("Polkadot client", func() {
 			"archive",
 			PolkadotArgRPCCors,
 			"kotal.com",
+			PolkadotArgDatabase,
+			string(polkadotv1alpha1.ParityDB),
 		}))
 
 	})

@@ -9,12 +9,23 @@ import (
 // +kubebuilder:validation:Enum=fast;full
 type SynchronizationMode string
 
+// +kubebuilder:validation:Enum=auto;paritydb;rocksdb
+type DatabaseBackend string
+
 const (
 	//FastSynchronization is the fast synchronization mode
 	FastSynchronization SynchronizationMode = "fast"
-
 	//FullSynchronization is the full archival synchronization mode
 	FullSynchronization SynchronizationMode = "full"
+)
+
+const (
+	// Auto databse backend
+	Auto DatabaseBackend = "auto"
+	// ParityDB databse backend
+	ParityDB DatabaseBackend = "paritydb"
+	// RocksDB databse backend
+	RocksDB DatabaseBackend = "rocksdb"
 )
 
 // NodeSpec defines the desired state of Node
@@ -42,8 +53,7 @@ type NodeSpec struct {
 	// RetainedBlocks is the number of blocks to keep state for
 	RetainedBlocks uint `json:"retainedBlocks,omitempty"`
 	// Database is database backend
-	// +kubebuilder:validation:Enum=auto;paritydb;rocksdb
-	Database string `json:"database,omitempty"`
+	Database DatabaseBackend `json:"database,omitempty"`
 	// Logging is logging verboisty level
 	// +kubebuilder:validation:Enum=error;warn;info;debug;trace
 	Logging shared.VerbosityLevel `json:"logging,omitempty"`

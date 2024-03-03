@@ -24,7 +24,7 @@ const (
 	// DefaultCORSDomain is the default browser origin allowed to access the JSON-RPC HTTP and WS servers
 	DefaultCORSDomain = "all"
 	// DefaultDatabaseBackend is the default database backend
-	DefaultDatabaseBackend = "auto"
+	DefaultDatabaseBackend DatabaseBackend = Auto
 )
 
 const (
