@@ -41,6 +41,7 @@ var _ = Describe("Polkadot node defaulting", func() {
 		Expect(node.Spec.TelemetryURL).To(Equal(DefaultTelemetryURL))
 		Expect(node.Spec.PrometheusPort).To(Equal(DefaultPrometheusPort))
 		Expect(node.Spec.Pruning).To(Equal(&t))
+		Expect(node.Spec.Database).To(Equal(DefaultDatabaseBackend))
 		Expect(node.Spec.CORSDomains).To(ContainElement(DefaultCORSDomain))
 
 	})

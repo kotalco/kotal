@@ -59,6 +59,10 @@ func (r *Node) Default() {
 		r.Spec.Pruning = &t
 	}
 
+	if r.Spec.Database == "" {
+		r.Spec.Database = DefaultDatabaseBackend
+	}
+
 	if r.Spec.RetainedBlocks == 0 {
 		r.Spec.RetainedBlocks = DefaultRetainedBlocks
 	}
