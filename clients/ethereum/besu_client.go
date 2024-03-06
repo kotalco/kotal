@@ -138,8 +138,9 @@ func (b *BesuClient) Genesis() (content string, err error) {
 	node := b.node
 	genesis := node.Spec.Genesis
 	mixHash := genesis.MixHash
+	parentHash := genesis.ParentHash
 	nonce := genesis.Nonce
-	extraData := "0x00"
+	extraData := genesis.ExtraData
 	difficulty := genesis.Difficulty
 	result := map[string]interface{}{}
 
@@ -190,20 +191,23 @@ func (b *BesuClient) Genesis() (content string, err error) {
 	}
 
 	config := map[string]interface{}{
-		"chainId":             genesis.ChainID,
-		"homesteadBlock":      genesis.Forks.Homestead,
-		"eip150Block":         genesis.Forks.EIP150,
-		"eip155Block":         genesis.Forks.EIP155,
-		"eip158Block":         genesis.Forks.EIP158,
-		"byzantiumBlock":      genesis.Forks.Byzantium,
-		"constantinopleBlock": genesis.Forks.Constantinople,
-		"petersburgBlock":     genesis.Forks.Petersburg,
-		"istanbulBlock":       genesis.Forks.Istanbul,
-		"muirGlacierBlock":    genesis.Forks.MuirGlacier,
-		"berlinBlock":         genesis.Forks.Berlin,
-		"londonBlock":         genesis.Forks.London,
-		"arrowGlacierBlock":   genesis.Forks.ArrowGlacier,
-		engine:                consensusConfig,
+		"chainId":                 genesis.ChainID,
+		"homesteadBlock":          genesis.Forks.Homestead,
+		"eip150Block":             genesis.Forks.EIP150,
+		"eip155Block":             genesis.Forks.EIP155,
+		"eip158Block":             genesis.Forks.EIP158,
+		"byzantiumBlock":          genesis.Forks.Byzantium,
+		"constantinopleBlock":     genesis.Forks.Constantinople,
+		"petersburgBlock":         genesis.Forks.Petersburg,
+		"istanbulBlock":           genesis.Forks.Istanbul,
+		"muirGlacierBlock":        genesis.Forks.MuirGlacier,
+		"berlinBlock":             genesis.Forks.Berlin,
+		"londonBlock":             genesis.Forks.London,
+		"arrowGlacierBlock":       genesis.Forks.ArrowGlacier,
+		"mergeForBlock":           genesis.Forks.MergeFor,
+		"terminalTotalDifficulty": genesis.Forks.TerminalTotalDifficulty,
+		"shanghaiTime":            genesis.Forks.ShanghaiTime,
+		engine:                    consensusConfig,
 	}
 
 	if genesis.Forks.DAO != nil {
@@ -223,6 +227,7 @@ func (b *BesuClient) Genesis() (content string, err error) {
 	result["gasLimit"] = genesis.GasLimit
 	result["difficulty"] = difficulty
 	result["coinbase"] = genesis.Coinbase
+	result["parentHash"] = parentHash
 	result["mixHash"] = mixHash
 	result["extraData"] = extraData
 

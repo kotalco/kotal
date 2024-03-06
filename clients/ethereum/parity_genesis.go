@@ -20,7 +20,7 @@ func (p *ParityGenesis) NormalizeNonce(data string) string {
 // Genesis returns genesis config parameter
 func (p *ParityGenesis) Genesis(node *ethereumv1alpha1.Node) (content string, err error) {
 	genesis := node.Spec.Genesis
-	extraData := "0x00"
+	extraData := genesis.ExtraData
 	var engineConfig map[string]interface{}
 
 	// clique PoA settings
@@ -51,6 +51,9 @@ func (p *ParityGenesis) Genesis(node *ethereumv1alpha1.Node) (content string, er
 	berlinBlock := hex(genesis.Forks.Berlin)
 	londonBlock := hex(genesis.Forks.London)
 	arrowGlacierBlock := hex(genesis.Forks.ArrowGlacier)
+	mergeForBlock := hex(genesis.Forks.MergeFor)
+	terminalTotalDifficulty := hex(genesis.Forks.TerminalTotalDifficulty)
+	shanghaiTime := hex(genesis.Forks.ShanghaiTime)
 
 	// ethash PoW settings
 	if genesis.Ethash != nil {
@@ -92,7 +95,7 @@ func (p *ParityGenesis) Genesis(node *ethereumv1alpha1.Node) (content string, er
 				"mixHash": genesis.MixHash,
 			},
 		},
-		"parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"parentHash": genesis.ParentHash,
 		"timestamp":  genesis.Timestamp,
 		"gasLimit":   genesis.GasLimit,
 		"difficulty": genesis.Difficulty,
@@ -153,6 +156,12 @@ func (p *ParityGenesis) Genesis(node *ethereumv1alpha1.Node) (content string, er
 		"eip1559BaseFeeMaxChangeDenominator": "0x8",
 		"eip1559ElasticityMultiplier":        "0x2",
 		"eip1559BaseFeeInitialValue":         "0x3B9ACA00",
+		"mergeForkIdTransition":              mergeForBlock,
+		"eip3651TransitionTimestamp":         shanghaiTime,
+		"eip3855TransitionTimestamp":         shanghaiTime,
+		"eip3860TransitionTimestamp":         shanghaiTime,
+		"eip4895TransitionTimestamp":         shanghaiTime,
+		"terminalTotalDifficulty":            terminalTotalDifficulty,
 	}
 
 	alloc := genesisAccounts(true, genesis.Forks)
