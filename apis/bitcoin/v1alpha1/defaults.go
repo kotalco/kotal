@@ -21,7 +21,7 @@ const (
 
 const (
 	// DefaultBitcoinCoreImage is the default Bitcoin core client image
-	DefaultBitcoinCoreImage = "lncm/bitcoind:v25.0"
+	DefaultBitcoinCoreImage = "lncm/bitcoind:v26.0"
 )
 
 // Resources
