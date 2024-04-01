@@ -13,7 +13,7 @@ var (
 
 const (
 	// DefaultBesuImage is hyperledger besu image
-	DefaultBesuImage = "hyperledger/besu:23.4.1"
+	DefaultBesuImage = "hyperledger/besu:24.3.0"
 	// DefaultGethImage is go-ethereum image
 	DefaultGethImage = "kotalco/geth:v1.12.0"
 	// DefaultNethermindImage is nethermind image
