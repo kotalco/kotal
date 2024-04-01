@@ -14,6 +14,9 @@ import (
 	chainlinkv1alpha1 "github.com/kotalco/kotal/apis/chainlink/v1alpha1"
 )
 
+// Chainlink node configuration is documented here
+// https://github.com/smartcontractkit/chainlink/blob/develop/docs/CONFIG.md
+
 type WebServer struct {
 	AllowOrigins  string
 	SecureCookies bool
@@ -39,12 +42,12 @@ type Node struct {
 	HTTPURL string
 }
 
-type P2PV1 struct {
-	ListenPort uint
+type P2PV2 struct {
+	ListenAddresses []string
 }
 
 type P2P struct {
-	V1 P2PV1
+	V2 P2PV2
 }
 
 type Log struct {
@@ -86,8 +89,10 @@ func ConfigFromSpec(node *chainlinkv1alpha1.Node, homeDir string) (config string
 	}
 
 	c.P2P = P2P{
-		V1: P2PV1{
-			ListenPort: node.Spec.P2PPort,
+		V2: P2PV2{
+			ListenAddresses: []string{
+				fmt.Sprintf("%s:%d", shared.Host(true), node.Spec.P2PPort),
+			},
 		},
 	}
 
