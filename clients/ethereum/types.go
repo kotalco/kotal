@@ -94,8 +94,8 @@ const (
 	GethSyncMode = "--syncmode"
 	// GethGcMode is the argument used for garbage collection mode
 	GethGcMode = "--gcmode"
-	// GethTxLookupLimit is the argument used to set recent number of blocks to maintain transactions index for
-	GethTxLookupLimit = "--txlookuplimit"
+	// GethHistoryTxs is the argument used to set recent number of blocks to maintain transactions index for
+	GethHistoryTxs = "--history.transactions"
 	// GethCachePreImages is the argument used to enable recording the sha3 preimages of trie keys
 	GethCachePreImages = "--cache.preimages"
 

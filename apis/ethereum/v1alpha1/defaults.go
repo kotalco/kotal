@@ -15,7 +15,7 @@ const (
 	// DefaultBesuImage is hyperledger besu image
 	DefaultBesuImage = "hyperledger/besu:24.3.0"
 	// DefaultGethImage is go-ethereum image
-	DefaultGethImage = "kotalco/geth:v1.12.0"
+	DefaultGethImage = "kotalco/geth:v1.13.14"
 	// DefaultNethermindImage is nethermind image
 	DefaultNethermindImage = "kotalco/nethermind:v1.19.2"
 )

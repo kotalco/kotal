@@ -218,7 +218,7 @@ var _ = Describe("Geth Client", func() {
 				GethSyncMode,
 				string(node.Spec.SyncMode),
 				GethCachePreImages,
-				GethTxLookupLimit,
+				GethHistoryTxs,
 				"0",
 				GethMinerEnabled,
 				GethMinerCoinbase,
