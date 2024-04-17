@@ -17,7 +17,7 @@ const (
 	// DefaultGethImage is go-ethereum image
 	DefaultGethImage = "kotalco/geth:v1.13.14"
 	// DefaultNethermindImage is nethermind image
-	DefaultNethermindImage = "kotalco/nethermind:v1.19.2"
+	DefaultNethermindImage = "kotalco/nethermind:v1.25.4"
 )
 
 // Node defaults
