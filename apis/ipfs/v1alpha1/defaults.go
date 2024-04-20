@@ -17,9 +17,9 @@ const (
 
 const (
 	// DefaultGoIPFSImage is the default go ipfs client image
-	DefaultGoIPFSImage = "kotalco/kubo:v0.21.0"
+	DefaultGoIPFSImage = "kotalco/kubo:v0.28.0"
 	// DefaultGoIPFSClusterImage is the default go ipfs cluster client image
-	DefaultGoIPFSClusterImage = "kotalco/ipfs-cluster:v1.0.6"
+	DefaultGoIPFSClusterImage = "kotalco/ipfs-cluster:v1.0.8"
 )
 
 // Resources
