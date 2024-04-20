@@ -29,7 +29,7 @@ const (
 
 const (
 	// DefaultPolkadotImage is the default polkadot client image
-	DefaultPolkadotImage = "parity/polkadot:v0.9.43"
+	DefaultPolkadotImage = "parity/polkadot:v1.10.0"
 )
 
 // Resources

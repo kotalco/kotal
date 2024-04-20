@@ -10,7 +10,7 @@ import (
 )
 
 // PolkadotClient is parity Polkadot client
-// https://github.com/paritytech/polkadot
+// https://github.com/paritytech/polkadot-sdk
 type PolkadotClient struct {
 	node *polkadotv1alpha1.Node
 }
