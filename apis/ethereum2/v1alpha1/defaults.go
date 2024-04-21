@@ -30,7 +30,7 @@ const (
 	// DefaultLighthouseBeaconNodeImage is the default SigmaPrime Ethereum 2.0 beacon node image
 	DefaultLighthouseBeaconNodeImage = "kotalco/lighthouse:v4.2.0"
 	// DefaultTekuBeaconNodeImage is PegaSys Teku beacon node image
-	DefaultTekuBeaconNodeImage = "consensys/teku:23.6.0"
+	DefaultTekuBeaconNodeImage = "consensys/teku:24.3.1"
 	// DefaultPrysmBeaconNodeImage is Prysmatic Labs beacon node image
 	DefaultPrysmBeaconNodeImage = "kotalco/prysm:v4.0.6"
 	// DefaultNimbusBeaconNodeImage is the default Status Ethereum 2.0 beacon node image
@@ -39,7 +39,7 @@ const (
 
 const (
 	// DefaultTekuValidatorImage is PegaSys Teku validator client image
-	DefaultTekuValidatorImage = "consensys/teku:23.6.0"
+	DefaultTekuValidatorImage = "consensys/teku:24.3.1"
 	// DefaultPrysmValidatorImage is Prysmatic Labs validator client image
 	DefaultPrysmValidatorImage = "kotalco/prysm:v4.0.6"
 	// DefaultNimbusValidatorImage is the default Status Ethereum 2.0 validator client image
