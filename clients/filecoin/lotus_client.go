@@ -15,7 +15,7 @@ type LotusClient struct {
 // Images
 const (
 	//  LotusHomeDir is lotus client image home dir
-	LotusHomeDir = "/home/filecoin"
+	LotusHomeDir = "/home/fc"
 )
 
 // Command is lotus image command
