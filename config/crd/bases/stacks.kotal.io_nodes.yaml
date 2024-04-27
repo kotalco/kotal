@@ -90,6 +90,7 @@ spec:
                 enum:
                 - mainnet
                 - testnet
+                - xenon
                 type: string
               nodePrivateKeySecretName:
                 description: NodePrivateKeySecretName is k8s secret holding node private

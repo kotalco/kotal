@@ -11,6 +11,7 @@ type StacksNetwork string
 const (
 	Mainnet StacksNetwork = "mainnet"
 	Testnet StacksNetwork = "testnet"
+	Xenon   StacksNetwork = "xenon"
 )
 
 // BitcoinNode is Bitcoin node
@@ -37,7 +38,7 @@ type NodeSpec struct {
 	// +kubebuilder:validation:Enum=0;1
 	Replicas *uint `json:"replicas,omitempty"`
 	// Network is stacks network
-	// +kubebuilder:validation:Enum=mainnet;testnet
+	// +kubebuilder:validation:Enum=mainnet;testnet;xenon
 	Network StacksNetwork `json:"network"`
 	// RPC enables JSON-RPC server
 	RPC bool `json:"rpc,omitempty"`
