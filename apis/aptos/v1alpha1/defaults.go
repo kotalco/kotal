@@ -17,12 +17,8 @@ const (
 )
 
 const (
-	// DefaultAptosCoreMainnetImage is the default Aptos core Mainnet client image
-	DefaultAptosCoreMainnetImage = "aptoslabs/validator@sha256:06ca1753786724805e7efb525bd2dbfbc5a114e8792a8d05ef522dba9830b613"
-	// DefaultAptosCoreDevnetImage is the default Aptos core Devnet client image
-	DefaultAptosCoreDevnetImage = "aptoslabs/validator@sha256:d017e7f56781ff26c4755c2a379810b9d9c2f263c5ade15a26ccb719c743f7de"
-	// DefaultAptosCoreTestnetImage is the default Aptos core Testnet client image
-	DefaultAptosCoreTestnetImage = "aptoslabs/validator@sha256:c109ab86066fc35cbff5d7f57340ea6da9ed480896d08cd1bbd30c3dec683033"
+	// DefaultAptosCoreImage is the default Aptos core client image
+	DefaultAptosCoreImage = "aptoslabs/validator:aptos-node-v1.11.2"
 )
 
 const (

@@ -19,7 +19,7 @@ var _ = Describe("Aptos node defaulting", func() {
 
 		node.Default()
 
-		Expect(node.Spec.Image).To(Equal(DefaultAptosCoreDevnetImage))
+		Expect(node.Spec.Image).To(Equal(DefaultAptosCoreImage))
 		Expect(*node.Spec.Replicas).To(Equal(DefaltReplicas))
 		Expect(node.Spec.CPU).To(Equal(DefaultNodeCPURequest))
 		Expect(node.Spec.CPULimit).To(Equal(DefaultNodeCPULimit))

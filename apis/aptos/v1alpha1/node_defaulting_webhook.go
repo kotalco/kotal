@@ -39,13 +39,7 @@ func (r *Node) Default() {
 	r.DefaultNodeResources()
 
 	if r.Spec.Image == "" {
-		if r.Spec.Network == Mainnet {
-			r.Spec.Image = DefaultAptosCoreMainnetImage
-		} else if r.Spec.Network == Devnet {
-			r.Spec.Image = DefaultAptosCoreDevnetImage
-		} else if r.Spec.Network == Testnet {
-			r.Spec.Image = DefaultAptosCoreTestnetImage
-		}
+		r.Spec.Image = DefaultAptosCoreImage
 	}
 
 	if r.Spec.Replicas == nil {
