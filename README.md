@@ -74,7 +74,7 @@ kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5
 Install kotal custom resources and controllers:
 
 ```bash
-kubectl apply -f https://github.com/kotalco/kotal/releases/download/v0.2.0/kotal.yaml
+kubectl apply -f https://github.com/kotalco/kotal/releases/download/v0.3.0/kotal.yaml
 ```
 
 ## Example
