@@ -68,7 +68,7 @@ kind create cluster
 After the cluster is up and running, [install](https://cert-manager.io/docs/installation/kubernetes/) cert-manager:
 
 ```bash
-kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.5/cert-manager.yaml
 ```
 
 Install kotal custom resources and controllers:
